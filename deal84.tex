@@ -1,0 +1,475 @@
+\documentclass{ansarticle-preprint}
+%\usepackage{ucs}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+%\usepackage{cite}
+\usepackage{anslistings}
+
+\usepackage{fontenc}
+\usepackage{graphicx}
+
+\hypersetup{
+  pdfauthor={Wolfgang Bangerth, Timo Heister, Luca Heltai, Guido Kanschat,
+    Martin Kronbichler, Matthias Maier, Bruno Turcksin
+  %, Toby D. Young
+  },
+  pdftitle={The deal.II Library, Version 8.4.0, 2016},
+}
+
+\newcommand{\specialword}[1]{\texttt{#1}}
+\newcommand{\dealii}{{\specialword{deal.II}}}
+\newcommand{\pfrst}{{\specialword{p4est}}}
+\newcommand{\trilinos}{{\specialword{Trilinos}}}
+\newcommand{\aspect}{\specialword{Aspect}}
+\newcommand{\petsc}{\specialword{PETSc}}
+\newcommand{\cmake}{{\specialword{CMake}}}
+\newcommand{\autoconf}{{\specialword{autoconf}}}
+
+\title{The \dealii{} Library, Version 8.4}
+\author[1]{Wolfgang Bangerth}
+\affil[1]{Department of Mathematics, Texas A\&M University, College Station,
+    TX 77843, USA,
+    {\texttt{bangerth@math.tamu.edu}}}
+\author[2]{Denis Davydov}
+\affil[2]{???,
+  {\texttt{???}}}
+\author[3]{Timo Heister}
+\affil[3]{Mathematical Sciences,
+  O-110 Martin Hall.
+  Clemson University.
+  Clemson, SC 29634, USA,
+  {\texttt{heister@clemson.edu}}}
+\author[4]{Luca Heltai}
+\affil[4]{SISSA - International School for Advanced Studies, Via
+  Bonomea 265, 34136 Trieste, Italy,
+  {\texttt{luca.heltai@sissa.it}}}
+\author[5]{Guido Kanschat}
+\affil[5]{Interdisciplinary Center for Scientific Computing (IWR),
+  Universit{\"a}t Heidelberg, Im Neuenheimer Feld 368, 69120 Heidelberg, Germany,
+  {\texttt{kanschat@uni-heidelberg.de}}}
+\author[6]{Martin Kronbichler}
+\affil[6]{Institute for Computational Mechanics, Technische
+  Universit{\"a}t M{\"u}nchen, Boltzmannstr.~15, 85748 Garching b. Mænchen,
+  Germany,
+  {\texttt{kronbichler@lnm.mw.tum.de}}}
+\author[7]{Matthias Maier}
+\affil[7]{School of Mathematics, University of Minnesota, 127 Vincent Hall,
+  206 Church Street SE, Minneapolis, MN 55455, USA,
+  {\texttt{msmaier@umn.edu}}}
+\author[8]{Bruno Turcksin}
+\affil[8]{Department of Mathematics, Texas A\&M University, College Station,
+  TX 77843, USA,
+  {\texttt{turcksin@math.tamu.edu}}}
+\author[9]{David Wells}
+\affil[9]{Department of Mathematical Sciences, Rensselaer Polytechnic Institute,
+Troy, NY 12180, USA
+  {\texttt{wellsd2@rpi.edu}}}
+%\author[8]{Toby~D.~Young}
+%\affil[8]{Institute of Fundamental Technological Research of the Polish
+%  Academy of Sciences, ul. Pawi{\'n}skiego 5b, Warsaw 02-106, Poland,
+%  {\texttt{tyoung@ippt.pan.pl}}}
+
+\renewcommand{\labelitemi}{--}
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  This paper provides an overview of the new features of the finite element
+  library \dealii{} version 8.4.0.
+\end{abstract}
+
+
+\section{Overview}
+
+\dealii{} version 8.4.0 was released February 29, 2016. This paper provides an
+overview of the new features of this release and serves as a citable
+reference for the \dealii{} software library version 8.4.0. \dealii{} is an
+object-oriented finite element library used around the world in the
+development of finite element solvers. It is available for free under the
+GNU Lesser General Public License (LGPL) from the \dealii{} homepage at
+\url{http://www.dealii.org/}.
+
+The major changes of this release are:
+\begin{itemize}
+\item Preliminary support for parallel, adaptive, geometric multigrid
+\item Parallel triangulations can now be partitioned in ways that allow
+  weighting cells differently
+\item Improved support for mixed-type arithmetic throughout the library
+\item A new triangulation type that supports parallel computations
+  but ensures that the entire mesh is available on every processor
+\item An implementation of the Rannacher-Turek element, as well as an
+  element that extends the usual Q(p) elements by bubble functions
+\item Second and third derivatives of finite element fields are now
+  computed exactly.
+\item The various \emph{Concepts}, or requirements on template parameters
+  in the library, are now consistently labeled and documented as such.
+\item The interface between finite elements, quadrature, mapping, and the
+  FEValues class has been rewritten. It is now much better documented
+\item  More than 140 other features and bugfixes.
+\end{itemize}
+Some of these will be detailed in the following section.
+Information on how to cite \dealii{} is provided in Section \ref{sec:cite}.
+
+
+\section{Significant changes to the library}
+
+This release of \dealii{} contains a number of large and significant changes
+that will be discussed in the following sections. It of course also contains a
+vast number of smaller changes and added functionality; the details of these
+can be found
+\href{https://www.dealii.org/8.4.0/doxygen/deal.II/changes_between_8_3_0_and_8_4.html}{in the file that lists all changes for this release}
+and that is linked to from the web site of each release as well as the
+release announcement.
+
+
+\subsection{Preliminary support for parallel, adaptive, geometric
+  multigrid}
+
+\marginpar{Martin/Timo -- can you write this section?}
+...
+
+\subsection{Parallel triangulations can now be partitioned with weights}
+
+Previously, partitioning a parallel mesh (represented by the
+\texttt{parallel::distributed::Triangulation} class) between
+processors assumed that every cell should be weighted equally. On the
+other hand, the \pfrst{} library which manages the partitioning
+process, allows for attaching weights for each cell and thereby
+enables ways in which not the number of cells per MPI process is
+equilibrated, but the sum of weights on the cells managed by each
+process. \dealii{} now also supports this feature.
+
+The implementation of this mechanism is based on a callback mechanism,
+in the form of the signal-slot design pattern. User codes can register
+functions that will be called upon mesh refinement and coarsening,
+returning a weight for each cell. These weights will be added after
+all slots (i.e., callback functions) connected to the signal have been
+called.
+
+The mechanism chosen has the advantage that all parties that use a
+triangulation, for example multiple \texttt{DoFHandler} objects or a
+scheme that tracks particles that are advected along with a flow field
+and stored them per-cell, can indicate their computational needs for
+each cell, and there no central place in a user code (other than the
+triangulation itself) that has to collect these needs and forward this
+information.
+
+
+\subsection{Improved support for mixed-type arithmetic throughout the
+  library}
+
+When evaluating finite element fields or their derivatives at
+a points $\mathbf x_q$, one typically has to do an operation of the form
+\begin{align*}
+  u_h(\mathbf x_q) &= \sum_{j} U_j \varphi_j(\mathbf x_q),
+  \\
+  \nabla u_h(\mathbf x_q) &= \sum_{j} U_j \nabla\varphi_j(\mathbf x_q).
+\end{align*}
+The value or derivatives of shape functions, $\varphi_j(\mathbf x_q)$
+or $\nabla\varphi_j(\mathbf x_q)$ are internally evaluated by classes
+derived from the \texttt{FiniteElement} and \texttt{Mapping}, and are
+computed as scalars or tensors of type \texttt{double}. On the other
+hand, the expansion coefficients of the field, $U_j$ are stored in
+vectors of types chosen by the user; their underlying representation
+can be \texttt{double}, but also \texttt{float}, \texttt{long double},
+\texttt{PetscScalar}, or \texttt{std::complex<float>}. It could also
+be an autodifferentiation type.
+
+To facilitate the correct typing of the computed quantity, \dealii{}
+now contains mechanisms by which one can evaluate the \textit{type} of
+the product of two values, and this type is now consistently used
+throughout the library in expressions such as those above. Thus, as an
+example, if the user stores the expansion coefficients in a
+\texttt{Vector<long double>}, then the gradients
+$\nabla\varphi_j(\mathbf x_q)$ will be computed as objects of type
+\texttt{Tensor<1,dim,long double>}. Likewise, if a user uses a PETSc
+vector, and PETSc was configured with complex scalar types, then the
+second derivatives of the solution field will be computed as
+\texttt{SymmetricTensor<2,dim,PetscScalar>}, which should equal
+\texttt{SymmetricTensor<2,dim,std::complex<double> >}.
+
+These improvements make type-correct computations possible in many
+places. In particular, this enables the use of complex-valued solution
+vectors in many more places. On the other hand, many but not all
+places have learned what actually to do with complex numbers. This is,
+in particular, true for the \texttt{DataOut} class that generates an
+intermediate data format that can then be written to graphical output
+files for visualization. Since no format we are aware of supports
+complex numbers, future versions still need to learn how to separate
+real and imaginary parts of complex numbers, and output them as two
+components.
+
+
+\subsection{A new ``shared'' triangulation type for parallel computations}
+
+\marginpar{Denis -- can you write this section?}
+...
+
+\subsection{Second and third derivatives of finite element fields are now
+  computed exactly}
+
+Second derivatives of solution fields, i.e., 
+\begin{align*}
+  \nabla^2 u_h(\mathbf x_q) &= \sum_{j} U_j \nabla^2\varphi_j(\mathbf x_q)
+\end{align*}
+were previously computed by finite differencing of first
+derivatives. The reason for this approach is that in order to compute
+the second derivatives of shape functions, $\nabla^2\varphi_j(\mathbf
+x_q)$ one needs (at least) derivatives of the inverse of the Jacobian of the
+mapping. This is easy to see because, for the usual $Q_p$ Lagrange
+elements, one has that $\nabla\varphi_j(\mathbf
+x_q)=J^{-1}\hat\nabla\hat\varphi_j(\hat{\mathbf x}_q)$, where quantities
+with a hat refer to coordinates and functions on the reference cell,
+and $J$ is the Jacobian of the mapping from reference to real
+cell. Thus, the second derivatives satisfy
+\begin{align*}
+  \nabla^2\varphi_j(\mathbf x_q)
+  =
+  J^{-1}\hat\nabla\left[J^{-1}\hat\nabla\hat\varphi_j(\hat{\mathbf x}_q)\right]
+  =
+  J^{-1} J^{-1}\hat\nabla^2\hat\varphi_j(\hat{\mathbf x}_q)
+  +
+  J^{-1}\left(\hat\nabla J^{-1}\right)\hat\nabla\hat\varphi_j(\hat{\mathbf x}_q),
+\end{align*}
+where in the last expression, matrices and tensors of rank 1 and 3
+have to be appropriately contracted.  Here, the difficulty lies in
+computing the derivative $\hat\nabla J^{-1}$: for the usual mappings
+on quadrilaterals and hexahedra, $J$ is in general a polynomial in the
+reference coordinates $\hat {\mathbf x}$, so $J^{-1}$ is a rational
+function. It is possible to compute the derivatives of this object,
+but they are difficult and cumbersome to evaluate, especially for
+higher order mappings.
+
+The key to computing second (and higher) derivatives of shape
+functions is to recognize that $\hat\nabla J^{-1}$ can be expressed
+more conveniently by observing that
+\begin{align*}
+  0 &= \hat\nabla I
+  \\
+  &= \hat\nabla (JJ^{-1})
+  \\
+  &= J (\hat\nabla J^{-1}) + (\hat\nabla J) J^{-1},
+\end{align*}
+and consequently $\hat\nabla J^{-1} = - J^{-1} (\hat\nabla J)
+J^{-1}$. Here, $J^{-1}$ is a matrix that is already available from
+computing first derivatives, and $\hat\nabla J$ is an easily computed
+rank-3 tensor with polynomial entries. Using this approach, we have
+\begin{align*}
+  \nabla^2\varphi_j(\mathbf x_q)
+  =
+  J^{-1} J^{-1}\hat\nabla^2\hat\varphi_j(\hat{\mathbf x}_q)
+  -
+  J^{-1} J^{-1} (\hat\nabla J)
+  J^{-1}\hat\nabla\hat\varphi_j(\hat{\mathbf x}_q),
+\end{align*}
+again with an appropriate set of contractions over the indices of the
+objects on the right.
+
+This, and corresponding extensions to compute third derivatives, have
+now been implemented in several of the finite element and mapping
+classes by Maien Hamed, and are available through the
+\texttt{FEValues} interface to shape functions and their derivatives.
+
+
+\subsection{Incompatible changes}
+
+\subsubsection{Revision of the interface between finite elements,
+  quadratures, and mappings}
+
+Finite element classes describe shape functions as continuous (as
+opposed to discrete) objects on the reference cell. On the other hand,
+in actual practice, one only needs information about shape functions
+at finitely many quadrature points, and these are typically the same
+on every cell in a loop over all cells. Furthermore, the evaluation of
+shape functions at quadrature points then also needs to be mapped to
+the real cell, typically using a polynomial mapping.
+
+To facilitate this complex interplay, \dealii{} has three class
+hierarchies with base classes \texttt{FiniteElement} (for the
+description of shape functions on the reference cell),
+\texttt{Quadrature} (for the locations and weights of quadrature
+points on the reference cell), and \texttt{Mapping} (for the
+description of mappings from the reference to the real cell). In
+almost all cases, users create an object of a derived class for each
+of these categories, but they never access any of the members of these
+classes and instead leave this task to the \texttt{FEValues} class
+(and \texttt{FEFaceValues}, \texttt{FESubfaceValues}) that presents
+all one typically needs: the mapped values, gradients, and
+higher order derivatives of shape functions at the quadrature points
+of the real cell.
+
+The interplay between these classes in the \texttt{FEValues} interface
+is one of the oldest parts of the library. It was, at the time, not
+designed based on specifications we explicitly or implicitly knew this
+class had to satisfy, but instead organically grew to its current
+state. These interfaces have now been fundamentally rewritten: some
+functions have been replaced; several others had their argument lists
+shuffled, sorted, and made more uniform; and everything has generally
+been far better documented.
+
+None of the changes in this arena is visible to the average user. The
+only user codes that are affected in an incompatible way are those
+that implement finite element or mapping classes.
+
+\subsubsection{Other incompatible changes}
+
+The
+\href{https://www.dealii.org/8.4.0/doxygen/deal.II/changes_between_8_3_0_and_8_4.html}{file
+  that lists all changes for this release} lists another 18
+incompatible changes, but none of these should in fact be visible in
+typical user codes. Some remove previously deprecated classes and
+functions, and the majority change internal interfaces that are not
+typically used in user codes.
+
+
+
+\section{How to cite \dealii{}}\label{sec:cite}
+
+In order to justify the work the developers of \dealii{} put into this
+software, we ask that papers using the library reference one of the
+\dealii{} papers. This helps us justify the effort we put into it.
+
+There are various ways to reference \dealii{}. To acknowledge the use of a
+particular version of the library, reference the present document. For up
+to date information and bibtex snippets for this document see:
+
+\bigskip
+
+\begin{center}
+ \url{https://www.dealii.org/publications.html}
+\end{center}
+
+\bigskip
+
+% \begin{minipage}{0.9\textwidth}%no page break in here please
+% \begin{verbatim}
+% @article{dealII82,
+%   title = {The {\tt deal.{I}{I}} Library, Version 8.2},
+%   author = {W. Bangerth and T. Heister and L. Heltai
+%    and G. Kanschat and M. Kronbichler and M. Maier
+%    and B. Turcksin and T. D. Young},
+%   journal = {preprint},
+%   year = {2015},
+% }
+% \end{verbatim} %  journal = {arXiv preprint \url{http://arxiv.org/abs/TODO}},
+% \end{minipage}
+
+The original \texttt{\dealii{}} paper containing an overview of its
+architecture is \cite{BangerthHartmannKanschat2007}. If you rely on specific
+features of the library, please consider citing any of the following:
+\begin{itemize}
+ \item For geometric multigrid: \cite{Kanschat2004,JanssenKanschat2011};
+ \item For distributed parallel computing: \cite{BangerthBursteddeHeisterKronbichler11};
+ \item For $hp$ adaptivity: \cite{BangerthKayserHerold2007};
+ \item For matrix-free and fast assembly techniques:
+   \cite{KronbichlerKormann2012};
+ \item For computations on lower-dimensional manifolds:
+   \cite{DeSimoneHeltaiManigrasso2009};
+ \item For integration with CAD files and tools:
+   \cite{HeltaiMola2015};
+ \item For \texttt{LinearOperator} and \texttt{PackagedOperation} facilities:
+   \cite{MaierBardelloniHeltai-2015-a}.
+ \item For uses of the \texttt{WorkStream} interface:
+   \cite{TKB16}.
+\end{itemize}
+
+\dealii{} can interface with many other libraries:
+\begin{itemize}
+\item ARPACK \cite{arpack}
+\item BLAS, LAPACK
+\item HDF5 \cite{hdf5}
+\item METIS \cite{karypis1998fast}
+\item MUMPS \cite{ADE00,MUMPS:1,MUMPS:2,mumps-web-page}
+\item muparser \cite{muparser-web-page}
+\item NetCDF \cite{rew1990netcdf}
+\item OpenCASCADE \cite{opencascade-web-page}
+\item p4est \cite{p4est}
+\item PETSc \cite{petsc-user-ref,petsc-web-page}
+\item SLEPc \cite{Hernandez:2005:SSF}
+\item Threading Building Blocks \cite{Rei07}
+\item Trilinos \cite{trilinos,trilinos-web-page}
+\item UMFPACK \cite{umfpack}
+\end{itemize}
+Please consider citing the appropriate references if you use interfaces to these
+libraries.
+
+Older releases of \dealii{} can be cited as \cite{dealII80,dealII81,dealII82,dealII83}.
+
+\nocite{BangerthKanschat1999}
+
+\section{Acknowledgments}
+
+\dealii{} is a world-wide project with dozens of contributors around the
+globe. Other than the authors of this paper, the following people contributed code to
+this release:
+%
+% get this from the changes.h file using
+%   egrep '^ *\(.*201[56789]' 8.3.0-vs-8.4.0.h | perl -p -e 's/201\d.*//g; s/, */\n/g; s/^ *\(?//g;' | sort | uniq
+% then sort by last name and remove the authors of this paper
+%
+Daniel Arndt,
+Mauro Bardelloni,
+Alistair Bentley,
+Andrea Bonito,
+Claire Bruna-Rosso,
+Krzysztof Bzowski,
+Praveen Chandrashekar,
+Conrad Clevenger,
+Patrick Esser,
+Rene Gassmoeller,
+Arezou Ghesmati,
+Maien Hamed,
+Alexander Grayver,
+Lukas Korous,
+Aslan Kosakian,
+Adam Kosik,
+Konstantin Ladutenko,
+Jean-Paul Pelteret,
+Lei Qiao,
+Gennadiy Rishin,
+Angel Rodriguez,
+Alberto Sartori,
+Daniel Shapero,
+Jason Sheldon,
+Jan Stebel,
+Florian Sonner,
+Zhen Tao,
+Heikki Virtanen,
+Daniel Weygand
+
+
+Their contributions are much appreciated!
+
+
+\dealii{} and its developers are financially supported through a
+variety of funding sources. W.~Bangerth and B.~Turcksin were partially
+supported by the National Science Foundation under award OCI-1148116
+as part of the Software Infrastructure for Sustained Innovation (SI2)
+program; and by the Computational Infrastructure in Geodynamics initiative
+(CIG), through the National Science Foundation under Award
+No.~EAR-0949446 and The University of California -- Davis.
+
+L.~Heltai was partially supported by the project OpenViewSHIP,
+``Sviluppo di un ecosistema computazionale per la progettazione
+idrodinamica del sistema elica-carena'', financed by Regione FVG - PAR
+FSC 2007-2013, Fondo per lo Sviluppo e la Coesione, and by the project
+TRIM ``Tecnologia e Ricerca Industriale per la Mobilit\`a Marina'',
+CTN01-00176-163601, funded by MIUR -  Ministero dell'Istruzione,
+dell'Universit\`a e della Ricerca.
+
+T.~Heister was partially supported by the Computational Infrastructure in
+Geodynamics initiative (CIG), through the National Science Foundation under Award
+No. EAR-0949446 and The University of California -- Davis.
+
+The Interdisciplinary Center for Scientific Computing (IWR) at Heidelberg University has provided
+hosting services for the \dealii{} web page and the SVN archive.
+
+%\marginpar{Everyone's funding, please}
+
+
+\bibliography{deal84}{}
+\bibliographystyle{abbrv}
+
+\end{document}
