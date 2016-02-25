@@ -94,18 +94,20 @@ GNU Lesser General Public License (LGPL) from the \dealii{} homepage at
 The major changes of this release are:
 \begin{itemize}
 \item Parallel triangulations can now be partitioned in ways that allow
-  weighting cells differently
-\item Improved support for mixed-type arithmetic throughout the library
+  weighting cells differently.
+\item Improved support for mixed-type arithmetic throughout the library.
 \item A new triangulation type that supports parallel computations
-  but ensures that the entire mesh is available on every processor
+  but ensures that the entire mesh is available on every processor.
 \item An implementation of the Rannacher-Turek element, as well as an
-  element that extends the usual Q(p) elements by bubble functions
+  element that extends the usual Q(p) elements by bubble functions.
 \item Second and third derivatives of finite element fields are now
   computed exactly.
 \item The various \emph{Concepts}, or requirements on template parameters
   in the library, are now consistently labeled and documented as such.
 \item The interface between finite elements, quadrature, mapping, and the
-  FEValues class has been rewritten. It is now much better documented
+  FEValues class has been rewritten. It is now much better documented.
+\item Initial support for compiling with Visual C++ 2013 and 2015 under Windows
+  has been added.
 \item  More than 140 other features and bugfixes.
 \end{itemize}
 Some of these will be detailed in the following section.
@@ -265,6 +267,15 @@ now been implemented in several of the finite element and mapping
 classes by Maien Hamed, and are available through the
 \texttt{FEValues} interface to shape functions and their derivatives.
 
+\subsection{Visual C++ support}
+
+The library can now be compiled under Windows with Visual C++ 2013 and
+2015. The support is still experimental for the following reasons: First, we
+currently only support static linking. This will slow down linking of
+application code immensly.  Second, only a minimal testsuite is working, which
+is mainly because static linking of thousands of test executables is not
+viable. Therefore, we can not exclude the possibility of subtle bugs in the
+library.  Finally, there is of course limited support for external packages.
 
 \subsection{Incompatible changes}
 
