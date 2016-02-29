@@ -1,0 +1,35 @@
+Version 6.1 of deal.II, the object-oriented finite element library
+recently awarded the J. H. Wilkinson Prize for Numerical Software, has
+been released. It is available from the deal.II home-page at
+
+                   http://www.dealii.org/
+
+Major new features of version 6.1 are:
+- 3 new extensive tutorial programs showing advanced FEM techniques for
+  complex-valued problems, the Stokes equations, and the Euler equations of
+  compressible gas dynamics
+- Improved hp finite element support
+- A simpler and more powerful method to assemble matrices and vectors for
+  systems of partial differential equations
+- A method to postprocess numerical solutions and write derived quantities
+  into output files for graphical visualization 
+- A much improved sparse ILU
+- Some 60 new functions, classes, and bug fixes.
+
+All main features of the previous versions have been continued and improved:
+- Support for dimension-independent programming
+- Extensive documentation and working example programs
+- Multigrid support
+- Locally refined grids
+- A zoo of different finite elements
+- Fast linear algebra
+- Built-in support for symmetric multi-processing (SMP) and distributed
+  computing
+- Interfaces to PETSc, METIS, UMFPACK and other external software
+- Output for a variety of visualization platforms.
+
+deal.II can be downloaded for free and is distributed under an Open
+Source license.
+
+
+Wolfgang Bangerth, Guido Kanschat, Ralf Hartmann, the deal.II team

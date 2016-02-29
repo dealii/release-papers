@@ -1,0 +1,35 @@
+Version 7.2 of deal.II, the object-oriented finite element library awarded the
+J. H. Wilkinson Prize for Numerical Software, has been released. It is
+available for free under an Open Source license from the deal.II homepage at
+
+                   http://www.dealii.org/
+
+This version has a large number of enhancements:
+- A framework for matrix-free finite element computations, with support
+  for both intra-node parallelism and massively parallel inter-node
+  computations, together with two tutorial programs that show how this can be
+  used (step-37, step-48)
+- A tutorial program demonstrating advanced techniques for
+  multiphase flow (step-43)
+- Three tutorial programs showing how to solve variational inequalities (the
+  obstacle problem, step-41), finite strain elasticity (step-44), and a
+  rewritten introduction to nonlinear problems (step-15)
+- Support for problems with codimension 2, for example for solving problems on
+  a line embedded into R^3
+- Distributed triangulations now provide checkpoint/restart functionality
+- Support for parallel output using HDF5/xdmf
+- More than 100 other changes and bug fixes throughout the library.
+
+All main features of the previous versions have been continued and improved:
+- Extensive documentation and 45 working example programs
+- Support for dimension-independent programming
+- Locally refined adaptive meshes
+- Multigrid support
+- A zoo of different finite elements
+- Fast linear algebra
+- Built-in support for shared memory and distributed parallel computing,
+  scaling from laptops to clusters with 10,000s of processor cores
+- Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
+- Output for a wide variety of visualization platforms.
+
+Wolfgang Bangerth, Timo Heister, Guido Kanschat, and many other contributors.

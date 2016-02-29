@@ -1,0 +1,17 @@
+Version 8.1 of deal.II, the object-oriented finite element library awarded the
+J. H. Wilkinson Prize for Numerical Software, has been released. It is
+available for free under an Open Source license from the deal.II homepage at
+
+                   http://www.dealii.org/
+
+This version is primarily a maintenance release but still has a number of
+noteworthy new features:
+- Three new tutorial programs on elasto-plastic contact problems (step-42),
+  hybridizable dicontinuous Galerkin methods (step-51), and a simple example
+  of using adaptive mesh refinement for time dependent problems (step-26)
+- Significantly better support for shared memory multicore parallelism
+- Dozens of new features and bugfixes
+
+For more information see http://arxiv.org/abs/1312.2266v4
+
+Wolfgang Bangerth, Timo Heister, Guido Kanschat, and many other contributors.

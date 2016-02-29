@@ -1,0 +1,30 @@
+Version 8.3 of deal.II, the object-oriented finite element library awarded the
+J. H. Wilkinson Prize for Numerical Software, has been released. It is
+available for free under an Open Source license from the deal.II homepage at
+
+                   https://www.dealii.org/
+
+Among the major changes of this release are:
+- Improved handling of parallel distributed meshes.
+- New abstract C++11 interface to linear operators.
+- Conversion of tutorials to the new manifold mechanism for boundary descriptions. 
+- Better support for complex-valued problems.
+- More descriptive exception messages in many places.
+- More than 140 other features and bugfixes.
+
+For more information see the preprint at https://www.dealii.org/deal83-preprint.pdf
+and the full list of changes at  
+  https://www.dealii.org/8.3.0/doxygen/deal.II/changes_between_8_2_1_and_8_3.html
+
+The main features of deal.II are:
+- Extensive documentation and 52 working example programs
+- Support for dimension-independent programming
+- Locally refined adaptive meshes and multigrid support
+- A zoo of different finite elements
+- Built-in support for shared memory and distributed parallel computing,
+  scaling from laptops to clusters with 10,000s of processor cores
+- Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
+- Output for a wide variety of visualization platforms.
+
+Wolfgang Bangerth, Timo Heister, Guido Kanschat, Matthias Maier,
+and many other contributors.

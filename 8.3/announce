@@ -1,0 +1,45 @@
+Version 8.3 of deal.II, the object-oriented finite element library awarded the
+J. H. Wilkinson Prize for Numerical Software, has been released. It is
+available for free under an Open Source license from the deal.II homepage at
+
+                   https://www.dealii.org/
+
+The major changes of this release are:
+- Improved handling of parallel distributed meshes, including a better
+  numbering of cells on coarse meshes based on a hierarchical concept instead
+  of Cuthill-McKee numbering.
+- New abstract C++11 interface to linear operators.
+- All examples have been changed to use the new DynamicSparsityPattern.
+- Improved support for periodic boundary conditions with arbitrary
+  orientations.
+- New quadrature formulas.
+- Full conversion to the new manifold mechanism (manifold_id) for boundary
+  descriptions.
+- Better support for complex-valued problems by doing internal arithmetic in
+  the correct data types, rather than defaulting to double precision.
+- An implementation of Bernstein polynomial-based finite elements.
+- Interface to the new algebraic multilevel package MueLu of the Trilinos
+  project.
+- More descriptive exception messages in many places for improved user
+  productivity in code development.
+- More than 140 other features and bugfixes.
+
+For more information see
+- the preprint at https://www.dealii.org/deal83-preprint.pdf
+- the list of changes at  
+  https://www.dealii.org/8.3.0/doxygen/deal.II/changes_between_8_2_1_and_8_3.html
+
+The main features of deal.II are:
+- Extensive documentation and 52 working example programs
+- Support for dimension-independent programming
+- Locally refined adaptive meshes
+- Multigrid support
+- A zoo of different finite elements
+- Fast linear algebra
+- Built-in support for shared memory and distributed parallel computing,
+  scaling from laptops to clusters with 10,000s of processor cores
+- Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
+- Output for a wide variety of visualization platforms.
+
+Wolfgang Bangerth, Timo Heister, Guido Kanschat, Matthias Maier,
+and many other contributors.

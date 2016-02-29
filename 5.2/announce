@@ -1,0 +1,25 @@
+Version 5.2 of the deal.II object-oriented finite element library has been
+released. It is available from the deal.II home-page at
+
+                   http://www.dealii.org/
+
+All main features of the previous versions have been continued and improved:
+- Support for dimension-independent programming
+- Extensive documentation and working example programs
+- Multigrid support
+- Locally refined grids
+- A zoo of different finite elements
+- Fast linear algebra
+- Built-in support for symmetric multi-processing (SMP) and distributed
+  computing
+- Petsc interface
+- Output for a variety of visualization platforms.
+
+A comprehensive list of almost 100 new features and fixed bugs can be found at
+     http://www.dealii.org/5.2.0/news/5.1.0-vs-5.2.0.html
+
+deal.II can be downloaded for free and is distributed under an Open
+Source license.
+
+
+Guido Kanschat, Wolfgang Bangerth, Ralf Hartmann, the deal.II team

@@ -1,0 +1,28 @@
+Version 7.3 of deal.II, the object-oriented finite element library awarded the
+J. H. Wilkinson Prize for Numerical Software, has been released. It is
+available for free under an Open Source license from the deal.II homepage at
+
+                   http://www.dealii.org/
+
+This version is primarily a maintenance release. It makes a significant part
+of the handling of linear algebra objects across the various supported
+libraries (native, via PETSc and via Trilinos) more consistent in their
+interfaces. In addition, it also contains a new tutorial program demonstrating
+various ways of generating meshes, introduces better iterators into sparsity
+patterns and sparse matrices, and has better ways to deal with multicomponent
+problems. Release 7.3 is backward compatible to 7.2.  However, it deprecates a
+number of classes and functions that will be removed in the next release.
+
+All main features of the previous versions have been continued and improved:
+- Extensive documentation and 46 working example programs
+- Support for dimension-independent programming
+- Locally refined adaptive meshes
+- Multigrid support
+- A zoo of different finite elements
+- Fast linear algebra
+- Built-in support for shared memory and distributed parallel computing,
+  scaling from laptops to clusters with 10,000s of processor cores
+- Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
+- Output for a wide variety of visualization platforms.
+
+Wolfgang Bangerth, Timo Heister, Guido Kanschat, and many other contributors.

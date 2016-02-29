@@ -1,0 +1,24 @@
+Version 8.2 of deal.II, the object-oriented finite element library awarded the
+J. H. Wilkinson Prize for Numerical Software, has been released. It is
+available for free under an Open Source license from the deal.II homepage at
+
+                   http://www.dealii.org/
+
+This version has a significant number of noteworthy new features:
+- Comprehensive support for geometries described by arbitrary manifolds
+  and meshes that respect this description not only on the boundary but
+  also internally
+- Support for geometries imported from CAD using the OpenCASCADE library
+- Three new tutorial programs on complex geometries, CAD geometries, and
+  time stepping methods
+- Support for users wanting to use C++11 features
+- Improvements to multithreading support
+- Vectorization of many vector operations using OpenMP SIMD directives
+- At least 140 features and bugfixes
+
+For more information see
+  https://journals.ub.uni-heidelberg.de/index.php/ans/article/view/18031 (release paper)
+  https://www.dealii.org/8.2.1/doxygen/deal.II/changes_between_8_1_and_8_2.html (changelog)
+
+Wolfgang Bangerth, Timo Heister, Guido Kanschat, Matthias Maier,
+and many other contributors.

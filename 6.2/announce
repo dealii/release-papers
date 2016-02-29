@@ -1,0 +1,32 @@
+Version 6.2 of deal.II, the object-oriented finite element library
+recently awarded the J. H. Wilkinson Prize for Numerical Software, has
+been released. It is available for free under an OpenSource license
+from the deal.II home-page at
+
+                   http://www.dealii.org/
+
+Major new features of version 6.2 are:
+- The ability to do anisotropic mesh refinement in both 2d and 3d
+- Support for meshes defined on curved manifolds, and the discretization
+  of partial differential or boundary integral equations on such domains
+- 4 new extensively documented tutorial programs demonstrating solving
+  boundary integral equations, the Boussinesq equations, anisotropic
+  mesh refinement, and an application from nuclear reactor engineering
+- Interfaces to the linear algebra classes in the Trilinos library
+- Support for vastly faster matrix assembly on structured meshes
+- Some 120 new functions, classes, and bug fixes.
+
+All main features of the previous versions have been continued and improved:
+- Support for dimension-independent programming
+- Extensive documentation and working example programs
+- Multigrid support
+- Locally refined grids
+- A zoo of different finite elements
+- Fast linear algebra
+- Built-in support for symmetric multi-processing (SMP) and distributed
+  computing
+- Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
+- Output for a wide variety of visualization platforms.
+
+Wolfgang Bangerth, Guido Kanschat, Ralf Hartmann, and many others who
+contributed.

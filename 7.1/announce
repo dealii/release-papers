@@ -1,0 +1,31 @@
+Version 7.1 of deal.II, the object-oriented finite element library awarded the
+J. H. Wilkinson Prize for Numerical Software, has been released. It is
+available for free under an Open Source license from the deal.II homepage at
+
+                   http://www.dealii.org/
+
+This version has a large number of enhancements:
+- A tutorial program (step-32) demonstrating the solution of the Boussinesq
+  equation on hundreds or thousands of processors
+- A tutorial program (step-46) solving a fluid-structure interaction problem
+  and showing how to implement problems in which different equations hold in
+  different parts of the domain
+- Improved support for massively large computations and for multiphysics
+  problems throughout the library
+- Support for serialization of most classes to allow checkpoint/restart
+- More robust interfaces to Trilinos and PETSc
+- More than 100 other changes and bug fixes throughout the library.
+
+All main features of the previous versions have been continued and improved:
+- Support for dimension-independent programming
+- Extensive documentation and 40 working example programs
+- Locally refined adaptive meshes
+- Multigrid support
+- A zoo of different finite elements
+- Fast linear algebra
+- Built-in support for shared memory and distributed parallel computing,
+  scaling from laptops to clusters with 10,000s of processor cores
+- Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
+- Output for a wide variety of visualization platforms.
+
+Wolfgang Bangerth, Guido Kanschat, Timo Heister, and many other contributors.

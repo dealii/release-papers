@@ -1,0 +1,31 @@
+Version 7.0 of deal.II, the object-oriented finite element library awarded the
+J. H. Wilkinson Prize for Numerical Software, has been released. It is
+available for free under an OpenSource license from the deal.II home-page at
+
+                   http://www.dealii.org/
+
+Version 7.0 is a major step forward. Its new features include:
+- Support for massively parallel computations that has been shown to scale to
+  at least 16,384 processors and a new tutorial program that shows its
+  use. The user code for a massively parallel, fully adaptive Laplace solver
+  is only some 20 lines of code longer than its sequential version.
+- While 2d and 3d programs could always use almost exactly the same code,
+  dimension independent programming has become simpler by making sure that 1d
+  now works in exactly the same way.
+- A new tutorial program on the discretization of PDE on manifolds.
+- Nedelec elements are now available to arbitrary order.
+- deal.II is now linked into a single library.
+- A graphical user interface for input parameter files.
+
+All main features of the previous versions have been continued and improved:
+- Support for dimension-independent programming
+- Extensive documentation and working example programs
+- Locally refined adaptive meshes
+- Multigrid support
+- A zoo of different finite elements
+- Fast linear algebra
+- Built-in support for shared memory and distributed parallel computing
+- Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
+- Output for a wide variety of visualization platforms.
+
+Wolfgang Bangerth, Guido Kanschat, Ralf Hartmann, and many other contributors.
