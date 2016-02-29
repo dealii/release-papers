@@ -1,0 +1,565 @@
+This file is internal information only. It lists the steps to be done when a
+new release shall be issued.
+
+***
+***
+*** Release preparation:
+***
+***
+
+
+-3/ Send out notice to the mailinglist if anyone has outstanding
+    issues or patches. This should happen at least a week before the
+    release process starts. Ask for volunteer testers on Mac.
+
+Subject: Release preparations
+
+All,
+
+we would like to start the release process for deal.II 8.3.0 soon. Please let us
+know if you have any last minute things that need to be addressed (bugs,
+documentation issues, configuration problems, etc.).
+
+If you are running the current development version, please update your local
+working copy and test if everything compiles, especially if you are running a
+less common configuration (mac, old compilers, etc.).
+
+Thanks!
+
+
+-2/ Check all issues and pull-request on github. Create a list to see if
+    there are things that we intended to fix before the release.
+
+
+-1/ Update the list of publications. Standard text for the email:
+
+Subject: Publications based on deal.II
+
+All,
+
+as you may know, we try to list all publications based on deal.II at
+         http://dealii.org/publications.html
+We use this list to justify the effort we spend on writing this software, both
+to our universities as well as the funding agencies that support its
+development.
+
+In anticipation of the next release, we would like to update this page. If you
+have (or know of) a publication that uses deal.II for numerical results and
+that isn't already listed, please let us know so we can put it on there. For
+this purpose, publications also include MSc, Diploma or PhD theses, or
+anything else that may seem appropriate.
+
+Thanks!
+
+  Send this as BCC to
+    dealii@googlegroups.com
+    dealii-developers@googlegroups.com
+    num.info@ganymed.iwr.uni-heidelberg.de
+    aspect-devel@geodynamics.org
+    na-seminar@math.tamu.edu
+    "Suttmeier, Franz-Theo" <suttmeier@mathematik.uni-siegen.de>
+    geenen@gmail.com
+    joerg.willems@oeaw.ac.at
+    jwalton@math.tamu.edu
+    lube@math.uni-goettingen.de
+    mihai@vt.edu,sandu@cs.vt.edu,    Krishna Siva Shankar Rudraraju <rudraa@umich.edu>
+
+
+-1a/ update the authors list on the homepage authors.html by
+     cross-referencing doc/news/changes.h
+
+     Get the list using
+        egrep '[0-9]+/[0-9]+/[0-9]+' doc/news/changes.h | \
+           perl -pi -e 's/^ *\(//g; s#, *[0-9/]+\)##g; s/, */\n/g;' | \
+           sort |uniq
+
+     Compare with the commit list:
+       git log --date=short --format="%an %aE" v8.3.0..HEAD | sort | uniq
+
+
+
+-1b/ The list of contributors to the current release should also be copied to
+     the end of the release paper:
+
+Developers:
+  Wolfgang Bangerth
+  Denis Davydov
+  Timo Heister
+  Luca Heltai
+  Guido Kanschat
+  Martin Kronbichler
+  Matthias Maier
+  Bruno Turcksin
+  David Wells
+  Toby Young
+
+Contributors for 8.4: 
+Adam Kosik
+Alberto Sartori
+Alexander Grayver
+Alistair Bentley
+Andrea Bonito
+Angel Rodriguez
+Arezou Ghesmati
+Aslan Kosakian
+Claire Bruna-Rosso
+Conrad Clevenger
+Daniel Arndt
+Daniel Shapero
+Daniel Weygand
+Florian Sonner
+Gennadiy Rishin
+Heikki Virtanen
+Jan Stebel
+Jason Sheldon
+Jean-Paul Pelteret
+Konstantin Ladutenko
+Krzysztof Bzowski
+Lei Qiao
+Lukas Korous
+Maien Hamed
+Mauro Bardelloni
+Patrick Esser
+Praveen Chandrashekar
+Rene Gassmoeller
+Zhen Tao
+
+
+
+Contributors for 8.3:
+  Daniel Arndt
+  Benjamin Brands
+  Praveen C
+  Denis Davydov
+  Anton Evgrafov
+  Arezou Ghesmati
+  Nicola Giuliani
+  Lukas Korous
+  Ross Kynch
+  Giuseppe Pitton
+  Fernando Posada
+  Lei Qiao
+  Angel Rodriguez
+  Ian Rose
+  Florian Sonner
+  Martin Steigemann
+  Zhen Tao
+  Marco Tezzele
+  David Wells
+
+Contributors for 8.2:
+  Alexander Grayver
+  Andrea Mola
+  Andrew Baker
+  Angela Klewinghaus
+  Arezou Ghesmati
+  Ben Thompson
+  Christoph Heiniger
+  Damien Lebrun-Grandie
+  Daniel Arndt
+  David Wells
+  Denis Davydov
+  Fahad Alrashed
+  Giorgos Kourakos
+  Jean-Paul Pelteret
+  Kainan Wang
+  Kevin Drzycimski
+  Krysztof Bzowski
+  Lukas Korous
+  Manuel Quezada de Luna
+  Markus Bürg
+  Martin Steigemann
+  Mayank Sabharwal
+  Michal Wichrowski
+  Mihai Alexe
+  Minh Do-Quang
+  Shiva Rudraraju
+  Uwe Köcher
+  Valentin Zingan
+
+
+0/ Do some basic testing as always
+
+
+0a/ Run the indentation script:
+      ./contrib/utilities/indent
+    and push the corresponding changes
+
+0b/ Check for doxygen formatting problems by running tests/scripts/checkdoxygen.py:
+      find include -name "*h" -print | xargs -n 1 ./tests/scripts/checkdoxygen.py
+    and push the corresponding changes
+
+
+0c/ Fix formatting bugs reported by: 
+
+    cd include;
+    find . -name "*h" -print | while read file;do ../contrib/utilities/wrapcomments.py $file >temp;done
+
+    then rewrap comments in include/
+
+    cd include; 
+    find . -name "*h" -print | while read file;do ../contrib/utilities/wrapcomments.py $file >temp;mv temp $file;done
+
+    make sure you don't mess up polynomials_bdm.h ...
+
+
+    Also check:
+    grep -l '@ref[^"]*"[^"]*$' **/*.h
+    grep -l '@ref$' **/*.h
+
+    Push the corresponding changes.
+
+
+0d/ Check that doxygen produces no errors when generating offline docs.
+    Especially check that the tutorial dot graph gets generated
+
+
+0d'/ Run the copyright script:
+      ./contrib/utilities/update-copyright
+    and push the corresponding changes
+
+
+0e/ update Trilinos and PETSc to the latest release on the tester and update the blurb at:
+    doc/external-libs/trilinos.html
+    doc/external-libs/petsc.html
+
+
+*** Caveat: for a minor version x.y.Z,
+*** 1-3 must be performed on the corresponding release branch, e.g. 'dealii-8.2'
+*** AND on HEAD
+
+
+1/  Create new changes file:
+    - run:
+    cd doc/news
+    cp changes.h 8.2.1-vs-8.3.0.h
+    git add 8.2.1-vs-8.3.0.h
+    - empty the contents of changes.h: remove everything between 3x <ol></ol>
+    - edit the headers of the new file:
+/**
+ * @page changes_between_8_1_and_8_2 Changes between Version 8.1 and 8.2
+
+<p>
+This is the list of changes made between the release of deal.II version
+8.1.0 and that of 8.2.0. All entries are signed with the names of the
+author.
+</p>
+    - edit the version numbers in the now empty changes.h
+
+
+1a/ Adjust doc/users/doxygen.html to link to the to-be-created TAG file.
+
+
+2/ Commit the changes:
+
+  git commit -a -m "update changes and news for release"
+  [ pull request ]
+
+
+3/ create the new release paper, upload to arxiv, link in publications.html
+  TH: it might make sense to delay this. The paper won't be done in time...
+
+4/  If a x.y.0 release, it is now time to create a release branch:
+
+  git branch dealii-8.2       # exactly 'dealii-X.Y' to remain consistent!
+
+  # Update VERSION from 8.2.0-pre to 8.2.0-rc1
+  #
+  # Note: Please do not use "8.2.0" directly because the soname is derived
+  # from the current version number. Therefore, 8.2.0 must only be used for
+  # the final, tagged and distributed code.
+
+  git commit -a -m "update VERSION"
+
+  git push origin dealii-8.2  # where origin is the remote pointing to
+                              # github.com/dealii/dealii.git
+
+  Note: Without a pull request!
+
+
+5/ Update the VERSION from 8.2.0-pre to 8.3.0-pre on master
+
+  git commit -a -m "update VERSION"
+
+  git push origin master  # where origin is the remote pointing to
+                          # github.com/dealii/dealii.git
+
+  Note: Without a pull request!
+
+
+6/ update the official tester to test on the release branch dealii-8.2
+
+   An empty checkout in a folder 'dealii-8.2' can be obtained via
+
+   git clone --branch dealii-8.2 git://github.com/dealii/dealii.git deal-8.2
+
+6a/ On mainline, do something like this to require the current dev version
+    for the tutorials and in the documentation:
+
+    perl -pi -e 's/8.4 QUIET/8.5.0 QUIET/g;' examples/*/CMakeLists.txt
+ 
+    also check doc/users/* and tests/*:
+
+    grep "FIND_PACKAGE(deal.II" -r doc/ tests/
+   
+    git commit -a -m "Require the current version of deal.II."
+    [ pull request ]
+
+
+7/ Create an AUTHORS file in the top-level directory of the branch that
+   contains a text-only copy of the authors.html file from the website.
+   You can start from 
+   lynx -dump -nolist https://www.dealii.org/authors.html >AUTHORS
+   and format it like this:
+   https://github.com/dealii/dealii/blob/dealii-8.3/AUTHORS
+
+   Update LICENSE to point to the AUTHORS file:
+
+   "[...] refers to the people listed in the file AUTHORS."
+
+   git add AUTHORS
+   git commit -a -m "update AUTHORS"
+
+   git push origin dealii-8.2
+
+   Note: Without a pull request!
+
+
+7a/ Send prerelease announcement to dealii-developers@googlegroups.com
+
+Subject: Release testing, part1 (step 7a)
+
+Dear developers,
+
+we are in the process of releasing a new version of deal.II.
+
+It would be great if you could test it on your machine with your typical
+configuration. For this update your git repository and switch to the
+release branch:
+  git remote update
+  git checkout dealii-8.3
+
+If no further regressions show up we will release [planned date]
+
+Thanks,
+Wolfgang Bangerth, Timo Heister, Guido Kanschat, and Matthias Maier
+
+
+
+8/ Remove unfinished tutorial programs.
+   For 8.3, these are steps 47, 50
+
+   a) Delete directories on the branch:
+
+     cd examples
+     git rm -r step-47 step-50
+     git commit -a -m "removed unfinished steps (release tasks step 8)."
+
+   b) These steps should also not be listed on the branch in
+      doc/doxygen/tutorial/tutorial.h.in
+
+     [ pull request ]
+
+
+   c) Make sure all images are moved to the homepage repository. See:
+      https://svnhp.dealii.org/trunk/homepage/images/steps/readme.txt
+
+
+9/  Write up a short release note and save it as announce-8.3
+9a/ Write the release paper in the release-papers/ subdirectory
+
+10/ Test the branch thoroughly:
+
+    a) Run a full testsuite run locally,
+
+    b) Have a look at the test results on cdash
+
+    c) Configure, build and run all examples by hand (the testsuite only
+       runs a subset of it):
+
+      cd [install]/examples
+      for i in step-* ; do \
+        (cd $i ; cmake -DDEAL_II_DIR=../.. . ; make ; make run) ; done
+
+      This step will require looking at the output and checking whether
+      anything untoward is happening.
+
+
+11/ In a clean source directory of the dealii-8.2 branch, do
+      mkdir builddoc
+      cd builddoc
+      cmake -DDEAL_II_COMPONENT_DOCUMENTATION=ON -DCMAKE_INSTALL_PREFIX=$PWD/../installeddoc ../
+      make -j 10 documentation
+      cd doc
+      cmake -P cmake_install.cmake
+      cd ../../installeddoc/doc
+      for i in `find . | egrep '\.html$'` ; do \
+          perl ../../doc/doxygen/scripts/validate-xrefs.pl $i ; done
+
+     If some of the deleted tutorial programs were linked to somewhere
+     else, resolve the unresolved links by adding corresponding files
+     to the doc/doxygen/headers directory. The content of such files
+     looks like shown here:
+        svn cat http://www.dealii.org/svn/dealii/branches/releases/Branch-7-0/deal.II/doc/doxygen/headers/step-32.h
+
+
+[ some time with bugfixing and commits on the release branch ]
+
+
+***
+***
+*** Publish a release, or release candidate.
+***
+***
+
+
+12/ Push the button:
+
+    a) Change VERSION to 8.2.0 for a release and to 8.2.0-rc1 for a release
+       candiate and commit:
+       git commit -m "update VERSION for release"
+
+    b) (Signed) tag the commit with:
+
+      # for the final release:
+      git tag -s -m "deal.II Version 8.3.0" v8.3.0
+      # or alternatively for a release candidate:
+      git tag -s -m "deal.II Pre-Release Version 8.3.0-rc1" v8.3.0-rc1
+
+      You need a working gnupg key for this. (You should have anyway :-P)
+
+    c) Push changes to github:
+
+      # where origin is the remote pointing to github.com/dealii/dealii.git
+      git push origin dealii-8.3
+      git push origin v8.3.0
+
+
+13/ Create the tar files:
+
+    a) github automatically generates a source tarball from the current
+    repository state, see https://github.com/dealii/dealii/releases
+
+    b) Download the source tarball from github, verify that its contents is
+    what we expect, e.g.
+
+      # in a clean git repository:
+      git checkout v8.2.0 # or git checkout v8.2.0-rc1
+      rm -r *
+      tar --strip-components=1 -xvf dealii-8.2.0.tar.gz (or dealii-8.2.rc1.tar.gz)
+      git status
+
+    Now, the last git status must not show any modified contents!
+      TH: this is not true, because of .gitattributes, so ignore changes in ./tests/
+
+    Cryptographically sign it (detached, armored signature):
+
+      gpg --detach-sign --armor dealii-8.2.0.tar.gz
+
+      (Guido, Timo and Matthias have a suitable gpg in the "pgp strong set")
+
+    c) Create full offline_doc tarball
+
+    In a clean working copy of the tagged release version run the script
+
+      ./make_offline_doc.sh 8 2 0
+      # or alternatively for a release candidate
+      ./make_offline_doc.sh 8 2 0-rc1
+
+    to create dealii-8.2.0-offline_documentation.tar.gz
+    (dealii-8.2.0-rc1-offline_documentation.tar.gz). This step needs to be
+    done on a machine that has both a reasonably new doxygen version as
+    well as a dot version that can produce pngs. wolfgang's bloc507d has
+    both of these programs installed in /home/bangerth/bin/x86/bin.
+
+    d) Also sign it:
+
+      gpg --detach-sign --armor dealii-8.2.0-offline_documentation.tar.gz
+
+
+14a/ Create a pre-release on github:
+
+  https://github.com/dealii/dealii/releases/new
+
+    Tag: dealii-8.2.0-rc1 @master
+    Release title: deal.II pre-release version 8.2.0-rc1
+
+    Description: ""
+
+    Attach dealii-8.2.0-rc1.tar.gz (yes, once again)
+    Attach dealii-8.2.0-rc1.tar.gz.asc
+    Attach dealii-8.2.0-rc1-offline_documentation.tar.gz
+    Attach dealii-8.2.0-rc1-offline_documentation.tar.gz.asc
+
+14b/ Create a release on github:
+
+  https://github.com/dealii/dealii/releases/new
+
+    Tag: dealii-8.2.0 @master
+    Release title: deal.II version 8.2.0
+
+    Description:
+    [Short version of release notes as found in announce-8.2]
+    A full list of changes can be found at
+    http://www.dealii.org/developer/doxygen/deal.II/changes_between_8_2_1_and_8_3.html
+
+    Attach dealii-8.2.0.tar.gz (yes, once again)
+    Attach dealii-8.2.0.tar.gz.asc
+    Attach dealii-8.2.0-offline_documentation.tar.gz
+    Attach dealii-8.2.0-offline_documentation.tar.gz.asc
+
+
+***
+*** Caveat: Every further commit on an actual release at this point forces
+*** an increase in the patch number, i.e. 8.2.0 -> 8.2.1.
+***
+*** Go back to 12/ until a release is tagged
+***
+
+
+15/ Generate the documentation on the webserver.
+    Guido: Man nehme scripts/make_documentation.sh aus unserem privaten SVN-Repository und ersetze in der cmake-Zeile "Git ..." durch "X.Y.Z"
+
+16/ Adjust header.include on homepage:
+      change links to the documentation of the most recent version
+      change the link to the changes_after_X_Y_Z.html file
+      (possibly other items -- please update this list)
+
+
+17/ Ask Luca for Mac packages. Those can be added as additional download
+    options to the freshly created release. Mention new naming convention
+    "dealii-8.2.0-.*" for attachments
+
+
+18/ Finish writing the announcement
+
+
+18b/ Adjust news.html in the deal.II homepage repo: new entry for the
+     release using the link to the copied changes.h file from above; commit.
+     Rotate the news entry also in the short news blurb on the front page in
+     index.html
+
+19/ announce the release by sending an email to announce-list (file in this
+    directory) with subject:
+      Finite Element Software deal.II Version 8.2.0 released
+
+
+19a/ Send a note to the Facebook and Google+ accounts
+
+
+19b/ Update the deal.II wikipedia page: http://en.wikipedia.org/wiki/Deal.II
+
+
+19d/ Send thank-you email and list the people already referenced in step -1b above
+     Sample text:
+
+I would like to follow up on the announcement of this release by publicly
+saying again how much we appreciate the many contributions from those who
+have sent it code, bug reports, fixed grammar and typos, or have helped in
+any other way. Many thanks!
+
+The ChangeLog lists at least the following people to whom thanks are due
+(though I am certain that I am forgetting someone):
+
+
+20/ Celebrate!
