@@ -1,0 +1,432 @@
+\documentclass{ansarticle}
+%\usepackage{ucs}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+%\usepackage{cite}
+\usepackage{anslistings}
+
+\usepackage{fontenc}
+\usepackage{graphicx}
+
+\hypersetup{
+  pdfauthor={Wolfgang Bangerth, Timo Heister, Luca Heltai, Guido Kanschat, Martin Kronbichler, Matthias Maier, Bruno Turcksin, Toby D. Young},
+  pdftitle={The deal.II Library, Version 8.2, 2015},
+}
+
+\newcommand{\specialword}[1]{\texttt{#1}}
+\newcommand{\dealii}{{\specialword{deal.II}}}
+\newcommand{\pfrst}{{\specialword{p4est}}}
+\newcommand{\trilinos}{{\specialword{Trilinos}}}
+\newcommand{\aspect}{\specialword{Aspect}}
+\newcommand{\petsc}{\specialword{PETSc}}
+\newcommand{\cmake}{{\specialword{CMake}}}
+\newcommand{\autoconf}{{\specialword{autoconf}}}
+
+\title{The \dealii{} Library, Version 8.2}
+\author[1]{Wolfgang Bangerth}
+\affil[1]{Department of Mathematics, Texas A\&M University, College Station, 
+    TX 77843, USA,
+    %\href{mailto:bangerth@math.tamu.edu}
+    {\texttt{bangerth@math.tamu.edu}}}
+\author[2]{Timo Heister}
+\affil[2]{Mathematical Sciences,
+O-110 Martin Hall.
+Clemson University.
+Clemson, SC 29634, USA,
+%\href{mailto:heister@clemson.edu}
+{\texttt{heister@clemson.edu}}}
+\author[3]{Luca Heltai}
+\affil[3]{SISSA - International School for Advanced Studies, Via
+  Bonomea 265, 34136 Trieste, Italy,
+  %\href{mailto:luca.heltai@sissa.it}
+  {\texttt{luca.heltai@sissa.it}}}
+\author[4]{Guido Kanschat}
+\affil[4]{Interdisciplinary Center for Scientific Computing (IWR),
+  Universität Heidelberg, Im Neuenheimer Feld 368, 69120 Heidelberg, Germany,
+  %\href{mailto:kanschat@uni-heidelberg.de}
+  {\texttt{kanschat@uni-heidelberg.de}}}
+\author[5]{Martin Kronbichler}
+\affil[5]{Institute for Computational Mechanics, Technische
+  Universität München, Boltzmannstr.~15, 85748 Garching b. München,
+  Germany,
+  %\href{mailto:kronbichler@lnm.mw.tum.de}
+  {\texttt{kronbichler@lnm.mw.tum.de}}}
+\author[6]{Matthias Maier}
+\affil[6]{Institute of Applied Mathematics, Heidelberg
+  University, Im Neuenheimer Feld 293/294, 69120 Heidelberg, Germany,
+  %\href{mailto:matthias.maier@iwr.uni-heidelberg.de}
+  {\texttt{matthias.maier@iwr.uni-heidelberg.de}}}
+\author[7]{Bruno Turcksin}
+\affil[7]{Department of Mathematics, Texas A\&M University, College Station, 
+  TX 77843, USA,
+  %\href{mailto:turcksin@math.tamu.edu}
+  {\texttt{turcksin@math.tamu.edu}}}
+\author[8]{Toby~D.~Young}
+\affil[8]{Institute of Fundamental Technological Research of the Polish Academy of Sciences, ul. Pawińskiego 5b, Warsaw 02-106, Poland,
+  %\href{mailto:tyoung@ippt.pan.pl}
+  {\texttt{tyoung@ippt.pan.pl}}}
+
+\renewcommand{\labelitemi}{--}
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  This paper provides an overview of the new features of the finite element library \dealii{} version 8.2.
+\end{abstract}
+
+
+\section{Overview}
+
+\dealii{} version 8.2 was released January 1, 2015. This paper provides an
+overview of the new features of this release and serves as a citable
+reference for the \dealii{} software library version 8.2. \dealii{} is an
+object-oriented finite element library used around the world in the
+development of finite element solvers. It is available for free under the
+GNU Lesser General Public License (LGPL) from the \dealii{} homepage at
+\url{http://www.dealii.org/}.
+
+
+Version 8.2 contains,  along
+with the usual set of new functions, bug fixes and documentation updates, the following noteworthy changes:
+\begin{itemize}
+\item Comprehensive support for geometries described by arbitrary manifolds
+  and meshes that respect this description not only on the boundary but
+  also internally
+\item Support for geometries imported from CAD using the OpenCASCADE library
+\item Three new tutorial programs on complex geometries, CAD geometries, and
+  time stepping methods
+\item Support for users wanting to use C++11 features
+\item Improvements to multithreading support
+\item Vectorization of many vector operations using OpenMP SIMD directives
+\end{itemize}
+Some of these will be detailed in the following section.
+Information on how to cite \dealii{} is provided in Section \ref{sec:cite}.
+
+
+\section{Significant changes to the library}
+
+This release of deal.II contains a number of large and significant changes
+that will be discussed in the following sections. It of course also contains a
+vast number of smaller changes and added functionality; the details of these
+can be found in the file that lists all changes for this release and that is
+linked to from the web site of each release as well as the release
+announcement.
+
+
+\subsection{Supporting complex geometries through manifolds}
+
+Complex geometries can be described using the concept of a manifold, a
+topological space that resembles Euclidean space near each point. In
+mathematics, particularly topology, one describes a manifold using an
+atlas. An atlas consists of individual charts that, roughly speaking,
+describe individual regions of the manifold, by means of providing a
+local coordinate system near each point. (Such coordinate systems may not
+exist \textit{globally}, as in the case of the surface of a sphere, but it
+must be possible to cover the entire manifold with charts that are valid in
+some local neighborhood of every point.) In \dealii{} these concepts
+have been formalized in the abstract base class \verb|Manifold| that
+defines an interface by which the \verb|Triangulation| and
+\verb|Mapping| classes can query geometric information about the
+domain.
+
+Whenever a new point is required (for example upon mesh refinement, or
+when integrating over curved manifolds using higher order mappings), new points are typically
+obtained by providing a local coordinate system on the manifold,
+identifying existing points in the local coordinate system (pulling
+them back using the local chart to obtain their local coordinates),
+finding the new point in the local coordinate system by weighted sums of
+the existing points, and transforming the point back to the real space
+(pushing it forward using the local chart).
+
+A new identifier (the \verb|manifold_id|) has been introduced to
+describe geometrical features of complex domains: every entity of a mesh
+(i.e., cells, faces, and edges) now have a \verb|manifold_id| associated with
+them. This extends the existing behavior: Previous releases of
+the library allowed only boundaries to be curved, and used the
+\verb|boundary_id| of the faces of a triangulation to identify how to
+add new points upon mesh refinement.  In contrast, the new \verb|manifold_id|
+also exists for cells and interior faces. Upon refinement, the
+\verb|Triangulation| class queries each object (hex, quad or line)
+where new points should be placed. Attaching a custom \verb|Manifold|
+to any such object ensures that new points are created consistently
+with the underlying geometry.
+
+We provide a series of classes that implement this mechanism for
+commonly used geometries:
+\begin{itemize}
+\item \verb|FlatManifold|: in the simplest case, the
+  objects that make up the \verb|Triangulation| are straight line
+  segments, a bi-linear surface or a tri-linear volume. New vertices
+  are then simply put into the middle of the old ones (where
+  ``middle'' means a suitable average of the locations of the
+  pre-existing vertices). This is the default manifold associated to
+  each object of the \verb|Triangulation|;
+\item \verb|SphericalManifold|: you can use this manifold object to
+  describe any sphere, circle, hypersphere or hyperdisc in two or
+  three dimensions, both as a co-dimension one manifold descriptor or
+  as co-dimension zero manifold descriptor;
+\item \verb|CylindricalManifold|: in three dimensions, points are
+  transformed using a cylindrical coordinate system along an
+  arbitrarily oriented cylinder.
+\end{itemize}
+
+More general specialisations can be obtained by using the
+\verb|ChartManifold| partial specialisation: this class is intended to
+directly implement the topological concept of a chart, by explicitly
+providing \emph{pull back} and \emph{push forward} expressions. Classes
+derived from \verb|ChartManifold| only have to overload the \verb|pull_back|
+and \verb|push_forward| functions, while all other functions are then defined
+in terms of these two functions. \verb|ChartManifold| assumes that the
+manifold can be represented by a single, globally valid chart.
+The
+class \verb|FunctionManifold| further implements this using explicit \dealii{}
+\verb|Function| classes, and the new tutorial \verb|step-53| provides a
+concrete example on how to use these classes to work with complex
+geometries.
+
+\subsection{Interfacing with CAD geometries}
+
+If you have OpenCASCADE (\url{http://www.opencascade.org/})
+installed\cite{opencascade-web-page}, you can now use existing IGES or
+STEP CAD files to describe the boundary of your geometry to \dealii{}.
+
+The \dealii{} library allows the user to specify the geometry of the
+analysis in one of two possible ways: i) by creating a coarse grid
+internally (for simple geometries, such as boxes, cylinders, shells,
+etc.) or ii) by reading a mesh input file in one of the supported
+formats via the \verb|GridIn| class.
+
+Along with the default boundary descriptor \verb|StraightBoundary|
+which implements the standard behavior of \dealii{}, some elementary
+boundary descriptors are also included in the library to describe
+circles or spheres (\verb|HyperBallBoundary|), cylinders
+(\verb|CylinderBoundary|), half circles or half spheres
+(\verb|HalfHyperBallBoundary|), and so on. In general, \dealii{}
+provides a curved boundary descriptor for each one of the elementary
+mesh that can be created from within the library itself.
+
+Real world geometries, however, can rarely be described by straight
+lines, balls or cylinders, and much more complex structures are
+required if one wants to tackle industrial problems. The industry
+standard for the design of any geometry is based on Computer Aided
+Design (CAD) tools, which rely on Non Uniform Rational B-Splines
+(NURBS) descriptions of curves and surfaces. Virtually any object that
+surrounds us has been modeled using some NURBS patch in a CAD tool.
+
+The namespace \verb|dealii::OpenCASCADE| contains all utilities and
+wrappers that are needed to manipulate CAD files. Most of the
+functions in the \verb|dealii::OpenCASCADE| namespace deal with
+\verb|TopoDS_Shape| objects: the default topological object of the
+\verb|OpenCASCADE| library, and provide interfaces to deal.II objects,
+like \verb|Triangulation|, \verb|Manifold| and \verb|Boundary|.
+
+The new step-54 tutorial program of the \dealii{} library shows an example
+application of the functions and classes in the
+\verb|deal.II::OpenCASCADE| namespace. In step-54, a CAD shape and a
+coarse surface triangulation are imported from external files, and the
+resulting triangulation is then refined on the CAD surface using
+different projection strategies. A detailed description of these
+techniques is available in~\cite{HeltaiMola2015}.
+
+\subsection{A new tutorial: Support for time stepping methods (step-52)}
+The goal of this tutorial is to show how to use the different Runge--Kutta
+methods of the new TimeStepping class. The Runge--Kutta methods used in this
+tutorial include explicit methods, implicit methods, and embedded methods. In
+step-52, the time dependent neutron diffusion equation is solved on a uniform
+mesh. To compare the different time stepping methods, the solution of the
+problem is chosen such that its spatial component can be exactly represented on
+the uniform mesh by quadratic continuous finite elements. Moreover, at the
+end of the last time step the exact solution is zero. Therefore, the different
+time discretization methods can be compared by simply looking at the discretized
+solutions.
+
+\subsection{Support for some C++11 features}
+The C++11 standard \cite{cpp11} provides many convenient features that can
+help make writing finite element codes simpler. \dealii{} does not use any of
+these features itself to ensure that it can be used with compilers that do not
+implement C++11 yet. 
+
+However, this does not prevent users from using C++11
+features in their own codes. Among these, range-based for loops are
+particularly useful given that \dealii{} programs often contain many loops
+over all cells and that writing these loops is frequently quite verbose:
+\begin{c++}
+  Triangulation<dim> triangulation;
+  ...
+  typename Triangulation<dim>::active_cell_iterator
+    cell = triangulation.begin_active(),
+    endc = triangulation.end();
+  for (; cell!=endc; ++cell)
+    cell->set_refine_flag();
+\end{c++}
+Code such as this can be significantly simplified by combining C++11's
+range-based for loops and \texttt{auto}-typed variables. To support this,
+\dealii{}'s container classes (i.e., the triangulations and DoF handler
+classes) provide member functions that return objects that denote the entire
+set of cells, active cells, or cells on a particular level. This allows to
+write the same loop as above in the following, much shorter way:
+\begin{c++}
+  Triangulation<dim> triangulation;
+  ...
+  for (auto cell : triangulation.active_cell_iterators())
+    cell->set_refine_flag();
+\end{c++}
+The function
+\texttt{Triangulation::active\_cell\_iterators()}, 
+and equivalents in the
+\texttt{DoFHandler} and
+\texttt{hp::DoFHandler} classes, were added in \dealii{} 8.2
+to support this idiom.
+Other variants of these functions provide iterator ranges
+for all cells (not just the active ones) and for cells on individual
+levels. A new documentation module elaborates on support for C++11 in
+\dealii{}.
+
+
+\section{How to cite \dealii{}}\label{sec:cite}
+
+In order to justify the work the developers of \dealii{} put into this
+software, we ask that papers using the library reference one of the \dealii{}
+papers. This helps us justify the effort we put into it.
+
+There are various ways to reference \dealii{}. To acknowledge the use of a
+particular version of the library, reference the present document. For
+up to date information and bibtex snippets for this document see:
+
+\bigskip
+
+\begin{center}
+ \url{https://www.dealii.org/publications.html}
+\end{center}
+
+\bigskip
+
+% \begin{minipage}{0.9\textwidth}%no page break in here please
+% \begin{verbatim}
+% @article{dealII82,
+%   title = {The {\tt deal.{I}{I}} Library, Version 8.2},
+%   author = {W. Bangerth and T. Heister and L. Heltai 
+%    and G. Kanschat and M. Kronbichler and M. Maier
+%    and B. Turcksin and T. D. Young},
+%   journal = {preprint},
+%   year = {2015},
+% }
+% \end{verbatim} %  journal = {arXiv preprint \url{http://arxiv.org/abs/TODO}},
+% \end{minipage}
+
+The original \texttt{\dealii{}} paper containing an overview of its
+architecture is \cite{BangerthHartmannKanschat2007}. If you rely on specific
+features of the library, please consider citing any of the following:
+\begin{itemize}
+ \item For geometric multigrid: \cite{Kanschat2004,JanssenKanschat2011};
+ \item For distributed parallel computing: \cite{BangerthBursteddeHeisterKronbichler11};
+ \item For $hp$ adaptivity: \cite{BangerthKayserHerold2007};
+ \item For matrix-free and fast assembly techniques:
+   \cite{KronbichlerKormann2012};
+ \item For computations on lower-dimensional manifolds:
+   \cite{DeSimoneHeltaiManigrasso2009};
+ \item For integration with CAD files and tools:
+   \cite{HeltaiMola2015}.
+\end{itemize}
+
+\dealii{} can interface with many other libraries:
+\begin{itemize}
+\item ARPACK \cite{arpack}
+\item BLAS, LAPACK
+\item HDF5 \cite{hdf5}
+\item METIS \cite{karypis1998fast}
+\item MUMPS \cite{ADE00,MUMPS:1,MUMPS:2,mumps-web-page}
+\item muparser \cite{muparser-web-page}
+\item NetCDF \cite{rew1990netcdf}
+\item OpenCASCADE \cite{opencascade-web-page}
+\item p4est \cite{p4est}
+\item PETSc \cite{petsc-user-ref,petsc-web-page}
+\item SLEPc \cite{Hernandez:2005:SSF}
+\item Threading Building Blocks \cite{Rei07}
+\item Trilinos \cite{trilinos,trilinos-web-page}
+\item UMFPACK \cite{umfpack}
+\end{itemize}
+Please consider citing the appropriate references if you use interfaces to these
+libraries.
+
+Older releases of \dealii{} can be cited as \cite{dealII80,dealII81}.
+
+\nocite{BangerthKanschat1999}
+
+\section{Acknowledgements}
+
+\dealii{} is a world-wide project with dozens of contributors around the
+globe. Other than the authors of this paper, the following people contributed code to
+this release:
+Alexander Grayver,
+Andrea Mola,
+Andrew Baker,
+Angela Klewinghaus,
+Arezou Ghesmati,
+Ben Thompson,
+Christoph Heiniger,
+Damien Lebrun-Grandie,
+Daniel Arndt,
+David Wells,
+Denis Davydov,
+Fahad Alrashed,
+Giorgos Kourakos,
+Jean-Paul Pelteret,
+Kainan Wang,
+Kevin Drzycimski,
+Krysztof Bzowski,
+Lukas Korous,
+Manuel Quezada de Luna,
+Markus Bürg,
+Martin Steigemann,
+Mayank Sabharwal,
+Michal Wichrowski,
+Mihai Alexe,
+Minh Do-Quang,
+Shiva Rudraraju,
+Uwe Köcher,
+Valentin Zingan,
+Their contributions are much appreciated!
+
+
+\dealii{} and its developers are financially supported through a
+variety of funding sources. W.~Bangerth and B.~Turcksin were partially
+supported by the National Science Foundation under award OCI-1148116
+as part of the Software Infrastructure for Sustained Innovation (SI2)
+program; by the Computational Infrastructure in Geodynamics initiative
+(CIG), through the National Science Foundation under Award
+No.~EAR-0949446 and The University of California -- Davis; and through
+Award No.~KUS-C1-016-04, made by King Abdullah University of Science
+and Technology (KAUST). 
+
+L.~Heltai was partially supported by the project OpenViewSHIP,
+``Sviluppo di un ecosistema computazionale per la progettazione
+idrodinamica del sistema elica-carena'', financed by Regione FVG - PAR
+FSC 2007-2013, Fondo per lo Sviluppo e la Coesione.
+
+T.~Heister was partially supported by the Computational Infrastructure in
+Geodynamics initiative (CIG), through the National Science Foundation under Award
+No. EAR-0949446 and The University of California -- Davis and through Award No. KUS-
+C1-016-04, made by King Abdullah University of Science and Technology (KAUST).
+
+The Interdisciplinary Center for Scientific Computing (IWR) at Heidelberg University has provided 
+hosting services for the deal.II web page and the SVN archive.
+ 
+%\marginpar{Everyone's funding, please}
+
+
+
+
+
+
+\bibliography{deal82}{}
+\bibliographystyle{plain}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

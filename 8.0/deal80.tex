@@ -1,0 +1,363 @@
+\documentclass{siamltex}
+
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{cite}
+
+\usepackage{fontenc}
+\usepackage[pdftex]{graphicx}
+
+\usepackage[pdftex,
+            pdfauthor={Wolfgang Bangerth, Timo Heister, Luca Heltai, Guido Kanschat, Martin Kronbichler, Matthias Maier, Toby D. Young},
+            pdftitle={The deal.II Library, Version 8.0, 2013},
+            colorlinks,linkcolor=blue,urlcolor=blue,citecolor=blue]{hyperref}
+
+
+\newcommand{\specialword}[1]{\texttt{#1}}            
+\newcommand{\dealii}{{\specialword{deal.II}}}
+\newcommand{\pfrst}{{\specialword{p4est}}}
+\newcommand{\trilinos}{{\specialword{Trilinos}}}
+\newcommand{\aspect}{\specialword{Aspect}}
+\newcommand{\petsc}{\specialword{PETSc}}
+\newcommand{\cmake}{{\specialword{CMake}}}
+\newcommand{\autoconf}{{\specialword{autoconf}}}
+
+\title{The \dealii{} Library, Version 8.0}
+\author{
+  Wolfgang Bangerth%
+  \thanks{Department of Mathematics, Texas A\&M University, College Station, 
+    TX 77843, USA,
+    \href{mailto:bangerth@math.tamu.edu}{\texttt{bangerth@math.tamu.edu}}}
+  \and
+  Timo Heister%
+  \thanks{Mathematical Sciences,
+O-110 Martin Hall.
+Clemson University.
+Clemson, SC 29634, USA,
+    \href{mailto:heister@clemson.edu}{\texttt{heister@clemson.edu}}}
+  \and
+  Luca Heltai%
+  \thanks{SISSA - International School for Advanced Studies, Via
+    Bonomea 265, 34136 Trieste, Italy,
+    \href{mailto:luca.heltai@sissa.it}{\texttt{luca.heltai@sissa.it}}}
+  \and
+  Guido Kanschat%
+  \thanks{Interdisciplinary Center for Scientific Computing, Heidelberg
+          University, Im Neuenheimer Feld 368, 69120 Heidelberg, Germany,
+          \href{mailto:kanschat@uni-heidelberg.de}{\texttt{kanschat@uni-heidelberg.de}}}
+  \and
+  Martin Kronbichler%
+  \thanks{Institute for Computational Mechanics, Technische Universit\"at M\"unchen, Boltzmannstr.~15, 85748 Garching b. M\"unchen, Germany, \href{mailto:kronbichler@lnm.mw.tum.de}{\texttt{kronbichler@lnm.mw.tum.de}}}
+  \and
+  Matthias Maier%
+  \thanks{Institute of Applied Mathematics, Heidelberg
+          University, Im Neuenheimer Feld 293/294, 69120 Heidelberg, Germany,
+          \href{mailto:matthias.maier@iwr.uni-heidelberg.de}{\texttt{matthias.maier@iwr.uni-heidelberg.de}}}
+  \and
+  Bruno Turcksin%
+  \thanks{Department of Mathematics, Texas A\&M University, College Station, 
+    TX 77843, USA,
+    \href{mailto:turcksin@math.tamu.edu}{\texttt{turcksin@math.tamu.edu}}}
+  \and
+  Toby~D.~Young%
+  \thanks{Institute of Fundamental Technological Research of the Polish Academy of Sciences, ul. Pawi\'nskiego 5b, Warsaw 02-106, Poland,
+    \href{mailto:tyoung@ippt.pan.pl}{\texttt{tyoung@ippt.pan.pl}}}
+}
+
+\renewcommand{\labelitemi}{--}
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  This paper provides an overview of the new features of the finite element library \dealii{} version 8.0.
+\end{abstract}
+
+
+\section{Overview}
+
+\dealii{} version 8.0 was released July 24, 2013. This paper provides an
+overview of the new features of this release and serves as a citable web
+reference for the \dealii{} software library version 8.0. \dealii{} is an
+object-oriented finite element library used around the world in the
+development of finite element solvers. It is available for free under the
+GNU Lesser General Public License (LGPL) from the \dealii{} homepage at
+\url{http://www.dealii.org/}.
+
+Version 8.0 is a major release. It has numerous significant features along
+with the usual set of bug fixes and documentation updates. In particular,
+it has the following noteworthy large changes:
+\begin{itemize}
+  \item The configuration and build system has been switched to \cmake{},
+    providing better support for a wide variety of platforms, better
+    integration with IDEs such as Eclipse, and many other advantages. See Section \ref{sec:cmake}.
+
+\item \dealii{} now supports 64-bit integers for degrees of freedom indices for
+  problems with more than 2 billion unknowns and has been tested on problems
+  of up to 27 billion unknowns. See Section \ref{sec:64bit}.
+
+\item \dealii{} is now licensed under the GNU Lesser General Public License
+  version 2.1 or later (LGPL-2.1+), see Section \ref{sec:license} for details.
+
+\item There is the usual set of dozens or hundreds of new small features and
+  bugfixes, some of which are described in \ref{sec:other}.
+\end{itemize}
+Information on how to cite \dealii{} is provided in Section \ref{sec:cite}.
+
+\section{Important Changes}
+
+\subsection{Build System}\label{sec:cmake}
+
+With the release of version 8.0 and after more than 12 years with an
+\autoconf{} and custom makefiles setup, \dealii{} switched its build system
+over to \cmake{}. This is a major rewrite which changes over $25,000$ lines
+of code (10,000 insertions and 15,000 deletions) together with a major
+reorganization and cleanup of the code base. The rewrite addressed quite a
+number of shortcomings with the old build system, that made a rewrite
+highly desirable (if not necessary):
+\begin{itemize}
+  \item Over time, with the addition of an increasing number of external
+    libraries, \dealii{} can optionally interface with, the configuration
+    happened to be highly heterogeneous---almost every external dependency
+    had to be set up with different command line options with completely
+    different internal setup logic in the \autoconf{} files.
+  \item Nowadays, \dealii{} is used in highly different environments
+    ranging from installations on laptops to computing clusters. The old
+    build system was not suited very well for quite a number of them,
+    e.\,g. distributional needs or static linkage.
+  \item The old build system strongly depended on the availability of a
+    \textsc{UNIX} or \textsc{GNU/Linux} environment due to the fact that
+    \textsc{GNU Make}, \textsc{Bash} and \text{Perl} were mandatory build
+    time dependencies,
+    which made support for other platforms (and especially Microsoft
+    Windows) difficult.
+\end{itemize}
+Arguably, it would have been possible to address all this shortcomings in
+the current build system, or by changing to another alternative, but there
+are a number of reasons that make \cmake{} a particularly good choice as
+build system for \dealii{}:
+\begin{itemize}
+  \item \cmake{} readily provides elaborate support for dependency
+    resolution, incremental rebuilds and parallel builds, which were
+    previously implemented mainly by hand.
+  \item \cmake{} is a meta build system. It provides support for
+    \emph{native toolchains} for \textsc{Linux}, \textsc{BSD},
+    \textsc{Darwin}, and \textsc{Windows} platforms with minimal external
+    dependencies, which drastically increases portability.
+  \item \cmake{} supports a variety of commonly used IDEs for different
+    platforms such as \textsc{Eclipse}, \textsc{KDevelop}, \textsc{Xcode},
+    \textsc{CodeBlocks} or \textsc{MSVC} where it can directly produce a
+    corresponding project.
+\end{itemize}
+The fact that the new build system was rewritten from scratch, offered the
+possibility to reformulate and respect some major design criteria. Amongst
+them are
+\begin{itemize}
+  \item Full support for all 16 external dependencies in various
+    setups---either compiled and/or installed by the user, or provided by
+    software distributions such as Linux distributions or Mac Ports.
+  \item Feature auto detection to ease the setup for the average user,
+    while at the same time providing full user override of configuration
+    options to support almost any setup case.
+  \item Be (almost) readily packageable for major distributions (e.\,g.
+    Debian Linux, or Ubuntu).
+  \item Provide a project configuration so that user projects based on
+    \dealii{} only need a minimalistic \textsc{CMakeLists.txt} file on
+    client side.
+\end{itemize}
+
+\subsection{64-bit Indices}\label{sec:64bit}
+
+Up to version 7.3 of \dealii{}, the indices of degrees of freedom (which
+are uniquely defined) were stored using the \emph{unsigned int} datatype. This
+limited the total number of degrees of freedom in a computation to about four billion. When \dealii{}
+was used in conjunction with \petsc{} or \trilinos{}, this number was in
+fact only half as large since both of these libraries use \emph{signed
+integer} indices (leaving only 31 bits for the indices). Furthermore, because an individual processor needs at
+least on the order of $10^5$ unknowns to have a suitable amount of work,
+\dealii{} could not scale to more than about $\frac{2\cdot 10^9}{10^5}=20,000$
+processors. Even though this number may seem large, an increasing number of
+supercomputers offer a much larger number of processors -- the fastest
+supercomputers today are almost one hundred times larger. It is also
+important to note that using simulations with more than two billions of
+unknowns can be run using only a couple of thousand processors. This number
+is easily reached by clusters at typical universities in the West.
+
+To increase the number of unknowns that can be solved using \dealii{}, the
+degrees of freedom can now be stored using \emph{unsigned long long int} (a
+data type typically 64 bit wide) and the new 64 bit capabilities of Epetra
+(Trilinos 11.2 and later) are employed (PETSc could already be compiled to use 64
+bit indices for a long time). The new version of \dealii{} is completely
+backward compatible with the previous version and can be compiled to use 32
+or 64 bit indices indifferently. This was done by using a typedef
+\emph{types::global\_dof\_index} to switch between \emph{unsigned int} and
+\emph{unsigned long long int} indices. The switch between 32 and 64 bit
+indices is done using the cmake option \hbox{\tt
+  -DDEAL\_II\_WITH\_64BIT\_INDICES=OFF/ON}. By default, this option is turned
+off to keep memory consumption at moderate levels. 
+
+Using 64 bit indices only makes sense for parallel computations for which
+\dealii{} relies on either \petsc{} or \trilinos{}.  To use the 64 bit indices
+with the former, \petsc{} must be configured with {\tt
+  --with-64-bit-indices}. For the latter, \trilinos{} 11.2 or later must be
+used (by the default \trilinos{} is compiled with 32 and 64 bit capabilities) and
+uses the facilities laid out in \cite{trilinos64}. 
+
+To write a code compatible for 32 and 64 bit indices,
+\emph{types::global\_dof\_index} needs to be used in all places where the
+global indices of degrees of freedom are referenced. There are of course many
+of these places: the library contained some 20,000 occurrences of the text
+\texttt{unsigned int}, all of which needed to be examined, and some 1,600
+places had to be modified. However, the library now compiles and runs with 64
+bit indices and the adapted version of the step-40 tutorial program was run on
+3600 processors; this computation had 1.47 billions of active cells, 5.898
+billions of degrees of freedom, and was solved in 771 seconds.
+
+
+
+
+\subsection{License Change}\label{sec:license}
+
+\dealii{} used to be distributed under the Q Public License (QPL), a
+license that was popular in the late 1990s mainly due to its utilization by
+the Qt Application Framework.
+
+The QPL, as many other open source licenses, puts restrictions on any use;
+in particular, programs that are developed to use \dealii{} needed to be
+open source as well. In practice, this puts some restrictions on commercial
+use because companies are unwilling to engage in a model where they are
+required to deliver their source code to customers who may then distribute
+it further.
+
+This license was chosen in the early days of \dealii{} out of a feeling that
+whoever uses the library should be required to show the same open source
+spirit. Abstractly, many will probably agree with this sentiment. However, in
+more than 10 years of reality, it has only led to companies walking away from
+using \dealii{} for commercial products. As a consequence, the project has
+seen no gain, only losses from this choice of license. 
+
+We have therefore decided to change the license under which \dealii{} is
+distributed to the GNU Lesser General Public License (LGPL), version 2.1 or
+later at the discretion of the user. Among the advantages of this choice
+are:
+\begin{itemize}
+  \item The LGPL allows proprietary software to dynamically link against
+    \dealii{} without the need to redistribute this software under a
+    restrictive license. On the other hand, the LGPL allows us to leave the
+    full ``copyleft'' of the library itself intact.
+  \item It avoids licensing incompatibilities with (external) dependencies
+    that are either licensed under (L)GPL or a BSD style license---which
+    would otherwise make any binary distribution of \dealii{} impossible,
+    for example for inclusion in the package management system of many
+    operating systems. This is especially important given the large number
+    of external packages \dealii{} interacts with these days.
+\end{itemize}
+A further account of these considerations can be found in \cite{BH13}.
+
+
+\subsection{Other Changes}\label{sec:other}
+
+The \dealii{} release 8.0 also includes improvements in the following areas:
+
+\begin{itemize}
+\item Improvements to \dealii{} threading support: The WorkStream class used
+  in \dealii{} to parallelize assembly loops now uses thread local memory,
+  which gives considerably better utilization of caches on multi-core
+  architectures. In addition, a few more linear algebra functions have been
+  parallelized with threads. The new version also allows to directly limit the
+  number of threads used by the task scheduler in Threading Building Blocks at
+  run time.
+\item \dealii{}'s own iterative solvers have been revised. CG and BiCGStab now
+  use less auxiliary vectors, and GMRES avoids unnecessary work due to
+  re-orthogonalization when it is not necessary. This makes behavior more
+  similar to external linear algebra in PETSc and Trilinos (but those remain
+  better adapted to large-scale parallel computers by reducing global
+  communication).
+\item The interfaces to parallel linear algebra objects of PETSc and Trilinos
+  objects have been further unified to allow for easily exchanging one variant
+  with the other.
+\item The generic template instantiation mechanism in \dealii{} has been
+  applied to several new places to pre-compile code for all vector types in
+  ErrorEstimator, VectorTools, FETools, ConstraintMatrix.
+\end{itemize}
+
+
+\section{How to cite \dealii{}}\label{sec:cite}
+
+In order to justify the work the developers of \dealii{} put into this
+software, we ask that papers using the library reference one of the \dealii{}
+papers. This helps us justify the effort we put into it.
+
+There are various ways to reference \dealii{}. To acknowledge the use of a
+particular version of the library, reference the present document as follows:
+\begin{verbatim}
+@article{dealII80,
+  title = {The {\tt deal.{I}{I}} Library, Version 8.0},
+  author = {W. Bangerth and T. Heister and L. Heltai and G. Kanschat
+   and M. Kronbichler and M. Maier and B. Turcksin and T. D. Young},
+  journal = {arXiv preprint \url{http://arxiv.org/abs/1312.2266v3}},
+  year = {2013},
+}
+\end{verbatim}
+
+The original \texttt{\dealii{}} paper containing an overview of its
+architecture is \cite{BangerthHartmannKanschat2007}. If you rely on specific
+features of the library, please consider citing any of the following:
+\begin{itemize}
+ \item For geometric multigrid: \cite{Kanschat2004,JanssenKanschat2011};
+ \item For distributed parallel computing: \cite{BangerthBursteddeHeisterKronbichler11};
+ \item For $hp$ adaptivity: \cite{BangerthKayserHerold2007};
+ \item For matrix-free and fast assembly techniques:
+   \cite{KronbichlerKormann2012};
+ \item For computations on lower-dimensional manifolds:
+   \cite{DeSimoneHeltaiManigrasso2009}.
+\end{itemize}
+
+
+\nocite{BangerthKanschat1999}
+
+\section{Acknowledgements}
+
+\dealii{} is a world-wide project with dozens of contributors around the
+globe. Other than the authors of this paper, the following people contributed code to
+this release: 
+  Fahad Alrashed,
+  Juan Carlos Araujo Cabarcas,
+  Denis Davydov,
+  Ashkan Dorostkar,
+  J{\"o}rg Frohne,
+  Felix Gruber,
+  Scott Miller,
+  Spencer Patty,
+  Martin Steigemann,
+  Kainan Wang,
+  Christian W{\"u}lker.
+Their contributions are much appreciated!
+
+\dealii{} and its developers are financially supported through a
+variety of funding sources. W.~Bangerth and B.~Turcksin were partially
+supported by the National Science Foundation under award OCI-1148116
+as part of the Software Infrastructure for Sustained Innovation (SI2)
+program; by the Computational Infrastructure in Geodynamics initiative
+(CIG), through the National Science Foundation under Award
+No.~EAR-0949446 and The University of California -- Davis; and through
+Award No.~KUS-C1-016-04, made by King Abdullah University of Science
+and Technology (KAUST). 
+
+L.~Heltai was partially supported by the project OpenSHIP,
+``Simulazioni di fluidodinamica computazionale (CFD) di alta qualita
+per le previsioni di prestazioni idrodinamiche del sistema
+carena-elica in ambiente OpenSOURCE'', financed by Regione FVG - POR
+FESR 2007–2013 Obiettivo competitivita regionale e occupazione.
+
+T.~Heister was partially supported by the Computational Infrastructure in
+Geodynamics initiative (CIG), through the National Science Foundation under Award
+No. EAR-0949446 and The University of California -- Davis and through Award No. KUS-
+C1-016-04, made by King Abdullah University of Science and Technology (KAUST).
+
+\bibliography{deal80}{}
+\bibliographystyle{plain}
+
+\end{document}

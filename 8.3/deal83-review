@@ -1,0 +1,133 @@
+Reviewer B:
+
+-- MAJOR: --
+
+[X] Some features are not explained at all: improved handling of parallel
+    meshes, periodic boundary conditions with arbitrary orientations, and new
+    manifold boundaries. For each of these, I'd welcome a paragraph that
+    explains the central mechanism and innovation to the interested reader.
+
+    --> Not all of these really involve great innovation, instead of
+        just the labor to make stuff work that previously didn't work.
+        We therefore think that not all of them have to be elaborated
+        upon in more detail. However, we have added a paragraph for
+        the parallel meshes as this indeed was a significant step
+        forward. We have also elaborated upon the complex-valued
+        conversions and the manifold mechanism.
+
+-- MAJOR: --
+
+[X] There are three sections about code contributed by other developers,
+    named M. Tezzele, N. Giuliani, and G. Pitton, each totalling about one half
+    page. I would think, especially in a software paper, that one of these
+    three options may be in order, seperately for the three persons mentioned:
+
+      a. Provide proof that they agree to the publications as is.
+      b. Promote them to coauthor.
+      c. Remove the according paragraph.
+
+   --> We thought that this was an onerous requirement. One of us
+       supervises these students and had previously asked them for
+       their agreement, which they had gladly provided. We do not see
+       how this agreement should be recorded in the paper. Their
+       contributions are also not at the same level to warrant
+       authorship. At the same time, we wanted to give them credit
+       where credit is due, and therefore leave the paragraph as is.
+
+[X] The linear operator extension uses C++11. How does everything compile
+    and act if the compiler does not support that standard?
+
+    --> The footnote already explains this: These classes are simply
+        not available if not in C++11 mode.
+
+------------------------------------------------------
+
+Reviewer C:
+
+[X] The only topic I don't see specifically addressed is whether or not there
+    are any backward incompatibilities.  Perhaps I missed it, but I don't see
+    any list of interfaces that have bee removed or modified.  I am guessing
+    there are none of these, but even that should be explicitly
+    stated.
+
+    --> New section 2.5.
+
+------------------------------------------------------
+
+Reviewer D:
+
+[X] I thought this was a good summary of the changes for the new Deal.II
+    version, and it would be nice if everyone wrote one of these. I was
+    interested in what the coarse mesh numbering might be, but perhaps its only
+    me.
+
+    --> The coarse mesh is numbered in the same way as it is read from
+        the input file (or created internally). This may or may not be
+        a useful numbering for the purpose of partitioning a coarse
+        mesh onto processors, and so we previously re-numbered cells
+        according to a Cuthill-McKee algorithm. This turned out to
+        make things better for small coarse meshes, but not
+        necessarily for larger meshes. The new algorithm is better in
+        this regard, and is briefly described in the paper now.
+
+[X] Section 2: There is a textual description of the changes file, but in a PDF
+    the actual URL and hyperlink would be much more useful.
+
+    --> We made this a link.
+
+[X] Section 2.3.1: This quadrature is not as efficient (or simple) as Tanh-Sinh
+    quadrature: https://en.wikipedia.org/wiki/Tanh-sinh_quadrature
+
+    --> Maybe so, and we'll take that into account for the
+        future. Yet, we can only describe what has actually been
+        changed in any release :-)
+
+[X] Section 2.3.2: You do not say what orders are implemented, or if you have
+    an embedded solve to define all orders.
+
+    --> All orders. These formulas have explicit formulas for points
+    and weights.
+
+[x] ``Lagrangean'' --> ``Lagrangian''
+
+    --> Done.
+
+------------------------------------------------------
+
+Reviewer G:
+
+[x] Typo on page 3, appropriates should be appropriately
+
+    --> Done.
+
+[x] Considering the reference to “template metaprogramming”, I was initially
+    expecting a solution to loop fusion, which didn’t turn out to be there.
+    Your solution is neat and does solve the excessive intermediates problem as
+    you well describe, but for fairness I would like to see a comment that
+    clarifies that template metaprogramming has further benefits you do not
+    achieve here. In particular template metaprogramming techniques allow the
+    C++ compiler to fuse loops over e.g. vectors a,b,c in an expression like
+    “a + k*(b - c)” such that the memory is only iterated over once. This is
+    done by having each operator specify an apply function over single scalars
+    instead of over the whole Range. Of course this could be hard to achieve as
+    a wrapper around e.g. PETSc, but still worth mentioning. All in all it’s a
+    nice twist on operator overloading with C++11 features you present here.
+
+    --> Section 2.1 now contains a paragraph with a short remark.
+
+[X] In addition, following the installation procedure on OS X 10.10 resulted in
+    two minor obstacles I suggest improving in the future (this is not really a
+    flaw of the current article):
+
+    Warnings of possible malware because of “unidentified developers”. You can
+    possibly avoid this in the future by registering with Apple and signing the
+    .dmg. Cmake has the same issue. The user workaround is described in the
+    OS X documentation: simply open the app from Applications in Finder using
+    ctrl+click,Open the first time.
+
+    I didn’t get the option to install links for cmake presented when
+    installing it, but opening cmake from Applications and looking at the menus
+    provided easy instructions.
+
+    --> Good point. We'll take that into account when doing packages
+        in the future. Thanks for the suggestion.
