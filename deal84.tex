@@ -202,39 +202,39 @@ components.
 
 Previously, in order to use \texttt{Triangulation<dim,spacedim>} class with MPI one had to manually
 partition triangulation (e.g. via \texttt{METIS}), calculate and store index sets of locally owned and locally relevant degrees-of-freedom (DoF), querry \texttt{subdomain\_id}  of a cell during assembly etc.
-In order to facilitate the usage of \texttt{Triangulation} class with MPI  
+In order to facilitate the usage of \texttt{Triangulation} class with MPI
 and to make its behaviour in this context consistent with \texttt{parallel::distributed::Triangulation}, a new class
-\texttt{parallel::shared::Triangulation} was introduced. 
+\texttt{parallel::shared::Triangulation} was introduced.
 It extends \texttt{Triangulation} class to automatically partition triangulation when run with MPI.
-Identical functionality between \texttt{shared} and \texttt{distributed} triangulation  
+Identical functionality between \texttt{shared} and \texttt{distributed} triangulation
 (e.g. locally owned and relevant DoFs, mpi communicator, etc)
 is grouped in the parent class \texttt{parallel::Triangulation}.
-The main difference between the two parallel triangulations is that in the case of 
+The main difference between the two parallel triangulations is that in the case of
 \texttt{parallel::shared::Triangulation} each process stores all cells of the triangulation.
-Consequently, by default there are no artificial cells. 
-That is, cells which are attributed to the current processor are marked as locally owned 
-(\texttt{cell->is\_locally\_owned()} returns \texttt{true}) 
+Consequently, by default there are no artificial cells.
+That is, cells which are attributed to the current processor are marked as locally owned
+(\texttt{cell->is\_locally\_owned()} returns \texttt{true})
 and the rest are ghost cells.
-This behaviour can be altered via an additional boolean flag provided to the constructor of the class. 
+This behaviour can be altered via an additional boolean flag provided to the constructor of the class.
 In this case, a set of ghost cells will consist of a halo layer of cells around locally owned cells.
 Cells which are neither ghost nor locally owned are marked as artificial.
 This is consistent with the behaviour of \texttt{parallel::distributed::Triangulation},
 although in the latter case the size of the set of artificial cells will be much smaller.
-The introduction of \texttt{parallel::shared::Triangulation} class together with the 
+The introduction of \texttt{parallel::shared::Triangulation} class together with the
 optional artificial cells and parent \texttt{parallel::Triangulation} class
 facilitates writing
-algorithms that are indifferent to the way triangulation is stored in the MPI context. 
-For example, \texttt{DoFTools::locally\_relevant\_dofs()} will now return a subset of 
-all DoFs for both triangulations, granted that artificial cells are enabled in 
+algorithms that are indifferent to the way triangulation is stored in the MPI context.
+For example, \texttt{DoFTools::locally\_relevant\_dofs()} will now return a subset of
+all DoFs for both triangulations, granted that artificial cells are enabled in
 \texttt{parallel::shared::Triangulation}.
-Assmebly routines can now use \texttt{cell->is\_locally\_owned()} 
+Assmebly routines can now use \texttt{cell->is\_locally\_owned()}
 for both triangulations.
 Currently, only standard (non hp) \texttt{DoFHandler} is supported.
 
 \subsection{Second and third derivatives of finite element fields are now
   computed exactly}
 
-Second derivatives of solution fields, i.e., 
+Second derivatives of solution fields, i.e.,
 \begin{align*}
   \nabla^2 u_h(\mathbf x_q) &= \sum_{j} U_j \nabla^2\varphi_j(\mathbf x_q)
 \end{align*}
@@ -484,6 +484,8 @@ program; and by the Computational Infrastructure in Geodynamics initiative
 (CIG), through the National Science Foundation under Award
 No.~EAR-0949446 and The University of California -- Davis.
 
+D.~Davydov was supported by the ERC Advanced Grant MOCOPOLY and the Competence Network for Technical and Scientific High Performance Computing in Bavaria (KONWIHR).
+
 L.~Heltai was partially supported by the project OpenViewSHIP,
 ``Sviluppo di un ecosistema computazionale per la progettazione
 idrodinamica del sistema elica-carena'', financed by Regione FVG - PAR
@@ -495,7 +497,7 @@ dell'Universit\`a e della Ricerca.
 T.~Heister was partially supported by the Computational Infrastructure in
 Geodynamics initiative (CIG), through the National Science Foundation under Award No. EAR-0949446 and The University of California—Davis, and National Science Foundation grant DMS1522191.
 
-D.~Davydov was supported by the ERC Advanced Grant MOCOPOLY and the Competence Network for Technical and Scientific High Performance Computing in Bavaria (KONWIHR).
+G.~Kanschat and M.~Kronbichler were partially supported by the German Research Foundation (DFG) through the project ExaDG.
 
 The Interdisciplinary Center for Scientific Computing (IWR) at Heidelberg University has provided
 hosting services for the \dealii{} web page and the SVN archive.
