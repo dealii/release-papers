@@ -84,7 +84,7 @@ Troy, NY 12180, USA
 
 \section{Overview}
 
-\dealii{} version 8.4.0 was released February 29, 2016. This paper provides an
+\dealii{} version 8.4.0 was released March 10, 2016. This paper provides an
 overview of the new features of this release and serves as a citable
 reference for the \dealii{} software library version 8.4.0. \dealii{} is an
 object-oriented finite element library used around the world in the
@@ -107,11 +107,12 @@ The major changes of this release are:
   in the library, are now consistently labeled and documented as such.
 \item The interface between finite elements, quadrature, mapping, and the
   FEValues class has been rewritten. It is now much better documented.
-\item Initial support for compiling with Visual C++ 2013 and 2015 under Windows
+\item Initial support for compiling with Visual C++ 2013 and 2015 under
+  Microsoft Windows
   has been added.
 \item  More than 140 other features and bugfixes.
 \end{itemize}
-Some of these will be detailed in the following section.
+The more important ones of these will be detailed in the following section.
 Information on how to cite \dealii{} is provided in Section \ref{sec:cite}.
 
 
@@ -128,11 +129,11 @@ release announcement.
 
 \subsection{Parallel triangulations can now be partitioned with weights}
 
-Previously, partitioning a parallel mesh (represented by the
-\texttt{parallel::distributed::Triangulation} class) between
+Previously, partitioning a parallel mesh (represented by objects of class
+\texttt{parallel::}\-\texttt{distributed::}\-\texttt{Triangulation}) between
 processors assumed that every cell should be weighted equally. On the
 other hand, the \pfrst{} library which manages the partitioning
-process, allows for attaching weights for each cell and thereby
+process, allows for attaching weights to each cell and thereby
 enables ways in which not the number of cells per MPI process is
 equilibrated, but the sum of weights on the cells managed by each
 process. \dealii{} now also supports this feature.
@@ -140,15 +141,15 @@ process. \dealii{} now also supports this feature.
 The implementation of this mechanism is based on a callback mechanism,
 in the form of the signal-slot design pattern. User codes can register
 functions that will be called upon mesh refinement and coarsening,
-returning a weight for each cell. These weights will be added after
-all slots (i.e., callback functions) connected to the signal have been
-called.
+returning a weight for each cell. These weights will be added up over
+all slots (i.e., callback functions) connected to the signal.
 
 The mechanism chosen has the advantage that all parties that use a
 triangulation, for example multiple \texttt{DoFHandler} objects or a
 scheme that tracks particles that are advected along with a flow field
-and stored them per-cell, can indicate their computational needs for
-each cell, and there no central place in a user code (other than the
+and stores them per-cell, can indicate their computational needs for
+each cell. In particular, there is no central place in a user code (other than
+the 
 triangulation itself) that has to collect these needs and forward this
 information.
 
@@ -168,9 +169,9 @@ or $\nabla\varphi_j(\mathbf x_q)$ are internally evaluated by classes
 derived from the \texttt{FiniteElement} and \texttt{Mapping}, and are
 computed as scalars or tensors of type \texttt{double}. On the other
 hand, the expansion coefficients of the field, $U_j$ are stored in
-vectors of types chosen by the user; their underlying representation
-can be \texttt{double}, but also \texttt{float}, \texttt{long double},
-\texttt{PetscScalar}, or \texttt{std::complex<float>} for example. It could also
+vectors over scalar types chosen by the user; their underlying representation
+could be \texttt{double}, but also \texttt{float}, \texttt{long double},
+\texttt{PetscScalar}, or \texttt{std::complex<float>}. It could also
 be an autodifferentiation type.
 
 To facilitate the correct typing of the computed quantity, \dealii{}
@@ -179,7 +180,7 @@ the product of two values, and this type is now consistently used
 throughout the library in expressions such as those above. Thus, as an
 example, if the user stores the expansion coefficients in a
 \texttt{Vector<long double>}, then the gradients
-$\nabla\varphi_j(\mathbf x_q)$ will be computed as objects of type
+$\nabla u_h(\mathbf x_q)$ will be computed as objects of type
 \texttt{Tensor<1,dim,long double>}. Likewise, if a user uses a PETSc
 vector, and PETSc was configured with complex scalar types, then the
 second derivatives of the solution field will be computed as
@@ -188,7 +189,7 @@ second derivatives of the solution field will be computed as
 
 These improvements make type-correct computations possible in many
 places. In particular, this enables the use of complex-valued solution
-vectors in many more places. On the other hand, many but not all
+vectors in many more places than before. On the other hand, many but not all
 places have learned what actually to do with complex numbers. This is,
 in particular, true for the \texttt{DataOut} class that generates an
 intermediate data format that can then be written to graphical output
@@ -200,36 +201,54 @@ components.
 
 \subsection{A new ``shared'' triangulation type for parallel computations}
 
-Previously, in order to use \texttt{Triangulation<dim,spacedim>} class with MPI one had to manually
-partition triangulation (e.g. via \texttt{METIS}), calculate and store index sets of locally owned and locally relevant degrees-of-freedom (DoF), querry \texttt{subdomain\_id}  of a cell during assembly etc.
-In order to facilitate the usage of \texttt{Triangulation} class with MPI
-and to make its behaviour in this context consistent with \texttt{parallel::distributed::Triangulation}, a new class
-\texttt{parallel::shared::Triangulation} was introduced.
-It extends \texttt{Triangulation} class to automatically partition triangulation when run with MPI.
-Identical functionality between \texttt{shared} and \texttt{distributed} triangulation
-(e.g. locally owned and relevant DoFs, mpi communicator, etc)
-is grouped in the parent class \texttt{parallel::Triangulation}.
-The main difference between the two parallel triangulations is that in the case of
+\dealii{} already has two types of triangulations: the
+\texttt{Triangulation<dim,spacedim>} class works entirely locally, whereas
+\texttt{parallel::distributed::Triangulation<dim,spacedim>} builds on the
+former, but only stores the local partition that corresponds to a globally
+distributed triangulation managed across an MPI network. One \textit{could},
+however, use the former also for parallel computations in situations where one
+needs access to \textit{all} cells, not just the subset of cells that
+correspond to the partition owned by the current processor. This required
+building the same triangulation on all processors, then
+manually partitioning it (e.g., via \texttt{METIS}), calculating and storing
+index sets of locally owned and locally relevant degrees of freedom (DoFs),
+querying the \texttt{subdomain\_id}  of a cell during assembly, etc.
+
+In order to simplify this usage of the \texttt{Triangulation} class with MPI
+and to make its behavior in this context consistent with \texttt{parallel::distributed::Triangulation}, a new class
+\texttt{parallel::shared::Triangulation} has been introduced.
+It extends the \texttt{Triangulation} class to automatically partition the triangulation when run with MPI.
+Shared functionality between the \texttt{shared} and \texttt{distributed}
+triangulation classes
+(e.g., locally owned and relevant DoFs, MPI communicators, etc)
+is now grouped in a common parent class \texttt{parallel::Triangulation}.
+The main difference between the two classes is that in the case of
 \texttt{parallel::shared::Triangulation} each process stores all cells of the triangulation.
 Consequently, by default there are no artificial cells.
 That is, cells which are attributed to the current processor are marked as locally owned
 (\texttt{cell->is\_locally\_owned()} returns \texttt{true})
 and the rest are ghost cells.
-This behaviour can be altered via an additional boolean flag provided to the constructor of the class.
-In this case, a set of ghost cells will consist of a halo layer of cells around locally owned cells.
+This behavior can be altered via an additional boolean flag provided to the constructor of the class.
+In this case, the set of ghost cells will consist of a halo layer of cells around locally owned cells.
 Cells which are neither ghost nor locally owned are marked as artificial.
-This is consistent with the behaviour of \texttt{parallel::distributed::Triangulation},
-although in the latter case the size of the set of artificial cells will be much smaller.
-The introduction of \texttt{parallel::shared::Triangulation} class together with the
+This is consistent with the behavior of \texttt{parallel::distributed::Triangulation},
+although in the latter case the size of the set of artificial cells will be
+much smaller.
+
+The introduction of the \texttt{parallel::shared::Triangulation} class together with the
 optional artificial cells and parent \texttt{parallel::Triangulation} class
 facilitates writing
-algorithms that are indifferent to the way triangulation is stored in the MPI context.
-For example, \texttt{DoFTools::locally\_relevant\_dofs()} will now return a subset of
-all DoFs for both triangulations, granted that artificial cells are enabled in
-\texttt{parallel::shared::Triangulation}.
-Assmebly routines can now use \texttt{cell->is\_locally\_owned()}
+algorithms that are indifferent to the way a triangulation is stored in the MPI context.
+For example, the function \texttt{DoFTools::locally\_active\_dofs()} will
+return the appropriate subset of
+all DoF indices for both triangulations.
+Assmebly routines can use predicates such as \texttt{cell->is\_locally\_owned()}
 for both triangulations.
-Currently, only standard (non hp) \texttt{DoFHandler} is supported.
+
+Based on the new triangulation class, the (non-hp) \texttt{DoFHandler} manages
+degrees of freedom in the same way as it has already done for a long time for
+sequential and parallel distributed triangulations.
+
 
 \subsection{Second and third derivatives of finite element fields are now
   computed exactly}
@@ -255,11 +274,11 @@ cell. Thus, the second derivatives satisfy
   =
   J^{-1} J^{-1}\hat\nabla^2\hat\varphi_j(\hat{\mathbf x}_q)
   +
-  J^{-1}\left(\hat\nabla J^{-1}\right)\hat\nabla\hat\varphi_j(\hat{\mathbf x}_q),
+  J^{-1}\left(\hat\nabla [J^{-1}]\right)\hat\nabla\hat\varphi_j(\hat{\mathbf x}_q),
 \end{align*}
 where in the last expression, matrices and tensors of rank 1 and 3
 have to be appropriately contracted.  Here, the difficulty lies in
-computing the derivative $\hat\nabla J^{-1}$: for the usual mappings
+computing the derivative $\hat\nabla [J^{-1}]$: for the usual mappings
 on quadrilaterals and hexahedra, $J$ is in general a polynomial in the
 reference coordinates $\hat {\mathbf x}$, so $J^{-1}$ is a rational
 function. It is possible to compute the derivatives of this object,
@@ -267,16 +286,16 @@ but they are difficult and cumbersome to evaluate, especially for
 higher order mappings.
 
 The key to computing second (and higher) derivatives of shape
-functions is to recognize that $\hat\nabla J^{-1}$ can be expressed
+functions is to recognize that $\hat\nabla [J^{-1}]$ can be expressed
 more conveniently by observing that
 \begin{align*}
   0 &= \hat\nabla I
   \\
   &= \hat\nabla (JJ^{-1})
   \\
-  &= J (\hat\nabla J^{-1}) + (\hat\nabla J) J^{-1},
+  &= J (\hat\nabla [J^{-1}]) + (\hat\nabla J) J^{-1},
 \end{align*}
-and consequently $\hat\nabla J^{-1} = - J^{-1} (\hat\nabla J)
+and consequently $\hat\nabla [J^{-1}] = - J^{-1} (\hat\nabla J)
 J^{-1}$. Here, $J^{-1}$ is a matrix that is already available from
 computing first derivatives, and $\hat\nabla J$ is an easily computed
 rank-3 tensor with polynomial entries. Using this approach, we have
@@ -320,7 +339,7 @@ shape functions at quadrature points then also needs to be mapped to
 the real cell, typically using a polynomial mapping.
 
 To facilitate this complex interplay, \dealii{} has three class
-hierarchies with base classes \texttt{FiniteElement} (for the
+hierarchies rooted in the base classes \texttt{FiniteElement} (for the
 description of shape functions on the reference cell),
 \texttt{Quadrature} (for the locations and weights of quadrature
 points on the reference cell), and \texttt{Mapping} (for the
