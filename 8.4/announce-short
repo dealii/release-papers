@@ -1,0 +1,29 @@
+Version 8.4.0 of deal.II, the object-oriented finite element library awarded the
+J. H. Wilkinson Prize for Numerical Software, has been released. It is
+available for free under an Open Source license from the deal.II homepage at
+
+                   https://www.dealii.org/
+
+The major changes of this release are:
+- Parallel triangulations can now be partitioned with cell weights.
+- Improved support for complex numbers throughout the library.
+- A new triangulation type that supports parallel computations but ensures
+  that the entire mesh is available on every processor.
+- New Rannacher-Turek and Q(p) bubble enriched finite elements
+- Initial support for compiling with Visual C++ under Windows.
+- see the preprint at https://www.dealii.org/deal84-preprint.pdf
+- More than 140 other features and bugfixes, see the full list of changes at  
+  https://www.dealii.org/8.4.0/doxygen/deal.II/changes_between_8_3_and_8_4.html
+
+The main features of deal.II are:
+- Extensive documentation and 52 working example programs
+- Support for dimension-independent programming
+- Locally refined adaptive meshes and multigrid support
+- A zoo of different finite elements
+- Built-in support for shared memory and distributed parallel computing,
+  scaling from laptops to clusters with 10,000s of processor cores
+- Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
+- Output for a wide variety of visualization platforms.
+
+Wolfgang Bangerth, Timo Heister, Guido Kanschat, Matthias Maier,
+and many other contributors.
