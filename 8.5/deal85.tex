@@ -8,11 +8,6 @@
 \usepackage{fontenc}
 \usepackage{graphicx}
 
-\hypersetup{
-  pdfauthor={Wolfgang Bangerth, Timo Heister},
-  pdftitle={The deal.II Library, Version 8.5, 2016},
-}
-
 \newcommand{\specialword}[1]{\texttt{#1}}
 \newcommand{\dealii}{{\specialword{deal.II}}}
 \newcommand{\pfrst}{{\specialword{p4est}}}
@@ -22,11 +17,27 @@
 \newcommand{\cmake}{{\specialword{CMake}}}
 \newcommand{\autoconf}{{\specialword{autoconf}}}
 
+%
+% Author list -- please add yourself in both places below (in
+%                alphabetical order) if you think that your
+%                contributions to the last release warrant this
+%
+
+\hypersetup{
+  pdfauthor={
+    Wolfgang Bangerth,
+    Timo Heister
+  },
+  pdftitle={The deal.II Library, Version 8.5, 2017},
+}
+
 \title{The \dealii{} Library, Version 8.5}
+
 \author[1]{Wolfgang Bangerth}
 \affil[1]{Department of Mathematics, Colorado State University, Fort
   Collins, CO 80523-1874, USA.
     {\texttt{bangerth@colostate.edu}}}    
+
 \author[2]{Timo Heister}
 \affil[2]{Mathematical Sciences,
   O-110 Martin Hall,
@@ -35,6 +46,8 @@
   {\texttt{heister@clemson.edu}}}
 
 \renewcommand{\labelitemi}{--}
+
+
 
 
 \begin{document}
@@ -48,6 +61,7 @@
 
 \section{Overview}
 
+\marginpar{Update date}
 \dealii{} version 8.5.0 was released March 11, 2017. This paper provides an
 overview of the new features of this release and serves as a citable
 reference for the \dealii{} software library version 8.5. \dealii{} is an
@@ -58,8 +72,31 @@ GNU Lesser General Public License (LGPL) from the \dealii{} homepage at
 
 The major changes of this release are:
 \begin{itemize}
-\item 
-\item More than 140 other features and bugfixes.
+\item CellDataStorage class
+
+\item MappingManifold
+
+\item Trilinos linear operators?
+
+\item Physics module
+
+\item FE\_Enriched
+
+\item FESeries namespace, use in step-27
+
+\item step-57, step-55, step-56
+
+\item step-44 improvements
+
+\item step-37 parallel improvements
+
+\item New code gallery codes demonstrating (i) quasi-static visco-elastic
+  material behavior, (ii) multiphase Navier-Stokes flow, (iii) the
+  evolution of global-scale topography on planetary bodies, (iv)
+  goal-oriented elastoplasticity.
+
+
+\item More than 230 other features and bugfixes.
 \end{itemize}
 The more important ones of these will be detailed in the following section.
 Information on how to cite \dealii{} is provided in Section \ref{sec:cite}.
@@ -71,7 +108,7 @@ This release of \dealii{} contains a number of large and significant changes
 that will be discussed in the following sections. It of course also contains a
 vast number of smaller changes and added functionality; the details of these
 can be found
-\href{https://www.dealii.org/8.4.0/doxygen/deal.II/changes_between_8_3_and_8_4.html}{in the file that lists all changes for this release} (see \cite{changes84})
+\href{https://www.dealii.org/8.5.0/doxygen/deal.II/changes_between_8_4_and_8_5.html}{in the file that lists all changes for this release} (see \cite{changes84})
 and that is linked to from the web site of each release as well as the
 release announcement.
 
@@ -81,15 +118,34 @@ release announcement.
 \subsection{important thing 2}
 
 
+
+Other things we could talk about:
+PVS static checker, coverity, ...
+
+GridReordering rewrite
+
+No longer use features of C++ deprecated with C++11/14/17
+Move operators
+
+Python bindings
+
+
 \subsection{Incompatible changes}
 
 \subsubsection{incompatible change 1}
 
+Switch default of Lagrange elements to Gauss-Lobatto
+
 \subsubsection{Other incompatible changes}
 
+No long double instantiations any more
+
+ParameterGUI moved to separate repo
+
 The
-\href{https://www.dealii.org/8.4.0/doxygen/deal.II/changes_between_8_3_and_8_4.html}{file
-  that lists all changes for this release} (see \cite{changes84}) lists another 18
+\href{https://www.dealii.org/8.5.0/doxygen/deal.II/changes_between_8_4_and_8_5.html}{file
+  that lists all changes for this release} (see \cite{changes84})
+lists another around 20
 incompatible changes, but none of these should in fact be visible in
 typical user codes. Some remove previously deprecated classes and
 functions, and the majority change internal interfaces that are not
