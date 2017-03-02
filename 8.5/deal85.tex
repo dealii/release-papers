@@ -47,9 +47,9 @@
 
 \section{Overview}
 
-\dealii{} version 8.4.0 was released March 11, 2016. This paper provides an
+\dealii{} version 8.5.0 was released March 11, 2017. This paper provides an
 overview of the new features of this release and serves as a citable
-reference for the \dealii{} software library version 8.4. \dealii{} is an
+reference for the \dealii{} software library version 8.5. \dealii{} is an
 object-oriented finite element library used around the world in the
 development of finite element solvers. It is available for free under the
 GNU Lesser General Public License (LGPL) from the \dealii{} homepage at
@@ -57,23 +57,8 @@ GNU Lesser General Public License (LGPL) from the \dealii{} homepage at
 
 The major changes of this release are:
 \begin{itemize}
-\item Parallel triangulations can now be partitioned in ways that allow
-  weighting cells differently.
-\item Improved support for mixed-type arithmetic throughout the library.
-\item A new triangulation type that supports parallel computations
-  but ensures that the entire mesh is available on every processor.
-\item An implementation of the Rannacher-Turek element, as well as an
-  element that extends the usual Q(p) elements by bubble functions.
-\item Second and third derivatives of finite element fields are now
-  computed exactly.
-\item The various \emph{Concepts}, or requirements on template parameters
-  in the library, are now consistently labeled and documented as such.
-\item The interface between finite elements, quadrature, mapping, and the
-  FEValues class has been rewritten. It is now much better documented.
-\item Initial support for compiling with Visual C++ 2013 and 2015 under
-  Microsoft Windows
-  has been added.
-\item  More than 140 other features and bugfixes.
+\item 
+\item More than 140 other features and bugfixes.
 \end{itemize}
 The more important ones of these will be detailed in the following section.
 Information on how to cite \dealii{} is provided in Section \ref{sec:cite}.
@@ -90,243 +75,14 @@ and that is linked to from the web site of each release as well as the
 release announcement.
 
 
-\subsection{Parallel triangulations can now be partitioned with weights}
+\subsection{important thing 1}
 
-Previously, partitioning a parallel mesh (represented by objects of class
-\texttt{parallel::}\-\texttt{distributed::}\-\texttt{Triangulation}) between
-processors assumed that every cell should be weighted equally. On the
-other hand, the \pfrst{} library which manages the partitioning
-process, allows for attaching weights to each cell and thereby
-enables ways in which not the number of cells per MPI process is
-equilibrated, but the sum of weights on the cells managed by each
-process. \dealii{} now also supports this feature.
+\subsection{important thing 2}
 
-The implementation of this mechanism is based on a callback mechanism,
-in the form of the signal-slot design pattern. User codes can register
-functions that will be called upon mesh refinement and coarsening,
-returning a weight for each cell. These weights will be added up over
-all slots (i.e., callback functions) connected to the signal.
-
-The mechanism chosen has the advantage that all parties that use a
-triangulation, for example multiple \texttt{DoFHandler} objects or a
-scheme that tracks particles that are advected along with a flow field
-and stores them per-cell, can indicate their computational needs for
-each cell. In particular, there is no central place in a user code (other than
-the 
-triangulation itself) that has to collect these needs and forward this
-information.
-
-
-\subsection{Improved support for mixed-type arithmetic throughout the
-  library}
-
-When evaluating finite element fields or their derivatives at
-a points $\mathbf x_q$, one typically has to do an operation of the form
-\begin{align*}
-  u_h(\mathbf x_q) &= \sum_{j} U_j \varphi_j(\mathbf x_q),
-  \\
-  \nabla u_h(\mathbf x_q) &= \sum_{j} U_j \nabla\varphi_j(\mathbf x_q).
-\end{align*}
-The value or derivatives of shape functions, $\varphi_j(\mathbf x_q)$
-or $\nabla\varphi_j(\mathbf x_q)$ are internally evaluated by classes
-derived from the \texttt{FiniteElement} and \texttt{Mapping}, and are
-computed as scalars or tensors of type \texttt{double}. On the other
-hand, the expansion coefficients of the field, $U_j$ are stored in
-vectors over scalar types chosen by the user; their underlying representation
-could be \texttt{double}, but also \texttt{float}, \texttt{long double},
-\texttt{PetscScalar}, or \texttt{std::complex<float>}. It could also
-be an autodifferentiation type.
-
-To facilitate the correct typing of the computed quantity, \dealii{}
-now contains mechanisms by which one can evaluate the \textit{type} of
-the product of two values, and this type is now consistently used
-throughout the library in expressions such as those above. Thus, as an
-example, if the user stores the expansion coefficients in a
-\texttt{Vector<long double>}, then the gradients
-$\nabla u_h(\mathbf x_q)$ will be computed as objects of type
-\texttt{Tensor<1,dim,long double>}. Likewise, if a user uses a PETSc
-vector, and PETSc was configured with complex scalar types, then the
-second derivatives of the solution field will be computed as
-\texttt{SymmetricTensor<2,dim,PetscScalar>}, which should equal
-\texttt{SymmetricTensor<2,dim,std::complex<double> >}.
-
-These improvements make type-correct computations possible in many
-places. In particular, this enables the use of complex-valued solution
-vectors in many more places than before. On the other hand, many but not all
-places have learned what actually to do with complex numbers. This is,
-in particular, true for the \texttt{DataOut} class that generates an
-intermediate data format that can then be written to graphical output
-files for visualization. Since no format we are aware of supports
-complex numbers, future versions still need to learn how to separate
-real and imaginary parts of complex numbers, and output them as two
-components.
-
-
-\subsection{A new ``shared'' triangulation type for parallel computations}
-
-\dealii{} already has two types of triangulations: the
-\texttt{Triangulation<dim,spacedim>} class works entirely locally, whereas
-\texttt{parallel::distributed::Triangulation<dim,spacedim>} builds on the
-former, but only stores the local partition that corresponds to a globally
-distributed triangulation managed across an MPI network. One \textit{could},
-however, use the former also for parallel computations in situations where one
-needs access to \textit{all} cells, not just the subset of cells that
-correspond to the partition owned by the current processor. This required
-building the same triangulation on all processors, then
-manually partitioning it (e.g., via \texttt{METIS}), calculating and storing
-index sets of locally owned and locally relevant degrees of freedom (DoFs),
-querying the \texttt{subdomain\_id}  of a cell during assembly, etc.
-
-In order to simplify this usage of the \texttt{Triangulation} class with MPI
-and to make its behavior in this context consistent with \texttt{parallel::distributed::Triangulation}, a new class
-\texttt{parallel::shared::Triangulation} has been introduced.
-It extends the \texttt{Triangulation} class to automatically partition the triangulation when run with MPI.
-Shared functionality between the \texttt{shared} and \texttt{distributed}
-triangulation classes
-(e.g., locally owned and relevant DoFs, MPI communicators, etc)
-is now grouped in a common parent class \texttt{parallel::Triangulation}.
-The main difference between the two classes is that in the case of
-\texttt{parallel::shared::Triangulation} each process stores all cells of the triangulation.
-Consequently, by default there are no artificial cells.
-That is, cells which are attributed to the current processor are marked as locally owned
-(\texttt{cell->is\_locally\_owned()} returns \texttt{true})
-and the rest are ghost cells.
-This behavior can be altered via an additional boolean flag provided to the constructor of the class.
-In this case, the set of ghost cells will consist of a halo layer of cells around locally owned cells.
-Cells which are neither ghost nor locally owned are marked as artificial.
-This is consistent with the behavior of \texttt{parallel::distributed::Triangulation},
-although in the latter case the size of the set of artificial cells will be
-much smaller.
-
-The introduction of the \texttt{parallel::shared::Triangulation} class together with the
-optional artificial cells and parent \texttt{parallel::Triangulation} class
-facilitates writing
-algorithms that are indifferent to the way a triangulation is stored in the MPI context.
-For example, the function \texttt{DoFTools::locally\_active\_dofs()} will
-return the appropriate subset of
-all DoF indices for both triangulations.
-Assmebly routines can use predicates such as \texttt{cell->is\_locally\_owned()}
-for both triangulations.
-
-Based on the new triangulation class, the (non-hp) \texttt{DoFHandler} manages
-degrees of freedom in the same way as it has already done for a long time for
-sequential and parallel distributed triangulations.
-
-
-\subsection{Second and third derivatives of finite element fields are now
-  computed exactly}
-
-Second derivatives of solution fields, i.e.,
-\begin{align*}
-  \nabla^2 u_h(\mathbf x_q) &= \sum_{j} U_j \nabla^2\varphi_j(\mathbf x_q)
-\end{align*}
-were previously computed by finite differencing of first
-derivatives. The reason for this approach is that in order to compute
-the second derivatives of shape functions, $\nabla^2\varphi_j(\mathbf
-x_q)$ one needs (at least) derivatives of the inverse of the Jacobian of the
-mapping. This is easy to see because, for the usual $Q_p$ Lagrange
-elements, one has that $\nabla\varphi_j(\mathbf
-x_q)=J^{-1}\hat\nabla\hat\varphi_j(\hat{\mathbf x}_q)$, where quantities
-with a hat refer to coordinates and functions on the reference cell,
-and $J$ is the Jacobian of the mapping from reference to real
-cell. Thus, the second derivatives satisfy
-\begin{align*}
-  \nabla^2\varphi_j(\mathbf x_q)
-  =
-  J^{-1}\hat\nabla\left[J^{-1}\hat\nabla\hat\varphi_j(\hat{\mathbf x}_q)\right]
-  =
-  J^{-1} J^{-1}\hat\nabla^2\hat\varphi_j(\hat{\mathbf x}_q)
-  +
-  J^{-1}\left(\hat\nabla [J^{-1}]\right)\hat\nabla\hat\varphi_j(\hat{\mathbf x}_q),
-\end{align*}
-where in the last expression, matrices and tensors of rank 1 and 3
-have to be appropriately contracted.  Here, the difficulty lies in
-computing the derivative $\hat\nabla [J^{-1}]$: for the usual mappings
-on quadrilaterals and hexahedra, $J$ is in general a polynomial in the
-reference coordinates $\hat {\mathbf x}$, so $J^{-1}$ is a rational
-function. It is possible to compute the derivatives of this object,
-but they are difficult and cumbersome to evaluate, especially for
-higher order mappings.
-
-The key to computing second (and higher) derivatives of shape
-functions is to recognize that $\hat\nabla [J^{-1}]$ can be expressed
-more conveniently by observing that
-\begin{align*}
-  0 &= \hat\nabla I
-  \\
-  &= \hat\nabla (JJ^{-1})
-  \\
-  &= J (\hat\nabla [J^{-1}]) + (\hat\nabla J) J^{-1},
-\end{align*}
-and consequently $\hat\nabla [J^{-1}] = - J^{-1} (\hat\nabla J)
-J^{-1}$. Here, $J^{-1}$ is a matrix that is already available from
-computing first derivatives, and $\hat\nabla J$ is an easily computed
-rank-3 tensor with polynomial entries. Using this approach, we have
-\begin{align*}
-  \nabla^2\varphi_j(\mathbf x_q)
-  =
-  J^{-1} J^{-1}\hat\nabla^2\hat\varphi_j(\hat{\mathbf x}_q)
-  -
-  J^{-1} J^{-1} (\hat\nabla J)
-  J^{-1}\hat\nabla\hat\varphi_j(\hat{\mathbf x}_q),
-\end{align*}
-again with an appropriate set of contractions over the indices of the
-objects on the right.
-
-This, and corresponding extensions to compute third derivatives, have
-now been implemented in several of the finite element and mapping
-classes by Maien Hamed, and are available through the
-\texttt{FEValues} interface to shape functions and their derivatives.
-
-\subsection{Visual C++ support}
-
-The library can now be compiled under Windows with Visual C++ 2013 and
-2015. The support is still experimental for the following reasons: First, we
-currently only support static linking. This will slow down linking of
-application code immensly.  Second, only a minimal testsuite is working, which
-is mainly because static linking of thousands of test executables is not
-viable. Therefore, we can not exclude the possibility of subtle bugs in the
-library.  Finally, there is of course limited support for external packages.
 
 \subsection{Incompatible changes}
 
-\subsubsection{Revision of the interface between finite elements,
-  quadratures, and mappings}
-
-Finite element classes describe shape functions as continuous (as
-opposed to discrete) objects on the reference cell. On the other hand,
-in actual practice, one only needs information about shape functions
-at finitely many quadrature points, and these are typically the same
-on every cell in a loop over all cells. Furthermore, the evaluation of
-shape functions at quadrature points then also needs to be mapped to
-the real cell, typically using a polynomial mapping.
-
-To facilitate this complex interplay, \dealii{} has three class
-hierarchies rooted in the base classes \texttt{FiniteElement} (for the
-description of shape functions on the reference cell),
-\texttt{Quadrature} (for the locations and weights of quadrature
-points on the reference cell), and \texttt{Mapping} (for the
-description of mappings from the reference to the real cell). In
-almost all cases, users create an object of a derived class for each
-of these categories, but they never access any of the members of these
-classes and instead leave this task to the \texttt{FEValues} class
-(and \texttt{FEFaceValues}, \texttt{FESubfaceValues}) that presents
-all one typically needs: the mapped values, gradients, and
-higher order derivatives of shape functions at the quadrature points
-of the real cell.
-
-The interplay between these classes in the \texttt{FEValues} interface
-is one of the oldest parts of the library. It was, at the time, not
-designed based on specifications we explicitly or implicitly knew this
-class had to satisfy, but instead organically grew to its current
-state. These interfaces have now been fundamentally rewritten: some
-functions have been replaced; several others had their argument lists
-shuffled, sorted, and made more uniform; and everything has generally
-been far better documented.
-
-None of the changes in this arena is visible to the average user. The
-only user codes that are affected in an incompatible way are those
-that implement finite element or mapping classes.
+\subsubsection{incompatible change 1}
 
 \subsubsection{Other incompatible changes}
 
@@ -410,7 +166,7 @@ features of the library, please consider citing any of the following:
 Please consider citing the appropriate references if you use interfaces to these
 libraries.
 
-Older releases of \dealii{} can be cited as \cite{dealII80,dealII81,dealII82,dealII83}.
+Older releases of \dealii{} can be cited as \cite{dealII80,dealII81,dealII82,dealII83,dealII84}.
 
 \nocite{BangerthKanschat1999}
 
@@ -424,71 +180,27 @@ this release:
 %   egrep '^ *\(.*201[56789]' 8.3.0-vs-8.4.0.h | perl -p -e 's/201\d.*//g; s/, */\n/g; s/^ *\(?//g;' | sort | uniq
 % then sort by last name and remove the authors of this paper
 %
-Daniel Arndt,
-Mauro Bardelloni,
-Alistair Bentley,
-Andrea Bonito,
-Claire Bruna-Rosso,
-Krzysztof Bzowski,
-Praveen Chandrashekar,
-Conrad Clevenger,
-Patrick Esser,
-Rene Gassmoeller,
-Arezou Ghesmati,
-Maien Hamed,
-Alexander Grayver,
-Lukas Korous,
-Aslan Kosakian,
-Adam Kosik,
-Konstantin Ladutenko,
-Jean-Paul Pelteret,
-Lei Qiao,
-Gennadiy Rishin,
-Angel Rodriguez,
-Alberto Sartori,
-Daniel Shapero,
-Jason Sheldon,
-Jan Stebel,
-Florian Sonner,
-Zhen Tao,
-Heikki Virtanen,
-Daniel Weygand
 
 
 Their contributions are much appreciated!
 
 
+\bigskip
+
 \dealii{} and its developers are financially supported through a
-variety of funding sources. W.~Bangerth and B.~Turcksin were partially
-supported by the National Science Foundation under award OCI-1148116
-as part of the Software Infrastructure for Sustained Innovation (SI2)
-program; and by the Computational Infrastructure in Geodynamics initiative
-(CIG), through the National Science Foundation under Award
-No.~EAR-0949446 and The University of California -- Davis.
+variety of funding sources:
 
-D.~Davydov was supported by the ERC Advanced Grant MOCOPOLY and the Competence Network for Technical and Scientific High Performance Computing in Bavaria (KONWIHR).
+% TODO: add your funding here
 
-L.~Heltai was partially supported by the project OpenViewSHIP,
-``Sviluppo di un ecosistema computazionale per la progettazione
-idrodinamica del sistema elica-carena'', financed by Regione FVG - PAR
-FSC 2007-2013, Fondo per lo Sviluppo e la Coesione, and by the project
-TRIM ``Tecnologia e Ricerca Industriale per la Mobilit\`a Marina'',
-CTN01-00176-163601, funded by MIUR -  Ministero dell'Istruzione,
-dell'Universit\`a e della Ricerca.
 
 T.~Heister was partially supported by the Computational Infrastructure in
 Geodynamics initiative (CIG), through the National Science Foundation under Award No. EAR-0949446 and The University of California—Davis, and National Science Foundation grant DMS1522191.
 
-G.~Kanschat and M.~Kronbichler were partially supported by the German Research
-Foundation (DFG) through the project ExaDG. M.~Kronbichler also acknowledges
-the Gauss Centre for Supercomputing e.V.~for funding algorithm enhancements by
-providing computing time on the GCS Supercomputer SuperMUC at Leibniz
-Supercomputing Centre (LRZ) through project id pr83te.
+
+
 
 The Interdisciplinary Center for Scientific Computing (IWR) at Heidelberg University has provided
 hosting services for the \dealii{} web page and the SVN archive.
-
-%\marginpar{Everyone's funding, please}
 
 
 \bibliography{paper}{}
