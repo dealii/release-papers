@@ -188,21 +188,22 @@ The \verb!Physics::Elasticity::StandardTensors! class provides some frequently u
 
 \subsection{Scalability of geometric multigrid framework}
 
-For the new release, the geometric multigrid in \dealii{} have been thoroughly
-overhauled regarding their scalability on large-scale parallel computers. To
-this end, the geometric multigrid algorithm based on the fast matrix-free
-kernels from \cite{KronbichlerKormann2012} have been benchmarked up to
-147,456 cores. Several scalability bottlenecks have been removed, including
-unnecessary inner products inside the Chebyshev smoother and
-$\mathcal O(n_\text{levels})$ global communication steps during the
-restriction process rather than only the single global communication step that
-is necessary when going to the coarest grid. New matrix-free transfer
-implementations called \texttt{MGTransferMatrixFree} were devised that replace
-the matrix-based \texttt{MGTransferPrebuilt}. Besides better scalability than
-the Trilinos Epetra matrices underlying the latter, the matrix-free transfer
-is also a much better for high-order elements with complexity per degree of
-freedom of $\mathcal O(d p)$ in the polynomial degree $p$ in $d$ dimensions
-rather than $\mathcal O(p^d)$ for the matrix-based approach.
+For the new release, the geometric multigrid facilities in \dealii{} have been
+thoroughly overhauled regarding their scalability on large-scale parallel
+computers. During this process, a geometric multigrid implementation based on
+the fast matrix-free kernels from \cite{KronbichlerKormann2012} has been
+benchmarked up to 147,456 cores. The fast matrix-vector product revealed
+several scalability bottlenecks, including unnecessary inner products inside
+the Chebyshev smoother and $\mathcal O(n_\text{levels})$ global communication
+steps during the restriction process rather than only the single global
+communication step that is necessary when going to the coarest grid. New
+matrix-free transfer implementations called \texttt{MGTransferMatrixFree} were
+devised that can replace the matrix-based \texttt{MGTransferPrebuilt} class
+for tensor product elements. Besides better scalability than the Trilinos
+Epetra matrices underlying the latter, the matrix-free transfer is also a much
+better for high-order elements with complexity per degree of freedom of
+$\mathcal O(d p)$ in the polynomial degree $p$ in $d$ dimensions rather than
+$\mathcal O(p^d)$ for the matrix-based approach.
 
 \begin{figure}
 \pgfplotstableread{
@@ -327,16 +328,17 @@ nprocs    newdg256k    newdg2m   newdg16m olddg256k  olddg2m   olddg16m
 \end{figure}
 
 The scalability of the improved geometric multigrid framework is shown in
-Fig.~\ref{fig:scaling_mg}, including a combined strong and weak scalability
-plot in the left panel using continuous $\mathcal Q_3$ elements on 57 million
-to 232 billion degrees of freedom for the Laplacian. Along each line, the same
-problem size is solved with an increasing number of cores, whereas different
-lines always start out at 3.5 million degrees of freedom per core. Almost
-ideal scalability down to approximately 0.1 seconds can be observed also on
-147k cores. The right panel of Fig.~\ref{fig:scaling_mg} shows the effect of
-the aforementioned algorithmic improvements on a setup with discontinuous DG
-elements, clearly improving the latency of the multigrid V-cycle. The improved
-algorithms are shown in the updated step-37 tutorial program.
+Fig.~\ref{fig:scaling_mg}, including a combined strong and weak scaling plot
+in the left panel using continuous $\mathcal Q_3$ elements with 57~million to
+232~billion degrees of freedom for discretizing the Laplacian. Along each
+line, the same problem size is solved with an increasing number of cores,
+whereas different lines are a factor of eight apart and always start at
+3.5~million degrees of freedom per core. Almost ideal scalability down to
+approximately 0.1~seconds can be observed also on 147k~cores. The right panel
+of Fig.~\ref{fig:scaling_mg} shows the effect of the aforementioned
+algorithmic improvements on a setup with discontinuous DG elements, clearly
+improving the latency of the multigrid V-cycle. The improved algorithms are
+shown in the updated step-37 tutorial program.
 
 
 
