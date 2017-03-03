@@ -90,8 +90,8 @@ Best
      cross-referencing doc/news/changes.h
 
      Get the list using
-        egrep '[0-9]+/[0-9]+/[0-9]+' doc/news/changes.h | \
-           perl -pi -e 's/^ *\(//g; s#, *[0-9/]+\)##g; s/, */\n/g;' | \
+        egrep '[0-9]+/[0-9]+/[0-9]+' doc/news/changes/*/* | \
+           perl -p -e 's/^.*\(//g; s#, *[0-9/]+\)##g; s/, */\n/g;' | \
            sort |uniq
 
      Compare with the commit list:
@@ -115,7 +115,51 @@ Developers:
   Toby Young
 
 Contributors for 8.5: 
-  tbd
+Alberto Sartori
+Ali Samii
+Andrea Mola
+Andrew McBride
+Bruno Turcksin
+Ce Qin
+Conrad Clevenger
+Daniel Arndt
+Daniel Jodlbauer
+Daniel Shapero
+David Wells
+Denis Davydov
+Dragan Nikolic
+Dustin Kumor
+Giuseppe Pitton
+Guido Kanschat
+Jaeryun Yim
+Jean-Paul Pelteret
+Jihuan Tian
+Jonathan Perry-Houts
+Jonathan Robey
+Joscha Gedicke
+Juliane Dannberg
+Justin Kauffman
+Konstantin Ladutenko and many others
+Liang Zhao
+Luca Heltai
+Martin Kronbichler
+Martin Steigemann
+Mathias Mentler
+Matthias Maier
+Mauro Bardelloni
+Mayank Sabharwal
+Michael Harmon
+Paul Kuberry
+Rajat Arora
+Rene Gassmoeller
+Ryan Grove
+Sam Cox
+Sebastian Gonzalez-Pintor
+Spencer Patty
+Timo Heister
+Toby D. Young
+Vaibhav Palkar
+Wolfgang Bangerth
 
 0/ Do some basic testing as always
 
