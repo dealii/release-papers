@@ -352,9 +352,11 @@ shown in the updated step-37 tutorial program.
 \verb|!DoFTools::make_hanging_node_constraints()| function can automatically make the resulting space $C^0$ continuous.
 Existing \verb|SolutionTransfer| class can be used to transfer the solution during $h$\,-adaptive refinement from a coarse to a fine mesh under the condition that all child elements are also enriched.
 
-\subsection{The \texttt{FE\_Series} namespace}
+\subsection{The \texttt{FESeries} namespace}
 
-TODO: Denis
+\verb|FESeries| namespace offers functions to calculate expansion series of the solution on the reference element.
+Coefficients of expansion are often used to estimate local smoothness of the underlying finite element field to decide on h- or p-adaptive refinement strategy. Specifically, \verb|FESeries::Legendre| calculates expansion of a scalar FE field into series of Legendre functions on a reference element, whereas \verb|FESeries::Fourier| calculates Fourier coefficients. The user has to specify the required number of coefficients in each direction as well as provide a collection of finite elements and quadrature rules, that will be used for calculation of the transformation matrices. Obviously, those matrices are calculated only once, namely the first time coefficients are requested on a cell with the given finite element.
+The step-27 has been updated to use \verb|FESeries::Fourier|.
 
 \subsection{Matrix-free operators}
 
