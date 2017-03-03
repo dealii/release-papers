@@ -71,10 +71,15 @@ GNU Lesser General Public License (LGPL) from the \dealii{} homepage at
 \url{http://www.dealii.org/}.
 
 The major changes of this release are:
+\marginpar{Add one sentence to each of the following.}
 \begin{itemize}
 \item CellDataStorage class
 
-\item MappingManifold
+\item The \texttt{MappingManifold} class provides mappings between the
+  reference cell and a mesh cell that is ``exact'' in the sense that
+  the edges, faces, and the interior of the mesh cell matches an
+  underlying manifold. This is opposed to using the usual polynomial
+  approximations of the manifold.
 
 \item Trilinos linear operators?
 
@@ -84,16 +89,18 @@ The major changes of this release are:
 
 \item FESeries namespace, use in step-27
 
-\item step-57, step-55, step-56
+\item New tutorial programs step-55, step-56, and step-57,
+  demonstrating parallel solvers for the Stokes equations, a multigrid
+  method for the Stokes equation, and methods for the nonlinear
+  Navier-Stokes equations, respectively. In addition, the step-37
+  tutorial program has been rewritten to support parallel
+  computations, and the step-44 tutorial now uses the facilities of
+  the physics module mentioned above.
 
-\item step-44 improvements
-
-\item step-37 parallel improvements
-
-\item New code gallery codes demonstrating (i) quasi-static visco-elastic
-  material behavior, (ii) multiphase Navier-Stokes flow, (iii) the
-  evolution of global-scale topography on planetary bodies, (iv)
-  goal-oriented elastoplasticity.
+\item New code gallery programs demonstrating (i) quasi-static
+  visco-elastic material behavior, (ii) multiphase Navier-Stokes flow,
+  (iii) the evolution of global-scale topography on planetary bodies,
+  (iv) goal-oriented elastoplasticity.
 
 
 \item More than 230 other features and bugfixes.
