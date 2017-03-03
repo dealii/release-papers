@@ -125,8 +125,7 @@ This data is treated as a first-class citizen to \dealii{} and, when used in con
   approximations of the manifold.
   TODO: Luca
 
-\item Trilinos linear operators?
-  TODO: Jean-Paul and Matthias
+\item The \texttt{LinearOperator} class has been extended to fully support {\trilinos} solvers.
 
 \item A dedicated physics module has been created to provide some standard definitions and operations used in continuum physics.
 
@@ -177,9 +176,16 @@ Not only does it perform an $\mathcal{L}^2$ projection of the specified user dat
 
 TODO: Luca
 
-\subsection{TODO: Linear operators with Payload and Trilinos}
+\subsection{Extension of the \texttt{LinearOperator} class}
 
-TODO: Jean-Paul and Matthias
+By introduction of an arbitrary \texttt{Payload} base class, the \texttt{LinearOperator} class can be extended to seamlessly exploit the native features and operations offered by external linear algebra libraries.
+We have thus developed a \texttt{TrilinosPayload} class, through which full support for the suite of {\trilinos} parallel iterative solvers and preconditioners has been achieved.
+In the case of the construction of an \texttt{inverse\_operator}, both \dealii's built in solvers and those offered by {\trilinos} can be selected.
+This has been achieved by using the \texttt{Epetra\_Operator} as the basis for the \texttt{TrilinosPayload}, for which the result of both standard and composite operations involving forward (\texttt{Apply()}) and inverse (\texttt{ApplyInverse()}) matrix-vector multiplication are collated using lambda functions.
+It is envisaged that, in the future, similar can be done for the {\petsc} iterative solvers.
+
+An additional feature of the \texttt{LinearOperator} suite is the defintion of a \texttt{schur\_complement} operator, and its associated condensation and post-processing \texttt{PackagedOperation}s.
+An operator representing the Schur complement of a block system can be declared and, though the delayed evaluation offered by \texttt{PackagedOperation}s, reused on any number of vector systems.
 
 \subsection{The physics module}
 
