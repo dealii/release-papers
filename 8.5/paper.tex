@@ -348,7 +348,9 @@ shown in the updated step-37 tutorial program.
 
 \subsection{The \texttt{FE\_Enriched} class}
 
-TODO: Denis
+\verb!FE_Enriched! finite element implements a partition of unity finite element method (PUM) by Babuska and Melenk which enriches a standard finite element with an enrichment function multiplied with another (usually linear) finite element. This allows to include in the finite element space a priori knowledge about the partial differential equation being solved which in turn improves the local approximation properties of the spaces. The user can also use enriched and non-enriched finite elements in different parts of the domain. 
+\verb|!DoFTools::make_hanging_node_constraints()| function can automatically make the resulting space $C^0$ continuous.
+Existing \verb|SolutionTransfer| class can be used to transfer the solution during $h$\,-adaptive refinement from a coarse to a fine mesh under the condition that all child elements are also enriched.
 
 \subsection{The \texttt{FE\_Series} namespace}
 
