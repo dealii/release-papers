@@ -137,11 +137,23 @@ release announcement.
 
 \subsection{The \texttt{FE\_Enriched} class}
 
-\subsection{The \texttt{FE\_Series} namespace?}
+TODO: Denis 
 
+\subsection{The \texttt{FE\_Series} namespace}
 
+TODO: Denis
 
+\subsection{Matrix-free operators}
 
+Facilitate the usage of matrix-free method by providing a \verb!MatrixFreeOperator::Base! class,
+which implements various interface to matrix-vector products, including necessary operations when used in
+the context of the geometric multigrids, methods needed for usage within the linear operator as well as with Jacobi preconditioner. 
+The derived classes only need to implement \verb!apply_add()! method that is
+used in the \verb!vmult()! functions, and a method to compute the diagonal entries of the underlying matrix. 
+The \verb!MatrixFreeOperator! namespace contains implementations of \verb!MatrixFreeOperators::LaplaceOperator! and 
+\verb!MatrixFreeOperators::MassOperator!. 
+
+TODO: Mention updated Step-37.
 
 \subsection{Incompatible changes}
 
