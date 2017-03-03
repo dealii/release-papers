@@ -6,6 +6,9 @@
 \usepackage{anslistings}
 \usepackage{multicol}
 
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+
 \usepackage{fontenc}
 \usepackage{graphicx}
 
@@ -29,6 +32,7 @@
     Wolfgang Bangerth,
     Denis Davydov
     Timo Heister
+    Martin Kronbichler
   },
   pdftitle={The deal.II Library, Version 8.5, 2017},
 }
@@ -38,7 +42,7 @@
 \author[1]{Wolfgang Bangerth}
 \affil[1]{Department of Mathematics, Colorado State University, Fort
   Collins, CO 80523-1874, USA.
-    {\texttt{bangerth@colostate.edu}}}    
+    {\texttt{bangerth@colostate.edu}}}
 
 \author[2]{Denis Davydov}
 \affil[2]{Chair of Applied Mechanics, University of
@@ -51,6 +55,12 @@
   Clemson University,
   Clemson, SC 29634, USA.
   {\texttt{heister@clemson.edu}}}
+
+\author[4]{Martin Kronbichler}
+\affil[4]{Institute for Computational Mechanics,
+  Technical University of Munich,
+  Boltzmannstr.~15, 85748 Garching, Germany.
+  {\texttt{kronbichler@lnm.mw.tum.de}}}
 
 \renewcommand{\labelitemi}{--}
 
@@ -135,9 +145,163 @@ release announcement.
 
 \subsection{The physics module?}
 
+\subsection{Scalability of geometric multigrid framework}
+
+For the new release, the geometric multigrid in \dealii{} have been thoroughly
+overhauled regarding their scalability on large-scale parallel computers. To
+this end, the geometric multigrid algorithm based on the fast matrix-free
+kernels from \cite{KronbichlerKormann2012} have been benchmarked up to
+147,456 cores. Several scalability bottlenecks have been removed, including
+unnecessary inner products inside the Chebyshev smoother and
+$\mathcal O(n_\text{levels})$ global communication steps during the
+restriction process rather than only the single global communication step that
+is necessary when going to the coarest grid. New matrix-free transfer
+implementations called \texttt{MGTransferMatrixFree} were devised that replace
+the matrix-based \texttt{MGTransferPrebuilt}. Besides better scalability than
+the Trilinos Epetra matrices underlying the latter, the matrix-free transfer
+is also a much better for high-order elements with complexity per degree of
+freedom of $\mathcal O(d p)$ in the polynomial degree $p$ in $d$ dimensions
+rather than $\mathcal O(p^d)$ for the matrix-based approach.
+
+\begin{figure}
+\pgfplotstableread{
+nprocs     fem256k    fem2m     fem16m    fem128m  fem1g    fem8g
+16         0.640934   4.97684   nan       nan      nan      nan
+32         0.325741   2.51771   nan       nan      nan      nan
+64         0.1645     1.2823    nan       nan      nan      nan
+128        0.090898   0.658832  5.00366   nan      nan      nan
+256        0.059922   0.339999  2.56216   nan      nan      nan
+512        0.0455449  0.176482  1.29986   nan      nan      nan
+1024       0.0368049  0.099691  0.67364   6.48155  nan      nan
+2048       0.0348921  0.069573  0.356066  2.59601  nan      nan
+4096       0.0367949  0.056833  0.19293   1.3251   nan      nan
+8192       0.033958   0.045350  0.110485  0.790214 5.50143  nan
+16384      0.0379629  0.049351  0.099904  0.424692 2.81479  nan
+32768      0.0461671  0.051276  0.077546  0.229114 1.53091  nan
+65536      0.0466189  0.058941  0.075194  0.127353 0.819    6.2909
+147456     nan        nan       nan       0.087949 0.43213  2.90856
+}\scalinglarge
+\pgfplotstableread{
+nprocs    newdg256k    newdg2m   newdg16m olddg256k  olddg2m   olddg16m
+28        1.4398       12.2014   nan      1.458725   12.25674  nan
+56        0.6987        6.2015   nan      0.721993   6.266567  nan
+112       0.3352        3.1782   nan      0.353412   3.263585  nan
+224       0.1888        1.5687   12.8235  0.183643   1.611967  13.03189
+448       0.0853        0.7686   6.5649   0.105388   0.805367  6.700762
+896       0.0478        0.3537   3.3685   0.063270   0.383875  3.446427
+1792      0.0317        0.1717   1.7061   0.046065   0.199738  1.762310
+3584      0.0235        0.1079   0.8580   0.042032   0.123113  0.902782
+7168      0.0207        0.0668   0.4328   0.037678   0.091822  0.462007
+14336     0.0183699     0.045095 0.23276  0.038804   0.071644  0.288911
+}\scalingHSW
+\centering
+\definecolor{gnuplot@green}{RGB}{0,158,115}
+\begin{tikzpicture}
+    \begin{loglogaxis}[
+      title style={at={(0.5,0.965)},anchor=north,draw=black,fill=white,font=\scriptsize\bf},
+      title={strong and weak scaling, continuous $\mathcal Q_3$ elements},
+      width=0.53\textwidth,
+      height=0.5\textwidth,
+      xlabel={Number of cores},
+      ylabel={Solver time [s]},
+      x label style={at={(0.5,0.02)}},
+      y label style={at={(0.05,0.5)}},
+      xtick={32,128,512,2048,8192,32768,147456},
+      xticklabels={32,128,512,2048,8192,32k,147k},
+      tick label style={font=\scriptsize},
+      label style={font=\scriptsize},
+      legend style={font=\scriptsize},
+      legend pos=south west,
+      ymin=5e-3, ymax=15,
+      xmin=8, xmax=147456,
+      grid
+      ]
+      \addplot table[x={nprocs}, y={fem8g}] {\scalinglarge};
+      \addlegendentry{8B cells};
+      \addplot table[x={nprocs}, y={fem1g}] {\scalinglarge};
+      \addlegendentry{1B cells};
+      \addplot table[x={nprocs}, y={fem128m}] {\scalinglarge};
+      \addlegendentry{128M cells};
+      \addplot table[x={nprocs}, y={fem16m}] {\scalinglarge};
+      \addlegendentry{16M cells};
+      \addplot[gnuplot@green,mark=diamond*,mark options={fill=gnuplot@green!40}] table[x={nprocs}, y={fem2m}] {\scalinglarge};
+      \addlegendentry{2M cells};
+      \addplot[dashed,black] coordinates {
+        (8,10)
+        (147456,5/9168)
+      };
+      \addlegendentry{linear scaling};
+      \addplot[dashed,black] coordinates {
+        (16,8*5)
+        (147456,8*5/9168)
+      };
+      \addplot[dashed,black] coordinates {
+        (16,64*5)
+        (147456,64*5/9168)
+      };
+      \addplot[dashed,black] coordinates {
+        (16,5*512)
+        (147456,5*512/9168)
+      };
+      \addplot[dashed,black] coordinates {
+        (16,5*4096)
+        (147456,5*4096/9168)
+      };
+    \end{loglogaxis}
+  \end{tikzpicture}
+  \begin{tikzpicture}
+    \begin{loglogaxis}[
+      title style={at={(1,0.965)},anchor=north east,draw=black,fill=white,font=\scriptsize\bf},
+      title={$256^3$ mesh, discontinuous $\mathcal Q_3$ elements},
+      width=0.48\textwidth,
+      height=0.5\textwidth,
+      xlabel={Number of cores},
+      x label style={at={(0.5,0.02)}},
+      xtick={56,224,896,3584,14336},
+      xticklabels={56,224,896,3584,14336},
+      tick label style={font=\scriptsize},
+      label style={font=\scriptsize},
+      legend style={font=\scriptsize},
+      legend pos=south west,
+      xmin=28, xmax=14336,
+      ymin=5e-3, ymax=15,
+      grid
+      ]
+      \addplot[blue,mark=*,densely dashed] table[x={nprocs}, y={olddg16m}] {\scalingHSW};
+      \addlegendentry{old, 16M cells};
+      \addplot[blue,mark=o] table[x={nprocs}, y={newdg16m}] {\scalingHSW};
+      \addlegendentry{new, 16M cells};
+      \addplot[red,mark=square*,densely dashed] table[x={nprocs}, y={olddg2m}] {\scalingHSW};
+      \addlegendentry{old, 2M cells};
+      \addplot[red,mark=square] table[x={nprocs}, y={newdg2m}] {\scalingHSW};
+      \addlegendentry{new, 2M cells};
+      \addplot[gnuplot@green,mark=diamond*,densely dashed] table[x={nprocs}, y={olddg256k}] {\scalingHSW};
+      \addlegendentry{old, 256k cells};
+      \addplot[gnuplot@green,mark=diamond] table[x={nprocs}, y={newdg256k}] {\scalingHSW};
+      \addlegendentry{new, 256k cells};
+    \end{loglogaxis}
+  \end{tikzpicture}
+  \caption{Scaling of multigrid algorithms on SuperMUC.}
+\label{fig:scaling_mg}
+\end{figure}
+
+The scalability of the improved geometric multigrid framework is shown in
+Fig.~\ref{fig:scaling_mg}, including a combined strong and weak scalability
+plot in the left panel using continuous $\mathcal Q_3$ elements on 57 million
+to 232 billion degrees of freedom for the Laplacian. Along each line, the same
+problem size is solved with an increasing number of cores, whereas different
+lines always start out at 3.5 million degrees of freedom per core. Almost
+ideal scalability down to approximately 0.1 seconds can be observed also on
+147k cores. The right panel of Fig.~\ref{fig:scaling_mg} shows the effect of
+the aforementioned algorithmic improvements on a setup with discontinuous DG
+elements, clearly improving the latency of the multigrid V-cycle. The improved
+algorithms are shown in the updated step-37 tutorial program.
+
+
+
 \subsection{The \texttt{FE\_Enriched} class}
 
-TODO: Denis 
+TODO: Denis
 
 \subsection{The \texttt{FE\_Series} namespace}
 
@@ -147,13 +311,13 @@ TODO: Denis
 
 Facilitate the usage of matrix-free method by providing a \verb!MatrixFreeOperator::Base! class,
 which implements various interface to matrix-vector products, including necessary operations when used in
-the context of the geometric multigrids, methods needed for usage within the linear operator as well as with Jacobi preconditioner. 
+the context of the geometric multigrids, methods needed for usage within the linear operator as well as with Jacobi preconditioner.
 The derived classes only need to implement \verb!apply_add()! method that is
-used in the \verb!vmult()! functions, and a method to compute the diagonal entries of the underlying matrix. 
-The \verb!MatrixFreeOperator! namespace contains implementations of \verb!MatrixFreeOperators::LaplaceOperator! and 
-\verb!MatrixFreeOperators::MassOperator!. 
+used in the \verb!vmult()! functions, and a method to compute the diagonal entries of the underlying matrix.
+The \verb!MatrixFreeOperator! namespace contains implementations of \verb!MatrixFreeOperators::LaplaceOperator! and
+\verb!MatrixFreeOperators::MassOperator!.
 
-TODO: Mention updated Step-37.
+The framework was also included in the updated step-37 tutorial program.
 
 \subsection{Incompatible changes}
 
@@ -259,40 +423,40 @@ this release:
 % get this from the changes/*/* files using the command listed in the
 % release-tasks paper and remove the authors of this paper
 %
-Rajat  Arora, 
-Mauro  Bardelloni, 
-Conrad  Clevenger, 
-Sam  Cox, 
-Juliane  Dannberg, 
-Ren{\'e}  Gassm{\"o}ller, 
-Joscha  Gedicke, 
-Sebastian  Gonzalez-Pintor, 
-Ryan  Grove, 
-Michael  Harmon, 
-Daniel  Jodlbauer, 
-Guido  Kanschat, 
-Justin  Kauffman, 
-Paul  Kuberry, 
-Dustin  Kumor, 
-Konstantin  Ladutenko, 
-Andrew  McBride, 
-Mathias  Mentler, 
-Andrea  Mola, 
-Dragan  Nikolic, 
-Vaibhav  Palkar, 
-Spencer  Patty, 
-Jonathan  Perry-Houts, 
-Giuseppe  Pitton, 
-Ce  Qin, 
-Jonathan  Robey, 
-Mayank  Sabharwal, 
-Ali  Samii, 
-Alberto  Sartori, 
-Daniel  Shapero, 
-Martin  Steigemann, 
-Jihuan  Tian, 
-Jaeryun  Yim, 
-Toby  Young, 
+Rajat  Arora,
+Mauro  Bardelloni,
+Conrad  Clevenger,
+Sam  Cox,
+Juliane  Dannberg,
+Ren{\'e}  Gassm{\"o}ller,
+Joscha  Gedicke,
+Sebastian  Gonzalez-Pintor,
+Ryan  Grove,
+Michael  Harmon,
+Daniel  Jodlbauer,
+Guido  Kanschat,
+Justin  Kauffman,
+Paul  Kuberry,
+Dustin  Kumor,
+Konstantin  Ladutenko,
+Andrew  McBride,
+Mathias  Mentler,
+Andrea  Mola,
+Dragan  Nikolic,
+Vaibhav  Palkar,
+Spencer  Patty,
+Jonathan  Perry-Houts,
+Giuseppe  Pitton,
+Ce  Qin,
+Jonathan  Robey,
+Mayank  Sabharwal,
+Ali  Samii,
+Alberto  Sartori,
+Daniel  Shapero,
+Martin  Steigemann,
+Jihuan  Tian,
+Jaeryun  Yim,
+Toby  Young,
 Zhao, Liang.
 
 Their contributions are much appreciated!
@@ -315,7 +479,14 @@ T.~Heister was partially supported by the Computational Infrastructure in
 Geodynamics initiative (CIG), through the National Science Foundation
 under Award No. EAR-0949446 and The University of California -- Davis, and National Science Foundation grant DMS1522191.
 
-
+M.~Kronbichler was partially supported by the German Research Foundation (DFG)
+under the project ``High-order discontinuous Galerkin for the exa-scale''
+(ExaDG) within the priority program ``Software for Exascale Computing''
+(SPPEXA), grant agreement no.~KR4661/2-1, the Bayerisches Kompetenznetzwerk
+f\"ur Technisch-Wissenschaftliches Hoch- und H\"ochstleistungsrechnen
+(KONWIHR), and the Gauss Centre for Supercomputing e.V.~by providing computing
+time on the GCS Supercomputer SuperMUC at Leibniz Supercomputing Centre (LRZ)
+through project id pr83te.
 
 
 The Interdisciplinary Center for Scientific Computing (IWR) at Heidelberg University has provided
