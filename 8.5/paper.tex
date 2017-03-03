@@ -61,8 +61,8 @@
   Minneapolis, MN 55455, USA,
   {\texttt{msmaier@umn.edu}}}
   
-\author[2]{Jean-Paul Pelteret}
-\affil[2]{Chair of Applied Mechanics, 
+\author[5]{Jean-Paul Pelteret}
+\affil[5]{Chair of Applied Mechanics, 
   University of Erlangen-Nuremberg, 
   Egerlandstr.\ 5, 
   91058 Erlangen, 
@@ -109,8 +109,7 @@ The major changes of this release are:
 \item Trilinos linear operators?
   TODO: Jean-Paul and Matthias
 
-\item Physics module
-  TODO: Denis and Jean-Paul
+\item A dedicated physics module has been created to provide some standard definitions and operations used in continuum physics.
 
 \item FE\_Enriched
 
@@ -157,9 +156,14 @@ TODO: Denis and Jean-Paul
 
 TODO: Jean-Paul and Matthias
 
-\subsection{The physics module?}
+\subsection{The physics module}
 
-TODO: Jean-Paul
+A dedicated physics module has been created to facilitate the implementation of functions and classes that relate to continuum physics, physical fields and material constitutive laws.
+To date, it includes transformations of scalar or tensorial quantities between any two configurations, and some definitions typically utilized in both linear and finite-strain nonlinear elasticity.
+
+The \verb!Physics::Transformations! namespace offers push-forward and pull-back operations in the context of contravariant, covariant and Piola transformations, as well as rotation operations for Euclidean space.
+In the \verb!Physics::Elasticity::Kinematics! namespace, a selection of deformation, strain tensors and strain rate tensors are defined.
+The \verb!Physics::Elasticity::StandardTensors! class provides some frequently used second and fourth order metric tensors, and defines some referential and spatial projection operators and tensor derivatives as commonly required in the definition of material laws.
 
 \subsection{The \texttt{FE\_Enriched} class}
 
