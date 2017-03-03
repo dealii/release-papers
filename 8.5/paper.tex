@@ -4,6 +4,7 @@
 \usepackage{amsmath}
 %\usepackage{cite}
 \usepackage{anslistings}
+\usepackage{multicol}
 
 \usepackage{fontenc}
 \usepackage{graphicx}
@@ -120,21 +121,20 @@ and that is linked to from the web site of each release as well as the
 release announcement.
 
 
-\subsection{important thing 1}
+\subsection{The \texttt{CellDataStorage} class}
 
-\subsection{important thing 2}
+\subsection{The \texttt{MappingManifold} class}
+
+\subsection{Linear operators with Trilinos?}
+
+\subsection{The physics module?}
+
+\subsection{The \texttt{FE\_Enriched} class}
+
+\subsection{The \texttt{FE\_Series} namespace?}
 
 
 
-Other things we could talk about:
-PVS static checker, coverity, ...
-
-GridReordering rewrite
-
-No longer use features of C++ deprecated with C++11/14/17
-Move operators
-
-Python bindings
 
 
 \subsection{Incompatible changes}
@@ -145,7 +145,7 @@ Switch default of Lagrange elements to Gauss-Lobatto
 
 \subsubsection{Other incompatible changes}
 
-No long double instantiations any more
+No \texttt{long double} instantiations any more
 
 ParameterGUI moved to separate repo
 
@@ -169,14 +169,9 @@ software, we ask that papers using the library reference one of the
 There are various ways to reference \dealii{}. To acknowledge the use of a
 particular version of the library, reference the present document. For up
 to date information and bibtex snippets for this document see:
-
-\bigskip
-
 \begin{center}
  \url{https://www.dealii.org/publications.html}
 \end{center}
-
-\bigskip
 
 % \begin{minipage}{0.9\textwidth}%no page break in here please
 % \begin{verbatim}
@@ -211,6 +206,7 @@ features of the library, please consider citing any of the following:
 \end{itemize}
 
 \dealii{} can interface with many other libraries:
+\begin{multicols}{2}
 \begin{itemize}
 \item ARPACK \cite{arpack}
 \item BLAS, LAPACK
@@ -227,6 +223,7 @@ features of the library, please consider citing any of the following:
 \item Trilinos \cite{trilinos,trilinos-web-page}
 \item UMFPACK \cite{umfpack}
 \end{itemize}
+\end{multicols}
 Please consider citing the appropriate references if you use interfaces to these
 libraries.
 
