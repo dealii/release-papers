@@ -30,9 +30,12 @@
 \hypersetup{
   pdfauthor={
     Wolfgang Bangerth,
-    Denis Davydov
-    Timo Heister
-    Martin Kronbichler
+    Denis Davydov,
+    Timo Heister,
+    Luca Heltai,
+    Martin Kronbichler,
+    Matthias Maier,
+    Jean-Paul Pelteret
   },
   pdftitle={The deal.II Library, Version 8.5, 2017},
 }
@@ -56,11 +59,33 @@
   Clemson, SC 29634, USA.
   {\texttt{heister@clemson.edu}}}
 
-\author[4]{Martin Kronbichler}
-\affil[4]{Institute for Computational Mechanics,
+\author[4]{Luca Heltai}
+\affil[4]{SISSA,
+  International School for Advanced Studies,
+  Via Bonomea 265,
+  34136, Trieste, Italy
+{\texttt{luca.heltai@sissa.it}}}
+
+\author[5]{Martin Kronbichler}
+\affil[5]{Institute for Computational Mechanics,
   Technical University of Munich,
   Boltzmannstr.~15, 85748 Garching, Germany.
   {\texttt{kronbichler@lnm.mw.tum.de}}}
+
+\author[6]{Matthias Maier}
+\affil[6]{School of Mathematics,
+  University of Minnesota,
+  127 Vincent Hall, 206 Church Street SE,
+  Minneapolis, MN 55455, USA,
+  {\texttt{msmaier@umn.edu}}}
+
+\author[7]{Jean-Paul Pelteret}
+\affil[7]{Chair of Applied Mechanics,
+  University of Erlangen-Nuremberg,
+  Egerlandstr.\ 5,
+  91058 Erlangen,
+  Germany.
+  {\texttt{jean-paul.pelteret@fau.de}}}
 
 \renewcommand{\labelitemi}{--}
 
@@ -91,16 +116,19 @@ The major changes of this release are:
 \marginpar{Add one sentence to each of the following.}
 \begin{itemize}
 \item CellDataStorage class
+  TODO: Denis and Jean-Paul
 
 \item The \texttt{MappingManifold} class provides mappings between the
   reference cell and a mesh cell that is ``exact'' in the sense that
   the edges, faces, and the interior of the mesh cell matches an
   underlying manifold. This is opposed to using the usual polynomial
   approximations of the manifold.
+  TODO: Luca
 
 \item Trilinos linear operators?
+  TODO: Jean-Paul and Matthias
 
-\item Physics module
+\item A dedicated physics module has been created to provide some standard definitions and operations used in continuum physics.
 
 \item FE\_Enriched
 
@@ -139,11 +167,24 @@ release announcement.
 
 \subsection{The \texttt{CellDataStorage} class}
 
+TODO: Denis and Jean-Paul
+
 \subsection{The \texttt{MappingManifold} class}
 
-\subsection{Linear operators with Trilinos?}
+TODO: Luca
 
-\subsection{The physics module?}
+\subsection{TODO: Linear operators with Payload and Trilinos}
+
+TODO: Jean-Paul and Matthias
+
+\subsection{The physics module}
+
+A dedicated physics module has been created to facilitate the implementation of functions and classes that relate to continuum physics, physical fields and material constitutive laws.
+To date, it includes transformations of scalar or tensorial quantities between any two configurations, and some definitions typically utilized in both linear and finite-strain nonlinear elasticity.
+
+The \verb!Physics::Transformations! namespace offers push-forward and pull-back operations in the context of contravariant, covariant and Piola transformations, as well as rotation operations for Euclidean space.
+In the \verb!Physics::Elasticity::Kinematics! namespace, a selection of deformation, strain tensors and strain rate tensors are defined.
+The \verb!Physics::Elasticity::StandardTensors! class provides some frequently used second and fourth order metric tensors, and defines some referential and spatial projection operators and tensor derivatives as commonly required in the definition of material laws.
 
 \subsection{Scalability of geometric multigrid framework}
 
@@ -488,6 +529,7 @@ f\"ur Technisch-Wissenschaftliches Hoch- und H\"ochstleistungsrechnen
 time on the GCS Supercomputer SuperMUC at Leibniz Supercomputing Centre (LRZ)
 through project id pr83te.
 
+J-P.~Pelteret was supported by the European Research Council (ERC) through the Advanced Grant 289049 MOCOPOLY.
 
 The Interdisciplinary Center for Scientific Computing (IWR) at Heidelberg University has provided
 hosting services for the \dealii{} web page and the SVN archive.
