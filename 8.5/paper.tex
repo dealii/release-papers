@@ -116,7 +116,7 @@ The major changes of this release are:
 \marginpar{Add one sentence to each of the following.}
 \begin{itemize}
 \item The \texttt{CellDataStorage} class provides a mechanism to store user-defined data on each cell.
-This data is treated as a first-class citizen to \dealii{} and, when used in conjunction with other classes, can be shipped to other MPI cores during mesh refinement and repartitioning. 
+This data is treated as a first-class citizen to \dealii{} and, when used in conjunction with other classes, can be shipped to other MPI cores during mesh refinement and repartitioning.
 
 \item The \texttt{MappingManifold} class provides mappings between the
   reference cell and a mesh cell that is ``exact'' in the sense that
@@ -145,6 +145,12 @@ This data is treated as a first-class citizen to \dealii{} and, when used in con
   visco-elastic material behavior, (ii) multiphase Navier-Stokes flow,
   (iii) the evolution of global-scale topography on planetary bodies,
   (iv) goal-oriented elastoplasticity.
+
+\item Various improvements for high-order elements, including a switch of
+  support points in \texttt{FE\_Q} and \texttt{FE\_DGQ} to Gauss--Lobatto
+  support points, more stable evaluation of Legendre polynomials, and several
+  bugfixes for high-order polynomial mappings defined through the
+  \texttt{MappingQ} class.
 
 
 \item More than 230 other features and bugfixes.
@@ -200,20 +206,21 @@ The \verb!Physics::Elasticity::StandardTensors! class provides some frequently u
 
 For the new release, the geometric multigrid facilities in \dealii{} have been
 thoroughly overhauled regarding their scalability on large-scale parallel
-computers. During this process, a geometric multigrid implementation based on
+systems. During this process, a geometric multigrid implementation based on
 the fast matrix-free kernels from \cite{KronbichlerKormann2012} has been
-benchmarked up to 147,456 cores. The fast matrix-vector product revealed
-several scalability bottlenecks, including unnecessary inner products inside
-the Chebyshev smoother and $\mathcal O(n_\text{levels})$ global communication
-steps during the restriction process rather than only the single global
-communication step that is necessary when going to the coarest grid. New
+benchmarked on up to 147,456 cores. The fast matrix-vector products revealed
+several scalability bottlenecks in the other multigrid components, including
+unnecessary inner products inside the Chebyshev smoother and
+$\mathcal O(n_\text{levels})$ global communication steps during the
+restriction process rather than the single unavoidable global communication
+step inherent to going to the coarsest grid and the coarse solve. New
 matrix-free transfer implementations called \texttt{MGTransferMatrixFree} were
 devised that can replace the matrix-based \texttt{MGTransferPrebuilt} class
 for tensor product elements. Besides better scalability than the Trilinos
 Epetra matrices underlying the latter, the matrix-free transfer is also a much
-better for high-order elements with complexity per degree of freedom of
+better for high-order elements with a complexity per degree of freedom of
 $\mathcal O(d p)$ in the polynomial degree $p$ in $d$ dimensions rather than
-$\mathcal O(p^d)$ for the matrix-based approach.
+$\mathcal O(p^d)$ for the matrices.
 
 \begin{figure}
 \pgfplotstableread{
@@ -333,7 +340,7 @@ nprocs    newdg256k    newdg2m   newdg16m olddg256k  olddg2m   olddg16m
       \addlegendentry{new, 256k cells};
     \end{loglogaxis}
   \end{tikzpicture}
-  \caption{Scaling of multigrid algorithms on SuperMUC.}
+  \caption{Scaling of \dealii{}'s geometric multigrid algorithms on SuperMUC.}
 \label{fig:scaling_mg}
 \end{figure}
 
@@ -343,19 +350,21 @@ in the left panel using continuous $\mathcal Q_3$ elements with 57~million to
 232~billion degrees of freedom for discretizing the Laplacian. Along each
 line, the same problem size is solved with an increasing number of cores,
 whereas different lines are a factor of eight apart and always start at
-3.5~million degrees of freedom per core. Almost ideal scalability down to
-approximately 0.1~seconds can be observed also on 147k~cores. The right panel
-of Fig.~\ref{fig:scaling_mg} shows the effect of the aforementioned
+3.5~million degrees of freedom per core with an absolute performance of around
+650,000 degrees of freedom per core and second. Almost ideal scalability down
+to approximately 0.1~seconds can be observed also on 147k~cores. The right
+panel of Fig.~\ref{fig:scaling_mg} shows the effect of the aforementioned
 algorithmic improvements on a setup with discontinuous DG elements, clearly
-improving the latency of the multigrid V-cycle. The improved algorithms are
-shown in the updated step-37 tutorial program.
+improving the latency of the multigrid V-cycle. The updated step-37 tutorial
+programs presents the updated algorithms and the MPI-parallel multigrid
+setting with matrix-free operator evaluation.
 
 
 
 \subsection{The \texttt{FE\_Enriched} class}
 
-\verb!FE_Enriched! finite element implements a partition of unity finite element method (PUM) by Babuska and Melenk which enriches a standard finite element with an enrichment function multiplied with another (usually linear) finite element. This allows to include in the finite element space a priori knowledge about the partial differential equation being solved which in turn improves the local approximation properties of the spaces. The user can also use enriched and non-enriched finite elements in different parts of the domain. 
-\verb|!DoFTools::make_hanging_node_constraints()| function can automatically make the resulting space $C^0$ continuous.
+\verb!FE_Enriched! finite element implements a partition of unity finite element method (PUM) by Babuska and Melenk which enriches a standard finite element with an enrichment function multiplied with another (usually linear) finite element. This allows to include in the finite element space a priori knowledge about the partial differential equation being solved which in turn improves the local approximation properties of the spaces. The user can also use enriched and non-enriched finite elements in different parts of the domain.
+\verb|DoFTools::make_hanging_node_constraints()| function can automatically make the resulting space $C^0$ continuous.
 Existing \verb|SolutionTransfer| class can be used to transfer the solution during $h$\,-adaptive refinement from a coarse to a fine mesh under the condition that all child elements are also enriched.
 
 \subsection{The \texttt{FESeries} namespace}
@@ -366,21 +375,30 @@ The step-27 has been updated to use \verb|FESeries::Fourier|.
 
 \subsection{Matrix-free operators}
 
-Facilitate the usage of matrix-free method by providing a \verb!MatrixFreeOperator::Base! class,
-which implements various interface to matrix-vector products, including necessary operations when used in
-the context of the geometric multigrids, methods needed for usage within the linear operator as well as with Jacobi preconditioner.
-The derived classes only need to implement \verb!apply_add()! method that is
+In order to facilitate the usage of matrix-free methods, a \verb!MatrixFreeOperator::Base! class has been introduced,
+implementing various interfaces to matrix-vector products and the necessary operations for the interface residuals according to \cite{JanssenKanschat2011} in
+the context of the geometric multigrids. Furthermore, the class is compatible with the linear operator framework and provides an interface to a Jacobi preconditioner.
+The derived classes only need to implement the \verb!apply_add()! method that is
 used in the \verb!vmult()! functions, and a method to compute the diagonal entries of the underlying matrix.
 The \verb!MatrixFreeOperator! namespace contains implementations of \verb!MatrixFreeOperators::LaplaceOperator! and
 \verb!MatrixFreeOperators::MassOperator!.
-
-The framework was also included in the updated step-37 tutorial program.
+The updated step-37 tutorial program makes use of these facilities and
+explains their usage in detail. Using the matrix-free mass operator,
+\verb!VectorTools::project! has become much faster than the previous
+matrix-based approach and also works in parallel with MPI.
 
 \subsection{Incompatible changes}
 
 \subsubsection{incompatible change 1}
 
-Switch default of Lagrange elements to Gauss-Lobatto
+High-order Lagrange elements, both continuous \verb!FE_Q! and discontinuous
+\verb!FE_DGQ! types, now use the nodal points of the Gauss--Lobatto
+quadrature formula as support points, rather than the previous equidistant
+ones. For cubic polynomials and higher, the point distribution has changed and
+thus the entries in solution vectors will look different now. Note, however,
+that using the Gauss--Lobatto points as nodal points results in much more
+stable interpolation, including better iteration counts in most iterative
+solvers.
 
 \subsubsection{Other incompatible changes}
 
