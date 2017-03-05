@@ -12,6 +12,8 @@
 \usepackage{fontenc}
 \usepackage{graphicx}
 
+\pgfplotsset{compat=1.12}
+
 \newcommand{\specialword}[1]{\texttt{#1}}
 \newcommand{\dealii}{{\specialword{deal.II}}}
 \newcommand{\pfrst}{{\specialword{p4est}}}
@@ -29,6 +31,7 @@
 
 \hypersetup{
   pdfauthor={
+    Daniel Arndt,
     Wolfgang Bangerth,
     Denis Davydov,
     Timo Heister,
@@ -42,45 +45,50 @@
 
 \title{The \dealii{} Library, Version 8.5}
 
-\author[1]{Wolfgang Bangerth}
-\affil[1]{Department of Mathematics, Colorado State University, Fort
+\author[1]{Daniel Arndt}
+\affil[1]{Interdisciplinary Center for Scientific Computing,
+    Heidelberg University, Im Neuenheimer Feld 205, 69120 Heidelberg, Germany.
+    {\texttt{daniel.arndt@iwr.uni-heidelberg.de}}}
+
+\author[2]{Wolfgang Bangerth}
+\affil[2]{Department of Mathematics, Colorado State University, Fort
   Collins, CO 80523-1874, USA.
     {\texttt{bangerth@colostate.edu}}}
 
-\author[2]{Denis Davydov}
-\affil[2]{Chair of Applied Mechanics, University of
+\author[3]{Denis Davydov}
+\affil[3]{Chair of Applied Mechanics, University of
      Erlangen-Nuremberg, Egerlandstr.\ 5, 91058 Erlangen, Germany.
     {\texttt{denis.davydov@fau.de}}}
 
-\author[3]{Timo Heister}
-\affil[3]{Mathematical Sciences,
+\author[4]{Timo Heister}
+\affil[4]{Mathematical Sciences,
   O-110 Martin Hall,
   Clemson University,
   Clemson, SC 29634, USA.
   {\texttt{heister@clemson.edu}}}
 
-\author[4]{Luca Heltai}
-\affil[4]{SISSA,
+\author[5]{Luca Heltai}
+\affil[5]{SISSA,
   International School for Advanced Studies,
   Via Bonomea 265,
   34136, Trieste, Italy
 {\texttt{luca.heltai@sissa.it}}}
 
-\author[5]{Martin Kronbichler}
-\affil[5]{Institute for Computational Mechanics,
+\author[6]{Martin Kronbichler}
+\affil[6]{Institute for Computational Mechanics,
   Technical University of Munich,
   Boltzmannstr.~15, 85748 Garching, Germany.
   {\texttt{kronbichler@lnm.mw.tum.de}}}
 
-\author[6]{Matthias Maier}
-\affil[6]{School of Mathematics,
+\author[7]{Matthias Maier}
+\affil[7]{School of Mathematics,
   University of Minnesota,
   127 Vincent Hall, 206 Church Street SE,
   Minneapolis, MN 55455, USA,
   {\texttt{msmaier@umn.edu}}}
 
-\author[7]{Jean-Paul Pelteret}
-\affil[7]{Chair of Applied Mechanics,
+\author[8]{Jean-Paul Pelteret}
+\affil[8]{Chair of Applied Mechanics,
   University of Erlangen-Nuremberg,
   Egerlandstr.\ 5,
   91058 Erlangen,
@@ -545,6 +553,10 @@ Their contributions are much appreciated!
 variety of funding sources:
 
 \marginpar{Add your funding here as appropriate}
+D.~Arndt was supported by the German Research Foundation (DFG) under the
+project ``High-order discontinuous Galerkin for the exa-scale'' (ExaDG) within the
+priority program ``Software for Exascale Computing'' (SPPEXA).
+
 W.~Bangerth was partially
 supported by the National Science Foundation under award OCI-1148116
 as part of the Software Infrastructure for Sustained Innovation (SI2)
@@ -552,7 +564,7 @@ program; and by the Computational Infrastructure in Geodynamics initiative
 (CIG), through the National Science Foundation under Awards
 No.~EAR-0949446 and EAR-1550901 and The University of California -- Davis.
 
-D. Davydov was supported by the European Research Council (ERC) through the Advanced Grant 289049 MOCOPOLY and the Competence Network for Technical and Scientific High Performance Computing in Bavaria (KONWIHR).
+D.~Davydov was supported by the European Research Council (ERC) through the Advanced Grant 289049 MOCOPOLY and the Competence Network for Technical and Scientific High Performance Computing in Bavaria (KONWIHR).
 
 T.~Heister was partially supported by the Computational Infrastructure in
 Geodynamics initiative (CIG), through the National Science Foundation
