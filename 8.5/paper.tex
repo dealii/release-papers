@@ -385,7 +385,8 @@ The \verb!MatrixFreeOperator! namespace contains implementations of \verb!Matrix
 The updated step-37 tutorial program makes use of these facilities and
 explains their usage in detail. Using the matrix-free mass operator,
 \verb!VectorTools::project! has become much faster than the previous
-matrix-based approach and also works in parallel with MPI.
+matrix-based approach for elements supported by \verb!MatrixFree! and also
+works in parallel with MPI.
 
 \subsection{Incompatible changes}
 
