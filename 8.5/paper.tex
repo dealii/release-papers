@@ -156,7 +156,7 @@ This data is treated as a first-class citizen to \dealii{} and, when used in con
 
 \item Various improvements for high-order elements, including a switch of
   support points in \texttt{FE\_Q} and \texttt{FE\_DGQ} to Gauss--Lobatto
-  support points, more stable evaluation of Legendre polynomials, and several
+  support points, stable evaluation of high-order Legendre polynomials, and several
   bugfixes for high-order polynomial mappings defined through the
   \texttt{MappingQ} class.
 
@@ -271,8 +271,6 @@ nprocs    newdg256k    newdg2m   newdg16m olddg256k  olddg2m   olddg16m
       height=0.5\textwidth,
       xlabel={Number of cores},
       ylabel={Solver time [s]},
-      x label style={at={(0.5,0.02)}},
-      y label style={at={(0.05,0.5)}},
       xtick={32,128,512,2048,8192,32768,147456},
       xticklabels={32,128,512,2048,8192,32k,147k},
       tick label style={font=\scriptsize},
@@ -319,11 +317,10 @@ nprocs    newdg256k    newdg2m   newdg16m olddg256k  olddg2m   olddg16m
   \begin{tikzpicture}
     \begin{loglogaxis}[
       title style={at={(1,0.965)},anchor=north east,draw=black,fill=white,font=\scriptsize\bf},
-      title={$256^3$ mesh, discontinuous $\mathcal Q_3$ elements},
+      title={discontinuous $\mathcal Q_3$ elements},
       width=0.48\textwidth,
       height=0.5\textwidth,
       xlabel={Number of cores},
-      x label style={at={(0.5,0.02)}},
       xtick={56,224,896,3584,14336},
       xticklabels={56,224,896,3584,14336},
       tick label style={font=\scriptsize},
@@ -403,9 +400,9 @@ works in parallel with MPI.
 High-order Lagrange elements, both continuous \verb!FE_Q! and discontinuous
 \verb!FE_DGQ! types, now use the nodal points of the Gauss--Lobatto
 quadrature formula as support points, rather than the previous equidistant
-ones. For cubic polynomials and higher, the point distribution has changed and
-thus the entries in solution vectors will look different now. Note, however,
-that using the Gauss--Lobatto points as nodal points results in much more
+ones. For cubic polynomials and higher, the point distribution has thus changed and
+thus the entries in solution vectors will look different as compared to the previous version. Note, however,
+that using the Gauss--Lobatto points as nodal points results in a much more
 stable interpolation, including better iteration counts in most iterative
 solvers.
 
