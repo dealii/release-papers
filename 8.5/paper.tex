@@ -137,9 +137,9 @@ This data is treated as a first-class citizen to \dealii{} and, when used in con
 
 \item A dedicated physics module has been created to provide some standard definitions and operations used in continuum physics.
 
-\item FE\_Enriched
+\item \texttt{FE\_Enriched}
 
-\item FESeries namespace, use in step-27
+\item \texttt{FESeries} namespace, use in step-27
 
 \item New tutorial programs step-55, step-56, and step-57,
   demonstrating parallel solvers for the Stokes equations, a multigrid
@@ -149,10 +149,13 @@ This data is treated as a first-class citizen to \dealii{} and, when used in con
   computations, and the step-44 tutorial now uses the facilities of
   the physics module mentioned above.
 
-\item New code gallery programs demonstrating (i) quasi-static
-  visco-elastic material behavior, (ii) multiphase Navier-Stokes flow,
-  (iii) the evolution of global-scale topography on planetary bodies,
-  (iv) goal-oriented elastoplasticity.
+\item New code gallery programs demonstrating
+  \begin{enumerate}
+    \item[(i)] quasi-static visco-elastic material behavior, 
+    \item[(ii)] multiphase Navier-Stokes flow,
+    \item[(iii)] the evolution of global-scale topography on planetary bodies,
+    \item[(iv)] goal-oriented elastoplasticity.
+  \end{enumerate}
 
 \item Various improvements for high-order elements, including a switch of
   support points in \texttt{FE\_Q} and \texttt{FE\_DGQ} to Gauss--Lobatto
@@ -161,10 +164,17 @@ This data is treated as a first-class citizen to \dealii{} and, when used in con
   \texttt{MappingQ} class.
 
 
-\item More than 230 other features and bugfixes.
+\item More than 230 other features and bugfixes.\\
+  We realized that static code analyzers are valuable tools to improve and maintain the quality of the code in our library 
+  on top off build and regression tests for a variety of setups using \href{https://cdash.kyomu.43-1.org/index.php?project=deal.II}{CDash}.
+  This release was tested with \href{http://cppcheck.sourceforge.net/}{Cppcheck}, 
+  \href{https://www.viva64.com/en/pvs-studio/}{PVS-Studio} and \href{https://scan.coverity.com/}{Coverity-Scan}. 
+  For the latter the current status can be observed \href{https://scan.coverity.com/projects/deal-ii}{online}.
 \end{itemize}
 The more important ones of these will be detailed in the following section.
 Information on how to cite \dealii{} is provided in Section \ref{sec:cite}.
+
+
 
 
 \section{Significant changes to the library}
@@ -267,7 +277,7 @@ nprocs    newdg256k    newdg2m   newdg16m olddg256k  olddg2m   olddg16m
     \begin{loglogaxis}[
       title style={at={(0.5,0.965)},anchor=north,draw=black,fill=white,font=\scriptsize\bf},
       title={strong and weak scaling, continuous $\mathcal Q_3$ elements},
-      width=0.53\textwidth,
+      width=0.52\textwidth,
       height=0.5\textwidth,
       xlabel={Number of cores},
       ylabel={Solver time [s]},
@@ -500,7 +510,7 @@ Older releases of \dealii{} can be cited as \cite{dealII80,dealII81,dealII82,dea
 
 \dealii{} is a world-wide project with dozens of contributors around the
 globe. Other than the authors of this paper, the following people contributed code to
-this release:
+this release:\\
 %
 % get this from the changes/*/* files using the command listed in the
 % release-tasks paper and remove the authors of this paper
