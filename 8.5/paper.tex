@@ -136,7 +136,7 @@ The major changes of this release are:
   approximations of the manifold.
   TODO: Luca
 
-\item The \texttt{LinearOperator} class has been extended by a generic
+\item the \texttt{LinearOperator} class has been extended by a generic
   ``payload'' mechanism that allows to attach arbitrary additional
   information to a \texttt{LinearOperator}. The mechanism was used to
   implement a \texttt{TrilinosPayload} class to have full support for using
@@ -197,18 +197,30 @@ This release of \dealii{} contains a number of large and significant changes
 that will be discussed in the following sections. It of course also contains a
 vast number of smaller changes and added functionality; the details of these
 can be found
-\href{https://www.dealii.org/8.5.0/doxygen/deal.II/changes_between_8_4_and_8_5.html}{in the file that lists all changes for this release} (see \cite{changes85})
-and that is linked to from the web site of each release as well as the
-release announcement.
+\href{https://www.dealii.org/8.5.0/doxygen/deal.II/changes_between_8_4_and_8_5.html}{in
+the file that lists all changes for this release}; see \cite{changes85}.
+(The file is also linked to from the web site of each release as well as
+the release announcement.)
 
 
 \subsection{The \texttt{CellDataStorage} class and friends}
 
-The \texttt{CellDataStorage} class is an integrated mechanism to safely store user-defined data, such as that required at each computation point, within each cell.
-Although the same was previously achieved through the use of a cell \texttt{user\_pointer}, it required users to manage this data themselves.
-As this data is now treated as a first-class citizen to \dealii{}, through the abstract \texttt{TransferableQuadraturePointData} we have provided a generic interface to facilitate several low-level operations that were previously tedious or technically challenging to implement.
-For instance, the \texttt{parallel::distributed::ContinuousQuadratureDataTransfer} class assists in the transfer of arbitrary data (that is continuous within a cell) stored at quadrature points when performing h-adaptive refinement of \texttt{parallel::distributed::Triangulation}.
-Not only does it perform an $\mathcal{L}^2$ projection of the specified user data between quadrature points, but it also ships the data automatically between MPI processes.
+The \texttt{CellDataStorage} class is an integrated mechanism to safely
+store user-defined data, such as that required at each computation point,
+within each cell. Although the same was previously achieved through the use
+of a cell \texttt{user\_pointer}, it required users to manage this data
+themselves. This data is now treated as a first-class citizen to \dealii{}.
+
+Through the abstract \texttt{TransferableQuadraturePointData} we have
+provided a generic interface to facilitate several low-level operations
+that were previously tedious or technically challenging to implement. For
+instance, the
+\texttt{parallel::distributed::ContinuousQuadratureDataTransfer} class
+assists in the transfer of arbitrary data (that is continuous within a
+cell) stored at quadrature points when performing h-adaptive refinement of
+\texttt{parallel::distributed::Triangulation}. Not only does it perform an
+$\mathcal{L}^2$-projection of the specified user data between quadrature
+points, but it also ships the data automatically between MPI processes.
 
 \subsection{The \texttt{MappingManifold} class}
 
@@ -216,23 +228,30 @@ TODO: Luca
 
 \subsection{Extension of the \texttt{LinearOperator} class}
 
-By introduction of an arbitrary \texttt{Payload} base class, the
-\texttt{LinearOperator} class can be extended to seamlessly exploit the
-native features and operations offered by external linear algebra
-libraries. We have thus developed a \texttt{TrilinosPayload} class, through
-which full support for the suite of {\trilinos} parallel iterative solvers
-and preconditioners has been achieved. In the case of the construction of
-an \texttt{inverse\_operator}, both \dealii's built in solvers and those
-offered by {\trilinos} can be selected. This has been achieved by using the
-\texttt{Epetra\_Operator} as the basis for the \texttt{TrilinosPayload},
-for which the result of both standard and composite operations involving
-forward (\texttt{Apply()}) and inverse (\texttt{ApplyInverse()})
-matrix-vector multiplication are collated using lambda functions. It is
-envisaged that, in the future, similar can be done for the {\petsc}
+The \texttt{LinearOperator} class has been extended by a generic
+``payload'' mechanism that allows to attach arbitrary additional
+information to a \texttt{LinearOperator}. This was achieved by introducing
+a generic \texttt{Payload} base class. The main use case of the new
+mechanism is to extend the \texttt{LinearOperator} class to seamlessly
+exploit the native features and operations offered by external linear
+algebra libraries. We have thus developed a \texttt{TrilinosPayload} class,
+that provides full support for the suite of {\trilinos} parallel iterative
+solvers and preconditioners.
+
+A particular interesting case is the construction of an
+\texttt{inverse\_operator}. Now both, \dealii's built in solvers and those
+offered by {\trilinos}, can be selected. This has been achieved by using
+the \texttt{Epetra\_Operator} as the basis for the
+\texttt{TrilinosPayload}, for which the result of standard and composite
+operations involving forward (\texttt{Apply()}) and inverse
+(\texttt{ApplyInverse()}) matrix-vector multiplication are collated using
+lambda functions.
+
+It is envisaged that, in the future, similar can be done for the {\petsc}
 iterative solvers.
 
 An additional feature of the \texttt{LinearOperator} suite is the defintion
-of a \texttt{schur\_complement} operator, and its associated condensation
+of a \texttt{schur\_complement} operator and its associated condensation
 and post-processing \texttt{PackagedOperation}s. An operator representing
 the Schur complement of a block system can be declared and, though the
 delayed evaluation offered by \texttt{PackagedOperation}s, reused on any
