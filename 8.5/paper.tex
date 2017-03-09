@@ -468,46 +468,50 @@ updated to use \verb|FESeries::Fourier|.
 
 \subsection{Matrix-free operators}
 
-In order to facilitate the usage of matrix-free methods, a \verb!MatrixFreeOperator::Base! class has been introduced,
-implementing various interfaces to matrix-vector products and the necessary operations for the interface residuals according to \cite{JanssenKanschat2011} in
-the context of the geometric multigrids. Furthermore, the class is compatible with the linear operator framework and provides an interface to a Jacobi preconditioner.
-The derived classes only need to implement the \verb!apply_add()! method that is
-used in the \verb!vmult()! functions, and a method to compute the diagonal entries of the underlying matrix.
-The \verb!MatrixFreeOperator! namespace contains implementations of \verb!MatrixFreeOperators::LaplaceOperator! and
-\verb!MatrixFreeOperators::MassOperator!.
-The updated step-37 tutorial program makes use of these facilities and
-explains their usage in detail. Using the matrix-free mass operator,
-\verb!VectorTools::project! has become much faster than the previous
-matrix-based approach for elements supported by \verb!MatrixFree! and also
-works in parallel with MPI.
+In order to facilitate the usage of matrix-free methods, a
+\verb!MatrixFreeOperator::Base! class has been introduced, implementing
+various interfaces to matrix-vector products and the necessary operations
+for the interface residuals according to \cite{JanssenKanschat2011} in the
+context of the geometric multigrids. Furthermore, the class is compatible
+with the linear operator framework and provides an interface to a Jacobi
+preconditioner. The derived classes only need to implement the
+\verb!apply_add()! method that is used in the \verb!vmult()! functions, and
+a method to compute the diagonal entries of the underlying matrix. The
+\verb!MatrixFreeOperator! namespace contains implementations of
+\verb!MatrixFreeOperators::LaplaceOperator! and
+\verb!MatrixFreeOperators::MassOperator!. The updated step-37 tutorial
+program makes use of these facilities and explains their usage in detail.
+Using the matrix-free mass operator, \verb!VectorTools::project! has become
+much faster than the previous matrix-based approach for elements supported
+by \verb!MatrixFree! and also works in parallel with MPI.
 
 \subsection{Incompatible changes}
 
-\subsubsection{incompatible change 1}
-
-High-order Lagrange elements, both continuous \verb!FE_Q! and discontinuous
-\verb!FE_DGQ! types, now use the nodal points of the Gauss--Lobatto
-quadrature formula as support points, rather than the previous equidistant
-ones. For cubic polynomials and higher, the point distribution has thus changed and
-thus the entries in solution vectors will look different as compared to the previous version. Note, however,
-that using the Gauss--Lobatto points as nodal points results in a much more
-stable interpolation, including better iteration counts in most iterative
-solvers.
-
-\subsubsection{Other incompatible changes}
-
-No \texttt{long double} instantiations any more
-
-ParameterGUI moved to separate repo
-
-The
-\href{https://www.dealii.org/8.5.0/doxygen/deal.II/changes_between_8_4_and_8_5.html}{file
-  that lists all changes for this release} (see \cite{changes85})
-lists another around 20
-incompatible changes, but none of these should in fact be visible in
-typical user codes. Some remove previously deprecated classes and
-functions, and the majority change internal interfaces that are not
-typically used in user codes.
+The 8.5.0 release includes around 20
+\href{https://www.dealii.org/8.5.0/doxygen/deal.II/changes_between_8_4_and_8_5.html}{
+incompatible changes}; see \cite{changes85}. The majority of these changes
+should not be visible to typical user codes; some remove previously
+deprecated classes and functions, and the majority change internal
+interfaces that are not typically used in user codes. However, a number of
+incompatible changes a worth mentioning.
+\begin{itemize}
+  \item High-order Lagrange elements, both continuous \verb!FE_Q! and
+    discontinuous \verb!FE_DGQ! types, now use the nodal points of the
+    Gauss--Lobatto quadrature formula as support points, rather than the
+    previous equidistant ones. For cubic polynomials and higher, the point
+    distribution has thus changed and, consequently, the entries in
+    solution vectors will look different as compared to the previous
+    version. Note, however, that using the Gauss--Lobatto points as nodal
+    points results in a much more stable interpolation, including better
+    iteration counts in most iterative solvers.
+  \item
+    The library does not instantiate template versions with \texttt{long
+    double} any more. If you need template versions with \texttt{long
+    double} make sure to include the corresponding \texttt{templates.h}
+    header file.
+  \item
+    The \texttt{ParameterGUI} has been moved to a separate repository.
+\end{itemize}
 
 
 
