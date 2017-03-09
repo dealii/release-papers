@@ -123,8 +123,11 @@ GNU Lesser General Public License (LGPL) from the \dealii{} homepage at
 The major changes of this release are:
 \marginpar{Add one sentence to each of the following.}
 \begin{itemize}
-\item The \texttt{CellDataStorage} class provides a mechanism to store user-defined data on each cell.
-This data is treated as a first-class citizen to \dealii{} and, when used in conjunction with other classes, can be shipped to other MPI cores during mesh refinement and repartitioning.
+\item The \texttt{CellDataStorage} class provides a mechanism to store
+  user-defined data on each cell. This data is treated as a first-class
+  citizen to \dealii{} and, when used in conjunction with other classes,
+  can be shipped to other MPI cores during mesh refinement and
+  repartitioning.
 
 \item The \texttt{MappingManifold} class provides mappings between the
   reference cell and a mesh cell that is ``exact'' in the sense that
@@ -133,13 +136,19 @@ This data is treated as a first-class citizen to \dealii{} and, when used in con
   approximations of the manifold.
   TODO: Luca
 
-\item The \texttt{LinearOperator} class has been extended to fully support {\trilinos} solvers.
+\item The \texttt{LinearOperator} class has been extended by a generic
+  ``payload'' mechanism that allows to attach arbitrary additional
+  information to a \texttt{LinearOperator}. The mechanism was used to
+  implement a \texttt{TrilinosPayload} class to have full support for using
+  the suite of {\trilinos} iterative solvers and preconditioners with a
+  \texttt{LinearOperator}.
 
-\item A dedicated physics module has been created to provide some standard definitions and operations used in continuum physics.
+\item A dedicated physics module has been created to provide some standard
+  definitions and operations used in continuum mechanics.
 
-\item \texttt{FE\_Enriched}
+\item TODO \texttt{FE\_Enriched}
 
-\item \texttt{FESeries} namespace, use in step-27
+\item TODO \texttt{FESeries} namespace, use in step-27
 
 \item New tutorial programs step-55, step-56, and step-57,
   demonstrating parallel solvers for the Stokes equations, a multigrid
@@ -151,7 +160,7 @@ This data is treated as a first-class citizen to \dealii{} and, when used in con
 
 \item New code gallery programs demonstrating
   \begin{enumerate}
-    \item[(i)] quasi-static visco-elastic material behavior, 
+    \item[(i)] quasi-static visco-elastic material behavior,
     \item[(ii)] multiphase Navier-Stokes flow,
     \item[(iii)] the evolution of global-scale topography on planetary bodies,
     \item[(iv)] goal-oriented elastoplasticity.
@@ -159,21 +168,26 @@ This data is treated as a first-class citizen to \dealii{} and, when used in con
 
 \item Various improvements for high-order elements, including a switch of
   support points in \texttt{FE\_Q} and \texttt{FE\_DGQ} to Gauss--Lobatto
-  support points, stable evaluation of high-order Legendre polynomials, and several
-  bugfixes for high-order polynomial mappings defined through the
+  support points, stable evaluation of high-order Legendre polynomials, and
+  several bugfixes for high-order polynomial mappings defined through the
   \texttt{MappingQ} class.
 
 
-\item More than 230 other features and bugfixes.\\
-  We realized that static code analyzers are valuable tools to improve and maintain the quality of the code in our library 
-  on top off build and regression tests for a variety of setups using \href{https://cdash.kyomu.43-1.org/index.php?project=deal.II}{CDash}.
-  This release was tested with \href{http://cppcheck.sourceforge.net/}{Cppcheck}, 
-  \href{https://www.viva64.com/en/pvs-studio/}{PVS-Studio} and \href{https://scan.coverity.com/}{Coverity-Scan}. 
-  For the latter the current status can be observed \href{https://scan.coverity.com/projects/deal-ii}{online}.
+\item We realized that static code analyzers are valuable tools to improve
+  and maintain the quality of the code in our library on top off build and
+  regression tests for a variety of setups using
+  \href{https://cdash.kyomu.43-1.org/index.php?project=deal.II}{CDash}.
+  This release was tested with
+  \href{http://cppcheck.sourceforge.net/}{Cppcheck},
+  \href{https://www.viva64.com/en/pvs-studio/}{PVS-Studio} and
+  \href{https://scan.coverity.com/}{Coverity-Scan}. For the latter the
+  current status can be observed
+  \href{https://scan.coverity.com/projects/deal-ii}{online}.
+
+  \item More than 230 other features and bugfixes.
 \end{itemize}
 The more important ones of these will be detailed in the following section.
 Information on how to cite \dealii{} is provided in Section \ref{sec:cite}.
-
 
 
 
@@ -202,14 +216,27 @@ TODO: Luca
 
 \subsection{Extension of the \texttt{LinearOperator} class}
 
-By introduction of an arbitrary \texttt{Payload} base class, the \texttt{LinearOperator} class can be extended to seamlessly exploit the native features and operations offered by external linear algebra libraries.
-We have thus developed a \texttt{TrilinosPayload} class, through which full support for the suite of {\trilinos} parallel iterative solvers and preconditioners has been achieved.
-In the case of the construction of an \texttt{inverse\_operator}, both \dealii's built in solvers and those offered by {\trilinos} can be selected.
-This has been achieved by using the \texttt{Epetra\_Operator} as the basis for the \texttt{TrilinosPayload}, for which the result of both standard and composite operations involving forward (\texttt{Apply()}) and inverse (\texttt{ApplyInverse()}) matrix-vector multiplication are collated using lambda functions.
-It is envisaged that, in the future, similar can be done for the {\petsc} iterative solvers.
+By introduction of an arbitrary \texttt{Payload} base class, the
+\texttt{LinearOperator} class can be extended to seamlessly exploit the
+native features and operations offered by external linear algebra
+libraries. We have thus developed a \texttt{TrilinosPayload} class, through
+which full support for the suite of {\trilinos} parallel iterative solvers
+and preconditioners has been achieved. In the case of the construction of
+an \texttt{inverse\_operator}, both \dealii's built in solvers and those
+offered by {\trilinos} can be selected. This has been achieved by using the
+\texttt{Epetra\_Operator} as the basis for the \texttt{TrilinosPayload},
+for which the result of both standard and composite operations involving
+forward (\texttt{Apply()}) and inverse (\texttt{ApplyInverse()})
+matrix-vector multiplication are collated using lambda functions. It is
+envisaged that, in the future, similar can be done for the {\petsc}
+iterative solvers.
 
-An additional feature of the \texttt{LinearOperator} suite is the defintion of a \texttt{schur\_complement} operator, and its associated condensation and post-processing \texttt{PackagedOperation}s.
-An operator representing the Schur complement of a block system can be declared and, though the delayed evaluation offered by \texttt{PackagedOperation}s, reused on any number of vector systems.
+An additional feature of the \texttt{LinearOperator} suite is the defintion
+of a \texttt{schur\_complement} operator, and its associated condensation
+and post-processing \texttt{PackagedOperation}s. An operator representing
+the Schur complement of a block system can be declared and, though the
+delayed evaluation offered by \texttt{PackagedOperation}s, reused on any
+number of vector systems.
 
 \subsection{The physics module}
 
