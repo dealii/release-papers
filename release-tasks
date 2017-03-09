@@ -62,7 +62,8 @@ Thanks!
  developers:
 
 All,
-Timo and I have started to work on a few things necessary for the next release. In particular, we would like to get the release paper started.
+Timo and I have started to work on a few things necessary for the next
+release. In particular, we would like to get the release paper started.
 
 To this end:
 * Please check out https://github.com/dealii/release-papers
@@ -70,9 +71,15 @@ To this end:
   please add yourself to the list of authors for the 8.5 papers
 * If you think that someone other than just us maintainers should be a
   co-author, please nominate that person here
-We think that these last two points are important -- we want the list of co-authors to reflect who actually contributed, rather than inherited rights in the project, because that makes it clear to current and future participants in the project that they can hope for formal recognition of their work in terms of things they can put on their CV.
+We think that these last two points are important -- we want the list of
+co-authors to reflect who actually contributed, rather than inherited
+rights in the project, because that makes it clear to current and future
+participants in the project that they can hope for formal recognition of
+their work in terms of things they can put on their CV.
 
-As far as content of the paper is concerned: I put together a list of possible topics -- please take a look. Other things we /could/ talk about, if we think they are important, but that I'm not sure are good material:
+As far as content of the paper is concerned: I put together a list of
+possible topics -- please take a look. Other things we /could/ talk about,
+if we think they are important, but that I'm not sure are good material:
 * PVS static checker, coverity, ...
 * GridReordering rewrite
 * No longer use features of C++ deprecated with C++11/14/17
@@ -80,11 +87,13 @@ As far as content of the paper is concerned: I put together a list of possible t
 * Python bindings
 Please discuss. Also suggest topics I may have forgotten.
 
-As far as the material I tentatively put into the paper: if you're willing to write a section, can you attach your name to it somehow in the next couple of days?
+As far as the material I tentatively put into the paper: if you're willing
+to write a section, can you attach your name to it somehow in the next
+couple of days?
 
 Best
   Wolfgang & Timo
-  
+
 
 -1b/ update the authors list on the homepage authors.html by
      cross-referencing doc/news/changes.h
@@ -114,52 +123,52 @@ Developers:
   David Wells
   Toby Young
 
-Contributors for 8.5: 
-Alberto Sartori
-Ali Samii
-Andrea Mola
-Andrew McBride
-Bruno Turcksin
-Ce Qin
-Conrad Clevenger
-Daniel Arndt
-Daniel Jodlbauer
-Daniel Shapero
-David Wells
-Denis Davydov
-Dragan Nikolic
-Dustin Kumor
-Giuseppe Pitton
-Guido Kanschat
-Jaeryun Yim
-Jean-Paul Pelteret
-Jihuan Tian
-Jonathan Perry-Houts
-Jonathan Robey
-Joscha Gedicke
-Juliane Dannberg
-Justin Kauffman
-Konstantin Ladutenko and many others
-Liang Zhao
-Luca Heltai
-Martin Kronbichler
-Martin Steigemann
-Mathias Mentler
-Matthias Maier
-Mauro Bardelloni
-Mayank Sabharwal
-Michael Harmon
-Paul Kuberry
-Rajat Arora
-Rene Gassmoeller
-Ryan Grove
-Sam Cox
-Sebastian Gonzalez-Pintor
-Spencer Patty
-Timo Heister
-Toby D. Young
-Vaibhav Palkar
-Wolfgang Bangerth
+Contributors for 8.5:
+  Alberto Sartori
+  Ali Samii
+  Andrea Mola
+  Andrew McBride
+  Bruno Turcksin
+  Ce Qin
+  Conrad Clevenger
+  Daniel Arndt
+  Daniel Jodlbauer
+  Daniel Shapero
+  David Wells
+  Denis Davydov
+  Dragan Nikolic
+  Dustin Kumor
+  Giuseppe Pitton
+  Guido Kanschat
+  Jaeryun Yim
+  Jean-Paul Pelteret
+  Jihuan Tian
+  Jonathan Perry-Houts
+  Jonathan Robey
+  Joscha Gedicke
+  Juliane Dannberg
+  Justin Kauffman
+  Konstantin Ladutenko and many others
+  Liang Zhao
+  Luca Heltai
+  Martin Kronbichler
+  Martin Steigemann
+  Mathias Mentler
+  Matthias Maier
+  Mauro Bardelloni
+  Mayank Sabharwal
+  Michael Harmon
+  Paul Kuberry
+  Rajat Arora
+  Rene Gassmoeller
+  Ryan Grove
+  Sam Cox
+  Sebastian Gonzalez-Pintor
+  Spencer Patty
+  Timo Heister
+  Toby D. Young
+  Vaibhav Palkar
+  Wolfgang Bangerth
 
 0/ Do some basic testing as always
 
