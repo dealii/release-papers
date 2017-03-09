@@ -436,15 +436,35 @@ setting with matrix-free operator evaluation.
 
 \subsection{The \texttt{FE\_Enriched} class}
 
-\verb!FE_Enriched! finite element implements a partition of unity finite element method (PUM) by Babuska and Melenk which enriches a standard finite element with an enrichment function multiplied with another (usually linear) finite element. This allows to include in the finite element space a priori knowledge about the partial differential equation being solved which in turn improves the local approximation properties of the spaces. The user can also use enriched and non-enriched finite elements in different parts of the domain.
-\verb|DoFTools::make_hanging_node_constraints()| function can automatically make the resulting space $C^0$ continuous.
-Existing \verb|SolutionTransfer| class can be used to transfer the solution during $h$\,-adaptive refinement from a coarse to a fine mesh under the condition that all child elements are also enriched.
+The \verb!FE_Enriched! finite element implements a partition of unity
+finite element method (PUM) by Babuska and Melenk which enriches a standard
+finite element with an enrichment function multiplied with another (usually
+linear) finite element. This allows to include in the finite element space
+a priori knowledge about the partial differential equation being solved
+which in turn improves the local approximation properties of the spaces.
+The user can also use enriched and non-enriched finite elements in
+different parts of the domain.
+\verb|DoFTools::make_hanging_node_constraints()| function can automatically
+make the resulting space $C^0$ continuous. Existing \verb|SolutionTransfer|
+class can be used to transfer the solution during $h$\,-adaptive refinement
+from a coarse to a fine mesh under the condition that all child elements
+are also enriched.
 
 \subsection{The \texttt{FESeries} namespace}
 
-\verb|FESeries| namespace offers functions to calculate expansion series of the solution on the reference element.
-Coefficients of expansion are often used to estimate local smoothness of the underlying finite element field to decide on h- or p-adaptive refinement strategy. Specifically, \verb|FESeries::Legendre| calculates expansion of a scalar FE field into series of Legendre functions on a reference element, whereas \verb|FESeries::Fourier| calculates Fourier coefficients. The user has to specify the required number of coefficients in each direction as well as provide a collection of finite elements and quadrature rules, that will be used for calculation of the transformation matrices. Obviously, those matrices are calculated only once, namely the first time coefficients are requested on a cell with the given finite element.
-The step-27 has been updated to use \verb|FESeries::Fourier|.
+The \verb|FESeries| namespace offers functions to calculate expansion
+series of the solution on the reference element. Coefficients of expansion
+are often used to estimate local smoothness of the underlying finite
+element field to decide on h- or p-adaptive refinement strategy.
+Specifically, \verb|FESeries::Legendre| calculates expansion of a scalar FE
+field into series of Legendre functions on a reference element, whereas
+\verb|FESeries::Fourier| calculates Fourier coefficients. The user has to
+specify the required number of coefficients in each direction as well as
+provide a collection of finite elements and quadrature rules, that will be
+used for calculation of the transformation matrices. Obviously, those
+matrices are calculated only once, namely the first time coefficients are
+requested on a cell with the given finite element. The step-27 has been
+updated to use \verb|FESeries::Fourier|.
 
 \subsection{Matrix-free operators}
 
