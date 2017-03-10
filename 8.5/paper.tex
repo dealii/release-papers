@@ -224,18 +224,19 @@ TODO: Luca
 \subsection{Extension of the \texttt{LinearOperator} class}
 
 The \texttt{LinearOperator} class has been extended by a generic
-``payload'' mechanism that allows to attach arbitrary additional
+``payload'' mechanism that allows for the attachment of arbitrary additional
 information to a \texttt{LinearOperator}. This was achieved by introducing
 a generic \texttt{Payload} base class. The main use case of the new
 mechanism is to extend the \texttt{LinearOperator} class to seamlessly
 exploit the native features and operations offered by external linear
-algebra libraries. We have thus developed a \texttt{TrilinosPayload} class,
+algebra libraries. We have thus developed a \texttt{TrilinosPayload} class
 that provides full support for the suite of {\trilinos} parallel iterative
 solvers and preconditioners.
 
-A particular interesting case is the construction of an
-\texttt{inverse\_operator}. Now both, \dealii's built in solvers and those
-offered by {\trilinos}, can be selected. This has been achieved by using
+A particularly interesting case is the construction of an
+\texttt{inverse\_operator}. Whereas previously only \dealii's built-in solvers
+were compatible with this operator, now both them and those
+offered by {\trilinos} can be selected. This has been achieved by using
 the \texttt{Epetra\_Operator} as the basis for the
 \texttt{TrilinosPayload}, for which the result of standard and composite
 operations involving forward (\texttt{Apply()}) and inverse
