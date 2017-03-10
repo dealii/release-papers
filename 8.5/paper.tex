@@ -259,15 +259,26 @@ A dedicated physics module has been created to facilitate the
 implementation of functions and classes that relate to continuum mechanics,
 physical fields and material constitutive laws. To date, it includes
 transformations of scalar or tensorial quantities between any two
-configurations,
-\marginpar{which configurations?}
-and some definitions typically utilized in both linear and finite-strain
-nonlinear elasticity.
+configurations (by user-specification of a linear map $\mathbf{F}$), and some 
+definitions typically utilized in both linear and finite-strain nonlinear 
+elasticity.
 
 The \verb!Physics::Transformations! namespace offers push-forward and
 pull-back operations in the context of contravariant, covariant and Piola
-transformations, as well as rotation operations for the Euclidean space. In
-the \verb!Physics::Elasticity::Kinematics! namespace, a selection of
+transformations, as well as rotation operations for the Euclidean space. 
+Although these transformations are defined in a general manner, one typical
+use of them in finite-strain elasticity would be the determination of the 
+Cauchy stress tensor $\boldsymbol{\sigma} = \boldsymbol{\sigma}\left(\mathbf{x}\right)$ 
+defined at the spatial position $\mathbf{x} \in \mathcal{B}$ from its
+fully referential counterpart, namely the Piola--Kirchhoff stress tensor 
+$\mathbf{S} = \mathbf{S}\left(\mathbf{X}\right)$ computed at the material 
+coordinate $\mathbf{X} \in \mathcal{B}_{0}$.
+By choosing
+$\mathbf{F} \left(\mathbf{X}\right) = \dfrac{\partial \mathbf{x}\left(\mathbf{X}\right)}{\partial \mathbf{X}}$,
+this is achieved through the action of the Piola push-forward
+$\boldsymbol{\sigma} = \dfrac{1}{\det \mathbf{F}} \, \mathbf{F} \cdot \mathbf{S} \cdot \mathbf{F}^{T}$.
+
+In the \verb!Physics::Elasticity::Kinematics! namespace, a selection of
 deformation, strain tensors and strain rate tensors are defined. The
 \verb!Physics::Elasticity::StandardTensors! class provides some frequently
 used second and fourth order metric tensors, and defines a number of
