@@ -123,11 +123,8 @@ GNU Lesser General Public License (LGPL) from the \dealii{} homepage at
 The major changes of this release are:
 \marginpar{Add one sentence to each of the following.}
 \begin{itemize}
-\item The \texttt{CellDataStorage} class provides a mechanism to store
-  user-defined data on each cell. This data is treated as a first-class
-  citizen to \dealii{} and, when used in conjunction with other classes,
-  can be shipped to other MPI cores during mesh refinement and
-  repartitioning.
+\item The \texttt{CellDataStorage} class provides a safe mechanism to store
+  and communicate user-defined data on each cell. 
 
 \item The \texttt{MappingManifold} class provides mappings between the
   reference cell and a mesh cell that is ``exact'' in the sense that
@@ -136,12 +133,9 @@ The major changes of this release are:
   approximations of the manifold.
   TODO: Luca
 
-\item the \texttt{LinearOperator} class has been extended by a generic
-  ``payload'' mechanism that allows to attach arbitrary additional
-  information to a \texttt{LinearOperator}. The mechanism was used to
-  implement a \texttt{TrilinosPayload} class to have full support for using
-  the suite of {\trilinos} iterative solvers and preconditioners with a
-  \texttt{LinearOperator}.
+\item The \texttt{LinearOperator} class has been extended by a generic
+  ``payload'' mechanism that allows the attachment of arbitrary additional
+  information to a \texttt{LinearOperator}.
 
 \item A dedicated physics module has been created to provide some standard
   definitions and operations used in continuum mechanics.
