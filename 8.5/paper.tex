@@ -254,6 +254,7 @@ delayed evaluation offered by \texttt{PackagedOperation}s, reused on any
 number of vector systems.
 
 \subsection{The physics module}
+\label{sec:physics}
 
 A dedicated physics module has been created to facilitate the
 implementation of functions and classes that relate to continuum mechanics,
@@ -472,6 +473,36 @@ used for calculation of the transformation matrices. Obviously, those
 matrices are calculated only once, namely the first time coefficients are
 requested on a cell with the given finite element. The step-27 has been
 updated to use \verb|FESeries::Fourier|.
+
+\subsection{New and updated tutorial programs}
+
+\begin{itemize}
+ \item {\bf step-55} is a new tutorial that explains how to solve the Stokes 
+ equations efficiently in parallel. It is a good introduction to solving
+ systems of PDEs in parallel, discusses optimal block 
+ preconditioners, and demonstrates other aspects like error computation.
+ Inverses of individual blocks of the linear system are approximated with an algebraic 
+ multigrid preconditioner.
+ 
+ \item {\bf step-56} is a new tutorial that shows how to apply geometric multigrid
+ preconditioners on a subset of a system of PDEs. The problem solved here is the 
+ Stokes equations, like in step-55.
+ 
+ \item {\bf step-57} is a new tutorial that solves the stationary Navier-Stokes equations.
+ The nonlinear system is solved using Newton's method on a sequence of adaptively refined
+ grids. The preconditioner is again built on a block factorization of the saddle point
+ system like in step-55 and step-56, but the non-symmetric terms stemming from the
+ nonlinear convective part requires more sophisticated solvers. The benchmark problem,
+ flow in the 2d lid-driven cavity, requires a continuation method for high Reynold's 
+ numbers.
+ 
+ \item {\bf step-37}, discussing matrix-free computations of the 
+ Poisson equation, has been rewritten to support parallel computations.
+ 
+ \item {\bf step-44} now uses the physics module, discussed in Section~\ref{sec:physics},
+ to solve a solid mechanics problem.
+ \end{itemize}
+
 
 \subsection{Matrix-free operators}
 
