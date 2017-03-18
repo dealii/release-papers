@@ -219,7 +219,24 @@ points, but it also ships the data automatically between MPI processes.
 
 \subsection{The \texttt{MappingManifold} class}
 
-TODO: Luca
+The \texttt{MappingManifold} class implements the same functionality
+of the \texttt{Mapping} class for \emph{manifold conforming}
+mappings. This class computes the transformation between the
+reference and real cell by exploiting the geometrical information
+coming from the underlying \texttt{Manifold} object.
+
+Quadrature points computed using this mapping lie on the exact
+geometrical objects, and tangent and normal vectors computed using
+this class are tangent and normal to the underlying geometry. This is
+in constrast with the \texttt{MappingQ} and \texttt{MappingQGeneric}
+classes, which approximate the geometry using a polynomial of some
+order, and then compute the normals and tangents using the
+approximated surface.
+
+Currently only first order transformations are implemented, and an
+assertion is thrown if the user requests any higher order
+transformations, for example, the hessian of the mapping.
+
 
 \subsection{Extension of the \texttt{LinearOperator} class}
 
