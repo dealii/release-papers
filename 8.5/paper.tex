@@ -121,17 +121,13 @@ GNU Lesser General Public License (LGPL) from the \dealii{} homepage at
 \url{http://www.dealii.org/}.
 
 The major changes of this release are:
-\marginpar{Add one sentence to each of the following.}
 \begin{itemize}
-\item The \texttt{CellDataStorage} class provides a safe mechanism to store
+\item The \texttt{CellDataStorage} class provides a mechanism to store
   and communicate user-defined data on each cell. 
 
 \item The \texttt{MappingManifold} class provides mappings between the
-  reference cell and a mesh cell that is ``exact'' in the sense that
-  the edges, faces, and the interior of the mesh cell matches an
-  underlying manifold. This is opposed to using the usual polynomial
-  approximations of the manifold.
-  TODO: Luca
+  reference cell and a mesh cell that is ``exact'', rather than the
+  usual polynomial approximations of a manifold.
 
 \item The \texttt{LinearOperator} class has been extended by a generic
   ``payload'' mechanism that allows the attachment of arbitrary additional
@@ -140,17 +136,14 @@ The major changes of this release are:
 \item A dedicated physics module has been created to provide some standard
   definitions and operations used in continuum mechanics.
 
-\item TODO \texttt{FE\_Enriched}
+\item The \texttt{FE\_Enriched} class implements the operation of
+  enriching the finite element space of an underlying element.
 
-\item TODO \texttt{FESeries} namespace, use in step-27
+\item The \texttt{FESeries} namespace provides expansions of a finite
+  element solution in terms of different, hierarchical bases.
 
-\item New tutorial programs step-55, step-56, and step-57,
-  demonstrating parallel solvers for the Stokes equations, a multigrid
-  method for the Stokes equation, and methods for the nonlinear
-  Navier-Stokes equations, respectively. In addition, the step-37
-  tutorial program has been rewritten to support parallel
-  computations, and the step-44 tutorial now uses the facilities of
-  the physics module mentioned above.
+\item New tutorial programs step-55, step-56, and step-57; as well as
+  updates to step-27, step-37, and step-44.
 
 \item New code gallery programs demonstrating
 \marginpar{Isn't the code gallery itself new for 8.5?}
@@ -162,7 +155,7 @@ The major changes of this release are:
   \end{enumerate}
 
 \item Various improvements for high-order elements, including a switch of
-  support points in \texttt{FE\_Q} and \texttt{FE\_DGQ} to Gauss--Lobatto
+  support points in \texttt{FE\_Q} and \texttt{FE\_DGQ} to Gauss-Lobatto
   support points, stable evaluation of high-order Legendre polynomials, and
   several bugfixes for high-order polynomial mappings defined through the
   \texttt{MappingQ} class.
@@ -175,14 +168,13 @@ The major changes of this release are:
   This release was tested with
   \href{http://cppcheck.sourceforge.net/}{Cppcheck},
   \href{https://www.viva64.com/en/pvs-studio/}{PVS-Studio} and
-  \href{https://scan.coverity.com/}{Coverity-Scan}. For the latter the
-  current status can be observed
-  \href{https://scan.coverity.com/projects/deal-ii}{online}.
+  \href{https://scan.coverity.com/}{Coverity-Scan}.
 
   \item More than 230 other features and bugfixes.
 \end{itemize}
-The more important ones of these will be detailed in the following section.
-Information on how to cite \dealii{} is provided in Section \ref{sec:cite}.
+The more important ones of these changes will be detailed in the
+following section.  Information on how to cite \dealii{} is provided
+in Section \ref{sec:cite}.
 
 
 
@@ -193,54 +185,68 @@ that will be discussed in the following sections. It of course also contains a
 vast number of smaller changes and added functionality; the details of these
 can be found
 \href{https://www.dealii.org/8.5.0/doxygen/deal.II/changes_between_8_4_and_8_5.html}{in
-the file that lists all changes for this release}; see \cite{changes85}.
+the file that lists all changes for this release}, see \cite{changes85}.
 (The file is also linked to from the web site of each release as well as
 the release announcement.)
 
 
 \subsection{The \texttt{CellDataStorage} class and friends}
 
-The \texttt{CellDataStorage} class is an integrated mechanism to safely
+The \texttt{CellDataStorage} class is an integrated mechanism to
 store user-defined data within each cell, such as a coefficient at each quadrature point.
 Although the same was previously achieved through the use
 of a cell \texttt{user\_pointer}, it required users to manage this data
-themselves. This data is now treated as a first-class citizen to \dealii{}.
+themselves, including transfer of this data if ownership of a cell is
+transferred from one processor to another in parallel
+computations. Instead, this data is now treated as a first-class
+citizen in \dealii{}.
 
-Through the abstract \texttt{TransferableQuadraturePointData} we have
-provided a generic interface to facilitate several low-level operations
-that were previously tedious or technically challenging to implement. For
-instance, the
+\texttt{CellDataStorage} can work with arbitrary kinds of data defined
+to live on a cell as long as the corresponding data type implements a
+certain interface. As an example,
+the abstract \texttt{TransferableQuadraturePointData} class provides
+a generic interface to facilitate several low-level operations
+that were previously tedious or technically challenging to implement.
+\marginpar{Denis: It is not clear to me how \texttt{CellDataStorage} and
+  \texttt{p::d::ContinuousQuadratureDataTransfer} relate to each
+  other. Can you clarify the paragraph?}
+For instance, the
 \texttt{parallel::distributed::ContinuousQuadratureDataTransfer} class
 assists in the transfer of arbitrary data (that is continuous within a
-cell) stored at quadrature points when performing h-adaptive refinement of
+cell) stored at quadrature points when performing $h$-adaptive refinement of
 \texttt{parallel::distributed::Triangulation}. Not only does it perform an
-$\mathcal{L}^2$-projection of the specified user data between quadrature
+$L^2$-projection of the specified user data between quadrature
 points, but it also ships the data automatically between MPI processes.
 
 \subsection{The \texttt{MappingManifold} class}
 
-The \texttt{MappingManifold} class implements the same functionality
-of the \texttt{Mapping} class for \emph{manifold conforming}
-mappings. This class computes the transformation between the
+The \texttt{MappingManifold} class implements the functionality
+of the \texttt{Mapping} interface for \emph{manifold conforming}
+mappings. In other words, instead of using polynomial approximations
+of the objects that describe the boundaries (or interiors) of cells,
+this class computes the transformation between the
 reference and real cell by exploiting the geometrical information
 coming from the underlying \texttt{Manifold} object.
 
-Quadrature points computed using this mapping lie on the exact
-geometrical objects, and tangent and normal vectors computed using
-this class are tangent and normal to the underlying geometry. This is
+When using this class,
+quadrature points lie on the \textit{exact}
+geometrical objects, and tangent and normal vectors computed
+are tangent and normal to the underlying geometry. This is
 in contrast with the \texttt{MappingQ} and \texttt{MappingQGeneric}
 classes, which approximate the geometry using a polynomial of some
 order, and then compute the normals and tangents using the
 approximated surface.
 
-Currently only first order transformations are implemented, and an
-assertion is thrown if the user requests any higher order
-transformations, for example, the Hessian of the mapping.
+The class currently only implements the information that relates to
+the mapping itself, as well to its derivatives (such as the Jacobian
+of the mapping, or the determinant thereof). Information related to
+higher order derivatives -- such as the Hessian of the mapping -- will
+result in an exception.
 
 
 \subsection{Extension of the \texttt{LinearOperator} class}
 
-The \texttt{LinearOperator} class has been extended by a generic
+We have extended the \texttt{LinearOperator} class by a generic
 ``payload'' mechanism that allows for the attachment of arbitrary additional
 information to a \texttt{LinearOperator}. This was achieved by introducing
 a generic \texttt{Payload} base class. The main use case of the new
@@ -252,18 +258,18 @@ solvers and preconditioners.
 
 A particularly interesting case is the construction of an
 \texttt{inverse\_operator}. Whereas previously only \dealii's built-in solvers
-were compatible with this operator, now both them and those
-offered by {\trilinos} can be selected. This has been achieved by using
+were compatible with this operator, one can now also select those
+offered by {\trilinos}. This has been achieved by using
 the \texttt{Epetra\_Operator} as the basis for the
 \texttt{TrilinosPayload}, for which the result of standard and composite
 operations involving forward (\texttt{Apply()}) and inverse
 (\texttt{ApplyInverse()}) matrix-vector multiplication are collated using
 lambda functions.
 
-We envisage that, in the future, similar can be done for the {\petsc}
+We envisage that, in the future, similar extensions can be implemented for the {\petsc}
 iterative solvers.
 
-An additional feature of the \texttt{LinearOperator} suite is the definition
+Another additional in this release related to the \texttt{LinearOperator} suite is the definition
 of a \texttt{schur\_complement} operator and its associated condensation
 and post-processing \texttt{PackagedOperation}s. An operator representing
 the Schur complement of a block system can be declared and, through the
@@ -273,7 +279,7 @@ number of vector systems.
 \subsection{The physics module}
 \label{sec:physics}
 
-A dedicated physics module has been created to facilitate the
+We have created a dedicated physics module to facilitate the
 implementation of functions and classes that relate to continuum mechanics,
 physical fields and material constitutive laws. To date, it includes
 transformations of scalar or tensorial quantities between any two
@@ -287,8 +293,8 @@ transformations, as well as rotation operations for the Euclidean space.
 Although these transformations are defined in a general manner, one typical
 use of them in finite-strain elasticity would be the determination of the 
 Cauchy stress tensor $\boldsymbol{\sigma} = \boldsymbol{\sigma}\left(\mathbf{x}\right)$ 
-defined at the spatial position $\mathbf{x} \in \mathcal{B}$ from its
-fully referential counterpart, namely the Piola--Kirchhoff stress tensor 
+defined at a spatial position $\mathbf{x} \in \mathcal{B}$ from its
+fully referential counterpart, namely the Piola-Kirchhoff stress tensor 
 $\mathbf{S} = \mathbf{S}\left(\mathbf{X}\right)$ computed at the material 
 coordinate $\mathbf{X} \in \mathcal{B}_{0}$.
 By choosing
@@ -297,11 +303,16 @@ this is achieved through the action of the Piola push-forward
 $\boldsymbol{\sigma} = \dfrac{1}{\det \mathbf{F}} \, \mathbf{F} \cdot \mathbf{S} \cdot \mathbf{F}^{T}$.
 
 In the \verb!Physics::Elasticity::Kinematics! namespace, a selection of
-deformation, strain tensors and strain rate tensors are defined. The
+deformation, strain and strain rate tensors are defined. The
 \verb!Physics::Elasticity::StandardTensors! class provides some frequently
 used second and fourth order metric tensors, and defines a number of
 referential and spatial projection operators and tensor derivatives that
 are commonly required in the definition of material laws.
+
+
+The updated step-44 tutorial program demonstrates the
+use of the physical module in the context of a solid mechanics problem.
+
 
 \subsection{Scalability of geometric multigrid framework}
 
@@ -312,14 +323,15 @@ the fast matrix-free kernels from \cite{KronbichlerKormann2012} has been
 benchmarked on up to 147,456 cores. The fast matrix-vector products revealed
 several scalability bottlenecks in the other multigrid components, including
 unnecessary inner products inside the Chebyshev smoother and
-$\mathcal O(n_\text{levels})$ global communication steps during the
+${\mathcal O}(n_\text{levels})$ global communication steps during the
 restriction process rather than the single unavoidable global communication
-step inherent to going to the coarsest grid and the coarse solve. New
-matrix-free transfer implementations called \texttt{MGTransferMatrixFree} were
-devised that can replace the matrix-based \texttt{MGTransferPrebuilt} class
+step inherent to going to the coarsest grid and the coarse solve. We
+implemented new
+matrix-free transfer implementations called \texttt{MGTransferMatrixFree}
+that can replace the matrix-based \texttt{MGTransferPrebuilt} class
 for tensor product elements. Besides better scalability than the Trilinos
 Epetra matrices underlying the latter, the matrix-free transfer is also a much
-better for high-order elements with a complexity per degree of freedom of
+faster for high-order elements with a complexity per degree of freedom of
 $\mathcal O(d p)$ in the polynomial degree $p$ in $d$ dimensions rather than
 $\mathcal O(p^d)$ for the matrices.
 
@@ -438,7 +450,11 @@ nprocs    newdg256k    newdg2m   newdg16m olddg256k  olddg2m   olddg16m
       \addlegendentry{new, 256k cells};
     \end{loglogaxis}
   \end{tikzpicture}
-  \caption{Scaling of \dealii{}'s geometric multigrid algorithms on SuperMUC.}
+  \caption{Scaling of \dealii{}'s geometric multigrid algorithms on
+    SuperMUC. Each line corresponds to a strong scaling experiment,
+    increasing the number of processor cores for a fixed-size
+    problem. Comparing corresponding data points on different lines
+    yields weak scaling information.}
 \label{fig:scaling_mg}
 \end{figure}
 
@@ -453,10 +469,34 @@ whereas different lines are a factor of eight apart and always start at
 to approximately 0.1~seconds can be observed also on 147k~cores. The right
 panel of Fig.~\ref{fig:scaling_mg} shows the effect of the aforementioned
 algorithmic improvements on a setup with discontinuous DG elements, clearly
-improving the latency of the multigrid V-cycle. The updated step-37 tutorial
+improving the latency of the multigrid V-cycle.
+
+The updated step-37 tutorial
 programs presents the updated algorithms and the MPI-parallel multigrid
 setting with matrix-free operator evaluation.
 
+
+
+\subsection{Matrix-free operators}
+
+In order to facilitate the usage of matrix-free methods, a
+\verb!MatrixFreeOperator::Base! class has been introduced, implementing
+functionality for matrix-vector products and the necessary operations
+for the interface residuals for multigrid on adaptively refined meshes
+(see \cite{JanssenKanschat2011}). Furthermore, the class is compatible
+with the linear operator framework and provides an interface to a Jacobi
+preconditioner. Derived classes only need to implement the
+\verb!apply_add()! method that is used in the \verb!vmult()! functions, and
+a method to compute the diagonal entries of the underlying matrix. The
+\verb!MatrixFreeOperator! namespace contains implementations of
+\verb!MatrixFreeOperators::LaplaceOperator! and
+\verb!MatrixFreeOperators::MassOperator!.
+
+The updated step-37 tutorial
+program makes use of these facilities and explains their usage in detail.
+Using the matrix-free mass operator, \verb!VectorTools::project! has become
+much faster than the previous matrix-based approach for elements supported
+by \verb!MatrixFree! and also works for parallel computations based on MPI.
 
 
 \subsection{The \texttt{FE\_Enriched} class}
@@ -468,8 +508,10 @@ linear) finite element. This allows including
 a priori knowledge about the partial differential equation being solved
 in the finite element space,
 which in turn improves the local approximation properties of the spaces.
-The user can also use enriched and non-enriched finite elements in
+Programs can also use enriched and non-enriched finite elements in
 different parts of the domain.
+
+The
 \verb|DoFTools::make_hanging_node_constraints()| function can automatically
 make the resulting space $C^0$ continuous. The existing \verb|SolutionTransfer|
 class can be used to transfer the solution during $h$\,-adaptive refinement
@@ -481,65 +523,44 @@ are also enriched.
 The \verb|FESeries| namespace offers functions to calculate expansion
 series of the solution on the reference element. Coefficients of expansion
 are often used to estimate local smoothness of the underlying finite
-element field to decide on h- or p-adaptive refinement strategy.
-Specifically, \verb|FESeries::Legendre| calculates expansion of a scalar FE
-field into series of Legendre functions on a reference element, whereas
-\verb|FESeries::Fourier| calculates Fourier coefficients. The user has to
+element field to decide on a $h$- or $p$-adaptive refinement strategy.
+Specifically, \verb|FESeries::Legendre| calculates expansion of a
+scalar finite element
+field into series of Legendre functions on the reference element, whereas
+\verb|FESeries::Fourier| calculates Fourier coefficients. Programs
+using this functionality have to
 specify the required number of coefficients in each direction as well as
-provide a collection of finite elements and quadrature rules, that will be
-used for calculation of the transformation matrices. Obviously, those
-matrices are calculated only once, namely the first time coefficients are
-requested on a cell with the given finite element. The step-27 has been
-updated to use \verb|FESeries::Fourier|.
+provide a collection of finite elements and quadrature rules; these will be
+used for the calculation of the transformation matrices.
+
+The updated step-27 tutorial program demonstrates the
+use of \verb|FESeries::Fourier|.
 
 \subsection{New and updated tutorial programs}
 
+In addition to the update tutorial programs mentioned in the previous
+section, this release of \dealii{} includes three new tutorials:
 \begin{itemize}
- \item {\bf step-55} is a new tutorial that explains how to solve the Stokes 
+ \item {\bf step-55} explains how to solve the Stokes 
  equations efficiently in parallel. It is a good introduction to solving
  systems of PDEs in parallel, discusses optimal block 
  preconditioners, and demonstrates other aspects like error computation.
  Inverses of individual blocks of the linear system are approximated with an algebraic 
  multigrid preconditioner.
  
- \item {\bf step-56} is a new tutorial that shows how to apply geometric multigrid
+ \item {\bf step-56} shows how to apply geometric multigrid
  preconditioners on a subset of a system of PDEs. The problem solved here is the 
  Stokes equations, like in step-55.
  
- \item {\bf step-57} is a new tutorial that solves the stationary Navier-Stokes equations.
+ \item {\bf step-57} solves the stationary Navier-Stokes equations.
  The nonlinear system is solved using Newton's method on a sequence of adaptively refined
  grids. The preconditioner is again built on a block factorization of the saddle point
  system like in step-55 and step-56, but the non-symmetric terms stemming from the
  nonlinear convective part requires more sophisticated solvers. The benchmark problem,
  flow in the 2d lid-driven cavity, requires a continuation method for high Reynold's 
  numbers.
- 
- \item {\bf step-37}, discussing matrix-free computations of the 
- Poisson equation, has been rewritten to support parallel computations.
- 
- \item {\bf step-44} now uses the physics module, discussed in Section~\ref{sec:physics},
- to solve a solid mechanics problem.
  \end{itemize}
 
-
-\subsection{Matrix-free operators}
-
-In order to facilitate the usage of matrix-free methods, a
-\verb!MatrixFreeOperator::Base! class has been introduced, implementing
-various interfaces to matrix-vector products and the necessary operations
-for the interface residuals according to \cite{JanssenKanschat2011} in the
-context of the geometric multigrids. Furthermore, the class is compatible
-with the linear operator framework and provides an interface to a Jacobi
-preconditioner. The derived classes only need to implement the
-\verb!apply_add()! method that is used in the \verb!vmult()! functions, and
-a method to compute the diagonal entries of the underlying matrix. The
-\verb!MatrixFreeOperator! namespace contains implementations of
-\verb!MatrixFreeOperators::LaplaceOperator! and
-\verb!MatrixFreeOperators::MassOperator!. The updated step-37 tutorial
-program makes use of these facilities and explains their usage in detail.
-Using the matrix-free mass operator, \verb!VectorTools::project! has become
-much faster than the previous matrix-based approach for elements supported
-by \verb!MatrixFree! and also works in parallel with MPI.
 
 \subsection{Incompatible changes}
 
@@ -548,23 +569,26 @@ The 8.5 release includes around 20
 incompatible changes}; see \cite{changes85}. The majority of these changes
 should not be visible to typical user codes; some remove previously
 deprecated classes and functions, and the majority change internal
-interfaces that are not typically used in user codes. However, a number of
-incompatible changes are worth mentioning.
+interfaces that are not usually used in external applications. However, three
+incompatible changes are worth mentioning:
 \begin{itemize}
   \item High-order Lagrange elements, both continuous \verb!FE_Q! and
     discontinuous \verb!FE_DGQ! types, now use the nodal points of the
-    Gauss--Lobatto quadrature formula as support points, rather than the
+    Gauss-Lobatto quadrature formula as support points, rather than the
     previous equidistant ones. For cubic polynomials and higher, the point
     distribution has thus changed and, consequently, the entries in
-    solution vectors will look different as compared to the previous
-    version. Note, however, that using the Gauss--Lobatto points as nodal
+    solution vectors will be different compared to previous
+    versions of \dealii{}. Note, however, that using the Gauss-Lobatto points as nodal
     points results in a much more stable interpolation, including better
     iteration counts in most iterative solvers.
   \item
-    The library does not instantiate template versions with \texttt{long
-    double} any more. If you need template versions with \texttt{long
-    double} make sure to include the corresponding \texttt{templates.h}
-    header file.
+    The library no longer instantiates template classes with \texttt{long
+    double}. These were rarely used, but took up a significant
+    fraction of compile and link time, as well as library
+    size. Application programs can, however, still instantiate all
+    template classes with \texttt{long
+    double} as long as they include the corresponding \texttt{.templates.h}
+    header files.
   \item
     The \texttt{ParameterGUI} has been moved to a separate repository.
 \end{itemize}
