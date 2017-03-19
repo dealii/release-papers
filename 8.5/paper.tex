@@ -168,8 +168,8 @@ The major changes of this release are:
   \texttt{MappingQ} class.
 
 
-\item We realized that static code analyzers are valuable tools to improve
-  and maintain the quality of the code in our library on top off build and
+\item Static code analyzers are valuable tools to improve
+  and maintain the quality of the code in our library in addition to build and
   regression tests for a variety of setups using
   \href{https://cdash.kyomu.43-1.org/index.php?project=deal.II}{CDash}.
   This release was tested with
@@ -201,8 +201,8 @@ the release announcement.)
 \subsection{The \texttt{CellDataStorage} class and friends}
 
 The \texttt{CellDataStorage} class is an integrated mechanism to safely
-store user-defined data, such as that required at each computation point,
-within each cell. Although the same was previously achieved through the use
+store user-defined data within each cell, such as a coefficient at each quadrature point.
+Although the same was previously achieved through the use
 of a cell \texttt{user\_pointer}, it required users to manage this data
 themselves. This data is now treated as a first-class citizen to \dealii{}.
 
@@ -228,14 +228,14 @@ coming from the underlying \texttt{Manifold} object.
 Quadrature points computed using this mapping lie on the exact
 geometrical objects, and tangent and normal vectors computed using
 this class are tangent and normal to the underlying geometry. This is
-in constrast with the \texttt{MappingQ} and \texttt{MappingQGeneric}
+in contrast with the \texttt{MappingQ} and \texttt{MappingQGeneric}
 classes, which approximate the geometry using a polynomial of some
 order, and then compute the normals and tangents using the
 approximated surface.
 
 Currently only first order transformations are implemented, and an
 assertion is thrown if the user requests any higher order
-transformations, for example, the hessian of the mapping.
+transformations, for example, the Hessian of the mapping.
 
 
 \subsection{Extension of the \texttt{LinearOperator} class}
@@ -263,7 +263,7 @@ lambda functions.
 We envisage that, in the future, similar can be done for the {\petsc}
 iterative solvers.
 
-An additional feature of the \texttt{LinearOperator} suite is the defintion
+An additional feature of the \texttt{LinearOperator} suite is the definition
 of a \texttt{schur\_complement} operator and its associated condensation
 and post-processing \texttt{PackagedOperation}s. An operator representing
 the Schur complement of a block system can be declared and, through the
@@ -464,13 +464,14 @@ setting with matrix-free operator evaluation.
 The \verb!FE_Enriched! finite element implements a partition of unity
 finite element method (PUM) by Babuska and Melenk which enriches a standard
 finite element with an enrichment function multiplied with another (usually
-linear) finite element. This allows to include in the finite element space
+linear) finite element. This allows including 
 a priori knowledge about the partial differential equation being solved
+in the finite element space,
 which in turn improves the local approximation properties of the spaces.
 The user can also use enriched and non-enriched finite elements in
 different parts of the domain.
 \verb|DoFTools::make_hanging_node_constraints()| function can automatically
-make the resulting space $C^0$ continuous. Existing \verb|SolutionTransfer|
+make the resulting space $C^0$ continuous. The existing \verb|SolutionTransfer|
 class can be used to transfer the solution during $h$\,-adaptive refinement
 from a coarse to a fine mesh under the condition that all child elements
 are also enriched.
@@ -542,13 +543,13 @@ by \verb!MatrixFree! and also works in parallel with MPI.
 
 \subsection{Incompatible changes}
 
-The 8.5.0 release includes around 20
-\href{https://www.dealii.org/8.5.0/doxygen/deal.II/changes_between_8_4_and_8_5.html}{
+The 8.5 release includes around 20
+\href{https://www.dealii.org/developer/doxygen/deal.II/changes_between_8_4_and_8_5.html}{
 incompatible changes}; see \cite{changes85}. The majority of these changes
 should not be visible to typical user codes; some remove previously
 deprecated classes and functions, and the majority change internal
 interfaces that are not typically used in user codes. However, a number of
-incompatible changes a worth mentioning.
+incompatible changes are worth mentioning.
 \begin{itemize}
   \item High-order Lagrange elements, both continuous \verb!FE_Q! and
     discontinuous \verb!FE_DGQ! types, now use the nodal points of the
@@ -576,8 +577,8 @@ In order to justify the work the developers of \dealii{} put into this
 software, we ask that papers using the library reference one of the
 \dealii{} papers. This helps us justify the effort we put into it.
 
-There are various ways to reference \dealii{}. To acknowledge the use of a
-particular version of the library, reference the present document. For up
+There are various ways to reference \dealii{}. To acknowledge the use of the
+current version of the library, \textbf{please reference the present document}. For up
 to date information and bibtex snippets for this document see:
 \begin{center}
  \url{https://www.dealii.org/publications.html}
