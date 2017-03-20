@@ -205,17 +205,18 @@ citizen in \dealii{}.
 \texttt{CellDataStorage} can work with arbitrary kinds of data defined
 to live on a cell as long as the corresponding data type implements a
 certain interface. As an example,
-the abstract \texttt{TransferableQuadraturePointData} class provides
+the abstract class \texttt{TransferableQuadraturePointData} provides
 a generic interface to facilitate several low-level operations
 that were previously tedious or technically challenging to implement.
-For instance, when user's custom data type is derived from \texttt{TransferableQuadraturePointData}
-and stored at quadrature points using \texttt{CellDataStorage},
-the \texttt{parallel::distributed::ContinuousQuadratureDataTransfer} class
-can transfer this data (assuming that it is continuous within a cell)
-when performing $h$-adaptive refinement of
-\texttt{parallel::distributed::Triangulation}. Not only does it perform an
-$L^2$-projection of the specified user data between quadrature
-points, but it also ships the data automatically between MPI processes.
+For instance, when a user's custom data type is derived from \texttt{TransferableQuadraturePointData}
+-- a data type that stores information at the quadrature points of cells using
+\texttt{CellDataStorage} --,
+then the \texttt{parallel::distributed::ContinuousQuadratureDataTransfer} class
+can transfer this data during
+$h$-adaptive refinement from parent to children and the other way around
+(interpreting the data on quadrature points as discrete representations of an
+underlying continuous field),
+as well as from one processor to another during repartitioning.
 
 \subsection{The \texttt{MappingManifold} class}
 
