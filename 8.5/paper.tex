@@ -192,10 +192,11 @@ the release announcement.)
 
 \subsection{The \texttt{CellDataStorage} class and friends}
 
-The \texttt{CellDataStorage} class is an integrated mechanism to
-store user-defined data within each cell, such as a coefficient at each quadrature point.
+The \texttt{CellDataStorage} templated class is an integrated mechanism to
+store a vector of user-defined data within each cell,
+such as a coefficient at each quadrature point.
 Although the same was previously achieved through the use
-of a cell \texttt{user\_pointer}, it required users to manage this data
+of a cell's \texttt{user\_pointer}, it required users to manage this data
 themselves, including transfer of this data if ownership of a cell is
 transferred from one processor to another in parallel
 computations. Instead, this data is now treated as a first-class
@@ -207,13 +208,11 @@ certain interface. As an example,
 the abstract \texttt{TransferableQuadraturePointData} class provides
 a generic interface to facilitate several low-level operations
 that were previously tedious or technically challenging to implement.
-\marginpar{Denis: It is not clear to me how \texttt{CellDataStorage} and
-  \texttt{p::d::ContinuousQuadratureDataTransfer} relate to each
-  other. Can you clarify the paragraph?}
-For instance, the
-\texttt{parallel::distributed::ContinuousQuadratureDataTransfer} class
-assists in the transfer of arbitrary data (that is continuous within a
-cell) stored at quadrature points when performing $h$-adaptive refinement of
+For instance, when user's custom data type is derived from \texttt{TransferableQuadraturePointData}
+and stored at quadrature points using \texttt{CellDataStorage},
+the \texttt{parallel::distributed::ContinuousQuadratureDataTransfer} class
+can transfer this data (assuming that it is continuous within a cell)
+when performing $h$-adaptive refinement of
 \texttt{parallel::distributed::Triangulation}. Not only does it perform an
 $L^2$-projection of the specified user data between quadrature
 points, but it also ships the data automatically between MPI processes.
