@@ -228,7 +228,7 @@ citizen in \dealii{}.
 \texttt{CellDataStorage} can work with arbitrary kinds of data defined to live on a cell
 as long as the corresponding data type implements a default constructor.
 Additionally, when a user's custom data type is derived from \texttt{TransferableQuadraturePointData}
-and thereby implements certain interface,
+and thereby implements certain interfaces,
 then the \texttt{parallel::distributed::ContinuousQuadratureDataTransfer} class
 can transfer this data during $h$-adaptive refinement from parent cell to children
 (interpreting the data on quadrature points as discrete representations of an
@@ -739,7 +739,6 @@ Their contributions are much appreciated!
 \dealii{} and its developers are financially supported through a
 variety of funding sources:
 
-\marginpar{Add your funding here as appropriate}
 D.~Arndt was supported by the German Research Foundation (DFG) under the
 project ``High-order discontinuous Galerkin for the exa-scale'' (ExaDG) within the
 priority program ``Software for Exascale Computing'' (SPPEXA).
