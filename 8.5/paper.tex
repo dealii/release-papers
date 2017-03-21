@@ -166,16 +166,8 @@ The major changes of this release are:
   element solution in terms of different, hierarchical bases.
 
 \item New tutorial programs step-55, step-56, and step-57; as well as
-  updates to step-27, step-37, and step-44.
-
-\item New code gallery programs demonstrating
-\marginpar{Isn't the code gallery itself new for 8.5?}
-  \begin{enumerate}
-    \item[(i)] quasi-static visco-elastic material behavior,
-    \item[(ii)] multiphase Navier-Stokes flow,
-    \item[(iii)] the evolution of global-scale topography on planetary bodies,
-    \item[(iv)] goal-oriented elastoplasticity.
-  \end{enumerate}
+  updates to step-27, step-37, and step-44. In addition, the separate code
+  gallery of \dealii{} has gained a number of new entries.
 
 \item Various improvements for high-order elements, including a switch of
   support points in \texttt{FE\_Q} and \texttt{FE\_DGQ} to Gauss-Lobatto
@@ -577,6 +569,19 @@ section, this release of \dealii{} includes three new tutorials:
  flow in the 2d lid-driven cavity, requires a continuation method for high Reynolds
  numbers.
  \end{itemize}
+
+In addition to tutorials, \dealii{} has a separate ``code gallery'' that
+consists of programs shared by users as examples of what can be
+done with \dealii{}. While not part of the release process, it is nonetheless
+worth mentioning that the set of new programs since the last release covers
+the following topics:
+\marginpar{Add the muscle elasticity example if it is merged in time.}
+  \begin{itemize}
+    \item Auasi-static visco-elastic material behavior;
+    \item Multiphase Navier-Stokes flow;
+    \item The evolution of global-scale topography on planetary bodies;
+    \item Goal-oriented elastoplasticity.
+  \end{itemize}
 
 
 \subsection{Incompatible changes}
