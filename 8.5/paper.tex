@@ -109,7 +109,7 @@
   DOE Public Access Plan (http://energy.gov/downloads/doe-public-access-plan).}}
 \affil[9]{Computational Engineering and Energy Sciences Group,
   Computional Sciences and Engineering Division,
-  Oak Ridge National Laboratory, 1 Bethel Valley Rd., 
+  Oak Ridge National Laboratory, 1 Bethel Valley Rd.,
   TN 37831, USA
   {\texttt{turcksinbr@ornl.gov}}}
 
@@ -146,11 +146,17 @@ GNU Lesser General Public License (LGPL) from the \dealii{} homepage at
 The major changes of this release are:
 \begin{itemize}
 \item The \texttt{CellDataStorage} class provides a mechanism to store
-  and communicate user-defined data on each cell. 
+  and communicate user-defined data on each cell.
 
 \item The \texttt{MappingManifold} class provides mappings between the
   reference cell and a mesh cell that is ``exact'', rather than the
   usual polynomial approximations of a manifold.
+
+\item Various improvements for high-order elements, including a switch of
+  support points in \texttt{FE\_Q} and \texttt{FE\_DGQ} to Gauss-Lobatto
+  support points, stable evaluation of high-order Legendre polynomials, and
+  several bugfixes for high-order polynomial mappings defined through the
+  \texttt{MappingQ} class.
 
 \item The \texttt{LinearOperator} class has been extended by a generic
   ``payload'' mechanism that allows the attachment of arbitrary additional
@@ -168,12 +174,6 @@ The major changes of this release are:
 \item New tutorial programs step-55, step-56, and step-57; as well as
   updates to step-27, step-37, and step-44. In addition, the separate code
   gallery of \dealii{} has gained a number of new entries.
-
-\item Various improvements for high-order elements, including a switch of
-  support points in \texttt{FE\_Q} and \texttt{FE\_DGQ} to Gauss-Lobatto
-  support points, stable evaluation of high-order Legendre polynomials, and
-  several bugfixes for high-order polynomial mappings defined through the
-  \texttt{MappingQ} class.
 
 
 \item Static code analyzers are valuable tools to improve
@@ -292,19 +292,19 @@ We have created a dedicated physics module to facilitate the
 implementation of functions and classes that relate to continuum mechanics,
 physical fields and material constitutive laws. To date, it includes
 transformations of scalar or tensorial quantities between any two
-configurations (by user-specification of a linear map $\mathbf{F}$), and some 
-definitions typically utilized in both linear and finite-strain nonlinear 
+configurations (by user-specification of a linear map $\mathbf{F}$), and some
+definitions typically utilized in both linear and finite-strain nonlinear
 elasticity.
 
 The \verb!Physics::Transformations! namespace offers push-forward and
 pull-back operations in the context of contravariant, covariant and Piola
-transformations, as well as rotation operations for the Euclidean space. 
+transformations, as well as rotation operations for the Euclidean space.
 Although these transformations are defined in a general manner, one typical
-use of them in finite-strain elasticity would be the determination of the 
-Cauchy stress tensor $\boldsymbol{\sigma} = \boldsymbol{\sigma}\left(\mathbf{x}\right)$ 
+use of them in finite-strain elasticity would be the determination of the
+Cauchy stress tensor $\boldsymbol{\sigma} = \boldsymbol{\sigma}\left(\mathbf{x}\right)$
 defined at a spatial position $\mathbf{x} \in \mathcal{B}$ from its
-fully referential counterpart, namely the Piola-Kirchhoff stress tensor 
-$\mathbf{S} = \mathbf{S}\left(\mathbf{X}\right)$ computed at the material 
+fully referential counterpart, namely the Piola-Kirchhoff stress tensor
+$\mathbf{S} = \mathbf{S}\left(\mathbf{X}\right)$ computed at the material
 coordinate $\mathbf{X} \in \mathcal{B}_{0}$.
 By choosing
 $\mathbf{F} \left(\mathbf{X}\right) = \dfrac{\partial \mathbf{x}\left(\mathbf{X}\right)}{\partial \mathbf{X}}$,
@@ -517,7 +517,7 @@ by \verb!MatrixFree! and also works for parallel computations based on MPI.
 The \verb!FE_Enriched! finite element implements a partition of unity
 finite element method (PUM) by Babuska and Melenk which enriches a standard
 finite element with an enrichment function multiplied with another (usually
-linear) finite element. This allows including 
+linear) finite element. This allows including
 a priori knowledge about the partial differential equation being solved
 in the finite element space,
 which in turn improves the local approximation properties of the spaces.
@@ -551,20 +551,20 @@ use of \verb|FESeries::Fourier|.
 
 \subsection{New and updated tutorial programs}
 
-In addition to the update tutorial programs mentioned in the previous
+In addition to the updated tutorial programs mentioned in the previous
 section, this release of \dealii{} includes three new tutorials:
 \begin{itemize}
- \item {\bf step-55} explains how to solve the Stokes 
+ \item {\bf step-55} explains how to solve the Stokes
  equations efficiently in parallel. It is a good introduction to solving
- systems of PDEs in parallel, discusses optimal block 
+ systems of PDEs in parallel, discusses optimal block
  preconditioners, and demonstrates other aspects like error computation.
- Inverses of individual blocks of the linear system are approximated with an algebraic 
+ Inverses of individual blocks of the linear system are approximated with an algebraic
  multigrid preconditioner.
- 
+
  \item {\bf step-56} shows how to apply geometric multigrid
- preconditioners on a subset of a system of PDEs. The problem solved here is the 
+ preconditioners on a subset of a system of PDEs. The problem solved here is the
  Stokes equations, like in step-55.
- 
+
  \item {\bf step-57} solves the stationary Navier-Stokes equations.
  The nonlinear system is solved using Newton's method on a sequence of adaptively refined
  grids. The preconditioner is again built on a block factorization of the saddle point
@@ -600,7 +600,7 @@ incompatible changes are worth mentioning:
 \begin{itemize}
   \item High-order Lagrange elements, both continuous \verb!FE_Q! and
     discontinuous \verb!FE_DGQ! types, now use the nodal points of the
-    Gauss-Lobatto quadrature formula as support points, rather than the
+    Gauss-Lobatto quadrature formula as support points by default, rather than the
     previous equidistant ones. For cubic polynomials and higher, the point
     distribution has thus changed and, consequently, the entries in
     solution vectors will be different compared to previous
