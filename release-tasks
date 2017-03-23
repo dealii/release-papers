@@ -224,7 +224,20 @@ Contributors for 8.5:
 
 
 1/  Create new changes file:
-    - run:
+        mkdir build-doc
+        cd build-doc
+        cmake ../dealii -DDEAL_II_COMPONENT_DOCUMENTATION=ON
+        make documentation
+        cp doc/news/changes.h ../dealii/doc/news/8.4.2-vs-8.5.0.h
+        cd ../dealii
+        git checkout -b update-changes-file
+        git add  doc/news/8.4.2-vs-8.5.0.h
+        git commit -m "Update the changelog file for the release." doc/news/8.4.2-vs-8.5.0.h
+        git rm doc/news/changes/{major,minor,incompatibilities}/*
+        git commit -m "Remove now obsolete files." doc/news/changes/{major,minor,incompatibilities}
+        git push origin update-changes-file
+        hub pull-request -m "Replace individual files by one changelog for the whole release."
+
     cd doc/news
     cp changes.h 8.2.1-vs-8.3.0.h
     git add 8.2.1-vs-8.3.0.h
