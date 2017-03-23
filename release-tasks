@@ -148,7 +148,7 @@ Contributors for 8.5:
   Joscha Gedicke
   Juliane Dannberg
   Justin Kauffman
-  Konstantin Ladutenko and many others
+  Konstantin Ladutenko
   Liang Zhao
   Luca Heltai
   Martin Kronbichler
@@ -179,8 +179,8 @@ Contributors for 8.5:
     and look for anything that should obviously be fixed.
 
 
-0b/ Check for doxygen formatting problems by running tests/scripts/checkdoxygen.py:
-      find include -name "*h" -print | xargs -n 1 ./tests/scripts/checkdoxygen.py
+0b/ Check for doxygen formatting problems by running contrib/utilities/checkdoxygen.py:
+      find include -name "*h" -print | xargs -n 1 ./contrib/utilities/checkdoxygen.py
     and push the corresponding changes
 
 
@@ -255,16 +255,7 @@ author.
 
 
 1a/ Adjust doc/users/doxygen.html to link to the to-be-created TAG file.
-
-
-2/ Commit the changes:
-
-  git commit -a -m "update changes and news for release"
-  [ pull request ]
-
-
-3/ create the new release paper, upload to arxiv, link in publications.html
-  TH: it might make sense to delay this. The paper won't be done in time...
+    then do a pull request
 
 4/  If a x.y.0 release, it is now time to create a release branch:
 
