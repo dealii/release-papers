@@ -318,9 +318,13 @@ used second and fourth order metric tensors, and defines a number of
 referential and spatial projection operators and tensor derivatives that
 are commonly required in the definition of material laws.
 
-
 The updated step-44 tutorial program demonstrates the
-use of the physical module in the context of a solid mechanics problem.
+use of the physics module in the context of a solid mechanics problem.
+Additional updates to this tutorial include application of the new 
+\texttt{CellDataStorage} class to store and retrieve local quadrature point 
+data. An alternative approach to solving the linear system, previously 
+performed by global static condensation of two of the three field variables, 
+has been implemented using the \texttt{LinearOperator} class. 
 
 
 \subsection{Scalability of geometric multigrid framework}
@@ -577,7 +581,7 @@ worth mentioning that the set of new programs since the last release covers
 the following topics:
 \marginpar{Add the muscle elasticity example if it is merged in time.}
   \begin{itemize}
-    \item Auasi-static visco-elastic material behavior;
+    \item Quasi-static quasi-incompressible visco-elastic material behavior;
     \item Multiphase Navier-Stokes flow;
     \item The evolution of global-scale topography on planetary bodies;
     \item Goal-oriented elastoplasticity.
