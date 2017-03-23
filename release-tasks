@@ -179,16 +179,12 @@ Contributors for 8.5:
     and look for anything that should obviously be fixed.
 
 
-0b/ Run the indentation script:
-      ./contrib/utilities/indent
-    and push the corresponding changes
-
-0c/ Check for doxygen formatting problems by running tests/scripts/checkdoxygen.py:
+0b/ Check for doxygen formatting problems by running tests/scripts/checkdoxygen.py:
       find include -name "*h" -print | xargs -n 1 ./tests/scripts/checkdoxygen.py
     and push the corresponding changes
 
 
-0d/ Fix formatting bugs reported by: 
+0c/ Fix formatting bugs reported by: 
 
     cd include;
     find . -name "*h" -print | while read file;do ../contrib/utilities/wrapcomments.py $file >temp;done
@@ -208,11 +204,11 @@ Contributors for 8.5:
     Push the corresponding changes.
 
 
-0e/ Check that doxygen produces no errors when generating offline docs.
+0d/ Check that doxygen produces no errors when generating offline docs.
     Especially check that the tutorial dot graph gets generated
 
 
-0e'/ Run the copyright script:
+0e/ Run the copyright script:
       ./contrib/utilities/update-copyright
     and push the corresponding changes
 
