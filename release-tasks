@@ -210,6 +210,10 @@ Contributors for 8.5:
 
 0e/ Run the copyright script:
       ./contrib/utilities/update-copyright
+      git checkout -b update-copyright
+      git commit -a -m "Update copyright years."
+      git push origin update-copyright
+      hub pull-request -m "Update copyright years."
     and push the corresponding changes
 
 
@@ -224,6 +228,10 @@ Contributors for 8.5:
 
 
 1/  Create new changes file:
+    - Adjust the header of doc/news/header so that it reflects
+      the versions in question
+    - Also adjust the copyright dates
+    - Run the following commands from above the source dir:
         mkdir build-doc
         cd build-doc
         cmake ../dealii -DDEAL_II_COMPONENT_DOCUMENTATION=ON
@@ -237,22 +245,8 @@ Contributors for 8.5:
         git commit -m "Remove now obsolete files." doc/news/changes/{major,minor,incompatibilities}
         git push origin update-changes-file
         hub pull-request -m "Replace individual files by one changelog for the whole release."
-
-    cd doc/news
-    cp changes.h 8.2.1-vs-8.3.0.h
-    git add 8.2.1-vs-8.3.0.h
-    - empty the contents of changes.h: remove everything between 3x <ol></ol>
-    - edit the headers of the new file:
-/**
- * @page changes_between_8_1_and_8_2 Changes between Version 8.1 and 8.2
-
-<p>
-This is the list of changes made between the release of deal.II version
-8.1.0 and that of 8.2.0. All entries are signed with the names of the
-author.
-</p>
-    - edit the version numbers in the now empty changes.h
-
+    - Adjust the header of doc/news/header back so that it can
+      serve as the running header for the next release cycle.
 
 1a/ Adjust doc/users/doxygen.html to link to the to-be-created TAG file.
     then do a pull request
