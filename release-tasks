@@ -112,6 +112,7 @@ Best
      the end of the release paper:
 
 Developers:
+  Daniel Arndt
   Wolfgang Bangerth
   Denis Davydov
   Timo Heister
@@ -119,57 +120,66 @@ Developers:
   Guido Kanschat
   Martin Kronbichler
   Matthias Maier
+  Jean-Paul Pelteret
   Bruno Turcksin
   David Wells
   Toby Young
 
 Contributors for 8.5:
-  Alberto Sartori
-  Ali Samii
-  Andrea Mola
-  Andrew McBride
-  Bruno Turcksin
-  Ce Qin
-  Conrad Clevenger
+
   Daniel Arndt
-  Daniel Jodlbauer
-  Daniel Shapero
-  David Wells
-  Denis Davydov
-  Dragan Nikolic
-  Dustin Kumor
-  Giuseppe Pitton
-  Guido Kanschat
-  Jaeryun Yim
-  Jean-Paul Pelteret
-  Jihuan Tian
-  Jonathan Perry-Houts
-  Jonathan Robey
-  Joscha Gedicke
-  Juliane Dannberg
-  Justin Kauffman
-  Konstantin Ladutenko
-  Liang Zhao
-  Luca Heltai
-  Martin Kronbichler
-  Martin Steigemann
-  Mathias Mentler
-  Matthias Maier
-  Mauro Bardelloni
-  Mayank Sabharwal
-  Michael Harmon
-  Paul Kuberry
   Rajat Arora
-  Rene Gassmoeller
-  Ryan Grove
-  Sam Cox
-  Sebastian Gonzalez-Pintor
-  Spencer Patty
-  Timo Heister
-  Toby D. Young
-  Vaibhav Palkar
   Wolfgang Bangerth
+  Mauro Bardelloni
+  Conrad Clevenger
+  Sam Cox
+  Toby D. Young
+  Juliane Dannberg
+  Denis Davydov
+  Nicola Demo
+  Patrick Esser
   Niklas Fehn
+  Rene Gassmoeller
+  Joscha Gedicke
+  Nicola Giuliani
+  Sebastian Gonzalez-Pintor
+  Ryan Grove
+  Michael Harmon
+  Timo Heister
+  Luca Heltai
+  Daniel Jodlbauer
+  Guido Kanschat
+  Justin Kauffman
+  Eldar Khattatov 
+  Uwe Koecher
+  Alex Kokomov
+  Martin Kronbichler
+  Paul Kuberry
+  Dustin Kumor
+  Konstantin Ladutenko
+  Karl Ljungkvist
+  Matthias Maier
+  Andrew McBride
+  Mathias Mentler
+  Andrea Mola
+  Dragan Nikolic
+  Vaibhav Palkar
+  Spencer Patty
+  Jean-Paul Pelteret
+  Jonathan Perry-Houts
+  Giuseppe Pitton
+  Ce Qin
+  Jonathan Robey
+  Mayank Sabharwal
+  Ali Samii
+  Alberto Sartori
+  Daniel Shapero
+  Martin Steigemann
+  Jihuan Tian
+  Bruno Turcksin
+  David Wells
+  Jaeryun Yim
+  Liang Zhao
 
 0/ Do some basic testing as always
 
