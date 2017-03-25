@@ -349,12 +349,12 @@ Wolfgang Bangerth, Timo Heister, Guido Kanschat, and Matthias Maier
 
 
 8/ Remove unfinished tutorial programs.
-   For 8.3, these are steps 47, 50
+   For 8.5, these are steps 47, 50
 
    a) Delete directories on the branch:
 
      cd examples
-     git rm -r step-47 step-50
+     git rm -r step-47 step-50 
      git commit -a -m "removed unfinished steps (release tasks step 8)."
 
    b) These steps should also not be listed on the branch in
@@ -392,9 +392,7 @@ Wolfgang Bangerth, Timo Heister, Guido Kanschat, and Matthias Maier
       cd builddoc
       cmake -DDEAL_II_COMPONENT_DOCUMENTATION=ON -DCMAKE_INSTALL_PREFIX=$PWD/../installeddoc ../
       make -j 10 documentation
-      cd doc
-      cmake -P cmake_install.cmake
-      cd ../../installeddoc/doc
+      cd ../installeddoc/doc
       for i in `find . | egrep '\.html$'` ; do \
           perl ../../doc/doxygen/scripts/validate-xrefs.pl $i ; done
 
