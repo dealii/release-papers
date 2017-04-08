@@ -12,14 +12,14 @@ The major changes of this release are:
   mesh cell that is exact, rather than the usual polynomial approximations of
   a manifold.
 - Various improvements for high-order elements, including a switch of support
-  points in FE\_Q and FE\_DGQ to Gauss-Lobatto support points, stable
+  points in FE_Q and FE_DGQ to Gauss-Lobatto support points, stable
   evaluation of high-order Legendre polynomials, and several bugfixes for
   high-order polynomial mappings defined through the MappingQ class.
 - The LinearOperator class has been extended by a generic ``payload''
   mechanism that allows the attachment of arbitrary additional information to
   a LinearOperator.
-- A dedicated physics module has been created to provide some standard
-  definitions and operations used in continuum mechanics.
+- A dedicated physics module to provide definitions and operations
+  used in continuum mechanics.
 - The FE_Enriched class implements the operation of enriching the finite
   element space of an underlying element.
 - The FESeries namespace provides expansions of a finite element solution in
@@ -46,9 +46,9 @@ The main features of deal.II are:
 - A zoo of different finite elements
 - Fast linear algebra
 - Built-in support for shared memory and distributed parallel computing,
-  scaling from laptops to clusters with 10,000s of processor cores
+  scaling from laptops to clusters with 100,000+ processor cores
 - Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
 - Output for a wide variety of visualization platforms.
 
-Wolfgang Bangerth, Timo Heister, Guido Kanschat, Matthias Maier,
-and many other contributors.
+D. Arndt, W. Bangerth, D. Davydov, T. Heister, L. Heltai, M. Kronbichler,
+M. Maier, J.-P. Pelteret, B. Turcksin, D. Wells, and many other contributors.

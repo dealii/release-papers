@@ -10,14 +10,11 @@ The major changes of this release are:
   user-defined data on each cell.
 - The MappingManifold class provides exact mapping between the reference cell
   and a mesh cell.
-- Various improvements for high-order elements, including a switch of support
-  points in FE\_Q and FE\_DGQ to Gauss-Lobatto support points, stable
-  evaluation of high-order Legendre polynomials, and several bugfixes for
-  high-order mappings.
+- Various improvements for high-order elements.
 - The LinearOperator class has been extended by a generic ``payload''
   mechanism that allows the attachment of arbitrary additional information.
-- A dedicated physics module has been created to provide some standard
-  definitions and operations used in continuum mechanics.
+- A dedicated physics module to provide definitions and operations
+  used in continuum mechanics.
 - The FE_Enriched class implements the operation of enriching the finite
   element space of an underlying element.
 - The FESeries namespace provides expansions of a finite element solution in
@@ -25,8 +22,6 @@ The major changes of this release are:
 - New tutorial programs step-55, step-56, and step-57; as well as updates to
   step-27, step-37, and step-44. In addition, the separate code gallery of
   deal.II has gained a number of new entries.
-- This release was tested with static code analyzers: Cppcheck, PVS-Studio,
-  and Coverity-Scan.
 - More than 240 other features and bugfixes, see the full list of changes at
   https://www.dealii.org/developer/doxygen/deal.II/changes_between_8_4_2_and_8_5_0.html
 
@@ -40,5 +35,5 @@ The main features of deal.II are:
 - Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
 - Output for a wide variety of visualization platforms.
 
-Wolfgang Bangerth, Timo Heister, Guido Kanschat, Matthias Maier,
-and many other contributors.
+D. Arndt, W. Bangerth, D. Davydov, T. Heister, L. Heltai, M. Kronbichler,
+M. Maier, J.-P. Pelteret, B. Turcksin, D. Wells, and many other contributors.
