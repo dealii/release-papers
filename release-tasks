@@ -231,6 +231,12 @@ Contributors for 8.5:
     doc/external-libs/trilinos.html
     doc/external-libs/petsc.html
 
+0g/ Run codespell: e.g., inside emacs' compilation-mode run
+
+        codespell --disable-colors ./contrib/ ./cmake/ ./doc/ ./examples/ ./include/ ./source/
+
+    or the same (without --disable-colors) in the terminal.
+
 
 *** Caveat: for a minor version x.y.Z,
 *** 1-3 must be performed on the corresponding release branch, e.g. 'dealii-8.2'
