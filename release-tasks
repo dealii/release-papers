@@ -392,6 +392,9 @@ Wolfgang Bangerth, Timo Heister, Guido Kanschat, and Matthias Maier
       This step will require looking at the output and checking whether
       anything untoward is happening.
 
+10a/ Do the same for the code gallery examples: They should at the
+     very least compile. If possible, also run them to make sure they
+     don't trip up any exceptions.
 
 11/ In a clean source directory of the dealii-8.2 branch, do
       mkdir builddoc
