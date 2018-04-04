@@ -91,21 +91,21 @@
 %   Germany.
 %   {\texttt{jean-paul.pelteret@fau.de}}}
 % 
-% \author[9]{Bruno Turcksin\footnote{
-%   This manuscript has been authored by UT-Battelle, LLC under Contract No.
-%   DE-AC05-00OR22725 with the U.S. Department of Energy. The United States
-%   Government retains and the publisher, by accepting the article for
-%   publication, acknowledges that the United States Government retains a
-%   non-exclusive, paid-up, irrevocable, worldwide license to publish or reproduce
-%   the published form of this manuscript, or allow others to do so, for United
-%   States Government purposes. The Department of Energy will provide public
-%   access to these results of federally sponsored research in accordance with the
-%   DOE Public Access Plan (http://energy.gov/downloads/doe-public-access-plan).}}
-% \affil[9]{Computational Engineering and Energy Sciences Group,
-%   Computional Sciences and Engineering Division,
-%   Oak Ridge National Laboratory, 1 Bethel Valley Rd.,
-%   TN 37831, USA.
-%   {\texttt{turcksinbr@ornl.gov}}}
+ \author[9]{Bruno Turcksin\footnote{
+   This manuscript has been authored by UT-Battelle, LLC under Contract No.
+   DE-AC05-00OR22725 with the U.S. Department of Energy. The United States
+   Government retains and the publisher, by accepting the article for
+   publication, acknowledges that the United States Government retains a
+   non-exclusive, paid-up, irrevocable, worldwide license to publish or reproduce
+   the published form of this manuscript, or allow others to do so, for United
+   States Government purposes. The Department of Energy will provide public
+   access to these results of federally sponsored research in accordance with the
+   DOE Public Access Plan (http://energy.gov/downloads/doe-public-access-plan).}}
+ \affil[9]{Computational Engineering and Energy Sciences Group,
+   Computional Sciences and Engineering Division,
+   Oak Ridge National Laboratory, 1 Bethel Valley Rd.,
+   TN 37831, USA.
+   {\texttt{turcksinbr@ornl.gov}}}
 % 
 % \author[10]{David Wells}
 % \affil[10]{Department of Mathematical Sciences, Rensselaer Polytechnic Institute,
@@ -156,16 +156,36 @@ The major changes of this release are:
   Improved support for LinearOperator (Trilinos payload, Schur complement,
   iterative inverse), removal of old wrapper classes
 
+\item 
+  Support for GPU
+
+\item
+  Increase support for dense solvers (LAPACK changes and new ScaLAPACK
+  interface).
+
+\item
+  Support for Sundials
+
+\item 
+  Support for Particles
+
+\item 
+  Support for automatically differentiable numbers
+
+\item 
+  Support for complex-values vectors is now at the same level as real-valued
+  vectors.
+
 \item
   Initial support for generalized support points: Internal interpolation
   rewritten (support for $H(\text{curl})$ and $H(\text{div})$ conforming
   elements).
 
-\item New tutorial programs XYZ; as well as
-  updates to XYZ. In addition, the separate code
+\item New python tutorial program tutorial-1; as well as
+  updates to step-37. In addition, the separate code
   gallery of \dealii{} has gained a number of new entries.
 
-  \item More than XYZ other features and bugfixes.
+  \item More than 330 other features and bugfixes.
 \end{itemize}
 The more important ones of these changes will be detailed in the
 following section.  Information on how to cite \dealii{} is provided
