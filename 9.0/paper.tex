@@ -1,0 +1,422 @@
+\documentclass{ansarticle-preprint}
+%\usepackage{ucs}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+%\usepackage{cite}
+\usepackage{anslistings}
+\usepackage{multicol}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+
+\usepackage{fontenc}
+\usepackage{graphicx}
+
+\pgfplotsset{compat=1.9}
+
+\newcommand{\specialword}[1]{\texttt{#1}}
+\newcommand{\dealii}{{\specialword{deal.II}}}
+\newcommand{\pfrst}{{\specialword{p4est}}}
+\newcommand{\trilinos}{{\specialword{Trilinos}}}
+\newcommand{\aspect}{\specialword{Aspect}}
+\newcommand{\petsc}{\specialword{PETSc}}
+\newcommand{\cmake}{{\specialword{CMake}}}
+\newcommand{\autoconf}{{\specialword{autoconf}}}
+
+%
+% Author list -- please add yourself in both places below (in
+%                alphabetical order) if you think that your
+%                contributions to the last release warrant this
+%
+
+\hypersetup{
+  pdfauthor={
+    Timo Heister,
+  },
+  pdftitle={The deal.II Library, Version 9.0, 2018},
+}
+
+\title{The \dealii{} Library, Version 9.0}
+
+% \author[1]{Daniel Arndt}
+% \affil[1]{Interdisciplinary Center for Scientific Computing,
+%     Heidelberg University, Im Neuenheimer Feld 205, 69120 Heidelberg, Germany.
+%     {\texttt{daniel.arndt@iwr.uni-heidelberg.de}}}
+% 
+% \author[2]{Wolfgang Bangerth}
+% \affil[2]{Department of Mathematics, Colorado State University, Fort
+%   Collins, CO 80523-1874, USA.
+%     {\texttt{bangerth@colostate.edu}}}
+% 
+% \author[3]{Denis Davydov}
+% \affil[3]{Chair of Applied Mechanics, University of
+%      Erlangen-Nuremberg, Egerlandstr.\ 5, 91058 Erlangen, Germany.
+%     {\texttt{denis.davydov@fau.de}}}
+
+\author[4]{Timo Heister}
+\affil[4]{Mathematical Sciences,
+  O-110 Martin Hall,
+  Clemson University,
+  Clemson, SC 29634, USA.
+  {\texttt{heister@clemson.edu}}}
+% 
+% \author[5]{Luca Heltai}
+% \affil[5]{SISSA,
+%   International School for Advanced Studies,
+%   Via Bonomea 265,
+%   34136, Trieste, Italy.
+% {\texttt{luca.heltai@sissa.it}}}
+% 
+% \author[6]{Martin Kronbichler}
+% \affil[6]{Institute for Computational Mechanics,
+%   Technical University of Munich,
+%   Boltzmannstr.~15, 85748 Garching, Germany.
+%   {\texttt{kronbichler@lnm.mw.tum.de}}}
+% 
+% \author[7]{Matthias Maier}
+% \affil[7]{School of Mathematics,
+%   University of Minnesota,
+%   127 Vincent Hall, 206 Church Street SE,
+%   Minneapolis, MN 55455, USA.
+%   {\texttt{msmaier@umn.edu}}}
+% 
+% \author[8]{Jean-Paul Pelteret}
+% \affil[8]{Chair of Applied Mechanics,
+%   University of Erlangen-Nuremberg,
+%   Egerlandstr.\ 5,
+%   91058 Erlangen,
+%   Germany.
+%   {\texttt{jean-paul.pelteret@fau.de}}}
+% 
+% \author[9]{Bruno Turcksin\footnote{
+%   This manuscript has been authored by UT-Battelle, LLC under Contract No.
+%   DE-AC05-00OR22725 with the U.S. Department of Energy. The United States
+%   Government retains and the publisher, by accepting the article for
+%   publication, acknowledges that the United States Government retains a
+%   non-exclusive, paid-up, irrevocable, worldwide license to publish or reproduce
+%   the published form of this manuscript, or allow others to do so, for United
+%   States Government purposes. The Department of Energy will provide public
+%   access to these results of federally sponsored research in accordance with the
+%   DOE Public Access Plan (http://energy.gov/downloads/doe-public-access-plan).}}
+% \affil[9]{Computational Engineering and Energy Sciences Group,
+%   Computional Sciences and Engineering Division,
+%   Oak Ridge National Laboratory, 1 Bethel Valley Rd.,
+%   TN 37831, USA.
+%   {\texttt{turcksinbr@ornl.gov}}}
+% 
+% \author[10]{David Wells}
+% \affil[10]{Department of Mathematical Sciences, Rensselaer Polytechnic Institute,
+% Troy, NY 12180, USA.
+%   {\texttt{wellsd2@rpi.edu}}}
+
+\renewcommand{\labelitemi}{--}
+
+
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  This paper provides an overview of the new features of the finite element
+  library \dealii{} version 9.0.
+\end{abstract}
+
+
+\section{Overview}
+
+\dealii{} version 9.0.0 was released April X, 2018. This paper provides an
+overview of the new features of this release and serves as a citable
+reference for the \dealii{} software library version 9.0. \dealii{} is an
+object-oriented finite element library used around the world in the
+development of finite element solvers. It is available for free under the
+GNU Lesser General Public License (LGPL) from the \dealii{} homepage at
+\url{http://www.dealii.org/}.
+
+The major changes of this release are:
+\begin{itemize}
+\item The \texttt{CellDataStorage} ...
+
+\item New tutorial programs XYZ; as well as
+  updates to XYZ. In addition, the separate code
+  gallery of \dealii{} has gained a number of new entries.
+
+  \item More than XYZ other features and bugfixes.
+\end{itemize}
+The more important ones of these changes will be detailed in the
+following section.  Information on how to cite \dealii{} is provided
+in Section \ref{sec:cite}.
+
+
+
+\section{Significant changes to the library}
+
+This release of \dealii{} contains a number of large and significant changes
+that will be discussed in the following sections. It of course also contains a
+vast number of smaller changes and added functionality; the details of these
+can be found
+\href{https://www.dealii.org/8.5.0/doxygen/deal.II/changes_between_8_4_2_and_8_5_0.html}{in
+the file that lists all changes for this release}, see \cite{changes90}.
+(The file is also linked to from the web site of each release as well as
+the release announcement.)
+
+
+\subsection{Feature 1}
+
+\subsection{Feature 2}
+
+
+\subsection{New and updated tutorial programs}
+\marginpar{OLD}
+In addition to the updated tutorial programs mentioned in the previous
+section, this release of \dealii{} includes three new tutorials TODO: old:
+\begin{itemize}
+ \item {\bf step-55} explains how to solve the Stokes
+ equations efficiently in parallel. It is a good introduction to solving
+ systems of PDEs in parallel, discusses optimal block
+ preconditioners, and demonstrates other aspects like error computation.
+ Inverses of individual blocks of the linear system are approximated with an algebraic
+ multigrid preconditioner.
+
+ \item {\bf step-56} shows how to apply geometric multigrid
+ preconditioners on a subset of a system of PDEs. The problem solved here is the
+ Stokes equations, like in step-55.
+
+ \item {\bf step-57} solves the stationary Navier-Stokes equations.
+ The nonlinear system is solved using Newton's method on a sequence of adaptively refined
+ grids. The preconditioner is again built on a block factorization of the saddle point
+ system like in step-55 and step-56, but the non-symmetric terms stemming from the
+ nonlinear convective part requires more sophisticated solvers. The benchmark problem,
+ flow in the 2d lid-driven cavity, requires a continuation method for high Reynolds
+ numbers.
+ \end{itemize}
+
+In addition to tutorials, \dealii{} has a separate ``code gallery'' that
+consists of programs shared by users as examples of what can be
+done with \dealii{}. While not part of the release process, it is nonetheless
+worth mentioning that the set of new programs since the last release covers
+the following topics:
+\marginpar{OLD}
+  \begin{itemize}
+    \item Quasi-static quasi-incompressible visco-elastic material behavior;
+    \item Multiphase Navier-Stokes flow;
+    \item The evolution of global-scale topography on planetary bodies;
+    \item Goal-oriented elastoplasticity.
+  \end{itemize}
+
+
+\subsection{Incompatible changes}
+
+\marginpar{OLD}
+The 9.0 release includes around XYZ
+\href{https://www.dealii.org/8.5.0/doxygen/deal.II/changes_between_8_4_2_and_8_5_0.html}{
+incompatible changes}; see \cite{changes90}. The majority of these changes
+should not be visible to typical user codes; some remove previously
+deprecated classes and functions, and the majority change internal
+interfaces that are not usually used in external applications. However, three
+incompatible changes are worth mentioning:
+\begin{itemize}
+  \item High-order Lagrange elements, both continuous \verb!FE_Q! and
+    discontinuous \verb!FE_DGQ! types, now use the nodal points of the
+    Gauss-Lobatto quadrature formula as support points by default, rather than the
+    previous equidistant ones. For cubic polynomials and higher, the point
+    distribution has thus changed and, consequently, the entries in
+    solution vectors will be different compared to previous
+    versions of \dealii{}. Note, however, that using the Gauss-Lobatto points as nodal
+    points results in a much more stable interpolation, including better
+    iteration counts in most iterative solvers.
+  \item
+    The library no longer instantiates template classes with \texttt{long
+    double}. These were rarely used, but took up a significant
+    fraction of compile and link time, as well as library
+    size. Application programs can, however, still instantiate all
+    template classes with \texttt{long
+    double} as long as they include the corresponding \texttt{.templates.h}
+    header files.
+  \item
+    The \texttt{ParameterGUI} has been moved to a separate repository.
+\end{itemize}
+
+
+
+\section{How to cite \dealii{}}\label{sec:cite}
+
+In order to justify the work the developers of \dealii{} put into this
+software, we ask that papers using the library reference one of the
+\dealii{} papers. This helps us justify the effort we put into it.
+
+There are various ways to reference \dealii{}. To acknowledge the use of the
+current version of the library, \textbf{please reference the present document}. For up
+to date information and bibtex snippets for this document see:
+\begin{center}
+ \url{https://www.dealii.org/publications.html}
+\end{center}
+
+% \begin{minipage}{0.9\textwidth}%no page break in here please
+% \begin{verbatim}
+% @article{dealII82,
+%   title = {The {\tt deal.{I}{I}} Library, Version 8.2},
+%   author = {W. Bangerth and T. Heister and L. Heltai
+%    and G. Kanschat and M. Kronbichler and M. Maier
+%    and B. Turcksin and T. D. Young},
+%   journal = {preprint},
+%   year = {2015},
+% }
+% \end{verbatim} %  journal = {arXiv preprint \url{http://arxiv.org/abs/TODO}},
+% \end{minipage}
+
+The original \texttt{\dealii{}} paper containing an overview of its
+architecture is \cite{BangerthHartmannKanschat2007}. If you rely on specific
+features of the library, please consider citing any of the following:
+\begin{itemize}
+ \item For geometric multigrid: \cite{Kanschat2004,JanssenKanschat2011};
+ \item For distributed parallel computing: \cite{BangerthBursteddeHeisterKronbichler11};
+ \item For $hp$ adaptivity: \cite{BangerthKayserHerold2007};
+  \item For $PUM$ and enrichment of the FE space: \cite{Davydov2016};
+ \item For matrix-free and fast assembly techniques:
+   \cite{KronbichlerKormann2012};
+ \item For computations on lower-dimensional manifolds:
+   \cite{DeSimoneHeltaiManigrasso2009};
+ \item For integration with CAD files and tools:
+   \cite{HeltaiMola2015};
+ \item For \texttt{LinearOperator} and \texttt{PackagedOperation} facilities:
+   \cite{MaierBardelloniHeltai-2016-a,MaierBardelloniHeltai-2016-b}.
+ \item For uses of the \texttt{WorkStream} interface:
+   \cite{TKB16}.
+\end{itemize}
+
+\marginpar{update}
+\dealii{} can interface with many other libraries:
+\begin{multicols}{2}
+\begin{itemize}
+\item ARPACK \cite{arpack}
+\item BLAS, LAPACK
+\item GSL \cite{gsl2016}
+\item HDF5 \cite{hdf5}
+\item METIS \cite{karypis1998fast}
+\item MUMPS \cite{ADE00,MUMPS:1,MUMPS:2,mumps-web-page}
+\item muparser \cite{muparser-web-page}
+\item NetCDF \cite{rew1990netcdf}
+\item OpenCASCADE \cite{opencascade-web-page}
+\item p4est \cite{p4est}
+\item PETSc \cite{petsc-user-ref,petsc-web-page}
+\item SLEPc \cite{Hernandez:2005:SSF}
+\item Threading Building Blocks \cite{Rei07}
+\item Trilinos \cite{trilinos,trilinos-web-page}
+\item UMFPACK \cite{umfpack}
+\end{itemize}
+\end{multicols}
+Please consider citing the appropriate references if you use interfaces to these
+libraries.
+
+Older releases of \dealii{} can be cited as \cite{dealII80,dealII81,dealII82,dealII83,dealII84,dealII85}.
+
+\nocite{BangerthKanschat1999}
+
+\section{Acknowledgments}
+
+\dealii{} is a world-wide project with dozens of contributors around the
+globe. Other than the authors of this paper, the following people contributed code to
+this release:\\
+%
+% get this from the changes/*/* files using the command listed in the
+% release-tasks paper and remove the authors of this paper
+%
+\marginpar{update}
+  Rajat Arora,
+  Mauro Bardelloni,
+  Conrad Clevenger,
+  Sam Cox,
+  Toby D. Young,
+  Juliane Dannberg,
+  Nicola Demo,
+  Patrick Esser,
+  Niklas Fehn,
+  Rene Gassmoeller,
+  Joscha Gedicke,
+  Nicola Giuliani,
+  Sebastian Gonzalez-Pintor,
+  Ryan Grove,
+  Michael Harmon,
+  Daniel Jodlbauer,
+  Guido Kanschat,
+  Justin Kauffman,
+  Eldar Khattatov ,
+  Uwe Koecher,
+  Alex Kokomov,
+  Paul Kuberry,
+  Dustin Kumor,
+  Konstantin Ladutenko,
+  Karl Ljungkvist,
+  Andrew McBride,
+  Mathias Mentler,
+  Andrea Mola,
+  Dragan Nikolic,
+  Vaibhav Palkar,
+  Spencer Patty,
+  Jonathan Perry-Houts,
+  Giuseppe Pitton,
+  Ce Qin,
+  Jonathan Robey,
+  Mayank Sabharwal,
+  Ali Samii,
+  Alberto Sartori,
+  Daniel Shapero,
+  Martin Steigemann,
+  Jihuan Tian,
+  Jaeryun Yim,
+  Liang Zhao
+
+
+Their contributions are much appreciated!
+
+
+\bigskip
+
+\dealii{} and its developers are financially supported through a
+variety of funding sources:
+\marginpar{update}
+
+% D.~Arndt was supported by the German Research Foundation (DFG) under the
+% project ``High-order discontinuous Galerkin for the exa-scale'' (ExaDG) within the
+% priority program ``Software for Exascale Computing'' (SPPEXA).
+% 
+% W.~Bangerth was partially
+% supported by the National Science Foundation under award OCI-1148116
+% as part of the Software Infrastructure for Sustained Innovation (SI2)
+% program; and by the Computational Infrastructure in Geodynamics initiative
+% (CIG), through the National Science Foundation under Awards
+% No.~EAR-0949446 and EAR-1550901 and The University of California -- Davis.
+% 
+% D.~Davydov was supported by the European Research Council (ERC) through the Advanced Grant 289049 MOCOPOLY and the Competence Network for Technical and Scientific High Performance Computing in Bavaria (KONWIHR).
+
+T.~Heister was partially supported by the Computational Infrastructure in
+Geodynamics initiative (CIG), through the National Science Foundation
+under Award No. EAR-0949446 and EAR-1550901 and The University of California -- Davis, and National Science Foundation grant DMS-1522191.
+% 
+% M.~Kronbichler was partially supported by the German Research Foundation (DFG)
+% under the project ``High-order discontinuous Galerkin for the exa-scale''
+% (ExaDG) within the priority program ``Software for Exascale Computing''
+% (SPPEXA), grant agreement no.~KR4661/2-1, the Bayerisches Kompetenznetzwerk
+% f\"ur Technisch-Wissenschaftliches Hoch- und H\"ochstleistungsrechnen
+% (KONWIHR), and the Gauss Centre for Supercomputing e.V.~by providing computing
+% time on the GCS Supercomputer SuperMUC at Leibniz Supercomputing Centre (LRZ)
+% through project id pr83te.
+% 
+% J-P.~Pelteret was supported by the European Research Council (ERC) through the Advanced Grant 289049 MOCOPOLY.
+% 
+% B.~Turcksin: This material is based upon work supported by the U.S. Department of
+% Energy, Office of Science, under contract number DE-AC05-00OR22725.
+% 
+% 
+% D.~Wells was supported by the National Science Foundation (NSF) through Grant
+% DMS-1344962.
+
+The Interdisciplinary Center for Scientific Computing (IWR) at Heidelberg University has provided
+hosting services for the \dealii{} web page and the SVN archive.
+
+
+\bibliography{paper}{}
+\bibliographystyle{abbrv}
+
+\end{document}
