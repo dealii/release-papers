@@ -73,12 +73,12 @@
 %   Boltzmannstr.~15, 85748 Garching, Germany.
 %   {\texttt{kronbichler@lnm.mw.tum.de}}}
 % 
-% \author[7]{Matthias Maier}
-% \affil[7]{School of Mathematics,
-%   University of Minnesota,
-%   127 Vincent Hall, 206 Church Street SE,
-%   Minneapolis, MN 55455, USA.
-%   {\texttt{msmaier@umn.edu}}}
+\author[7]{Matthias Maier}
+\affil[7]{School of Mathematics,
+  University of Minnesota,
+  127 Vincent Hall, 206 Church Street SE,
+  Minneapolis, MN 55455, USA.
+  {\texttt{msmaier@umn.edu}}}
 % 
 % \author[8]{Jean-Paul Pelteret}
 % \affil[8]{Chair of Applied Mechanics,
@@ -135,13 +135,28 @@ GNU Lesser General Public License (LGPL) from the \dealii{} homepage at
 
 The major changes of this release are:
 \begin{itemize}
-\item Manifold smoothing: The manifold smoothing algorithms applied in the Triangulation class and MappingQGeneric have been changed from the old Laplace-style smoothing to a transfinite interpolation that linearly blends between the descriptions on the faces around a cell. The old transformation introduced boundary layers inside cells that prevented convergence rates from exceeding 3.5 in the global L2 errors on typical settings. This change also considerably improves mesh quality on settings where curved descriptions are only applied to the boundary rather than the whole volume. 
+\item
+  Manifold smoothing: The manifold smoothing algorithms applied in the
+  Triangulation class and MappingQGeneric have been changed from the old
+  Laplace-style smoothing to a transfinite interpolation that linearly
+  blends between the descriptions on the faces around a cell. The old
+  transformation introduced boundary layers inside cells that prevented
+  convergence rates from exceeding 3.5 in the global L2 errors on typical
+  settings. This change also considerably improves mesh quality on settings
+  where curved descriptions are only applied to the boundary rather than
+  the whole volume.
 
-\item C++11 is now required and used in many places, move semantics, ... (...)
+\item
+  C++11 is now required and used in many places, move semantics, ... (...)
 
-\item 
+\item
+  Improved support for LinearOperator (Trilinos payload, Schur complement,
+  iterative inverse), removal of old wrapper classes
 
-
+\item
+  Initial support for generalized support points: Internal interpolation
+  rewritten (support for $H(\text{curl})$ and $H(\text{div})$ conforming
+  elements).
 
 \item New tutorial programs XYZ; as well as
   updates to XYZ. In addition, the separate code
