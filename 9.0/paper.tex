@@ -35,6 +35,7 @@
     Denis Davydov,
     Timo Heister,
     Luca Heltai,
+    Martin Kronbichler
     Matthias Maier
   },
   pdftitle={The deal.II Library, Version 9.0, 2018},
@@ -72,13 +73,13 @@
   Via Bonomea 265,
   34136, Trieste, Italy.
 {\texttt{luca.heltai@sissa.it}}}
-%
-% \author[6]{Martin Kronbichler}
-% \affil[6]{Institute for Computational Mechanics,
-%   Technical University of Munich,
-%   Boltzmannstr.~15, 85748 Garching, Germany.
-%   {\texttt{kronbichler@lnm.mw.tum.de}}}
-%
+
+\author[6]{Martin Kronbichler}
+\affil[6]{Institute for Computational Mechanics,
+  Technical University of Munich,
+  Boltzmannstr.~15, 85748 Garching, Germany.
+  {\texttt{kronbichler@lnm.mw.tum.de}}}
+
 \author[7]{Matthias Maier}
 \affil[7]{School of Mathematics,
   University of Minnesota,
@@ -160,6 +161,9 @@ The major changes of this release are:
   iterative inverse), removal of old wrapper classes
 
 \item
+  Significant extension of matrix-free capabilities, including support for face integrals in discontinuous Galerkin schemes, a new Hermite-like polynomial basis adapted to face integrals that involve derivatives of shape functions, and several performance enhancements
+
+\item
   Support for GPU
 
 \item
@@ -179,13 +183,13 @@ The major changes of this release are:
   Support for complex-values vectors is now at the same level as real-valued
   vectors.
 
-\item 
+\item
   Support for Nanoflann
 
-\item 
+\item
   Support for Assimp
 
-\item 
+\item
   Initial support for GMHS
 
 \item
@@ -269,7 +273,7 @@ the following topics:
 \item QSplit
 \end{itemize}
 
-Mostly used for BEM problems. 
+Mostly used for BEM problems.
 
 \subsection{Incompatible changes}
 
@@ -462,16 +466,14 @@ D.~Davydov was supported by the German Science Foundation
 T.~Heister was partially supported by the Computational Infrastructure in
 Geodynamics initiative (CIG), through the National Science Foundation
 under Award No. EAR-0949446 and EAR-1550901 and The University of California -- Davis, and National Science Foundation grant DMS-1522191.
-%
-% M.~Kronbichler was partially supported by the German Research Foundation (DFG)
-% under the project ``High-order discontinuous Galerkin for the exa-scale''
-% (ExaDG) within the priority program ``Software for Exascale Computing''
-% (SPPEXA), grant agreement no.~KR4661/2-1, the Bayerisches Kompetenznetzwerk
-% f\"ur Technisch-Wissenschaftliches Hoch- und H\"ochstleistungsrechnen
-% (KONWIHR), and the Gauss Centre for Supercomputing e.V.~by providing computing
-% time on the GCS Supercomputer SuperMUC at Leibniz Supercomputing Centre (LRZ)
-% through project id pr83te.
-%
+
+M.~Kronbichler was partially supported by the German Research Foundation (DFG)
+under the project ``High-order discontinuous Galerkin for the exa-scale''
+(ExaDG) within the priority program ``Software for Exascale Computing''
+(SPPEXA), grant agreement no.~KR4661/2-1 and the Bayerisches Kompetenznetzwerk
+f\"ur Technisch-Wissenschaftliches Hoch- und H\"ochstleistungsrechnen
+(KONWIHR).
+
 % J-P.~Pelteret was supported by the European Research Council (ERC) through the Advanced Grant 289049 MOCOPOLY.
 %
 % B.~Turcksin: This material is based upon work supported by the U.S. Department of
