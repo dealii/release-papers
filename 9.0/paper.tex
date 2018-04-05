@@ -154,7 +154,12 @@ The major changes of this release are:
   the whole volume.
 
 \item
-  C++11 is now required and used in many places, move semantics, ... (...)
+  C++11 is now required and used in many places. For performance reason,
+  move semantics is used when possible and in many places, \texttt{emplace\_back} 
+  replaces \texttt{push\_back()}. C-style raw pointers have been replaced by
+  \texttt{shared\_ptr} and \texttt{unique\_ptr} to avoid the risk of memory leak.
+  Private constructors have been removed and instead were delete. clang-tidy is
+  now being used to ensure the quality of the code.
 
 \item
   Improved support for LinearOperator (Trilinos payload, Schur complement,
@@ -167,30 +172,49 @@ The major changes of this release are:
   Support for GPU
 
 \item
-  Increase support for dense solvers (LAPACK changes and new ScaLAPACK
+  Increased support for dense solvers (LAPACK changes and new ScaLAPACK
   interface).
 
 \item
   Support for Sundials and ROL
 
 \item
-  Support for Particles
+  A dedicated particles module has been created to provide support for the
+  storage of particles and their properties. This module provides a base class
+  \texttt{Particles} which represents a particle with position, an ID number and
+  a variable number of properties. It also provides a \texttt{ParticleHandler}
+  class that manages the storage and handling of particles. This class
+  distributes the particles in distributed domains (these are the only domains
+  supported by this class so far)
 
 \item
-  Support for automatically differentiable numbers
+  A dedicated differentiation module had been created to provide support for
+  automatic and symbolic differentiation. Automatic differentiation is a set of
+  technique to evaluate the derivates of a function defined by a compute
+  program. Currently the Adol-C and Sacado libraries are supported through a
+  unified interface. In practice, this support means that Adol-c and Sacado
+  data types can be used in the \texttt{FEValues} and \texttt{FEValuesViews}
+  to represent degree-of-freedom values.
 
 \item
   Support for complex-values vectors is now at the same level as real-valued
   vectors.
 
 \item
-  Support for Nanoflann
+  Support for the nanoflann library. nanoflann is a library for building
+  KD-trees of datasets and for the fast querying of closest neighbors in
+  KD-trees. nanoflann is used to speed up the search of the p nearest neighbors
+  of a given point, or searching the points that fall within a radius of a
+  target point.
 
 \item
-  Support for Assimp
+  Support for the Open Asset Import Library (Assimp). Assimp can be used to read
+  about 40 different 3D graphics formats. A subset of these formats can be used
+  to generate two-dimensional meshes possibly embedded in a three-dimensional
+  space.
 
 \item
-  Initial support for GMHS
+  Initial support for Gmsh
 
 \item
   Initial support for generalized support points: Internal interpolation
@@ -359,6 +383,7 @@ features of the library, please consider citing any of the following:
 \dealii{} can interface with many other libraries:
 \begin{multicols}{2}
 \begin{itemize}
+\item Adol-c \cite{adol-c}
 \item ARPACK \cite{arpack}
 \item Assimp \cite{assimp}
 \item BLAS, LAPACK
@@ -367,6 +392,7 @@ features of the library, please consider citing any of the following:
 \item METIS \cite{karypis1998fast}
 \item MUMPS \cite{ADE00,MUMPS:1,MUMPS:2,mumps-web-page}
 \item muparser \cite{muparser-web-page}
+\item nanoflann \cite{nanoflann}
 \item NetCDF \cite{rew1990netcdf}
 \item OpenCASCADE \cite{opencascade-web-page}
 \item p4est \cite{p4est}
