@@ -32,7 +32,10 @@
 \hypersetup{
   pdfauthor={
     Daniel Arndt,
+    Denis Davydov,
     Timo Heister,
+    Luca Heltai,
+    Matthias Maier
   },
   pdftitle={The deal.II Library, Version 9.0, 2018},
 }
@@ -46,11 +49,11 @@
   69120 Heidelberg, Germany.
   {\texttt{daniel.arndt@iwr.uni-heidelberg.de}}}
 
-% \author[2]{Wolfgang Bangerth}
-% \affil[2]{Department of Mathematics, Colorado State University, Fort
-%   Collins, CO 80523-1874, USA.
-%     {\texttt{bangerth@colostate.edu}}}
-%
+\author[2]{Wolfgang Bangerth}
+\affil[2]{Department of Mathematics, Colorado State University, Fort
+  Collins, CO 80523-1874, USA.
+    {\texttt{bangerth@colostate.edu}}}
+
 \author[3]{Denis Davydov}
 \affil[3]{Chair of Applied Mechanics, University of
      Erlangen-Nuremberg, Egerlandstr.\ 5, 91058 Erlangen, Germany.
@@ -63,12 +66,12 @@
   Clemson, SC 29634, USA.
   {\texttt{heister@clemson.edu}}}
 %
-% \author[5]{Luca Heltai}
-% \affil[5]{SISSA,
-%   International School for Advanced Studies,
-%   Via Bonomea 265,
-%   34136, Trieste, Italy.
-% {\texttt{luca.heltai@sissa.it}}}
+\author[5]{Luca Heltai}
+\affil[5]{SISSA,
+  International School for Advanced Studies,
+  Via Bonomea 265,
+  34136, Trieste, Italy.
+{\texttt{luca.heltai@sissa.it}}}
 %
 % \author[6]{Martin Kronbichler}
 % \affil[6]{Institute for Computational Mechanics,
@@ -82,15 +85,15 @@
   127 Vincent Hall, 206 Church Street SE,
   Minneapolis, MN 55455, USA.
   {\texttt{msmaier@umn.edu}}}
-%
-% \author[8]{Jean-Paul Pelteret}
-% \affil[8]{Chair of Applied Mechanics,
-%   University of Erlangen-Nuremberg,
-%   Egerlandstr.\ 5,
-%   91058 Erlangen,
-%   Germany.
-%   {\texttt{jean-paul.pelteret@fau.de}}}
-%
+
+\author[8]{Jean-Paul Pelteret}
+\affil[8]{Chair of Applied Mechanics,
+  University of Erlangen-Nuremberg,
+  Egerlandstr.\ 5,
+  91058 Erlangen,
+  Germany.
+  {\texttt{jean-paul.pelteret@fau.de}}}
+
  \author[9]{Bruno Turcksin\footnote{
    This manuscript has been authored by UT-Battelle, LLC under Contract No.
    DE-AC05-00OR22725 with the U.S. Department of Energy. The United States
@@ -176,6 +179,15 @@ The major changes of this release are:
   Support for complex-values vectors is now at the same level as real-valued
   vectors.
 
+\item 
+  Support for Nanoflann
+
+\item 
+  Support for Assimp
+
+\item 
+  Initial support for GMHS
+
 \item
   Initial support for generalized support points: Internal interpolation
   rewritten (support for $H(\text{curl})$ and $H(\text{div})$ conforming
@@ -248,6 +260,16 @@ the following topics:
     \item Goal-oriented elastoplasticity.
   \end{itemize}
 
+\subsection{New non-standard quadrature rules}
+
+\begin{itemize}
+\item QSimplex
+\item QDuffy
+\item QTrianglePolar
+\item QSplit
+\end{itemize}
+
+Mostly used for BEM problems. 
 
 \subsection{Incompatible changes}
 
@@ -334,6 +356,7 @@ features of the library, please consider citing any of the following:
 \begin{multicols}{2}
 \begin{itemize}
 \item ARPACK \cite{arpack}
+\item Assimp \cite{assimp}
 \item BLAS, LAPACK
 \item GSL \cite{gsl2016}
 \item HDF5 \cite{hdf5}
@@ -345,6 +368,7 @@ features of the library, please consider citing any of the following:
 \item p4est \cite{p4est}
 \item PETSc \cite{petsc-user-ref,petsc-web-page}
 \item SLEPc \cite{Hernandez:2005:SSF}
+\item SUNDIALS \cite{sundials}
 \item Threading Building Blocks \cite{Rei07}
 \item Trilinos \cite{trilinos,trilinos-web-page}
 \item UMFPACK \cite{umfpack}
@@ -465,3 +489,8 @@ hosting services for the \dealii{} web page.
 \bibliographystyle{abbrv}
 
 \end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
