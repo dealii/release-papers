@@ -50,11 +50,11 @@
 % \affil[2]{Department of Mathematics, Colorado State University, Fort
 %   Collins, CO 80523-1874, USA.
 %     {\texttt{bangerth@colostate.edu}}}
-% 
-% \author[3]{Denis Davydov}
-% \affil[3]{Chair of Applied Mechanics, University of
-%      Erlangen-Nuremberg, Egerlandstr.\ 5, 91058 Erlangen, Germany.
-%     {\texttt{denis.davydov@fau.de}}}
+%
+\author[3]{Denis Davydov}
+\affil[3]{Chair of Applied Mechanics, University of
+     Erlangen-Nuremberg, Egerlandstr.\ 5, 91058 Erlangen, Germany.
+    {\texttt{denis.davydov@fau.de}}}
 
 \author[4]{Timo Heister}
 \affil[4]{Mathematical Sciences,
@@ -62,27 +62,27 @@
   Clemson University,
   Clemson, SC 29634, USA.
   {\texttt{heister@clemson.edu}}}
-% 
+%
 % \author[5]{Luca Heltai}
 % \affil[5]{SISSA,
 %   International School for Advanced Studies,
 %   Via Bonomea 265,
 %   34136, Trieste, Italy.
 % {\texttt{luca.heltai@sissa.it}}}
-% 
+%
 % \author[6]{Martin Kronbichler}
 % \affil[6]{Institute for Computational Mechanics,
 %   Technical University of Munich,
 %   Boltzmannstr.~15, 85748 Garching, Germany.
 %   {\texttt{kronbichler@lnm.mw.tum.de}}}
-% 
+%
 \author[7]{Matthias Maier}
 \affil[7]{School of Mathematics,
   University of Minnesota,
   127 Vincent Hall, 206 Church Street SE,
   Minneapolis, MN 55455, USA.
   {\texttt{msmaier@umn.edu}}}
-% 
+%
 % \author[8]{Jean-Paul Pelteret}
 % \affil[8]{Chair of Applied Mechanics,
 %   University of Erlangen-Nuremberg,
@@ -90,7 +90,7 @@
 %   91058 Erlangen,
 %   Germany.
 %   {\texttt{jean-paul.pelteret@fau.de}}}
-% 
+%
  \author[9]{Bruno Turcksin\footnote{
    This manuscript has been authored by UT-Battelle, LLC under Contract No.
    DE-AC05-00OR22725 with the U.S. Department of Energy. The United States
@@ -106,7 +106,7 @@
    Oak Ridge National Laboratory, 1 Bethel Valley Rd.,
    TN 37831, USA.
    {\texttt{turcksinbr@ornl.gov}}}
-% 
+%
 % \author[10]{David Wells}
 % \affil[10]{Department of Mathematical Sciences, Rensselaer Polytechnic Institute,
 % Troy, NY 12180, USA.
@@ -156,7 +156,7 @@ The major changes of this release are:
   Improved support for LinearOperator (Trilinos payload, Schur complement,
   iterative inverse), removal of old wrapper classes
 
-\item 
+\item
   Support for GPU
 
 \item
@@ -164,15 +164,15 @@ The major changes of this release are:
   interface).
 
 \item
-  Support for Sundials
+  Support for Sundials and ROL
 
-\item 
+\item
   Support for Particles
 
-\item 
+\item
   Support for automatically differentiable numbers
 
-\item 
+\item
   Support for complex-values vectors is now at the same level as real-valued
   vectors.
 
@@ -424,20 +424,21 @@ variety of funding sources:
 D.~Arndt was partially supported by the German Research Foundation (DFG) under the
 project ``High-order discontinuous Galerkin for the exa-scale'' (ExaDG) within the
 priority program ``Software for Exascale Computing'' (SPPEXA).
- 
+
 % W.~Bangerth was partially
 % supported by the National Science Foundation under award OCI-1148116
 % as part of the Software Infrastructure for Sustained Innovation (SI2)
 % program; and by the Computational Infrastructure in Geodynamics initiative
 % (CIG), through the National Science Foundation under Awards
 % No.~EAR-0949446 and EAR-1550901 and The University of California -- Davis.
-% 
-% D.~Davydov was supported by the European Research Council (ERC) through the Advanced Grant 289049 MOCOPOLY and the Competence Network for Technical and Scientific High Performance Computing in Bavaria (KONWIHR).
+%
+D.~Davydov was supported by the German Science Foundation
+(Deutsche Forschungs-Gemeinschaft, DFG), grant DA 1664/2-1.
 
 T.~Heister was partially supported by the Computational Infrastructure in
 Geodynamics initiative (CIG), through the National Science Foundation
 under Award No. EAR-0949446 and EAR-1550901 and The University of California -- Davis, and National Science Foundation grant DMS-1522191.
-% 
+%
 % M.~Kronbichler was partially supported by the German Research Foundation (DFG)
 % under the project ``High-order discontinuous Galerkin for the exa-scale''
 % (ExaDG) within the priority program ``Software for Exascale Computing''
@@ -446,13 +447,13 @@ under Award No. EAR-0949446 and EAR-1550901 and The University of California -- 
 % (KONWIHR), and the Gauss Centre for Supercomputing e.V.~by providing computing
 % time on the GCS Supercomputer SuperMUC at Leibniz Supercomputing Centre (LRZ)
 % through project id pr83te.
-% 
+%
 % J-P.~Pelteret was supported by the European Research Council (ERC) through the Advanced Grant 289049 MOCOPOLY.
-% 
+%
 % B.~Turcksin: This material is based upon work supported by the U.S. Department of
 % Energy, Office of Science, under contract number DE-AC05-00OR22725.
-% 
-% 
+%
+%
 % D.~Wells was supported by the National Science Foundation (NSF) through Grant
 % DMS-1344962.
 
