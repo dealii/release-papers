@@ -176,7 +176,18 @@ The major changes of this release are:
   interface).
 
 \item
-  Support for Sundials and ROL
+  A dedicated sundials module has been created to provide support for the
+  SUNDIALS library. SUNDIALS is a SUite of Nonlinear and
+  DIfferential/ALgebraic equations Solvers. ARKode, IDA, and KINSOL are
+  supported. ARKode is a solver library that provides adaptive-step time
+  integration. IDA is a package for the solution of differential-algebraic
+  equations systems in the form $F(t,y,y')=0$. KINSOL is olver for nonlinear
+  algebraic systems.
+
+\item 
+  A dedicated optimization/rol module has been created to provide support for
+  the Rapid Optimization Library (ROL). ROL is a package for large-scale
+  optimization.
 
 \item
   A dedicated particles module has been created to provide support for the
@@ -502,8 +513,8 @@ f\"ur Technisch-Wissenschaftliches Hoch- und H\"ochstleistungsrechnen
 
 % J-P.~Pelteret was supported by the European Research Council (ERC) through the Advanced Grant 289049 MOCOPOLY.
 %
-% B.~Turcksin: This material is based upon work supported by the U.S. Department of
-% Energy, Office of Science, under contract number DE-AC05-00OR22725.
+B.~Turcksin: This material is based upon work supported by the U.S. Department of
+Energy, Office of Science, under contract number DE-AC05-00OR22725.
 %
 %
 % D.~Wells was supported by the National Science Foundation (NSF) through Grant
