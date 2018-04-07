@@ -154,12 +154,26 @@ The major changes of this release are:
   the whole volume.
 
 \item
-  C++11 is now required and used in many places. For performance reason,
-  move semantics is used when possible and in many places, \texttt{emplace\_back} 
-  replaces \texttt{push\_back()}. C-style raw pointers have been replaced by
-  \texttt{shared\_ptr} and \texttt{unique\_ptr} to avoid the risk of memory leak.
-  Private constructors have been removed and instead were delete. clang-tidy is
-  now being used to ensure the quality of the code.
+  \dealii{} first offered support for C++11 features in version 6.2, which was
+  published in 2009: This release is the first to \emph{require} a compiler
+  supporting C++11. \dealii{} now uses language improvements such as using
+  \texttt{emplace\_back()} instead of \texttt{push\_back()}, moving objects
+  instead of copying them, using \texttt{nullptr} instead of \texttt{NULL}, and
+  marking unimplemented constructors with \texttt{=delete;} instead of making
+  them \texttt{private}. These changes include some minor incompatibilities: all
+  \texttt{clone} functions (such as \texttt{FiniteElement::clone} and
+  \texttt{Mapping::clone}) now return \texttt{std::unique\_ptr}s instead of
+  C-style raw pointers. Indeed, nearly every interface that returns a pointer
+  now returns either a \texttt{std::shared\_ptr} or \texttt{std::unique\_ptr},
+  which clarifies object ownership responsibilities and avoids memory leaks.
+
+\item \dealii{} has made extensive use of both the clang-tidy and coverity
+      static analysis tools for detecting bugs and other issues in the code.
+      %% TODO is there somewhere we can cite for either of these tools? It would
+      %% be nice to recognize the department of homeland security for offering
+      %% coverity.
+      %% TODO at the time of writing this coverity is down; get an issue count
+      %% when it is back online.
 
 \item
   Improved support for LinearOperator (Trilinos payload, Schur complement,
