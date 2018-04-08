@@ -177,8 +177,12 @@ The major changes of this release are:
       %% when it is back online.
 
 \item
-  Improved support for LinearOperator (Trilinos payload, Schur complement,
-  iterative inverse), removal of old wrapper classes
+  \texttt{LinearOperator}, a flexible template class that implements the action of a
+  linear operator (see \cite{MaierBardelloniHeltai-2016-b}), now supports
+  computations with Trilinos, Schur complements, and linear constraints. This
+  class is, as of this release, the official replacement for about half a dozen
+  similar (but less general) classes, such as \texttt{FilteredMatrix},
+  \texttt{IterativeInverse}, and \texttt{PointerMatrix}.
 
 \item
   Significant extension of matrix-free capabilities, including support for face integrals in discontinuous Galerkin schemes, a new Hermite-like polynomial basis adapted to face integrals that involve derivatives of shape functions, and several performance enhancements
