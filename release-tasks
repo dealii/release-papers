@@ -61,6 +61,8 @@ Thanks!
 -1a/ Start release paper process with email to all current (principal)
  developers:
 
+Subject: 9.0 Release Paper
+
 All,
 Timo and I have started to work on a few things necessary for the next
 release. In particular, we would like to get the release paper started.
@@ -68,7 +70,7 @@ release. In particular, we would like to get the release paper started.
 To this end:
 * Please check out https://github.com/dealii/release-papers
 * If you think that you have contributed in a way that warrants co-authorship,
-  please add yourself to the list of authors for the 8.5 papers
+  please add yourself to the list of authors for the 9.0 paper
 * If you think that someone other than just us maintainers should be a
   co-author, please nominate that person here
 We think that these last two points are important -- we want the list of
@@ -78,14 +80,7 @@ participants in the project that they can hope for formal recognition of
 their work in terms of things they can put on their CV.
 
 As far as content of the paper is concerned: I put together a list of
-possible topics -- please take a look. Other things we /could/ talk about,
-if we think they are important, but that I'm not sure are good material:
-* PVS static checker, coverity, ...
-* GridReordering rewrite
-* No longer use features of C++ deprecated with C++11/14/17
-* Move operators
-* Python bindings
-Please discuss. Also suggest topics I may have forgotten.
+possible topics -- please take a look. 
 
 As far as the material I tentatively put into the paper: if you're willing
 to write a section, can you attach your name to it somehow in the next
