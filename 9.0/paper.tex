@@ -185,14 +185,30 @@ The major changes of this release are:
   \texttt{IterativeInverse}, and \texttt{PointerMatrix}.
 
 \item
-  Significant extension of matrix-free capabilities, including support for face integrals in discontinuous Galerkin schemes, a new Hermite-like polynomial basis adapted to face integrals that involve derivatives of shape functions, and several performance enhancements
+  Significant extension of matrix-free capabilities, including support for face
+  integrals in discontinuous Galerkin schemes, a new Hermite-like polynomial
+  basis adapted to face integrals that involve derivatives of shape functions,
+  and several performance enhancements.
 
 \item
   Support for GPU
 
 \item
-  Increased support for dense solvers (LAPACK changes and new ScaLAPACK
-  interface).
+  In this version we add template wrappers for ScaLAPACK -- parallel dense linear algebra
+  library with block-cyclic matrix distribution over 2D process grid.
+  The functionality and interface is similar to the LAPACK wrappers,
+  matrix-matrix multiplication, Cholesky and LU factorizations,
+  eigensolvers, SVD, pseudoinverse, save/load in HDF5 format and
+  other functionality is implemented.
+  A user can combine the new linear algebra with other MPI-parallel
+  algorithms in \dealii{} without the need to worry about MPI communicator
+  being divisible exactly into 2D process grid. The processes which are not part of
+  the grid are labeled inactive and ScaLAPACK routines will not be called on them.
+  %
+  Additionally, we improved support of LAPACK. We added methods to perform
+  rank-1 update/downdate, calculate Cholesky factorization, trace and determinant,
+  as well as estimate the reciprocal condition number.
+  We also now support configuration with 64-bit BLAS.
 
 \item
   A dedicated sundials module has been created to provide support for the
@@ -203,7 +219,7 @@ The major changes of this release are:
   equations systems in the form $F(t,y,y')=0$. KINSOL is solver for nonlinear
   algebraic systems.
 
-\item 
+\item
   A dedicated optimization/rol module has been created to provide support for
   the Rapid Optimization Library (ROL). ROL is a package for large-scale
   optimization.
