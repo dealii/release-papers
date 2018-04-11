@@ -155,15 +155,15 @@ The major changes of this release are:
   the whole volume.
 
 \item
-  \dealii{} first offered support for C++11 features in version 6.2, which was
-  published in 2009: This release is the first to \emph{require} a compiler
+  \dealii{} first offered support for a subset of C++11 features in
+  version 6.2, released in 2009. The current release is the first to \emph{require} a compiler
   supporting C++11. \dealii{} now uses language improvements such as using
   \texttt{emplace\_back()} instead of \texttt{push\_back()}, moving objects
   instead of copying them, using \texttt{nullptr} instead of \texttt{NULL}, and
-  marking unimplemented constructors with \texttt{=delete;} instead of making
-  them \texttt{private}. These changes include some minor incompatibilities: all
-  \texttt{clone} functions (such as \texttt{FiniteElement::clone} and
-  \texttt{Mapping::clone}) now return \texttt{std::unique\_ptr}s instead of
+  marking members with \texttt{=delete;} and \texttt{=default;} where
+  appropriate. These changes include some minor incompatibilities: all
+  \texttt{clone()} functions (such as \texttt{FiniteElement::clone()} and
+  \texttt{Mapping::clone()}) now return \texttt{std::unique\_ptr}s instead of
   C-style raw pointers. Indeed, nearly every interface that returns a pointer
   now returns either a \texttt{std::shared\_ptr} or \texttt{std::unique\_ptr},
   which clarifies object ownership responsibilities and avoids memory leaks.
