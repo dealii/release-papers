@@ -202,13 +202,13 @@ The major changes of this release are:
   now returns either a \texttt{std::shared\_ptr} or \texttt{std::unique\_ptr},
   which clarifies object ownership responsibilities and avoids memory leaks.
 
-\item \dealii{} has made extensive use of both the clang-tidy and coverity
-      static analysis tools for detecting bugs and other issues in the code.
-      %% TODO is there somewhere we can cite for either of these tools? It would
-      %% be nice to recognize the department of homeland security for offering
-      %% coverity.
-      %% TODO at the time of writing this coverity is down; get an issue count
-      %% when it is back online.
+\item \dealii{} has made extensive use of both the Clang-Tidy \cite{clang-tidy}
+  and Coverity Scan \cite{coverity} static analysis tools for detecting bugs
+  and other issues in the code. In total around, 260 issues were detected and
+  fixed using the latter tool.
+      %% > Is there somewhere we can cite for either of these tools? It would
+      %% > be nice to recognize the department of homeland security for offering
+      %% The contract with homeland security was completed in 2009.
 
 \item
   \texttt{LinearOperator}, a flexible template class that implements the action of a
@@ -554,7 +554,7 @@ Their contributions are much appreciated!
 variety of funding sources:
 \marginpar{update}
 
-D.~Arndt was partially supported by the German Research Foundation (DFG) under the
+D.~Arndt was supported by the German Research Foundation (DFG) under the
 project ``High-order discontinuous Galerkin for the exa-scale'' (ExaDG) within the
 priority program ``Software for Exascale Computing'' (SPPEXA).
 
