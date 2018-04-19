@@ -118,63 +118,76 @@ Developers:
   Jean-Paul Pelteret
   Bruno Turcksin
   David Wells
-  Toby Young
 
-Contributors for 8.5:
-
+Contributors for 9.0: (updated 2018-04-19)
+  Giovanni Alzetta
+  Julian Andrej
   Daniel Arndt
   Rajat Arora
   Wolfgang Bangerth
-  Mauro Bardelloni
+  Vishal Boddu
+  Benjamin Brands
+  Lucas Campos
+  Praveen Chandrashekar
+  Jie Cheng
+  Emma Cinatl
   Conrad Clevenger
-  Sam Cox
-  Toby D. Young
-  Juliane Dannberg
+  Ester Comellas
+  Sambit Das
   Denis Davydov
-  Nicola Demo
-  Patrick Esser
+  Giovanni Di Ilio
+  Nivesh Dommaraju
+  Marc Fehling
   Niklas Fehn
+  Menno Fraters
+  Anian Fuchs
+  Daniel Garcia-Sanchez
   Rene Gassmoeller
-  Joscha Gedicke
   Nicola Giuliani
-  Sebastian Gonzalez-Pintor
-  Ryan Grove
-  Michael Harmon
+  Anne Glerum
+  Christoph Goering
+  Alexander Grayver
   Timo Heister
   Luca Heltai
+  Samuel Imfeld
   Daniel Jodlbauer
   Guido Kanschat
-  Justin Kauffman
-  Eldar Khattatov 
-  Uwe Koecher
-  Alex Kokomov
+  Vishal Kenchan
+  Andreas Kergassner
+  Eldar Khattatov
+  Ingo Kligge
+  Uwe Köcher
+  Joachim Kopp
+  Katharina Kormann
   Martin Kronbichler
-  Paul Kuberry
-  Dustin Kumor
+  Ross Kynch
   Konstantin Ladutenko
+  Tulio Ligneul
   Karl Ljungkvist
   Matthias Maier
-  Andrew McBride
-  Mathias Mentler
-  Andrea Mola
-  Dragan Nikolic
-  Vaibhav Palkar
-  Spencer Patty
+  Santiago Ospina
+  Alexey Ozeritsky
   Jean-Paul Pelteret
-  Jonathan Perry-Houts
-  Giuseppe Pitton
+  Dirk Peschka
+  Simon Puchert
+  E. G. Puckett
+  Lei Qiao
   Ce Qin
   Jonathan Robey
-  Mayank Sabharwal
-  Ali Samii
   Alberto Sartori
   Daniel Shapero
-  Martin Steigemann
-  Jihuan Tian
+  Ben Shields
+  Simon Sticko
+  Oliver Sutton
   Bruno Turcksin
+  Zhuoran Wang
+  Xiaoyu Wei
   David Wells
-  Jaeryun Yim
-  Liang Zhao
+  Michał Wichrowski
+  Julius Witte
+  Feimi Yu
+  Weixiong Zheng
+
 
 0/ Do some basic testing as always
 
