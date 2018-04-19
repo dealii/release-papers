@@ -160,8 +160,6 @@ Institute, Troy, NY 12180, USA.
 \renewcommand{\labelitemi}{--}
 
 
-
-
 \begin{document}
 \maketitle
 
@@ -171,6 +169,10 @@ Institute, Troy, NY 12180, USA.
 \end{abstract}
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview}
 
 \dealii{} version 9.0.0 was released April X, 2018. This paper provides an
@@ -232,23 +234,24 @@ The major changes of this release are:
 
 \item
   Support for GPU
+  \marginpar{paragraph for CUDA missing}
 
 \item
-  In this version we add template wrappers for ScaLAPACK -- parallel dense linear algebra
-  library with block-cyclic matrix distribution over 2D process grid.
-  The functionality and interface is similar to the LAPACK wrappers,
-  matrix-matrix multiplication, Cholesky and LU factorizations,
-  eigensolvers, SVD, pseudoinverse, save/load in HDF5 format and
-  other functionality is implemented.
-  A user can combine the new linear algebra with other MPI-parallel
-  algorithms in \dealii{} without the need to worry about MPI communicator
-  being divisible exactly into 2D process grid. The processes which are not part of
-  the grid are labeled inactive and ScaLAPACK routines will not be called on them.
+  In this version we add template wrappers for ScaLAPACK -- parallel dense
+  linear algebra library with block-cyclic matrix distribution over 2D
+  process grid. The functionality and interface is similar to the LAPACK
+  wrappers, matrix-matrix multiplication, Cholesky and LU factorizations,
+  eigensolvers, SVD, pseudoinverse, save/load in HDF5 format and other
+  functionality is implemented. A user can combine the new linear algebra
+  with other MPI-parallel algorithms in \dealii{} without the need to worry
+  about MPI communicator being divisible exactly into 2D process grid. The
+  processes which are not part of the grid are labeled inactive and
+  ScaLAPACK routines will not be called on them.
   %
   Additionally, we improved support of LAPACK. We added methods to perform
-  rank-1 update/downdate, calculate Cholesky factorization, trace and determinant,
-  as well as estimate the reciprocal condition number.
-  We also now support configuration with 64-bit BLAS.
+  rank-1 update/downdate, calculate Cholesky factorization, trace and
+  determinant, as well as estimate the reciprocal condition number. We also
+  now support configuration with 64-bit BLAS.
 
 \item
   A dedicated sundials module has been created to provide support for the
@@ -300,7 +303,10 @@ The major changes of this release are:
   space.
 
 \item
-  Initial support for Gmsh
+  Initial support for Gmsh.
+  \emph{[--- Do we actually provide any functionality with the GMSH
+  executable yet? ---]}
+  \marginpar{TODO}
 
 \item
   Initial support for generalized support points: Internal interpolation
@@ -319,6 +325,9 @@ in Section \ref{sec:cite}.
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Significant changes to the library}
 
 This release of \dealii{} contains a number of large and significant changes
@@ -330,13 +339,15 @@ in the file that lists all changes for this release}, see \cite{changes90}.
 (The file is also linked to from the web site of each release as well as
 the release announcement.)
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Feature 1}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Feature 2}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and updated tutorial programs}
+
 \marginpar{OLD}
 In addition to the updated tutorial programs mentioned in the previous
 section, this release of \dealii{} includes three new tutorials TODO: old:
@@ -374,17 +385,28 @@ the following topics:
     \item Goal-oriented elastoplasticity.
   \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New non-standard quadrature rules}
 
+A number of non-standard, special-purpose quadrature rules have been
+implemented. Among those are quadrature formulas that support
 \begin{itemize}
-\item QSimplex
-\item QDuffy
-\item QTrianglePolar
-\item QSplit
+  \item
+    truncating standard formulas to simplical domains (\texttt{Qsimplex}),
+  \item
+    singular transformations of the unit cell to the unit simplex
+    (\texttt{QDuffy}),
+  \item
+    composition of simplical quadrature rules to a combined rule on the
+    unit cell (\texttt{QSplit}),
+  \item
+    transformation of the unit square to polar coordinates
+    (\texttt{QTrianglePolar}).
 \end{itemize}
+These new quadrature rule greatly help to integrate singular domains. They
+are mainly used in Boundary Element Methods.
 
-Mostly used for BEM problems.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Incompatible changes}
 
 \marginpar{OLD}
@@ -419,35 +441,27 @@ incompatible changes are worth mentioning:
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{How to cite \dealii{}}\label{sec:cite}
 
 In order to justify the work the developers of \dealii{} put into this
 software, we ask that papers using the library reference one of the
 \dealii{} papers. This helps us justify the effort we put into it.
 
-There are various ways to reference \dealii{}. To acknowledge the use of the
-current version of the library, \textbf{please reference the present document}. For up
-to date information and bibtex snippets for this document see:
+There are various ways to reference \dealii{}. To acknowledge the use of
+the current version of the library, \textbf{please reference the present
+document}. For up to date information and bibtex snippets for this document
+see:
 \begin{center}
  \url{https://www.dealii.org/publications.html}
 \end{center}
 
-% \begin{minipage}{0.9\textwidth}%no page break in here please
-% \begin{verbatim}
-% @article{dealII82,
-%   title = {The {\tt deal.{I}{I}} Library, Version 8.2},
-%   author = {W. Bangerth and T. Heister and L. Heltai
-%    and G. Kanschat and M. Kronbichler and M. Maier
-%    and B. Turcksin and T. D. Young},
-%   journal = {preprint},
-%   year = {2015},
-% }
-% \end{verbatim} %  journal = {arXiv preprint \url{http://arxiv.org/abs/TODO}},
-% \end{minipage}
-
 The original \texttt{\dealii{}} paper containing an overview of its
-architecture is \cite{BangerthHartmannKanschat2007}. If you rely on specific
-features of the library, please consider citing any of the following:
+architecture is \cite{BangerthHartmannKanschat2007}. If you rely on
+specific features of the library, please consider citing any of the
+following:
 \begin{itemize}
  \item For geometric multigrid: \cite{Kanschat2004,JanssenKanschat2011};
  \item For distributed parallel computing: \cite{BangerthBursteddeHeisterKronbichler11};
@@ -467,7 +481,7 @@ features of the library, please consider citing any of the following:
 
 \marginpar{update}
 \dealii{} can interface with many other libraries:
-\begin{multicols}{2}
+\begin{multicols}{3}
 \begin{itemize}
 \item Adol-c \cite{adol-c}
 \item ARPACK \cite{arpack}
@@ -485,7 +499,7 @@ features of the library, please consider citing any of the following:
 \item PETSc \cite{petsc-user-ref,petsc-web-page}
 \item SLEPc \cite{Hernandez:2005:SSF}
 \item SUNDIALS \cite{sundials}
-\item Threading Building Blocks \cite{Rei07}
+\item TBB \cite{Rei07}
 \item Trilinos \cite{trilinos,trilinos-web-page}
 \item UMFPACK \cite{umfpack}
 \end{itemize}
@@ -493,7 +507,8 @@ features of the library, please consider citing any of the following:
 Please consider citing the appropriate references if you use interfaces to these
 libraries.
 
-Older releases of \dealii{} can be cited as \cite{dealII80,dealII81,dealII82,dealII83,dealII84,dealII85}.
+Older releases of \dealii{} can be cited as
+\cite{dealII80,dealII81,dealII82,dealII83,dealII84,dealII85}.
 
 \nocite{BangerthKanschat1999}
 
@@ -506,50 +521,59 @@ this release:\\
 % get this from the changes/*/* files using the command listed in the
 % release-tasks paper and remove the authors of this paper
 %
-\marginpar{update}
-  Rajat Arora,
-  Mauro Bardelloni,
-  Conrad Clevenger,
-  Sam Cox,
-  Toby D. Young,
-  Juliane Dannberg,
-  Nicola Demo,
-  Patrick Esser,
-  Niklas Fehn,
-  Joscha Gedicke,
-  Nicola Giuliani,
-  Sebastian Gonzalez-Pintor,
-  Ryan Grove,
-  Michael Harmon,
-  Daniel Jodlbauer,
-  Guido Kanschat,
-  Justin Kauffman,
-  Eldar Khattatov ,
-  Uwe Koecher,
-  Alex Kokomov,
-  Paul Kuberry,
-  Dustin Kumor,
-  Konstantin Ladutenko,
-  Karl Ljungkvist,
-  Andrew McBride,
-  Mathias Mentler,
-  Andrea Mola,
-  Dragan Nikolic,
-  Vaibhav Palkar,
-  Spencer Patty,
-  Jonathan Perry-Houts,
-  Giuseppe Pitton,
-  Ce Qin,
-  Jonathan Robey,
-  Mayank Sabharwal,
-  Ali Samii,
-  Alberto Sartori,
-  Daniel Shapero,
-  Martin Steigemann,
-  Jihuan Tian,
-  Jaeryun Yim,
-  Liang Zhao
-
+% Updated 2018-04-19
+Julian Andrej,
+Rajat Arora,
+Lucas Campos,
+Praveen Chandrashekar,
+Jie Cheng,
+Emma Cinatl,
+Conrad Clevenger,
+Ester Comellas,
+Sambit Das,
+Giovanni Di Ilio,
+Nivesh Dommaraju,
+Marc Fehling,
+Niklas Fehn,
+Menno Fraters,
+Anian Fuchs,
+Daniel Garcia-Sanchez,
+Nicola Giuliani,
+Anne Glerum,
+Christoph Goering,
+Alexander Grayver,
+Samuel Imfeld,
+Daniel Jodlbauer,
+Guido Kanschat,
+Vishal Kenchan,
+Andreas Kergassner,
+Eldar Khattatov,
+Ingo Kligge,
+Uwe Köcher,
+Joachim Kopp,
+Ross Kynch,
+Konstantin Ladutenko,
+Tulio Ligneul,
+Karl Ljungkvist,
+Santiago Ospina,
+Alexey Ozeritsky,
+Dirk Peschka,
+Simon Puchert,
+E. G. Puckett,
+Lei Qiao,
+Ce Qin,
+Jonathan Robey,
+Alberto Sartori,
+Daniel Shapero,
+Ben Shields,
+Simon Sticko,
+Oliver Sutton,
+Zhuoran Wang,
+Xiaoyu Wei,
+Michał Wichrowski,
+Julius Witte,
+Feimi Yu,
+Weixiong Zheng.
 
 Their contributions are much appreciated!
 
