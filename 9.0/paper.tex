@@ -175,7 +175,9 @@ Institute, Troy, NY 12180, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview}
 
-\dealii{} version 9.0.0 was released April X, 2018. This paper provides an
+\dealii{} version 9.0.0 was released April X, 2018.
+\marginpar{Update the date}
+This paper provides an
 overview of the new features of this major release and serves as a citable
 reference for the \dealii{} software library version 9.0. \dealii{} is an
 object-oriented finite element library used around the world in the
@@ -196,19 +198,7 @@ The major changes of this release are:
   where curved descriptions are only applied to the boundary rather than
   the whole volume.
 
-\item
-  \dealii{} first offered support for a subset of C++11 features in
-  version 6.2, released in 2009. The current release is the first to \emph{require} a compiler
-  supporting C++11. \dealii{} now uses language improvements such as using
-  \texttt{emplace\_back()} instead of \texttt{push\_back()}, moving objects
-  instead of copying them, using \texttt{nullptr} instead of \texttt{NULL}, and
-  marking members with \texttt{=delete;} and \texttt{=default;} where
-  appropriate. These changes include some minor incompatibilities: all
-  \texttt{clone()} functions (such as \texttt{FiniteElement::clone()} and
-  \texttt{Mapping::clone()}) now return \texttt{std::unique\_ptr}s instead of
-  C-style raw pointers. Indeed, nearly every interface that returns a pointer
-  now returns either a \texttt{std::shared\_ptr} or \texttt{std::unique\_ptr},
-  which clarifies object ownership responsibilities and avoids memory leaks.
+\item C++11 is now both required and used.
 
 \item \dealii{} has made extensive use of both the Clang-Tidy \cite{clang-tidy}
   and Coverity Scan \cite{coverity} static analysis tools for detecting bugs
@@ -343,7 +333,30 @@ the release announcement.)
 \subsection{Feature 1}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Feature 2}
+\subsection{Use of C++11}
+\dealii{} first offered support for a subset of C++11 features in
+version 6.2, released in 2009. The current release is the first to
+\emph{require} a C++11 compiler.
+
+Many parts of the code base have been rewritten to both support and
+use the new features of C++11. In particular, \dealii{} now makes
+extensive use of move semantics as well as range-based \texttt{for}
+loops with \texttt{auto} type deduction of iterator variables. We have
+also largely replaced \texttt{push\_back()} by
+\texttt{emplace\_back()} when adding elements to collections more
+efficiently.
+
+Finally, we have changed the entire code base to avoid using raw
+pointers and instead use \texttt{std::unique\_ptr} and
+\texttt{std::shared\_ptr} where possible to make memory management
+more reliable. These changes include some minor incompatibilities: all
+\texttt{clone()} functions (such as \texttt{FiniteElement::clone()} and
+\texttt{Mapping::clone()}) now return \texttt{std::unique\_ptr}s instead of
+C-style raw pointers. Indeed, nearly all interfaces throughout the library that return a pointer
+now return either a \texttt{std::shared\_ptr} or a \texttt{std::unique\_ptr},
+thereby clarifying object ownership responsibilities and avoiding memory leaks.
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and updated tutorial programs}
