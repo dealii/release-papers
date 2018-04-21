@@ -198,11 +198,34 @@ The major changes of this release are:
   where curved descriptions are only applied to the boundary rather than
   the whole volume.
 
+\item
+  A dedicated particles module has been created to provide support for the
+  storage of particles and their properties. This module provides a base class
+  \texttt{Particles} which represents a particle with position, an ID number and
+  a variable number of properties. It also provides a \texttt{ParticleHandler}
+  class that manages the storage and handling of particles. This class
+  distributes the particles in distributed domains (these are the only domains
+  supported by this class so far)
+
+\item
+  A dedicated differentiation module has been created to provide support for
+  automatic and symbolic differentiation. Automatic differentiation is a set of
+  technique to evaluate the derivatives of a function defined by a compute
+  program. Currently the Adol-C and Sacado libraries are supported through a
+  unified interface. In practice, this support means that Adol-c and Sacado
+  data types can be used in the \texttt{FEValues} and \texttt{FEValuesViews}
+  to represent degree-of-freedom values.
+  
+\item Interfaces to more external libraries and programs.
+  
 \item C++11 is now both required and used.
 
+\item
+  Support for GPU computations.
+  
 \item \dealii{} has made extensive use of both the Clang-Tidy \cite{clang-tidy}
   and Coverity Scan \cite{coverity} static analysis tools for detecting bugs
-  and other issues in the code. In total around, 260 issues were detected and
+  and other issues in the code. For example, around 260 issues were detected and
   fixed using the latter tool.
       %% > Is there somewhere we can cite for either of these tools? It would
       %% > be nice to recognize the department of homeland security for offering
@@ -222,86 +245,24 @@ The major changes of this release are:
   basis adapted to face integrals that involve derivatives of shape functions,
   and several performance enhancements.
 
-\item
-  Support for GPU
-  \marginpar{paragraph for CUDA missing}
+\item New non-standard quadrature rules:
+A number of non-standard, special-purpose quadrature rules have been
+implemented. Among these are ones for
+(i) truncating standard formulas to simplical domains (\texttt{Qsimplex});
+(ii) singular transformations of the unit cell to the unit simplex
+    (\texttt{QDuffy});
+(iii) composition of simplical quadrature rules to a combined rule on the
+    unit cell (\texttt{QSplit});
+and (iv) transformation of the unit square to polar coordinates
+    (\texttt{QTrianglePolar}).
+These quadrature rules greatly help when integrating singular
+functions or on singular domains. They
+are mainly used in Boundary Element Methods.
+  
 
 \item
-  In this version we add template wrappers for ScaLAPACK -- parallel dense
-  linear algebra library with block-cyclic matrix distribution over 2D
-  process grid. The functionality and interface is similar to the LAPACK
-  wrappers, matrix-matrix multiplication, Cholesky and LU factorizations,
-  eigensolvers, SVD, pseudoinverse, save/load in HDF5 format and other
-  functionality is implemented. A user can combine the new linear algebra
-  with other MPI-parallel algorithms in \dealii{} without the need to worry
-  about MPI communicator being divisible exactly into 2D process grid. The
-  processes which are not part of the grid are labeled inactive and
-  ScaLAPACK routines will not be called on them.
-  %
-  Additionally, we improved support of LAPACK. We added methods to perform
-  rank-1 update/downdate, calculate Cholesky factorization, trace and
-  determinant, as well as estimate the reciprocal condition number. We also
-  now support configuration with 64-bit BLAS.
-
-\item
-  A dedicated sundials module has been created to provide support for the
-  SUNDIALS library. SUNDIALS is a SUite of Nonlinear and
-  DIfferential/ALgebraic equations Solvers. ARKode, IDA, and KINSOL are
-  supported. ARKode is a solver library that provides adaptive-step time
-  integration. IDA is a package for the solution of differential-algebraic
-  equations systems in the form $F(t,y,y')=0$. KINSOL is solver for nonlinear
-  algebraic systems.
-
-\item
-  A dedicated optimization/rol module has been created to provide support for
-  the Rapid Optimization Library (ROL). ROL is a package for large-scale
-  optimization.
-
-\item
-  A dedicated particles module has been created to provide support for the
-  storage of particles and their properties. This module provides a base class
-  \texttt{Particles} which represents a particle with position, an ID number and
-  a variable number of properties. It also provides a \texttt{ParticleHandler}
-  class that manages the storage and handling of particles. This class
-  distributes the particles in distributed domains (these are the only domains
-  supported by this class so far)
-
-\item
-  A dedicated differentiation module has been created to provide support for
-  automatic and symbolic differentiation. Automatic differentiation is a set of
-  technique to evaluate the derivatives of a function defined by a compute
-  program. Currently the Adol-C and Sacado libraries are supported through a
-  unified interface. In practice, this support means that Adol-c and Sacado
-  data types can be used in the \texttt{FEValues} and \texttt{FEValuesViews}
-  to represent degree-of-freedom values.
-
-\item
-  Support for complex-valued vectors is now at the same level as real-valued
+  Support for complex-valued vectors at the same level as real-valued
   vectors.
-
-\item
-  Support for the nanoflann library. nanoflann is a library for building
-  KD-trees of datasets and for the fast querying of closest neighbors in
-  KD-trees. nanoflann is used to speed up the search of the p nearest neighbors
-  of a given point, or searching the points that fall within a radius of a
-  target point.
-
-\item
-  Support for the Open Asset Import Library (Assimp). Assimp can be used to read
-  about 40 different 3D graphics formats. A subset of these formats can be used
-  to generate two-dimensional meshes possibly embedded in a three-dimensional
-  space.
-
-\item
-  Initial support for Gmsh.
-  \emph{[--- Do we actually provide any functionality with the GMSH
-  executable yet? ---]}
-  \marginpar{TODO}
-
-\item
-  Initial support for generalized support points: Internal interpolation
-  rewritten (support for $H(\text{curl})$ and $H(\text{div})$ conforming
-  elements).
 
 \item New python tutorial program tutorial-1; as well as
   updates to step-37. In addition, the separate code
@@ -330,8 +291,88 @@ in the file that lists all changes for this release}, see \cite{changes90}.
 the release announcement.)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Feature 1}
+\subsection{Manifolds}
 
+...
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Support for particle-in-cell methods}
+
+...
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Dedicated support for automatic and symbolic differentiation}
+
+...
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{New interfaces to external libraries and programs}
+
+\dealii{} has always tried to leverage high-quality implementations of
+algorithms available through other open source software, rather than
+re-implementing their functionality. (A list of interfaces to other
+packages is given in Section~\ref{sec:cite}.) As part of the current
+release, we have written several new interfaces as discussed in the following.
+
+\marginpar{Add references to all of these libraries.}
+
+\paragraph*{ScaLAPACK, a parallel dense linear algebra library.}
+  ScaLAPACK provides block-cyclic matrix distribution over 2D process
+  grid. The functionality and interface of our wrappers is similar to
+  the LAPACK wrappers for serial dense linear algebra, namely
+  matrix-matrix multiplication, Cholesky and LU factorizations,
+  eigensolvers, SVD, pseudoinverses, and save/load operations using
+  the HDF5 format. All of this functionality is available even in
+  cases where the number of MPI processes does not exactly divide the
+  number of tiles stored in the block-cyclic data distribution.
+  
+  As part of this effort, we have also improved LAPACK support: there
+  are now methods to perform rank-1 updates/downdates, Cholesky
+  factorizations, to compute the trace and determinant, as well as
+  estimate the reciprocal condition number. We also now support
+  configuration with 64-bit BLAS.
+
+\paragraph*{SUNDIALS, a SUite of Nonlinear and DIfferential/ALgebraic
+  Equation Solvers.}
+  Solving nonlinear algebraic and differential equations is both a
+  common task and one that often requires sophisticated globalization
+  algorithms for efficiency and reliability. SUNDIALS provides these
+  in a widely used format, both sequentially and in parallel.
+  
+  \dealii{} now has interfaces to SUNDIALS's ARKode, IDA, and KINSOL sub-packages.
+  ARKode is a solver library that provides adaptive-step time
+  integration. IDA is a package for the solution of differential-algebraic
+  equations systems in the form $F(t,y,y')=0$. KINSOL is solver for nonlinear
+  algebraic systems.
+
+\paragraph*{ROL, a Rapid Optimization Library.}
+ROL is a package for large-scale optimization.
+\marginpar{Can we add a sentence or two about the ROL interface here?}
+  
+\paragraph*{nanoflann, a library for building and querying
+  $k$-d trees of datasets.} Operations such as finding the vertex
+or cell closest
+to a given evaluation point occur frequently in many applications that
+use unstructured meshes. While the naive algorithm is linear in the
+number of vertices or cells, many such operations can be made
+significantly faster by building a $k$-d tree data structure that
+recursively subdivides a $k$ dimensional space. The nanoflann library
+provides such a data structure and allows querying it, either for
+closest points (e.g., when finding the closest vertex) or for
+searching the points that fall within a radius of a target point. This
+functionality is now available via \dealii{} interfaces.
+
+\paragraph*{Assimp, the Open Asset Import Library.}
+  Assimp can be used to read about 40 different 3D graphics formats. A
+  subset of these formats can be now be read from within \dealii{} to
+  generate two-dimensional meshes, possibly embedded in a
+  three-dimensional space.
+
+\paragraph*{Gmsh.}
+  \marginpar{Do we actually provide any functionality with the GMSH
+  executable yet? If so, complete this part}
+
+  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Use of C++11}
 \dealii{} first offered support for a subset of C++11 features in
@@ -356,6 +397,12 @@ C-style raw pointers. Indeed, nearly all interfaces throughout the library that 
 now return either a \texttt{std::shared\_ptr} or a \texttt{std::unique\_ptr},
 thereby clarifying object ownership responsibilities and avoiding memory leaks.
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Support for GPU computations}
+
+\marginpar{Bruno?}
+...
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -398,26 +445,6 @@ the following topics:
     \item Goal-oriented elastoplasticity.
   \end{itemize}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{New non-standard quadrature rules}
-
-A number of non-standard, special-purpose quadrature rules have been
-implemented. Among those are quadrature formulas that support
-\begin{itemize}
-  \item
-    truncating standard formulas to simplical domains (\texttt{Qsimplex}),
-  \item
-    singular transformations of the unit cell to the unit simplex
-    (\texttt{QDuffy}),
-  \item
-    composition of simplical quadrature rules to a combined rule on the
-    unit cell (\texttt{QSplit}),
-  \item
-    transformation of the unit square to polar coordinates
-    (\texttt{QTrianglePolar}).
-\end{itemize}
-These new quadrature rule greatly help to integrate singular domains. They
-are mainly used in Boundary Element Methods.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Incompatible changes}
