@@ -193,7 +193,10 @@ The major changes of this release are:
 \item Interfaces to more external libraries and programs.
 \item C++11 is now both required and used.
 \item Support for GPU computations.
-  
+\end{itemize}
+These will all be discussed in more detail in the
+following section. In addition, this release contains the following changes:
+\begin{itemize}
 \item \dealii{} has made extensive use of both the Clang-Tidy \cite{clang-tidy}
   and Coverity Scan \cite{coverity} static analysis tools for detecting bugs
   and other issues in the code. For example, around 260 issues were detected and
@@ -235,15 +238,12 @@ are mainly used in Boundary Element Methods.
   Support for complex-valued vectors at the same level as real-valued
   vectors.
 
-\item New python tutorial program tutorial-1; as well as
+\item A new python tutorial program tutorial-1; as well as
   updates to step-37. In addition, the separate code
   gallery of \dealii{} has gained a number of new entries.
-
-  \item More than 330 other features and bugfixes.
 \end{itemize}
-The more important ones of these changes will be detailed in the
-following section.  Information on how to cite \dealii{} is provided
-in Section \ref{sec:cite}.
+Beyond these changes, the changelog lists more than 330 other features and bugfixes.
+
 
 
 
@@ -264,20 +264,28 @@ the release announcement.)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{xxx something with Manifolds xxx}
 
-  Manifold smoothing: The manifold smoothing algorithms applied in the
-  Triangulation class and MappingQGeneric have been changed from the old
-  Laplace-style smoothing to a transfinite interpolation that linearly
-  blends between the descriptions on the faces around a cell. The old
-  transformation introduced boundary layers inside cells that prevented
-  convergence rates from exceeding \(3.5\) in the global \(L^2\) errors on typical
-  settings. This change also considerably improves mesh quality on settings
-  where curved descriptions are only applied to the boundary rather than
-  the whole volume.
+\marginpar{All: please edit as appropriate}
+
+(i) separation between manifold and boundary ids, (ii) manifold
+smoothing via the transfinite mapping, (iii) maybe: grid generator functions already attach manifolds?
+
+Previous text:
+
+Manifold smoothing: The manifold smoothing algorithms applied in the
+Triangulation class and MappingQGeneric have been changed from the old
+Laplace-style smoothing to a transfinite interpolation that linearly
+blends between the descriptions on the faces around a cell. The old
+transformation introduced boundary layers inside cells that prevented
+convergence rates from exceeding \(3.5\) in the global \(L^2\) errors on typical
+settings. This change also considerably improves mesh quality on settings
+where curved descriptions are only applied to the boundary rather than
+the whole volume.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Support for particle-in-cell methods}
 
+\marginpar{Rene: Please edit as appropriate}
 While \dealii{} is a package intended to solve problems with the
 finite element method -- i.e., using continuous or discontinuous
 \textit{fields} --, is often convenient in fluid dynamics problems to
@@ -298,19 +306,31 @@ and supports efficient data transfer during mesh refinement and
 checkpoint/restart phases.
 
 A much more detailed view of the underlying algorithms can be found in
-\cite{GLHPB18}. A longer report is at \cite{GHPB16}.
+\cite{GLHPB18}. A longer report is at \cite{GHPB16}. The
+implementation here originated in the \aspect{} code, see \cite{KHB12,HDGB17}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Dedicated support for automatic and symbolic differentiation}
 
-A dedicated differentiation module has been created to provide support for
-automatic and symbolic differentiation. Automatic differentiation is a set of
-technique to evaluate the derivatives of a function defined by a compute
-program. Currently the Adol-C and Sacado libraries are supported through a
-unified interface. In practice, this support means that Adol-c and Sacado
-data types can be used in the \texttt{FEValues} and \texttt{FEValuesViews}
-to represent degree-of-freedom values.
+\marginpar{J-P: Please edit as appropriate}
+Automatic differentiation is often used to automatically derive
+residuals from the stored energy functional, and to derive Jacobian
+matrices from residual vectors for simulations that use complicated
+material models. Examples can be found widely for nonlinear solid
+mechanics as well as for nonlinear viscosity models in fluid flow.
+
+\dealii{} has had a tutorial program (step-33) since 2007 that
+demonstrates this technique based on the Trilinos Sacado package, but
+the functionality was not available pervasively throughout
+deal.II. This has changed with release 9.0 where support for
+differentiation has been collected in one module that provides both
+automatic and symbolic differentiation. Currently, this module relies
+on either the Adol-C and Sacado libraries, through a unified
+interface. In practice, this support means that Adol-C and Sacado data
+types can be used in the \texttt{FEValues}, \texttt{FEValuesViews},
+and related classes that are generally used to assemble linear systems
+and right hand sides.
   
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -414,44 +434,27 @@ thereby clarifying object ownership responsibilities and avoiding memory leaks.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{New and updated tutorial programs}
+\subsection{Tutorial and code gallery programs}
 
-\marginpar{OLD}
-In addition to the updated tutorial programs mentioned in the previous
-section, this release of \dealii{} includes three new tutorials TODO: old:
-\begin{itemize}
- \item {\bf step-55} explains how to solve the Stokes
- equations efficiently in parallel. It is a good introduction to solving
- systems of PDEs in parallel, discusses optimal block
- preconditioners, and demonstrates other aspects like error computation.
- Inverses of individual blocks of the linear system are approximated with an algebraic
- multigrid preconditioner.
+This release does not contain any new tutorial programs, though
+several have been updated extensively for the changes to the manifold
+handling as well as to adjust for current functionality
+compared to what that was available when the programs were first written.
 
- \item {\bf step-56} shows how to apply geometric multigrid
- preconditioners on a subset of a system of PDEs. The problem solved here is the
- Stokes equations, like in step-55.
-
- \item {\bf step-57} solves the stationary Navier-Stokes equations.
- The nonlinear system is solved using Newton's method on a sequence of adaptively refined
- grids. The preconditioner is again built on a block factorization of the saddle point
- system like in step-55 and step-56, but the non-symmetric terms stemming from the
- nonlinear convective part requires more sophisticated solvers. The benchmark problem,
- flow in the 2d lid-driven cavity, requires a continuation method for high Reynolds
- numbers.
- \end{itemize}
-
-In addition to tutorials, \dealii{} has a separate ``code gallery'' that
+\dealii{} has a separate ``code gallery'' that
 consists of programs shared by users as examples of what can be
 done with \dealii{}. While not part of the release process, it is nonetheless
 worth mentioning that the set of new programs since the last release covers
 the following topics:
-\marginpar{OLD}
-  \begin{itemize}
-    \item Quasi-static quasi-incompressible visco-elastic material behavior;
-    \item Multiphase Navier-Stokes flow;
-    \item The evolution of global-scale topography on planetary bodies;
-    \item Goal-oriented elastoplasticity.
-  \end{itemize}
+\begin{itemize}
+\item The multipoint flux mixed finite element method (MFMFE) applied
+  to the Darcy problem of porous media flow;
+\item A linearized active skeletal muscle model with application to
+  the simulation concentric contraction of the human biceps brachii;
+\item A parallel implementation of the Local Discontinuous Galerkin
+  (LDG) method applied to the Poisson equation.
+\end{itemize}
+With these additions, the code gallery now contains 10 different applications.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
