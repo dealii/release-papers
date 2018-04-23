@@ -187,41 +187,12 @@ GNU Lesser General Public License (LGPL) from the \dealii{} homepage at
 
 The major changes of this release are:
 \begin{itemize}
-\item
-  Manifold smoothing: The manifold smoothing algorithms applied in the
-  Triangulation class and MappingQGeneric have been changed from the old
-  Laplace-style smoothing to a transfinite interpolation that linearly
-  blends between the descriptions on the faces around a cell. The old
-  transformation introduced boundary layers inside cells that prevented
-  convergence rates from exceeding \(3.5\) in the global \(L^2\) errors on typical
-  settings. This change also considerably improves mesh quality on settings
-  where curved descriptions are only applied to the boundary rather than
-  the whole volume.
-
-\item
-  A dedicated particles module has been created to provide support for the
-  storage of particles and their properties. This module provides a base class
-  \texttt{Particles} which represents a particle with position, an ID number and
-  a variable number of properties. It also provides a \texttt{ParticleHandler}
-  class that manages the storage and handling of particles. This class
-  distributes the particles in distributed domains (these are the only domains
-  supported by this class so far)
-
-\item
-  A dedicated differentiation module has been created to provide support for
-  automatic and symbolic differentiation. Automatic differentiation is a set of
-  technique to evaluate the derivatives of a function defined by a compute
-  program. Currently the Adol-C and Sacado libraries are supported through a
-  unified interface. In practice, this support means that Adol-c and Sacado
-  data types can be used in the \texttt{FEValues} and \texttt{FEValuesViews}
-  to represent degree-of-freedom values.
-  
+\item xxxx something with manifolds xxx
+\item Support for particle-in-cell methods
+\item Dedicated support for automatic and symbolic differentiation.
 \item Interfaces to more external libraries and programs.
-  
 \item C++11 is now both required and used.
-
-\item
-  Support for GPU computations.
+\item Support for GPU computations.
   
 \item \dealii{} has made extensive use of both the Clang-Tidy \cite{clang-tidy}
   and Coverity Scan \cite{coverity} static analysis tools for detecting bugs
@@ -291,19 +262,56 @@ in the file that lists all changes for this release}, see \cite{changes90}.
 the release announcement.)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Manifolds}
+\subsection{xxx something with Manifolds xxx}
 
-...
+  Manifold smoothing: The manifold smoothing algorithms applied in the
+  Triangulation class and MappingQGeneric have been changed from the old
+  Laplace-style smoothing to a transfinite interpolation that linearly
+  blends between the descriptions on the faces around a cell. The old
+  transformation introduced boundary layers inside cells that prevented
+  convergence rates from exceeding \(3.5\) in the global \(L^2\) errors on typical
+  settings. This change also considerably improves mesh quality on settings
+  where curved descriptions are only applied to the boundary rather than
+  the whole volume.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Support for particle-in-cell methods}
 
-...
+While \dealii{} is a package intended to solve problems with the
+finite element method -- i.e., using continuous or discontinuous
+\textit{fields} --, is often convenient in fluid dynamics problems to
+couple the continuum description of phenomena with particles. These
+particles, advected along with the numerical approximation of the flow
+field, are then either used to visualize properties of the flow, or to
+advect material properties such as the viscosity of inhomogenous
+mixtures of fluids. If each particle is associated with the cells
+of a mesh, these methods are often referred to as particle-in-cell (PIC).
+
+\dealii{} now has a dedicated particles module. The module provides a base class
+\texttt{Particle} that represents a particle with position, an ID number and
+a variable number of properties. They are jointly represented by a \texttt{ParticleHandler}
+class that manages the storage and handling of all particles. In
+parallel simulations, this class also
+distributes the particles among the subdomains of the parallel process
+and supports efficient data transfer during mesh refinement and
+checkpoint/restart phases.
+
+A much more detailed view of the underlying algorithms can be found in
+\cite{GLHPB18}. A longer report is at \cite{GHPB16}.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Dedicated support for automatic and symbolic differentiation}
 
-...
+A dedicated differentiation module has been created to provide support for
+automatic and symbolic differentiation. Automatic differentiation is a set of
+technique to evaluate the derivatives of a function defined by a compute
+program. Currently the Adol-C and Sacado libraries are supported through a
+unified interface. In practice, this support means that Adol-c and Sacado
+data types can be used in the \texttt{FEValues} and \texttt{FEValuesViews}
+to represent degree-of-freedom values.
+  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New interfaces to external libraries and programs}
