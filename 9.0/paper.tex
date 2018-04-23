@@ -263,6 +263,7 @@ the release announcement.)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{xxx something with Manifolds xxx}
+\label{sec:manifolds}
 
 \marginpar{All: please edit as appropriate}
 
@@ -402,7 +403,8 @@ functionality is now available via \dealii{} interfaces.
 
   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Use of C++11}
+  \subsection{Use of C++11}
+  \label{sec:cxx11}
 \dealii{} first offered support for a subset of C++11 features in
 version 6.2, released in 2009. The current release is the first to
 \emph{require} a C++11 compiler.
@@ -460,34 +462,50 @@ With these additions, the code gallery now contains 10 different applications.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Incompatible changes}
 
-\marginpar{OLD}
-The 9.0 release includes around XYZ
-\href{https://www.dealii.org/developer/doxygen/deal.II/changes_between_8_5_and_9_0.html}{
-incompatible changes}; see \cite{changes90}. The majority of these changes
+The 9.0 release includes
+\href{https://www.dealii.org/developer/doxygen/deal.II/changes_between_8_5_and_9_0.html}
+     {around 75 incompatible changes}; see \cite{changes90}. The majority of these changes
 should not be visible to typical user codes; some remove previously
 deprecated classes and functions, and the majority change internal
-interfaces that are not usually used in external applications. However, three
+interfaces that are not usually used in external
+applications. However, some are, such as changes to the interplay between meshes and
+manifolds, as well as the requirement to use a
+C++11 compiler (see Sections~\ref{sec:manifolds} and
+~\ref{sec:cxx11}). In addition, the following
 incompatible changes are worth mentioning:
 \begin{itemize}
-  \item High-order Lagrange elements, both continuous \verb!FE_Q! and
-    discontinuous \verb!FE_DGQ! types, now use the nodal points of the
-    Gauss-Lobatto quadrature formula as support points by default, rather than the
-    previous equidistant ones. For cubic polynomials and higher, the point
-    distribution has thus changed and, consequently, the entries in
-    solution vectors will be different compared to previous
-    versions of \dealii{}. Note, however, that using the Gauss-Lobatto points as nodal
-    points results in a much more stable interpolation, including better
-    iteration counts in most iterative solvers.
-  \item
-    The library no longer instantiates template classes with \texttt{long
-    double}. These were rarely used, but took up a significant
-    fraction of compile and link time, as well as library
-    size. Application programs can, however, still instantiate all
-    template classes with \texttt{long
-    double} as long as they include the corresponding \texttt{.templates.h}
-    header files.
-  \item
-    The \texttt{ParameterGUI} has been moved to a separate repository.
+\item The \texttt{BlockDiagonalMatrix},
+  \texttt{InverseMatrixRichardson},
+  \texttt{IterativeInverse},
+  \texttt{ProductMatrix},
+  \texttt{ProductSparseMatrix},
+  \texttt{TransposeMatrix},
+  \texttt{ScaledMatrix},
+  \texttt{SchurMatrix},
+  \texttt{ShiftedMatrix}, and
+  \texttt{ShiftedMatrixGeneralized} classes have been removed. They are now
+  generalized through the \texttt{LinearOperator} concept. Several
+  other, similar classes have been deprecated.
+
+  \item The default partitioner for the
+    \texttt{parallel::shared::Triangulation} is now the Trilinos
+    package Zoltan. This functionality was previously provided by the
+    METIS partitioner, but the METIS package has not been actively maintained
+    for a long time, and moreover yields subdivisions that depend on
+    system details such as the random number generator and sorting
+    facilities provided by the operating system; consequently, the
+    partition is not consistent across platforms.
+
+  \item  The class \texttt{FE\_DGQHermite}  now uses a more stable,
+    ``Hermite-like'' polynomial basis. The change is highly
+    beneficial because it significantly improves the accuracy (in
+    terms of roundoff) for this basis and also reduces iteration
+    counts for some iterative solvers with simple preconditioners.
+
+  \item Many functions that previously returned a raw, C-style pointer
+    now return a \texttt{std::unique\_ptr} and
+    \texttt{std::shared\_ptr} where possible to make memory management
+    more reliable.
 \end{itemize}
 
 
