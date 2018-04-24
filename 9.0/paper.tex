@@ -77,7 +77,7 @@
   Egerlandstr.\ 5,
   91058 Erlangen, Germany.
   {\texttt{vishal.boddu@fau.de}}}
-  
+
 \author[5]{Benjamin Brands}
 \affil[5]{Chair of Applied Mechanics,
           Friedrich-Alexander-Universit\"{a}t Erlangen-N\"{u}rnberg,
@@ -232,7 +232,7 @@ and (iv) transformation of the unit square to polar coordinates
 These quadrature rules greatly help when integrating singular
 functions or on singular domains. They
 are mainly used in Boundary Element Methods.
-  
+
 
 \item
   Support for complex-valued vectors at the same level as real-valued
@@ -332,7 +332,7 @@ interface. In practice, this support means that ADOL-C and Sacado data
 types can be used in the \texttt{FEValues}, \texttt{FEValuesViews},
 and related classes that are generally used to assemble linear systems
 and right hand sides.
-  
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New interfaces to external libraries and programs}
@@ -354,7 +354,7 @@ release, we have written several new interfaces as discussed in the following.
   the HDF5 format. All of this functionality is available even in
   cases where the number of MPI processes does not exactly divide the
   number of tiles stored in the block-cyclic data distribution.
-  
+
   As part of this effort, we have also improved LAPACK support: there
   are now methods to perform rank-1 updates/downdates, Cholesky
   factorizations, to compute the trace and determinant, as well as
@@ -367,7 +367,7 @@ release, we have written several new interfaces as discussed in the following.
   common task and one that often requires sophisticated globalization
   algorithms for efficiency and reliability. SUNDIALS provides these
   in a widely used format, both sequentially and in parallel.
-  
+
   \dealii{} now has interfaces to SUNDIALS's ARKode, IDA, and KINSOL sub-packages.
   ARKode is a solver library that provides adaptive-step time
   integration. IDA is a package for the solution of differential-algebraic
@@ -377,7 +377,7 @@ release, we have written several new interfaces as discussed in the following.
 \paragraph*{ROL, a Rapid Optimization Library.}
 ROL is a package for large-scale optimization.
 \marginpar{Can we add a sentence or two about the ROL interface here?}
-  
+
 \paragraph*{nanoflann, a library for building and querying
   $k$-d trees of datasets.} Operations such as finding the vertex
 or cell closest
@@ -401,7 +401,7 @@ functionality is now available via \dealii{} interfaces.
   \marginpar{Do we actually provide any functionality with the GMSH
   executable yet? If so, complete this part}
 
-  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   \subsection{Use of C++11}
   \label{sec:cxx11}
@@ -549,7 +549,7 @@ following:
    \cite{TKB16}.
 \end{itemize}
 
-\marginpar{All: update scalapack, ROL, gmsh references}
+\marginpar{All: update ROL, gmsh references}
 \dealii{} can interface with many other libraries:
 \begin{multicols}{3}
 \begin{itemize}
@@ -569,7 +569,7 @@ following:
 \item p4est \cite{p4est}
 \item PETSc \cite{petsc-user-ref,petsc-web-page}
   \item ROL \cite{...}
-  \item ScaLAPACK \cite{...}
+\item ScaLAPACK
 \item SLEPc \cite{Hernandez:2005:SSF}
 \item SUNDIALS \cite{sundials}
 \item TBB \cite{Rei07}
