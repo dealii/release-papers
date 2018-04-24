@@ -185,9 +185,6 @@ following section. In addition, this release contains the following changes:
   and Coverity Scan \cite{coverity} static analysis tools for detecting bugs
   and other issues in the code. For example, around 260 issues were detected and
   fixed using the latter tool.
-      %% > Is there somewhere we can cite for either of these tools? It would
-      %% > be nice to recognize the department of homeland security for offering
-      %% The contract with homeland security was completed in 2009.
 
 \item
   \texttt{LinearOperator}, a flexible template class that implements the action of a
@@ -200,7 +197,7 @@ following section. In addition, this release contains the following changes:
 \item New non-standard quadrature rules:
 A number of non-standard, special-purpose quadrature rules have been
 implemented. Among these are ones for
-(i) truncating standard formulas to simplical domains (\texttt{Qsimplex});
+(i) truncating standard formulas to simplical domains (\texttt{QSimplex});
 (ii) singular transformations of the unit cell to the unit simplex
     (\texttt{QDuffy});
 (iii) composition of simplical quadrature rules to a combined rule on the
@@ -360,12 +357,38 @@ re-implementing their functionality. (A list of interfaces to other
 packages is given in Section~\ref{sec:cite}.) As part of the current
 release, we have written several new interfaces as discussed in the following.
 
-\marginpar{Add references to all of these libraries.}
+\paragraph*{Assimp, the Open Asset Import Library.}
+  Assimp \cite{assimp} can be used to read about 40 different 3D
+  graphics formats. A subset of these formats can be now be read from
+  within \dealii to generate two-dimensional meshes, possibly embedded in
+  a three-dimensional space.
+
+% \paragraph*{Gmsh.}
+%   \marginpar{Do we actually provide any functionality with the GMSH
+%   executable yet? If so, complete this part}
+%   Gmsh \cite{geuzaine2009gmsh}
+% The only thing we currently do is to define DEAL_II_GMSH_EXECUTABLE_PATH
+
+\paragraph*{nanoflann, a library for building and querying
+  $k$-d trees of datasets.} Operations such as finding the vertex or cell
+  closest to a given evaluation point occur frequently in many applications
+  that use unstructured meshes. While the naive algorithm is linear in the
+  number of vertices or cells, many such operations can be made significantly
+  faster by building a $k$-d tree data structure that recursively subdivides
+  a $k$ dimensional space. The nanoflann library \cite{nanoflann} provides
+  such a data structure and allows querying it, either for closest points
+  (e.g., when finding the closest vertex) or for searching the points that
+  fall within a radius of a target point. This functionality is now available
+  via \dealii interfaces.
+
+\paragraph*{ROL, a Rapid Optimization Library.}
+  ROL \cite{ridzal2014rapid} is a package for large-scale optimization.
+  \marginpar{Can we add a sentence or two about the ROL interface here?}
 
 \paragraph*{ScaLAPACK, a parallel dense linear algebra library.}
-  ScaLAPACK provides block-cyclic matrix distribution over 2D process
-  grid. The functionality and interface of our wrappers is similar to
-  the LAPACK wrappers for serial dense linear algebra, namely
+  ScaLAPACK \cite{slug} provides block-cyclic matrix distribution over 2D
+  process grid. The functionality and interface of our wrappers is similar
+  to the LAPACK wrappers for serial dense linear algebra, namely
   matrix-matrix multiplication, Cholesky and LU factorizations,
   eigensolvers, SVD, pseudoinverses, and save/load operations using
   the HDF5 format. All of this functionality is available even in
@@ -382,42 +405,14 @@ release, we have written several new interfaces as discussed in the following.
   Equation Solvers.}
   Solving nonlinear algebraic and differential equations is both a
   common task and one that often requires sophisticated globalization
-  algorithms for efficiency and reliability. SUNDIALS provides these
-  in a widely used format, both sequentially and in parallel.
+  algorithms for efficiency and reliability. SUNDIALS \cite{sundials}
+  provides these in a widely used format, both sequentially and in parallel.
 
   \dealii now has interfaces to SUNDIALS's ARKode, IDA, and KINSOL sub-packages.
   ARKode is a solver library that provides adaptive-step time
   integration. IDA is a package for the solution of differential-algebraic
   equations systems in the form $F(t,y,y')=0$. KINSOL is solver for nonlinear
   algebraic systems.
-
-\paragraph*{ROL, a Rapid Optimization Library.}
-ROL is a package for large-scale optimization.
-\marginpar{Can we add a sentence or two about the ROL interface here?}
-
-\paragraph*{nanoflann, a library for building and querying
-  $k$-d trees of datasets.} Operations such as finding the vertex
-or cell closest
-to a given evaluation point occur frequently in many applications that
-use unstructured meshes. While the naive algorithm is linear in the
-number of vertices or cells, many such operations can be made
-significantly faster by building a $k$-d tree data structure that
-recursively subdivides a $k$ dimensional space. The nanoflann library
-provides such a data structure and allows querying it, either for
-closest points (e.g., when finding the closest vertex) or for
-searching the points that fall within a radius of a target point. This
-functionality is now available via \dealii interfaces.
-
-\paragraph*{Assimp, the Open Asset Import Library.}
-  Assimp can be used to read about 40 different 3D graphics formats. A
-  subset of these formats can be now be read from within \dealii to
-  generate two-dimensional meshes, possibly embedded in a
-  three-dimensional space.
-
-\paragraph*{Gmsh.}
-  \marginpar{Do we actually provide any functionality with the GMSH
-  executable yet? If so, complete this part}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   \subsection{Use of C++11}
@@ -639,7 +634,7 @@ following:
 \item ARPACK \cite{arpack}
 \item Assimp \cite{assimp}
 \item BLAS and LAPACK
-\item Gmsh \cite{...}
+\item Gmsh \cite{geuzaine2009gmsh}
 \item GSL \cite{gsl2016}
 \item HDF5 \cite{hdf5}
 \item METIS \cite{karypis1998fast}
@@ -651,7 +646,7 @@ following:
 \item p4est \cite{p4est}
 \item PETSc \cite{petsc-user-ref,petsc-web-page}
 \item ROL \cite{ridzal2014rapid}
-\item ScaLAPACK
+\item ScaLAPACK \cite{slug}
 \item SLEPc \cite{Hernandez:2005:SSF}
 \item SUNDIALS \cite{sundials}
 \item TBB \cite{Rei07}
