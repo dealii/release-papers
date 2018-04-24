@@ -176,6 +176,7 @@ The major changes of this release are:
 \item Interfaces to more external libraries and programs;
 \item C++11 is now both required and used;
 \item Support for GPU computations;
+\item Support for face integrals and significant improvements of matrix-free framework;
 \end{itemize}
 These will all be discussed in more detail in the
 following section. In addition, this release contains the following changes:
@@ -195,12 +196,6 @@ following section. In addition, this release contains the following changes:
   class is, as of this release, the official replacement for about half a dozen
   similar (but less general) classes, such as \texttt{FilteredMatrix},
   \texttt{IterativeInverse}, and \texttt{PointerMatrix}.
-
-\item
-  Significant extension of matrix-free capabilities, including support for face
-  integrals in discontinuous Galerkin schemes, a new Hermite-like polynomial
-  basis adapted to face integrals that involve derivatives of shape functions,
-  and several performance enhancements.
 
 \item New non-standard quadrature rules:
 A number of non-standard, special-purpose quadrature rules have been
@@ -311,7 +306,7 @@ to the boundary but not in a whole volume.
 \marginpar{Rene: Please edit as appropriate}
 While \dealii is a package intended to solve problems with the
 finite element method -- i.e., using continuous or discontinuous
-\textit{fields} --, is often convenient in fluid dynamics problems to
+\textit{fields} --, it is often convenient in fluid dynamics problems to
 couple the continuum description of phenomena with particles. These
 particles, advected along with the numerical approximation of the flow
 field, are then either used to visualize properties of the flow, or to
@@ -389,7 +384,7 @@ release, we have written several new interfaces as discussed in the following.
   common task and one that often requires sophisticated globalization
   algorithms for efficiency and reliability. SUNDIALS provides these
   in a widely used format, both sequentially and in parallel.
-  
+
   \dealii now has interfaces to SUNDIALS's ARKode, IDA, and KINSOL sub-packages.
   ARKode is a solver library that provides adaptive-step time
   integration. IDA is a package for the solution of differential-algebraic
@@ -462,6 +457,65 @@ thereby clarifying object ownership responsibilities and avoiding memory leaks.
 \subsection{MeshWorker::mesh\_loop}
 
 \marginpar{do we want this? LH}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Extended matrix-free capabilities}
+
+The matrix-free infrastructure in \dealii{} was significantly overhauled for
+the current release. The major new contribution is the support of face
+integrals through a new class \texttt{FEFaceEvaluation}. The new class has a
+similar interface as the previous \texttt{FEEvaluation}, and applies SIMD
+vectorization over several faces in analogy to the intra-cell vectorization in
+FEEvaluation. The data structures have been particularly tuned for typical
+discontinuous Galerkin setups involving operators with first and second
+spatial derivatives. Both data access and computations have been thoroughly
+optimized and compared to the performance boundaries of the hardware.
+
+Furthermore, the internal algorithms for computing the values and gradients on
+all quadrature points for cell integrals have been significantly improved,
+giving around 10--20\% better performance for the case the kernels are compute
+bound. For the example of the reference cell gradient of a solution field
+$\mathbf u$ in three space dimensions, the new release applies the following
+change:
+\begin{equation*}
+  \text{previous: }
+  \begin{bmatrix}
+    D_{1} \otimes S_{2} \otimes S_{3}\\
+    S_{1} \otimes D_{2} \otimes S_{3}\\
+    S_{1} \otimes S_{2} \otimes D_{3}
+  \end{bmatrix}
+  \mathbf u
+  \quad
+  \leadsto
+  \quad
+  \text{new: }
+  \begin{bmatrix}
+    D_{1}^{\mathrm{co}} \otimes I_{2} \otimes I_{3}\\
+    I_{1} \otimes D_{2}^{\mathrm{co}} \otimes I_{3}\\
+    I_{1} \otimes I_{2} \otimes D_{3}^{\mathrm{co}}
+  \end{bmatrix}
+  \begin{bmatrix}
+    S_{1} \otimes S_{2} \otimes S_{3}
+  \end{bmatrix}
+  \mathbf u.
+\end{equation*}
+The matrices $S_i$ contain the values of the one-dimensional shape functions
+in one-dimensional quadrature points and $D_i$ their derivatives. When applied
+with the usual sum factorization implementation described e.g.~in
+\cite{KronbichlerKormann2012}, the old kernels amounted to 9 partial
+summations---or rather 8 in the previous implementation of \dealii{} because
+the application of $S_1$ for the $y$ and $z$ components of the gradient can be
+merged. The new code performs a basis transformation to a related basis with
+derivative matrix $D_i = D_i^{\mathrm{co}} S_i$, which is the basis of
+Lagrange polynomials in the points of the quadrature. This change reduces the
+number of partial sums to only 6 for the gradient, as the action of the unit
+matrices $I_i$ needs not be implemented. In isolation, this spectral
+element-like evaluation was previously available in \dealii{} for collocation
+between nodal points and quadrature, but not used for general bases. A more
+detailed description of this improvement, including an analysis of these
+kernels on modern hardware, is given in the preprint
+\cite{KronbichlerKormann2017}.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Tutorial and code gallery programs}
@@ -687,7 +741,7 @@ variety of funding sources:
 
 D.~Arndt, K.~Kormann and M.~Kronbichler were partially supported by the German
 Research Foundation (DFG) under the project ``High-order discontinuous
-Galerkin for the exa-scale'' (ExaDG) within the priority program ``Software
+Galerkin for the exa-scale'' (\mbox{ExaDG}) within the priority program ``Software
 for Exascale Computing'' (SPPEXA).
 
 W.~Bangerth and R.~Gassm\"{o}ller were partially
