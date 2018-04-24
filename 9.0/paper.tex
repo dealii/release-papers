@@ -176,7 +176,7 @@ The major changes of this release are:
 \item Interfaces to more external libraries and programs;
 \item C++11 is now both required and used;
 \item Support for GPU computations;
-\item Support for face integrals and significant improvements of matrix-free framework;
+\item Support for face integrals and significant improvements of the matrix-free framework;
 \end{itemize}
 These will all be discussed in more detail in the
 following section. In addition, this release contains the following changes:
@@ -217,28 +217,30 @@ are mainly used in Boundary Element Methods.
   updates to step-37. In addition, the separate code
   gallery of \dealii has gained a number of new entries.
 
-\item Improved support for user parameters; a new \texttt{ParameterAcceptor}
+\item Improved support for user parameters: a new \texttt{ParameterAcceptor}
   class has been added to the library. The class is intended to be used as a
   base for any class that wants to handle parameters using the
   \texttt{ParameterHandler} class. If you derive all your classes from
   \texttt{ParameterAcceptor}, and declare your parameters either with
   \texttt{parse/declare\_parameters} methods or via the
-  \texttt{ParameterAcceptor::add\_parameter} method, then the declaring and
-  parsing of your parameter files will be automatically managed by the
-  \texttt{ParameterAcceptor::initialize} function, greatly simplifying
-  the declaration and parsing of parameters in user codes.
+  \texttt{ParameterAcceptor::add\_parameter} method, then both the
+  declaration and the
+  parsing of parameter files are automatically managed by
+  \texttt{ParameterAcceptor::initialize}, greatly simplifying
+  dealing with parameters in user codes.
 
-\item New caching mechanism for expensive grid computations; We introduced a new
-  class, \texttt{GridTools::Cache}, that caches computationally intensive
+\item New caching mechanism for expensive grid computations: we introduced a new
+  class \texttt{GridTools::Cache} that caches computationally intensive
   information about a \texttt{Triangulation}.
 
 This class allows the user to query some of the data structures constructed
-using functions in the GridTools namespace which are computed only once, and
+using functions in the \texttt{GridTools} namespace. This data is then
+computed only once, and
 then cached inside this class for faster access whenever the triangulation has
-not changed. The Cache is marked for update by the \texttt{Triangulation} itself
+not changed. The cache is marked for update by the \texttt{Triangulation} itself
 using signals.
 
-Some of the methods in \texttt{GridTools} already use the \texttt{Cache} to
+Some of the methods in \texttt{GridTools} already use this cache to
 speed up repeated calls to the same expensive methods.
 \item A new \texttt{MeshWorker::mesh\_loop} function has been added that
   performs the same tasks of the \texttt{MeshWorker::loop} function without
