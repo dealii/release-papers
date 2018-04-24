@@ -11,17 +11,18 @@
 
 \usepackage{fontenc}
 \usepackage{graphicx}
+\usepackage{xspace}
 
 \pgfplotsset{compat=1.9}
 
 \newcommand{\specialword}[1]{\texttt{#1}}
-\newcommand{\dealii}{{\specialword{deal.II}}}
-\newcommand{\pfrst}{{\specialword{p4est}}}
-\newcommand{\trilinos}{{\specialword{Trilinos}}}
-\newcommand{\aspect}{\specialword{Aspect}}
-\newcommand{\petsc}{\specialword{PETSc}}
-\newcommand{\cmake}{{\specialword{CMake}}}
-\newcommand{\autoconf}{{\specialword{autoconf}}}
+\newcommand{\dealii}{{\specialword{deal.II}}\xspace}
+\newcommand{\pfrst}{{\specialword{p4est}}\xspace}
+\newcommand{\trilinos}{{\specialword{Trilinos}}\xspace}
+\newcommand{\aspect}{\specialword{Aspect}\xspace}
+\newcommand{\petsc}{\specialword{PETSc}\xspace}
+\newcommand{\cmake}{{\specialword{CMake}}\xspace}
+\newcommand{\autoconf}{{\specialword{autoconf}}\xspace}
 
 %
 % Author list -- please add yourself in both places below (in
@@ -50,7 +51,7 @@
   pdftitle={The deal.II Library, Version 9.0, 2018},
 }
 
-\title{The \dealii{} Library, Version 9.0}
+\title{The \dealii Library, Version 9.0}
 
 \author[1]{Giovanni Alzetta}
 \affil[1]{SISSA,
@@ -147,7 +148,7 @@ Institute, Troy, NY 12180, USA.
 
 \begin{abstract}
   This paper provides an overview of the new features of the finite element
-  library \dealii{} version 9.0.
+  library \dealii version 9.0.
 \end{abstract}
 
 
@@ -157,29 +158,29 @@ Institute, Troy, NY 12180, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview}
 
-\dealii{} version 9.0.0 was released April X, 2018.
+\dealii version 9.0.0 was released April X, 2018.
 \marginpar{Update the date}
 This paper provides an
 overview of the new features of this major release and serves as a citable
-reference for the \dealii{} software library version 9.0. \dealii{} is an
+reference for the \dealii software library version 9.0. \dealii is an
 object-oriented finite element library used around the world in the
 development of finite element solvers. It is available for free under the
-GNU Lesser General Public License (LGPL) from the \dealii{} homepage at
+GNU Lesser General Public License (LGPL) from the \dealii homepage at
 \url{http://www.dealii.org/}.
 
 The major changes of this release are:
 \begin{itemize}
-\item xxxx something with manifolds xxx
-\item Support for particle-in-cell methods
-\item Dedicated support for automatic and symbolic differentiation.
-\item Interfaces to more external libraries and programs.
-\item C++11 is now both required and used.
-\item Support for GPU computations.
+\item Improved support for curved geometries;
+\item Support for particle-in-cell methods;
+\item Dedicated support for automatic and symbolic differentiation;
+\item Interfaces to more external libraries and programs;
+\item C++11 is now both required and used;
+\item Support for GPU computations;
 \end{itemize}
 These will all be discussed in more detail in the
 following section. In addition, this release contains the following changes:
 \begin{itemize}
-\item \dealii{} has made extensive use of both the Clang-Tidy \cite{clang-tidy}
+\item \dealii has made extensive use of both the Clang-Tidy \cite{clang-tidy}
   and Coverity Scan \cite{coverity} static analysis tools for detecting bugs
   and other issues in the code. For example, around 260 issues were detected and
   fixed using the latter tool.
@@ -222,7 +223,35 @@ are mainly used in Boundary Element Methods.
 
 \item A new python tutorial program tutorial-1; as well as
   updates to step-37. In addition, the separate code
-  gallery of \dealii{} has gained a number of new entries.
+  gallery of \dealii has gained a number of new entries.
+
+\item Improved support for user parameters; a new \texttt{ParameterAcceptor}
+  class has been added to the library. The class is intended to be used as a
+  base for any class that wants to handle parameters using the
+  \texttt{ParameterHandler} class. If you derive all your classes from
+  \texttt{ParameterAcceptor}, and declare your parameters either with
+  \texttt{parse/declare\_parameters} methods or via the
+  \texttt{ParameterAcceptor::add\_parameter} method, then the declaring and
+  parsing of your parameter files will be automatically managed by the
+  \texttt{ParameterAcceptor::initialize} function, greatly simplifying
+  the declaration and parsing of parameters in user codes.
+
+\item New caching mechanism for expensive grid computations; We introduced a new
+  class, \texttt{GridTools::Cache}, that caches computationally intensive
+  information about a \texttt{Triangulation}.
+
+This class allows the user to query some of the data structures constructed
+using functions in the GridTools namespace which are computed only once, and
+then cached inside this class for faster access whenever the triangulation has
+not changed. The Cache is marked for update by the \texttt{Triangulation} itself
+using signals.
+
+Some of the methods in \texttt{GridTools} already use the \texttt{Cache} to
+speed up repeated calls to the same expensive methods.
+\item A new \texttt{MeshWorker::mesh\_loop} function has been added that
+  performs the same tasks of the \texttt{MeshWorker::loop} function without
+  forcing the users to adhere to a specific interface.
+
 \end{itemize}
 Beyond these changes, the changelog lists more than 330 other features and bugfixes.
 
@@ -234,7 +263,7 @@ Beyond these changes, the changelog lists more than 330 other features and bugfi
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Significant changes to the library}
 
-This release of \dealii{} contains a number of large and significant changes
+This release of \dealii contains a number of large and significant changes
 that will be discussed in the following sections. It of course also contains a
 vast number of smaller changes and added functionality; the details of these
 can be found
@@ -244,32 +273,43 @@ in the file that lists all changes for this release}, see \cite{changes90}.
 the release announcement.)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{xxx something with Manifolds xxx}
+\subsection{Improved support for curved geometries}
 \label{sec:manifolds}
 
 \marginpar{All: please edit as appropriate}
 
-(i) separation between manifold and boundary ids, (ii) manifold
-smoothing via the transfinite mapping, (iii) maybe: grid generator functions already attach manifolds?
+Every function in the GridGenerator namespace now attaches a default manifold to
+the curved parts of the domain, and sets reasonable defaults for manifold
+indicators both in the domain and on the boundary, where appropriate. Manifold
+classes are no longer sensible to settings made on boundary indicators, and are
+only affected by manifold indicators, decoupling completely the concept of
+boundary indicators and manifold indicator, leaving the former for boundary
+conditions, and the latter for the geometrical description of the domain.
 
-Previous text:
+All functions that allowed to query for \texttt{Boundary} objects (deprecated
+since version 8.9 of the \dealii library) have been removed, and have been
+replaced by the equivalent methods that query \texttt{Manifold} classes.
 
-Manifold smoothing: The manifold smoothing algorithms applied in the
-Triangulation class and MappingQGeneric have been changed from the old
-Laplace-style smoothing to a transfinite interpolation that linearly
-blends between the descriptions on the faces around a cell. The old
-transformation introduced boundary layers inside cells that prevented
-convergence rates from exceeding \(3.5\) in the global \(L^2\) errors on typical
-settings. This change also considerably improves mesh quality on settings
-where curved descriptions are only applied to the boundary rather than
-the whole volume.
+The manifold smoothing algorithms applied in the Triangulation class and
+MappingQGeneric have been changed from the old Laplace-style smoothing to a
+transfinite interpolation that linearly blends between the descriptions on the
+faces around a cell. The old transformation introduced boundary layers inside
+cells that prevented convergence rates from exceeding \(3.5\) in the global
+\(L^2\) errors on typical settings. This change also considerably improves mesh
+quality on settings where curved descriptions are only applied to the boundary
+rather than the whole volume.
 
+A new manifold class \texttt{TransfiniteInterpolationManifold} implementing an
+interpolation from a curved boundary description to the interior has been added.
+This class enables high-order convergence rates of more than three in the power
+of the mesh size for situations where a curved manifold can only be prescribed
+to the boundary but not in a whole volume.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Support for particle-in-cell methods}
 
 \marginpar{Rene: Please edit as appropriate}
-While \dealii{} is a package intended to solve problems with the
+While \dealii is a package intended to solve problems with the
 finite element method -- i.e., using continuous or discontinuous
 \textit{fields} --, is often convenient in fluid dynamics problems to
 couple the continuum description of phenomena with particles. These
@@ -279,7 +319,7 @@ advect material properties such as the viscosity of inhomogenous
 mixtures of fluids. If each particle is associated with the cells
 of a mesh, these methods are often referred to as particle-in-cell (PIC).
 
-\dealii{} now has a dedicated particles module. The module provides a base class
+\dealii now has a dedicated particles module. The module provides a base class
 \texttt{Particle} that represents a particle with position, an ID number and
 a variable number of properties. They are jointly represented by a \texttt{ParticleHandler}
 class that manages the storage and handling of all particles. In
@@ -290,7 +330,7 @@ checkpoint/restart phases.
 
 A much more detailed view of the underlying algorithms can be found in
 \cite{GLHPB18}. A longer report is at \cite{GHPB16}. The
-implementation here originated in the \aspect{} code, see \cite{KHB12,HDGB17}.
+implementation here originated in the \aspect code, see \cite{KHB12,HDGB17}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -303,7 +343,7 @@ matrices from residual vectors for simulations that use complicated
 material models. Examples can be found widely for nonlinear solid
 mechanics as well as for nonlinear viscosity models in fluid flow.
 
-\dealii{} has had a tutorial program (step-33) since 2007 that
+\dealii has had a tutorial program (step-33) since 2007 that
 demonstrates this technique based on the Trilinos Sacado package, but
 the functionality was not available pervasively throughout
 deal.II. This has changed with release 9.0 where support for
@@ -319,7 +359,7 @@ and right hand sides.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New interfaces to external libraries and programs}
 
-\dealii{} has always tried to leverage high-quality implementations of
+\dealii has always tried to leverage high-quality implementations of
 algorithms available through other open source software, rather than
 re-implementing their functionality. (A list of interfaces to other
 packages is given in Section~\ref{sec:cite}.) As part of the current
@@ -349,8 +389,8 @@ release, we have written several new interfaces as discussed in the following.
   common task and one that often requires sophisticated globalization
   algorithms for efficiency and reliability. SUNDIALS provides these
   in a widely used format, both sequentially and in parallel.
-
-  \dealii{} now has interfaces to SUNDIALS's ARKode, IDA, and KINSOL sub-packages.
+  
+  \dealii now has interfaces to SUNDIALS's ARKode, IDA, and KINSOL sub-packages.
   ARKode is a solver library that provides adaptive-step time
   integration. IDA is a package for the solution of differential-algebraic
   equations systems in the form $F(t,y,y')=0$. KINSOL is solver for nonlinear
@@ -371,11 +411,11 @@ recursively subdivides a $k$ dimensional space. The nanoflann library
 provides such a data structure and allows querying it, either for
 closest points (e.g., when finding the closest vertex) or for
 searching the points that fall within a radius of a target point. This
-functionality is now available via \dealii{} interfaces.
+functionality is now available via \dealii interfaces.
 
 \paragraph*{Assimp, the Open Asset Import Library.}
   Assimp can be used to read about 40 different 3D graphics formats. A
-  subset of these formats can be now be read from within \dealii{} to
+  subset of these formats can be now be read from within \dealii to
   generate two-dimensional meshes, possibly embedded in a
   three-dimensional space.
 
@@ -387,12 +427,12 @@ functionality is now available via \dealii{} interfaces.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   \subsection{Use of C++11}
   \label{sec:cxx11}
-\dealii{} first offered support for a subset of C++11 features in
+\dealii first offered support for a subset of C++11 features in
 version 6.2, released in 2009. The current release is the first to
 \emph{require} a C++11 compiler.
 
 Many parts of the code base have been rewritten to both support and
-use the new features of C++11. In particular, \dealii{} now makes
+use the new features of C++11. In particular, \dealii now makes
 extensive use of move semantics as well as range-based \texttt{for}
 loops with \texttt{auto} type deduction of iterator variables. We have
 also largely replaced \texttt{push\_back()} by
@@ -417,6 +457,12 @@ thereby clarifying object ownership responsibilities and avoiding memory leaks.
 ...
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{MeshWorker::mesh\_loop}
+
+\marginpar{do we want this? LH}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Tutorial and code gallery programs}
 
@@ -425,9 +471,9 @@ several have been updated extensively for the changes to the manifold
 handling as well as to adjust for current functionality
 compared to what that was available when the programs were first written.
 
-\dealii{} has a separate ``code gallery'' that
+\dealii has a separate ``code gallery'' that
 consists of programs shared by users as examples of what can be
-done with \dealii{}. While not part of the release process, it is nonetheless
+done with \dealii. While not part of the release process, it is nonetheless
 worth mentioning that the set of new programs since the last release covers
 the following topics:
 \begin{itemize}
@@ -495,13 +541,13 @@ incompatible changes are worth mentioning:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{How to cite \dealii{}}\label{sec:cite}
+\section{How to cite \dealii}\label{sec:cite}
 
-In order to justify the work the developers of \dealii{} put into this
+In order to justify the work the developers of \dealii put into this
 software, we ask that papers using the library reference one of the
-\dealii{} papers. This helps us justify the effort we put into it.
+\dealii papers. This helps us justify the effort we put into it.
 
-There are various ways to reference \dealii{}. To acknowledge the use of
+There are various ways to reference \dealii. To acknowledge the use of
 the current version of the library, \textbf{please reference the present
 document}. For up to date information and bibtex snippets for this document
 see:
@@ -509,7 +555,7 @@ see:
  \url{https://www.dealii.org/publications.html}
 \end{center}
 
-The original \texttt{\dealii{}} paper containing an overview of its
+The original \texttt{\dealii} paper containing an overview of its
 architecture is \cite{BangerthHartmannKanschat2007}. If you rely on
 specific features of the library, please consider citing any of the
 following:
@@ -532,7 +578,7 @@ following:
 \end{itemize}
 
 \marginpar{All: update gmsh reference}
-\dealii{} can interface with many other libraries:
+\dealii can interface with many other libraries:
 \begin{multicols}{3}
 \begin{itemize}
 \item ADOL-C \cite{adol-c}
@@ -562,14 +608,14 @@ following:
 Please consider citing the appropriate references if you use interfaces to these
 libraries.
 
-Older releases of \dealii{} can be cited as
+Older releases of \dealii can be cited as
 \cite{dealII80,dealII81,dealII82,dealII83,dealII84,dealII85}.
 
 \nocite{BangerthKanschat1999}
 
 \section{Acknowledgments}
 
-\dealii{} is a world-wide project with dozens of contributors around the
+\dealii is a world-wide project with dozens of contributors around the
 globe. Other than the authors of this paper, the following people contributed code to
 this release:\\
 %
@@ -635,7 +681,7 @@ Their contributions are much appreciated!
 
 \bigskip
 
-\dealii{} and its developers are financially supported through a
+\dealii and its developers are financially supported through a
 variety of funding sources:
 \marginpar{all: update your funding sources}
 
@@ -680,7 +726,7 @@ D.~Wells was supported by the National Science Foundation (NSF) through Grant
 DMS-1344962.
 
 The Interdisciplinary Center for Scientific Computing (IWR) at Heidelberg
-University has provided hosting services for the \dealii{} web page.
+University has provided hosting services for the \dealii web page.
 
 
 \bibliography{paper}{}
