@@ -407,7 +407,13 @@ release, we have written several new interfaces as discussed in the following.
 
 \paragraph*{ROL, a Rapid Optimization Library.}
   ROL \cite{ridzal2014rapid} is a package for large-scale optimization.
-  \marginpar{Can we add a sentence or two about the ROL interface here?}
+  \dealii can now use the state-of-the-art algorithms in ROL to solve
+  unconstrained and constrained optimization problems as well as optimization
+  problems under uncertainty.
+  \dealii provides an interface to ROL's (abstract) vector class using the
+  adapter software pattern.
+  Through such an interface any vector class in \dealii following certain
+  interface requirements can be used to define a ROL objective function.
 
 \paragraph*{ScaLAPACK, a parallel dense linear algebra library for distributed memory machines.}
   ScaLAPACK \cite{slug} provides block-cyclic matrix distribution over 2D
