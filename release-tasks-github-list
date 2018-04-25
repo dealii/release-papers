@@ -1,7 +1,8 @@
-Check list for https://github.com/dealii/release-papers/blob/master/release-tasks
+Check list for [release-tasks](https://github.com/dealii/release-papers/blob/master/release-tasks)
 =================================================================================
 
-Release preparation steps: https://github.com/dealii/release-papers/blob/master/release-tasks
+Release preparation steps:
+--
 
 - [ ] <b>-3</b>  Send out notice to the mailinglist if anyone has outstanding issues or patches.
 - [ ] <b>-2</b>  Check all issues and pull-request on github. Create a list of things to fix before the release.
@@ -19,9 +20,9 @@ Release preparation steps: https://github.com/dealii/release-papers/blob/master/
 - [ ] <b>0g</b>  Run codespell
 
 Release steps:
+--
 
 - [ ] <b>*</b>   Nominate a "release officer" that is in charge of (almost all) of the following steps
-
 - [ ] <b>1</b>   Create new changes file
 - [ ] <b>1a</b>  Adjust doc/users/doxygen.html to link to the to-be-created TAG file.
 - [ ] <b>4</b>   Create a release branch
@@ -36,7 +37,6 @@ Release steps:
 - [ ] <b>10</b>  Test the branch thoroughly
 - [ ] <b>10a</b> Do the same for the code gallery examples
 - [ ] <b>11</b>  Create documentation and verify
-
 - [ ] <b>12</b>  Push the button
     - Change VERSION to 9.0.0 for a release and to 9.0.0-rc1 for a pre-release
     - Create a signed tag of exactly this commit
