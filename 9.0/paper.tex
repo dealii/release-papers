@@ -387,15 +387,15 @@ release, we have written several new interfaces as discussed in the following.
   ROL \cite{ridzal2014rapid} is a package for large-scale optimization.
   \marginpar{Can we add a sentence or two about the ROL interface here?}
 
-\paragraph*{ScaLAPACK, a parallel dense linear algebra library.}
+\paragraph*{ScaLAPACK, a parallel dense linear algebra library for distributed memory machines.}
   ScaLAPACK \cite{slug} provides block-cyclic matrix distribution over 2D
-  process grid. The functionality and interface of our wrappers is similar
-  to the LAPACK wrappers for serial dense linear algebra, namely
+  process grids. The functionality and interface of our wrappers is similar
+  to the LAPACK \cite{lapack} wrappers for serial dense linear algebra, namely
   matrix-matrix multiplication, Cholesky and LU factorizations,
-  eigensolvers, SVD, pseudoinverses, and save/load operations using
-  the HDF5 format. All of this functionality is available even in
-  cases where the number of MPI processes does not exactly divide the
-  number of tiles stored in the block-cyclic data distribution.
+  eigensolvers, SVD, least squares, pseudoinverses and save/load operations using
+  either serial or parallel HDF5 \cite{hdf5}. All of this functionality is available
+  even in cases where the number of MPI processes does not match the numbers of
+  processes in the 2D process grid used to distribute a matrix.
 
   As part of this effort, we have also improved LAPACK support: there
   are now methods to perform rank-1 updates/downdates, Cholesky
@@ -637,7 +637,7 @@ following:
 \item ADOL-C \cite{adol-c}
 \item ARPACK \cite{arpack}
 \item Assimp \cite{assimp}
-\item BLAS and LAPACK
+\item BLAS and LAPACK \cite{lapack}
 \item Gmsh \cite{geuzaine2009gmsh}
 \item GSL \cite{gsl2016}
 \item HDF5 \cite{hdf5}
