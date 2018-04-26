@@ -488,9 +488,24 @@ thereby clarifying object ownership responsibilities and avoiding memory leaks.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Support for GPU computations}
 
-\marginpar{Bruno?}
-...
+Heterogeneous computing is becoming more prevalent in supercomputing and this is
+a trend that is expected to continue in the future. In particular, the use of
+GPU has been increasing the last few years.
 
+This release of \dealii adds support for GPU both for matrix-based and
+matrix-free applications. For matrix-based applications, we rely on
+cuSPARSE\cite{cusparse} and cuSOLVER\cite{cusolver} for operations on sparse
+matrices such as matrix-vector multiplication and for direct solvers. We have
+introduced a new type of sparse matrix, \texttt{CUDAWrappers::SparseMatrix},
+which moves onto the device a \dealii \texttt{SparseMatrix} and changes the
+format of the underlying data to the appropriate CSR format used by cuSPARSE. We
+also have added wrappers for Cholesky and LU factorizations provided by
+cuSOLVER. In practice, a user would assemble the matrix associated to the system
+on the host and then move the matrix to the device. At this point, the system
+would be solved on the device and the solution would be moved back to the host.
+
+We also have some support for matrix-free computation on GPU. For now, the
+evaluation of the operator is limited to mesh without hanging-nodes.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -684,6 +699,8 @@ following:
 \item ARPACK \cite{arpack}
 \item Assimp \cite{assimp}
 \item BLAS and LAPACK \cite{lapack}
+\item cuSOLVER \cite{cusolver}
+\item cuSPARSE \cite{cusparse}
 \item Gmsh \cite{geuzaine2009gmsh}
 \item GSL \cite{gsl2016}
 \item HDF5 \cite{hdf5}
