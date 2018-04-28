@@ -295,16 +295,8 @@ faces around a cell. The old transformation introduced boundary layers inside
 cells that prevented convergence rates from exceeding \(3.5\) in the global
 \(L^2\) errors for typical settings. This change also considerably improves mesh
 quality in situations where curved descriptions are only applied to the boundary
-rather than the whole volume.
-
-\marginpar{This paragraph seems to duplicate the previous. Can we
-  merge the information?}
-Secondly, a new manifold class
-\texttt{TransfiniteInterpolationManifold} has been added that implements an
-interpolation from a curved boundary description to the interior.
-This class enables high-order convergence rates of better than ${\cal O}(h^3)$
-for situations where a curved manifold can only be prescribed
-to the boundary but not in a whole volume.
+rather than the whole volume. This concept was also introduced as a new manifold class
+\texttt{TransfiniteInterpolationManifold}, which allows to apply this type of smoothing not only in the cells close to the boundary but over a full coarse (level 0) cell.
 
 Finally,
 every function in the \texttt{GridGenerator} namespace now attaches a default manifold to
