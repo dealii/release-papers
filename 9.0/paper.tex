@@ -354,9 +354,9 @@ for nonlinear viscosity models in fluid flow.
 \dealii has had a tutorial program (step-33) since 2007 that
 demonstrates this technique based on the Trilinos Sacado \cite{Bartlett2006a} package, but
 the functionality was not available pervasively throughout
-deal.II. 
-This has changed with release 9.0 where support is given for differentiation 
-using a selection of ``white-listed'' libraries (namely ADOL-C \citep{Griewank1996a} 
+deal.II.
+This has changed with release 9.0 where support is given for differentiation
+using a selection of ``white-listed'' libraries (namely ADOL-C \citep{Griewank1996a}
 and Sacado) and a subset of their supported number types. Currently,
 we offer support for the following cases:
 \begin{itemize}
@@ -372,17 +372,17 @@ types can be used in the \texttt{FEValues}, \texttt{FEValuesViews},
 \texttt{Tensor}, \texttt{SymmetricTensor},
 and related classes that are generally used to assemble linear systems
 and right hand sides.
-Given the updated capabilities of the library, there is now a dedicated module 
-that presents the AD compatibility and capabilities of the \dealii libraries. 
-Furthermore, the use of Sacado is now  demonstrated in a much more simplified 
-and transparent manner in an modernized version of an existing ``code gallery'' 
-example \cite{Pelteret2016a}. 
+Given the updated capabilities of the library, there is now a dedicated module
+that presents the AD compatibility and capabilities of the \dealii libraries.
+Furthermore, the use of Sacado is now  demonstrated in a much more simplified
+and transparent manner in an modernized version of an existing ``code gallery''
+example \cite{Pelteret2016a}.
 
-To date it remains necessary for the user  to manage the initialization of AD 
-independent variables and the resultant calls  to the AD dependent variables 
+To date it remains necessary for the user  to manage the initialization of AD
+independent variables and the resultant calls  to the AD dependent variables
 in order to initiate the computation of derivatives.
 In the next release we expect to provide a unified interface to these
-AD libraries, which will hide these library-dependent implementational details 
+AD libraries, which will hide these library-dependent implementational details
 and facilitate switching between the supported libraries and AD number types
 based on the user's requirements.
 
@@ -528,7 +528,10 @@ now collected in the new function \texttt{MatrixFree::loop}. The data
 structures have been particularly tuned for typical discontinuous Galerkin
 setups involving operators with first and second spatial derivatives. Both
 data access and computations have been thoroughly optimized and compared to
-the performance boundaries of the hardware.
+the performance boundaries of the hardware. Furthermore, the support for
+AVX-512 instructions in the matrix-free framework was extended, adding new
+\texttt{gather} and \texttt{scatter} intrinsics for the indirect access to
+vector entries where appropriate.
 
 To give an example of the algorithmic improvements, the computation of the
 values and gradients on all quadrature points for cell integrals has been
