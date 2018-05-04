@@ -252,7 +252,7 @@ Contributors for 9.0: (updated 2018-04-19)
 
 
 1/  Create new changes file:
-    - Adjust the header of doc/news/header so that it reflects
+    - Adjust the header of doc/news/changes/header* so that it reflects
       the versions in question
     - Also adjust the copyright dates
     - Run the following commands from above the source dir:
@@ -292,16 +292,11 @@ Contributors for 9.0: (updated 2018-04-19)
 
   Note: Without a pull request!
 
-
 5/ Update the VERSION from 8.2.0-pre to 8.3.0-pre on master
 
   git commit -a -m "update VERSION"
 
-  git push origin master  # where origin is the remote pointing to
-                          # github.com/dealii/dealii.git
-
-  Note: Without a pull request!
-
+  [ pull request for master branch ]
 
 6/ update the official tester to test on the release branch dealii-8.2
 
@@ -327,7 +322,7 @@ Contributors for 9.0: (updated 2018-04-19)
    You can start from 
    lynx -dump -nolist https://www.dealii.org/authors.html >AUTHORS
    and format it like this:
-   https://github.com/dealii/dealii/blob/dealii-8.3/AUTHORS
+   https://github.com/dealii/dealii/blob/dealii-9.0/AUTHORS
 
    Update LICENSE to point to the AUTHORS file:
 
@@ -336,7 +331,7 @@ Contributors for 9.0: (updated 2018-04-19)
    git add AUTHORS
    git commit -a -m "update AUTHORS"
 
-   git push origin dealii-8.2
+   git push origin dealii-9.0
 
    Note: Without a pull request!
 
@@ -357,8 +352,7 @@ release branch:
 
 If no further regressions show up we will release [planned date]
 
-Thanks,
-Wolfgang Bangerth, Timo Heister, Guido Kanschat, and Matthias Maier
+Thanks!
 
 
 
