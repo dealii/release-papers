@@ -457,7 +457,7 @@ Thanks!
       # in a clean git repository:
       git checkout v9.0.0 # or git checkout v9.0.0-rc1
       rm -r *
-      tar --strip-components=1 -xvf dealii-9.0.0.tar.gz (or dealii-8.2.rc1.tar.gz)
+      tar --strip-components=1 -xvf dealii-9.0.0.tar.gz (or dealii-9.0.0-rc1.tar.gz)
       git status
 
     Now, the last git status must not show any modified contents!
@@ -490,9 +490,11 @@ Thanks!
 
 14a/ Create a pre-release on github:
 
-  https://github.com/dealii/dealii/releases/new
+  https://github.com/dealii/dealii/tags
 
-    Tag: dealii-9.0.0-rc1 @master
+  Select the just uploaded v9.0.0-rc1 tag and click on "add release notes"
+
+    Tag: v9.0.0-rc1 Existing tag
     Release title: deal.II pre-release version 9.0.0-rc1
 
     Description: ""
