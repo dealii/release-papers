@@ -272,38 +272,42 @@ the release announcement.)
 
 \marginpar{All: please edit as appropriate}
 
-\dealii{} has had the ability to attach \textit{manifold descriptions}
-to all parts of a geometry for several releases already. These
-descriptions are used when considering where to place new vertices
-upon mesh refinement, in determining the mapping from reference cell
-to real cell, and in a number of other contexts. However, for historical
-reasons, manifold descripts have used some of the same code paths also
-used for boundary indicators typically used to identify which parts of
-the boundary correspond to what boundary conditions.
+\dealii{} has had the ability to attach \textit{manifold descriptions} to all
+parts of a geometry since the 8.2 release. These descriptions are used to place
+new vertices during mesh refinement, to determine the mapping between the
+reference and real cells, and in a number of other contexts. These classes,
+inheriting from \texttt{Manifold}, describe coordinate transformations in a
+general way and completely supersede the older classes inheriting from
+\texttt{Boundary}. However, for historical reasons, manifold descriptors have
+used some of the same code paths as boundary indicators, which were only
+intended for marking what parts of the boundary correspond to what boundary
+conditions. Put another way: under certain circumstances a boundary indicator
+was also interpreted as a manifold indicator.
 
-This connection has been severed in the current release: Boundary
-indicators and manifold descriptions are now entirely separated. Furthermore,
-all functions that allowed to query for old-style \texttt{Boundary} objects (deprecated
-since version 8.5 of the \dealii library) have been removed, and have been
-replaced by the equivalent methods that query \texttt{Manifold} classes.
+The current release severs this connection: Boundary indicators and manifold
+descriptions are now entirely separated. This means that \texttt{boundary\_id}s
+are only used to set boundary conditions and \texttt{manifold\_id}s are only
+used to set geometry descriptions. The old compatibility code for using boundary
+indicators as manifold indicators has been removed and all usages of the
+old-style \texttt{Boundary} objects (even with manifold ids) are now deprecated.
 
 There are also numerous improvements to the available manifold descriptions.
-First, the manifold smoothing algorithms applied in the \texttt{Triangulation} class and
-\texttt{MappingQGeneric} have been changed from the old Laplace-style smoothing to a
-transfinite interpolation that linearly blends between the descriptions on the
-faces around a cell. The old transformation introduced boundary layers inside
-cells that prevented convergence rates from exceeding \(3.5\) in the global
-\(L^2\) errors for typical settings. This change also considerably improves mesh
-quality in situations where curved descriptions are only applied to the boundary
-rather than the whole volume. This concept was also introduced as a new manifold class
-\texttt{TransfiniteInterpolationManifold}, which allows to apply this type of smoothing not only in the cells close to the boundary but over a full coarse (level 0) cell.
+First, the manifold smoothing algorithms applied in the \texttt{Triangulation}
+class and \texttt{MappingQGeneric} have been changed from the old Laplace-style
+smoothing to a transfinite interpolation that linearly blends between the
+descriptions on the faces around a cell. The old transformation introduced
+boundary layers inside cells that prevented convergence rates from exceeding
+\(3.5\) in the global \(L^2\) errors for typical settings. This change also
+considerably improves mesh quality in situations where curved descriptions are
+only applied to the boundary rather than the whole volume. This concept was also
+introduced as a new manifold class \texttt{TransfiniteInterpolationManifold},
+which allows to apply this type of smoothing not only in the cells close to the
+boundary but over a full coarse (level 0) cell.
 
-Finally,
-every function in the \texttt{GridGenerator} namespace now attaches a default manifold to
-the curved parts of the domain described by the generated mesh, and sets reasonable defaults for manifold
-indicators both in the domain and on the boundary.
-
-
+Finally, every function in the \texttt{GridGenerator} namespace now attaches a
+default manifold to the curved parts of the domain described by the generated
+mesh, and sets reasonable defaults for manifold indicators both in the domain
+and on the boundary.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Support for particle-in-cell methods}
