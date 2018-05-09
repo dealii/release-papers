@@ -543,9 +543,22 @@ Thanks!
     options to the freshly created release. Mention new naming convention
     "dealii-9.0.0-.*" for attachments
 
-17b/ Update dealii in Spack
+17b/ Update dealii in Spack (Denis)
+     https://github.com/spack/spack/blob/develop/var/spack/repos/builtin/packages/dealii/package.py
 
-17c/ Update dealii in Candi
+17c/ Update dealii in Candi (Uwe)
+     https://github.com/dealii/candi/blob/master/candi.cfg
+
+17d/ Update dealii in the Gentoo Science overlay (Matthias)
+     https://gitweb.gentoo.org/proj/sci.git/tree/sci-libs/dealii
+
+17e/ Update dealii in Ubuntu/Debian (Matthias)
+     https://salsa.debian.org/science-team/deal.ii
+
+17f/ Update dealii in Archlinux AUR (David)
+     https://aur.archlinux.org/packages/deal-ii/
+
+17g/ Update dealii virtualbox images (Timo)
 
 18/ Finish writing the announcement
 
