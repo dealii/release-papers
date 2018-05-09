@@ -80,7 +80,7 @@ participants in the project that they can hope for formal recognition of
 their work in terms of things they can put on their CV.
 
 As far as content of the paper is concerned: I put together a list of
-possible topics -- please take a look. 
+possible topics -- please take a look.
 
 As far as the material I tentatively put into the paper: if you're willing
 to write a section, can you attach your name to it somehow in the next
@@ -202,14 +202,14 @@ Contributors for 9.0: (updated 2018-04-19)
     and push the corresponding changes
 
 
-0c/ Fix formatting bugs reported by: 
+0c/ Fix formatting bugs reported by:
 
     cd include;
     find . -name "*h" -print | while read file;do ../contrib/utilities/wrapcomments.py $file >temp;done
 
     then rewrap comments in include/
 
-    cd include; 
+    cd include;
     find . -name "*h" -print | while read file;do ../contrib/utilities/wrapcomments.py $file >temp;mv temp $file;done
 
     make sure you don't mess up polynomials_bdm.h ...
@@ -308,18 +308,18 @@ Contributors for 9.0: (updated 2018-04-19)
     for the tutorials and in the documentation:
 
     perl -pi -e 's/8.5.0 QUIET/9.0.0 QUIET/g;' examples/*/CMakeLists.txt
- 
+
     also check doc/users/* and tests/*:
 
     grep "FIND_PACKAGE(deal.II" -r doc/ tests/
-   
+
     git commit -a -m "Require the current version of deal.II."
     [ pull request ]
 
 
 7/ Create an AUTHORS file in the top-level directory of the branch that
    contains a text-only copy of the authors.html file from the website.
-   You can start from 
+   You can start from
    lynx -dump -nolist https://www.dealii.org/authors.html >AUTHORS
    and format it like this:
    https://github.com/dealii/dealii/blob/dealii-9.0/AUTHORS
@@ -362,7 +362,7 @@ Thanks!
    a) Delete directories on the branch:
 
      cd examples
-     git rm -r step-47 step-50 
+     git rm -r step-47 step-50
      git commit -a -m "removed unfinished steps (release tasks step 8)."
 
    b) These steps should also not be listed on the branch in
@@ -539,10 +539,13 @@ Thanks!
       (possibly other items -- please update this list)
 
 
-17/ Ask Luca for Mac packages. Those can be added as additional download
+17a/ Ask Luca for Mac packages. Those can be added as additional download
     options to the freshly created release. Mention new naming convention
     "dealii-9.0.0-.*" for attachments
 
+17b/ Update dealii in Spack
+
+17c/ Update dealii in Candi
 
 18/ Finish writing the announcement
 

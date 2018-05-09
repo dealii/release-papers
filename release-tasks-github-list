@@ -48,7 +48,9 @@ Release steps:
 - [ ] <b>14a</b> Create a pre-release on github and upload files (and detached signatures)
 - [ ] <b>15</b>  Generate the documentation on the webserver.
 - [ ] <b>16</b>  Adjust header.include on homepage
-- [ ] <b>17</b>  Ask Luca for Mac packages
+- [ ] <b>17a</b> Ask Luca for Mac packages
+- [ ] <b>17b</b> Update dealii in [Spack](https://github.com/spack/spack/blob/develop/var/spack/repos/builtin/packages/dealii/package.py)
+- [ ] <b>17c</b> Update dealii in [Candi](https://github.com/dealii/candi/blob/master/candi.cfg)
 - [ ] <b>18</b>  Finish writing the announcement
 - [ ] <b>18b</b> Adjust news.html in the deal.II homepage repo
 - [ ] <b>19</b>  Announce the release via e-mail
