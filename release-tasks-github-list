@@ -51,6 +51,10 @@ Release steps:
 - [ ] <b>17a</b> Ask Luca for Mac packages
 - [ ] <b>17b</b> Update dealii in [Spack](https://github.com/spack/spack/blob/develop/var/spack/repos/builtin/packages/dealii/package.py)
 - [ ] <b>17c</b> Update dealii in [Candi](https://github.com/dealii/candi/blob/master/candi.cfg)
+- [ ] <b>17d</b> Update dealii in [Gentoo Science overlay](https://gitweb.gentoo.org/proj/sci.git/tree/sci-libs/dealii)
+- [ ] <b>17e</b> Update dealii in [Ubuntu/Debian](https://salsa.debian.org/science-team/deal.ii)
+- [ ] <b>17f</b> Update dealii in [Archlinux AUR](https://aur.archlinux.org/packages/deal-ii/)
+- [ ] <b>17g</b> Update dealii virtualbox images
 - [ ] <b>18</b>  Finish writing the announcement
 - [ ] <b>18b</b> Adjust news.html in the deal.II homepage repo
 - [ ] <b>19</b>  Announce the release via e-mail
