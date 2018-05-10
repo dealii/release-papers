@@ -1,0 +1,99 @@
+Version 9.0.0 of deal.II, the object-oriented finite element library awarded the
+J. H. Wilkinson Prize for Numerical Software, has been released. It is
+available for free under an Open Source license from the deal.II homepage at
+
+                   https://www.dealii.org/
+
+The major changes of this release are:
+
+- deal.II now requires C++11.
+
+- Support for curved geometries has been improved. Manifold descriptions
+  are now exclusively handled via manifold_ids and all compatibility code
+  that used boundary indicators has been removed. In addition, every
+  function in the GridGenerator namespace now attaches a default manifold
+  to the curved parts of the domain described by the generated mesh.
+
+- deal.II now has a dedicated particles module. The module provides a base
+  class Particle that represents a particle with position, an ID number and
+  a variable number of properties. They are jointly represented by a
+  ParticleHandler class that manages the storage and handling of all
+  particles.
+
+- deal.II gained dedicated, first-class support for automatic
+  differentiation libraries and various capabilities (taped and tapeless
+  ADOL-C, Sacado with dynamic forward, reverse, nested dynamic forward, and
+  nested reverse support for first and second derivatives).
+
+- Interfaces to a number of additional external libraries has been added.
+  deal.II can now be configured with optional support for Assimp,  Gmsh,
+  nanoflann, ROL, ScaLAPACK and Sundials.
+
+- This release adds support for computations on GPUs, both, for matrix-based
+  and for matrix-free applications. For matrix-based applications, cuSPARSE
+  and cuSOLVER are used. Support for matrix-free computation on GPUs is
+  preliminary. For now, the evaluation of the operator is limited to meshes
+  without hanging-nodes.
+
+- The matrix-free infrastructure in deal.II was significantly overhauled for
+  the current release. The major new contribution is the support of face
+  integrals through a new class FEFaceEvaluation.
+
+- deal.II has made extensive use of both the Clang-Tidy and Coverity Scan
+  static analysis tools for detecting bugs and other issues in the code.
+  For example, around 260 issues were detected and fixed using the latter
+  tool.
+
+- LinearOperator, a flexible template class that implements the action of a
+  linear operator, now supports computations with Trilinos, Schur
+  complements, and linear constraints. This class is, as of this release,
+  the official replacement for about half a dozen similar (but less
+  general) classes, such as FilteredMatrix, IterativeInverse, and
+  PointerMatrix.
+
+- A number of non-standard, special-purpose quadrature rules have been
+  implemented. Among these are ones for truncating standard formulas to
+  simplical domains (QSimplex), singular transformations of the unit cell
+  to the unit simplex (QDuffy), composition of simplical quadrature rules
+  to a combined rule on the unit cell (QSplit), and transformation of the
+  unit square to polar coordinates (QTrianglePolar).
+
+- Support for complex-valued vectors at the same level as real-valued
+  vectors.
+
+- A new python tutorial program tutorial-1; as well as updates to step-37.
+  In addition, the separate code gallery of deal.II has gained a number of
+  new entries.
+
+- Improved support for user-defined run-time parameters: a new
+  ParameterAcceptor class has been added to the library. The class is
+  intended to be used as a base for any class that wants to handle
+  parameters using the ParameterHandler class.
+
+- New caching mechanism for expensive grid computations: we introduced a
+  new class GridTools::Cache that caches computationally intensive
+  information about a Triangulation. This class allows the user to query
+  some of the data structures constructed using functions in the GridTools
+  namespace.
+
+- More than 330 other features and bugfixes.
+
+For more information see
+- the preprint at https://www.dealii.org/deal90-preprint.pdf
+- the list of changes at
+  https://www.dealii.org/developer/doxygen/deal.II/changes_between_8_5_0_and_9_0_0.html
+
+The main features of deal.II are:
+- Extensive documentation and 57 fully-functional example programs
+- Support for dimension-independent programming
+- Locally refined adaptive meshes
+- Multigrid support
+- A zoo of different finite elements
+- Fast linear algebra
+- Built-in support for shared memory and distributed parallel computing,
+  scaling from laptops to clusters with 100,000+ processor cores
+- Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
+- Output for a wide variety of visualization platforms.
+
+
+X X, on behalf of the deal.II developer team and many contributors.

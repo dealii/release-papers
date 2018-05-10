@@ -1,0 +1,26 @@
+Version 9.0.0 of deal.II, the object-oriented finite element library awarded
+the J. H. Wilkinson Prize for Numerical Software, has been released. It is
+available for free under an Open Source license from the deal.II homepage at
+https://www.dealii.org/
+
+The major changes of this release are:
+- Improved support for curved geometries
+- Support for particle-in-cell methods
+- Dedicated support for automatic differentiation
+- Interfaces to more external libraries and programs: Assimp,  Gmsh,
+  nanoflann, ROL, ScaLAPACK and Sundials.
+- C++11 is now both required and used
+- Support for GPU computations via CUDA
+- Support for face integrals and significant improvements of the
+  matrix-free framework
+
+The main features of deal.II are:
+- Extensive documentation and 57 working example programs
+- Support for dimension-independent programming
+- Locally refined adaptive meshes and multigrid support
+- A zoo of different finite elements
+- Built-in support for shared memory and distributed parallel computing,
+  scaling from laptops to clusters with 100,000+ of processor cores
+- Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
+
+The deal.II developers
