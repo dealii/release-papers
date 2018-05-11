@@ -587,8 +587,18 @@ outstanding performance of \dealii{}'s matrix-free module, solving the Poisson
 equation with 191 million degrees of freedom at degree $k=8$ on a workstation
 with 12 cores in about a minute.
 
-\marginpar{LH and others: Please add summaries of the new tutorial program.}
-The \texttt{step-60} tutorial program shows \ldots
+The tutorial program \texttt{step-60} shows how to perform computations on
+non-matching grids, and it presents advanced manipulation of
+\texttt{ParameterHandler} objects, exploiting the new \texttt{ParameterAccessor}
+and \texttt{ParameterAccessorProxy} classes. \texttt{step-60} solves a Poisson
+problem on a domain $\Omega$, subject to equality constraints defined on an
+embedded domain $\Gamma$. The embedded domain can be of co-dimension one or
+co-dimension zero, and its definition is independent with respect to $\Omega$.
+In order to enforce correctly the constraints, a non-matching coupling matrix
+needs to be constructed. This is achieved using the new
+\texttt{NonMatching::create\_coupling\_sparsity\_pattern} and
+\texttt{NonMatching::create\_coupling\_mass\_matrix}, that exploit some new
+functionality in the \texttt{GridTools} namespace.
 
 \dealii has a separate ``code gallery'' that
 consists of programs shared by users as examples of what can be
