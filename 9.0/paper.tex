@@ -177,6 +177,7 @@ The major changes of this release are:
 \item C++11 is now both required and used;
 \item Support for GPU computations;
 \item Support for face integrals and significant improvements of the matrix-free framework;
+\item Two new tutorial programs step-59 and step-60.
 \end{itemize}
 These will all be discussed in more detail in the
 following section. In addition, this release contains the following changes:
@@ -270,8 +271,6 @@ the release announcement.)
 \subsection{Improved support for curved geometries}
 \label{sec:manifolds}
 
-\marginpar{All: please edit as appropriate}
-
 \dealii{} has had the ability to attach \textit{manifold descriptions} to all
 parts of a geometry since the 8.2 release. These descriptions are used to place
 new vertices during mesh refinement, to determine the mapping between the
@@ -312,7 +311,6 @@ and on the boundary.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Support for particle-in-cell methods}
 
-\marginpar{Rene: Please edit as appropriate}
 While \dealii is a package intended to solve problems with the
 finite element method -- i.e., using continuous or discontinuous
 \textit{fields} --, it is often convenient in fluid dynamics problems to
@@ -486,9 +484,9 @@ thereby clarifying object ownership responsibilities and avoiding memory leaks.
 
 Heterogeneous computing is becoming more prevalent in supercomputing and this is
 a trend that is expected to continue in the future. In particular, the use of
-GPU has been increasing the last few years.
+GPUs has been increasing during the last few years.
 
-This release of \dealii adds support for GPU both for matrix-based and
+This release of \dealii adds support for GPUs both for matrix-based and
 matrix-free applications. For matrix-based applications, we rely on
 cuSPARSE\cite{cusparse} and cuSOLVER\cite{cusolver} for operations on sparse
 matrices such as matrix-vector multiplication and for direct solvers. We have
@@ -500,27 +498,22 @@ cuSOLVER. In practice, a user would assemble the matrix associated to the system
 on the host and then move the matrix to the device. At this point, the system
 would be solved on the device and the solution would be moved back to the host.
 
-We also have some support for matrix-free computation on GPU. For now, the
+We also have some support for matrix-free computation on a GPU. For now, the
 evaluation of the operator is limited to mesh without hanging-nodes.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{MeshWorker::mesh\_loop}
-
-\marginpar{do we want this? LH}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Extended matrix-free capabilities}
+\subsection{Extended matrix-free capabilities}\label{sec:matrixfree}
 
 The matrix-free infrastructure in \dealii{} was significantly overhauled for
-the current release. The major new contribution is the support of face
+this release. The major new contribution is the support of face
 integrals through a new class \texttt{FEFaceEvaluation}. The new class has a
 similar interface as the existing \texttt{FEEvaluation} class, and applies SIMD
 vectorization over several faces in analogy to the intra-cell vectorization in
 FEEvaluation. Discontinuous Galerkin operators are implemented defining two
 face functions, one for interior and one for boundary faces, in addition to
 the cell function. These kernels for the matrix-free operator evaluation are
-now collected in the new function \texttt{MatrixFree::loop}. The data
+now invoked by the new function \texttt{MatrixFree::loop}. The data
 structures have been particularly tuned for typical discontinuous Galerkin
 setups involving operators with first and second spatial derivatives. Both
 data access and computations have been thoroughly optimized and compared to
@@ -571,14 +564,31 @@ number of partial sums to only 6 for the gradient, as the action of the unit
 matrices $I_i$ needs not be implemented. In isolation, this spectral
 element-like evaluation was previously available in \dealii{} for collocation
 between nodal points and quadrature, but not used for general bases. A more
-detailed description of the matrix-free modules is given in the preprint
-\cite{KronbichlerKormann2017}.
+detailed description of the matrix-free components and their performance
+characteristics is given in the preprint \cite{KronbichlerKormann2017}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Tutorial and code gallery programs}
 
-\marginpar{LH, MK, and others: Please add summaries of the new tutorial programs.}
+Two new tutorial programs were added to this release of \dealii{}. The
+tutorial program \texttt{step-59} presents a matrix-free solver for the
+Poisson equation discretized with the interior penalty discontinuous Galerkin
+method. The implementation is based on the new matrix-free functions described
+in Subsection~\ref{sec:matrixfree}. The new class
+\texttt{TensorProductMatrixSymmetricSum} is used to construct a block-Jacobi
+smoother in a geometric multigrid preconditioner, based on the definition of
+the inverse of a tensor product matrix through tensor products. As compared to
+a matrix-based block-Jacobi method, this approach considerably reduces the
+memory access and also the complexity at high polynomial degrees, going from
+$\mathcal O(k^{2d})$ arithmetic operations per cell for degree $k$ in $d$
+dimensions to only $\mathcal O(k^{d+1})$. The new tutorial demonstrates the
+outstanding performance of \dealii{}'s matrix-free module, solving the Poisson
+equation with 191 million degrees of freedom at degree $k=8$ on a workstation
+with 12 cores in about a minute.
+
+\marginpar{LH and others: Please add summaries of the new tutorial program.}
+The \texttt{step-60} tutorial program shows \ldots
 
 \dealii has a separate ``code gallery'' that
 consists of programs shared by users as examples of what can be
