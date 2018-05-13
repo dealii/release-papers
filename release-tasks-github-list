@@ -37,6 +37,7 @@ Release steps:
 - [ ] <b>10</b>  Test the branch thoroughly
 - [ ] <b>10a</b> Do the same for the code gallery examples
 - [ ] <b>11</b>  Create documentation and verify
+- [ ] <b>11a</b> Check that .gitattributes is up to date. (Do quick tests work?)
 - [ ] <b>12</b>  Push the button
     - Change VERSION to 9.0.0 for a release and to 9.0.0-rc1 for a pre-release
     - Create a signed tag of exactly this commit

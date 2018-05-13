@@ -413,6 +413,8 @@ Thanks!
      looks like shown here:
         svn cat http://www.dealii.org/svn/dealii/branches/releases/Branch-7-0/deal.II/doc/doxygen/headers/step-32.h
 
+11a/ Check that .gitattributes is up to date. In particular do all the
+     quick tests work?
 
 [ some time with bugfixing and commits on the release branch ]
 
