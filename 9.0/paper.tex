@@ -229,16 +229,17 @@ are mainly used in Boundary Element Methods.
   \texttt{ParameterAcceptor::initialize}, greatly simplifying
   dealing with parameters in user codes.
 
-\item New caching mechanism for expensive grid computations: we introduced a new
+\item A new caching mechanism for expensive grid computations: this version introduces a new
   class \texttt{GridTools::Cache} that caches computationally intensive
   information about a \texttt{Triangulation}.
 
 This class allows the user to query some of the data structures constructed
 using functions in the \texttt{GridTools} namespace. This data is then
 computed only once, and
-then cached inside this class for faster access whenever the triangulation has
+cached inside this class for faster access whenever the triangulation has
 not changed. The cache is marked for update by the \texttt{Triangulation} itself
-using signals.
+using signals so that data is properly invalidated upon mesh
+refinement and coarsening.
 
 Some of the methods in \texttt{GridTools} already use this cache to
 speed up repeated calls to the same expensive methods.
@@ -348,7 +349,8 @@ for nonlinear viscosity models in fluid flow.
 demonstrates this technique based on the Trilinos Sacado \cite{Bartlett2006a} package, but
 the functionality was not available pervasively throughout
 deal.II.
-This has changed with release 9.0 where support is given for differentiation
+This has changed with release 9.0 where support for differentiation is
+now available
 using a selection of ``white-listed'' libraries (namely ADOL-C \citep{Griewank1996a}
 and Sacado) and a subset of their supported number types. Currently,
 we offer support for the following cases:
@@ -361,13 +363,13 @@ we offer support for the following cases:
 \item Sacado nested reverse and dynamic forward (twice differentiable).
 \end{itemize}
 In practice, this support means that these ADOL-C and Sacado data
-types can be used in the \texttt{FEValues}, \texttt{FEValuesViews},
+types can be used as the underlying ``scalar'' in the \texttt{FEValues}, \texttt{FEValuesViews},
 \texttt{Tensor}, \texttt{SymmetricTensor},
 and related classes that are generally used to assemble linear systems
 and right hand sides.
 Given the updated capabilities of the library, there is now a dedicated module
 that presents the AD compatibility and capabilities of the \dealii libraries.
-Furthermore, the use of Sacado is now  demonstrated in a much more simplified
+Furthermore, the use of Sacado is demonstrated in a much more simplified
 and transparent manner in a modernized version of an existing ``code gallery''
 example \cite{Pelteret2016a}.
 
@@ -449,7 +451,7 @@ release, we have written several new interfaces as discussed in the following.
   \dealii now has interfaces to SUNDIALS's ARKode, IDA, and KINSOL sub-packages.
   ARKode is a solver library that provides adaptive-step time
   integration. IDA is a package for the solution of differential-algebraic
-  equations systems in the form $F(t,y,y')=0$. KINSOL is solver for nonlinear
+  equations systems in the form $F(t,y,y')=0$. KINSOL is a solver for nonlinear
   algebraic systems.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -475,7 +477,7 @@ more reliable. These changes include some minor incompatibilities: all
 \texttt{Mapping::clone()}) now return \texttt{std::unique\_ptr}s instead of
 C-style raw pointers. Indeed, nearly all interfaces throughout the library that return a pointer
 now return either a \texttt{std::shared\_ptr} or a \texttt{std::unique\_ptr},
-thereby clarifying object ownership responsibilities and avoiding memory leaks.
+thereby clarifying object ownership and avoiding memory leaks.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -487,18 +489,20 @@ GPUs has been increasing during the last few years.
 
 This release of \dealii adds support for GPUs both for matrix-based and
 matrix-free applications. For matrix-based applications, we rely on
-cuSPARSE\cite{cusparse} and cuSOLVER\cite{cusolver} for operations on sparse
+cuSPARSE \cite{cusparse} and cuSOLVER \cite{cusolver} for operations on sparse
 matrices such as matrix-vector multiplication and for direct solvers. We have
 introduced a new type of sparse matrix, \texttt{CUDAWrappers::SparseMatrix},
 which moves onto the device a \dealii \texttt{SparseMatrix} and changes the
 format of the underlying data to the appropriate CSR format used by cuSPARSE. We
 also have added wrappers for Cholesky and LU factorizations provided by
-cuSOLVER. In practice, a user would assemble the matrix associated to the system
-on the host and then move the matrix to the device. At this point, the system
+cuSOLVER. In practice, a user would assemble the system matrix and
+right hand side vector
+on the host and then move them to the device. At this point, the
+linear system
 would be solved on the device and the solution would be moved back to the host.
 
 We also have some support for matrix-free computation on a GPU. For now, the
-evaluation of the operator is limited to mesh without hanging-nodes.
+evaluation of the operator is limited to meshes without hanging nodes.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -588,7 +592,7 @@ with 12 cores in about a minute.
 
 The tutorial program \texttt{step-60} shows how to perform computations on
 non-matching grids, and it presents advanced manipulation of
-\texttt{ParameterHandler} objects, exploiting the new \texttt{ParameterAccessor}
+\texttt{ParameterHandler} objects using the new \texttt{ParameterAccessor}
 and \texttt{ParameterAccessorProxy} classes. \texttt{step-60} solves a Poisson
 problem on a domain $\Omega$, subject to equality constraints defined on an
 embedded domain $\Gamma$. The embedded domain can be of co-dimension one or
@@ -596,7 +600,7 @@ co-dimension zero, and its definition is independent with respect to $\Omega$.
 In order to enforce correctly the constraints, a non-matching coupling matrix
 needs to be constructed. This is achieved using the new
 \texttt{NonMatching::create\_coupling\_sparsity\_pattern} and
-\texttt{NonMatching::create\_coupling\_mass\_matrix}, that exploit some new
+\texttt{NonMatching::create\_coupling\_mass\_matrix} functions that exploit new
 functionality in the \texttt{GridTools} namespace.
 
 \dealii has a separate ``code gallery'' that
