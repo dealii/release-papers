@@ -217,17 +217,18 @@ are mainly used in Boundary Element Methods.
   updates to step-37. In addition, the separate code
   gallery of \dealii has gained a number of new entries.
 
-\item Improved support for user-defined run-time parameters: a new \texttt{ParameterAcceptor}
-  class has been added to the library. The class is intended to be used as a
-  base for any class that wants to handle parameters using the
-  \texttt{ParameterHandler} class. If you derive all your classes from
-  \texttt{ParameterAcceptor}, and declare your parameters either with
-  \texttt{parse/declare\_parameters} methods or via the
-  \texttt{ParameterAcceptor::add\_parameter} method, then both the
-  declaration and the
-  parsing of parameter files are automatically managed by
-  \texttt{ParameterAcceptor::initialize}, greatly simplifying
-  dealing with parameters in user codes.
+\item Improved support for user-defined run-time parameters: A new class
+  \texttt{ParameterAcceptor} has been added to the library. Users should write
+  classes inheriting from that class to manage parameters stored by a
+  \texttt{ParameterHandler}. If the managing class is derived from
+  \texttt{ParameterAcceptor} and all parameters are declared by either
+  \texttt{parse\_parameters} and \texttt{declare\_parameters} or
+  \texttt{ParameterAcceptor::add\_parameter}, then both the declaration and
+  parsing of parameter files will be (instead of using ad-hoc calls to
+  \texttt{ParameterHandler} methods) automatically managed by the
+  \texttt{ParameterAcceptor::initialize} method, which greatly simplifies
+  parameter management in user codes.
+
 
 \item A new caching mechanism for expensive grid computations: this version introduces a new
   class \texttt{GridTools::Cache} that caches computationally intensive
