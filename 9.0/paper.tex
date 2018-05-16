@@ -250,6 +250,12 @@ This results in important speed-ups for computationally heavy methods like
 \item A new \texttt{MeshWorker::mesh\_loop} function has been added that
   performs the same tasks of the \texttt{MeshWorker::loop} function without
   forcing the users to adhere to a specific interface.
+  
+\item A new method \texttt{GridTools::distributed\_compute\_point\_locations} to
+  perform the same tasks of \texttt{GridTools::compute\_point\_locations} with
+  arbitrary points on a distributed mesh has been added. The current implementation
+  uses vectors of \texttt{BoundingBoxes} to manage the communication to other
+  processes of points which cannot be computed locally.
 
 \end{itemize}
 Beyond these changes, the changelog lists more than 330 other features and bugfixes.
