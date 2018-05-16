@@ -398,6 +398,7 @@ Thanks!
      don't trip up any exceptions.
 
 11/ In a clean source directory of the dealii-9.0 branch, do
+      git clone https://github.com/dealii/code-gallery.git
       mkdir builddoc
       cd builddoc
       cmake -DDEAL_II_COMPONENT_DOCUMENTATION=ON -DCMAKE_INSTALL_PREFIX=$PWD/../installeddoc ../
