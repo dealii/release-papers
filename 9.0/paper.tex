@@ -242,8 +242,11 @@ not changed. The cache is marked for update by the \texttt{Triangulation} itself
 using signals so that data is properly invalidated upon mesh
 refinement and coarsening.
 
-Some of the methods in \texttt{GridTools} already use this cache to
-speed up repeated calls to the same expensive methods.
+Some of the methods in \texttt{GridTools} and \texttt{FEFieldFunction} already
+use this cache to avoid repeated calls to the same expensive methods.
+This results in important speed-ups for computationally heavy methods like
+\texttt{GridTools::compute\_point\_locations}.
+
 \item A new \texttt{MeshWorker::mesh\_loop} function has been added that
   performs the same tasks of the \texttt{MeshWorker::loop} function without
   forcing the users to adhere to a specific interface.
