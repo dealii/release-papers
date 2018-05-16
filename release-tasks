@@ -428,7 +428,7 @@ Thanks!
 12/ Push the button:
 
     a) Change VERSION to 9.0.0 for a release and to 9.0.0-rc1 for a release
-       candiate and commit:
+       candidate and commit:
        git commit -m "update VERSION for release"
 
     b) (Signed) tag the commit with:
