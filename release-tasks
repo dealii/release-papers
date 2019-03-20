@@ -49,7 +49,16 @@ that isn't already listed, please let us know so we can put it on there. For
 this purpose, publications also include MSc, Diploma or PhD theses, or
 anything else that may seem appropriate.
 
-Thanks!
+We've made the process of submitting entries much simpler than in the past. Here are a number of ways you can let us know:
+
+* Open a new issue via https://github.com/dealii/publication-list/issues/new and just copy-paste either a bibtex entry, or just the reference information
+
+* If you want to save us a bit of work, follow the process here: https://github.com/dealii/publication-list/blob/master/README.md
+
+* Or email the information directly to me or one of the other principal developers.
+
+Thanks
+
 
   Send this as BCC to
     dealii@googlegroups.com
