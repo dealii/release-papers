@@ -143,6 +143,7 @@ The major changes of this release are:
 \begin{itemize}
 \item Improved support for automatic and symbolic differentiation;
 \item Full support for $hp$ adaptivity in parallel computations;
+\item Interfaces to the HDF5 file format and libraries.
 \item Four new tutorial programs step-61, step-62, step-63, step-64,
   as well as one new code gallery program.
 \end{itemize}
@@ -185,6 +186,8 @@ following section. There are a number of other noteworthy changes in this releas
   The way this element addresses the sign conflict problem is to assign
   local edges and faces a globally defined orientation. The
   implementation is described in \cite{Kynch2017}.
+
+  \marginpar{Maybe also mention the rtree interfaces?}
 \end{itemize}
 
 Beyond these changes, the changelog lists more than 200 other features and bugfixes.
@@ -213,7 +216,8 @@ the release announcement.)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Full support for $hp$ adaptivity in parallel computations}
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Interfaces to the HDF5 file format and libraries}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and improved tutorial and code gallery programs}
@@ -279,6 +283,8 @@ following:
    \cite{TKB16}.
 \end{itemize}
 
+\marginpar{I'm sure we have new interfaces. HDF5 and the various AD/SD
+  libraries come to mind. Please update.}
 \dealii can interface with many other libraries:
 \begin{multicols}{3}
 \begin{itemize}
