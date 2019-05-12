@@ -16,9 +16,9 @@ Subject: Release preparations
 
 All,
 
-we would like to start the release process for deal.II 9.0.0 soon. Please let us
-know if you have any last minute things that need to be addressed (bugs,
-documentation issues, configuration problems, etc.).
+we would like to start the release process for deal.II 9.0.0 soon. Please
+let us know if you have any last minute things that need to be addressed
+(bugs, documentation issues, configuration problems, etc.).
 
 If you are running the current development version, please update your local
 working copy and test if everything compiles, especially if you are running a
@@ -49,20 +49,24 @@ that isn't already listed, please let us know so we can put it on there. For
 this purpose, publications also include MSc, Diploma or PhD theses, or
 anything else that may seem appropriate.
 
-We've made the process of submitting entries much simpler than in the past. Here are a number of ways you can let us know:
+We've made the process of submitting entries much simpler than in the past.
+Here are a number of ways you can let us know:
 
-* Open a new issue via https://github.com/dealii/publication-list/issues/new and just copy-paste either a bibtex entry, or just the reference information
+* Open a new issue via
+  https://github.com/dealii/publication-list/issues/new and just copy-paste
+  either a bibtex entry, or just the reference information
 
-* If you want to save us a bit of work, follow the process here: https://github.com/dealii/publication-list/blob/master/README.md
+* If you want to save us a bit of work, follow the process here:
+  https://github.com/dealii/publication-list/blob/master/README.md
 
-* Or email the information directly to me or one of the other principal developers.
+* Or email the information directly to me or one of the other principal
+  developers.
 
 Thanks
 
 
   Send this as BCC to
     dealii@googlegroups.com
-    dealii-developers@googlegroups.com
     aspect-devel@geodynamics.org
 
 
