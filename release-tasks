@@ -133,93 +133,62 @@ Developers:
 
 Contributors for 9.1: (updated 2019-05-12)
   Giovanni Alzetta
-  Julian Andrej
+  Mathias Anselmann
+  Daniel Appel
   Daniel Arndt
-  Rajat Arora
   Wolfgang Bangerth
   Alexander Blank
   Vishal Boddu
   Benjamin Brands
-  Lucas Campos
-  Praveen Chandrashekar
-  Jie Cheng
   Pi-Yueh Chuang
-  Emma Cinatl
   Conrad Clevenger
   Thomas Clevenger
-  Ester Comellas
   Sambit Das
   Denis Davydov
-  Giovanni Di Ilio
+  Ginkgo developers
   Stefano Dominici
   Nivesh Dommaraju
   Marc Fehling
   Niklas Fehn
   Isuru Fernando
   Andreas Fink
-  Menno Fraters
-  Anian Fuchs
   Daniel Garcia-Sanchez
   Rene Gassmoeller
-  Nicola Giuliani
-  Anne Glerum
-  Christoph Goering
   Alexander Grayver
   Joshua Hanophy
   Logan Harbour
   Graham Harper
   Timo Heister
   Luca Heltai
-  Samuel Imfeld
   Daniel Jodlbauer
-  Guido Kanschat
-  Vishal Kenchan
-  Andreas Kergassner
+  Stefan Kaessmair
   Eldar Khattatov
-  Ingo Kligge
   Alexander Knieps
   Uwe Köcher
-  Joachim Kopp
-  Katharina Kormann
+  Uwe Koecher
   Kurt Kremitzki
   Martin Kronbichler
   Dustin Kumor
   Ross Kynch
-  Konstantin Ladutenko
-  Tulio Ligneul
-  Karl Ljungkvist
+  Damien Lebrun-Grandie
   Matthias Maier
   Jonathan Matthews
   Stefan Meggendorfer
   Pratik Nayak
-  Santiago Ospina
-  Alexey Ozeritsky
   Jean-Paul Pelteret
-  Dirk Peschka
-  Simon Puchert
-  E. G. Puckett
   Lei Qiao
   Ce Qin
   Reza Rastak
   Roland Richter
-  Jonathan Robey
   Alberto Sartori
   Svenja Schoeder
-  Daniel Shapero
-  Ben Shields
   Sebastian Stark
-  Simon Sticko
-  Oliver Sutton
   Bruno Turcksin
   Antoni Vidal
   Jiaxin Wang
+  Yuxiang Wang
   Zhuoran Wang
-  Xiaoyu Wei
   David Wells
-  Michał Wichrowski
-  Julius Witte
-  Feimi Yu
-  Weixiong Zheng
 
 
 0/ Do some basic testing as always
