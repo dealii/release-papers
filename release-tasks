@@ -207,13 +207,10 @@ Contributors for 9.1: (updated 2019-05-12)
     cd include;
     find . -name "*h" -print | while read file;do ../contrib/utilities/wrapcomments.py $file >temp;done
 
-    then rewrap comments in include/
+    [ NOTE: Do not use wrapcomments.py to actually reflow comments - the
+      script is broken at the moment - Timo & Matthias 2019/05/13 ]
 
-    cd include;
-    find . -name "*h" -print | while read file;do ../contrib/utilities/wrapcomments.py $file >temp;mv temp $file;done
-
-    make sure you don't mess up polynomials_bdm.h ...
-
+    [ make sure you don't mess up polynomials_bdm.h ... ]
 
     Also check:
     grep -l '@ref[^"]*"[^"]*$' **/*.h
