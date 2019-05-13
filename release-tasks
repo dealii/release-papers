@@ -131,26 +131,32 @@ Developers:
   Bruno Turcksin
   David Wells
 
-Contributors for 9.0: (updated 2018-04-19)
+Contributors for 9.1: (updated 2019-05-12)
   Giovanni Alzetta
   Julian Andrej
   Daniel Arndt
   Rajat Arora
   Wolfgang Bangerth
+  Alexander Blank
   Vishal Boddu
   Benjamin Brands
   Lucas Campos
   Praveen Chandrashekar
   Jie Cheng
+  Pi-Yueh Chuang
   Emma Cinatl
   Conrad Clevenger
+  Thomas Clevenger
   Ester Comellas
   Sambit Das
   Denis Davydov
   Giovanni Di Ilio
+  Stefano Dominici
   Nivesh Dommaraju
   Marc Fehling
   Niklas Fehn
+  Isuru Fernando
+  Andreas Fink
   Menno Fraters
   Anian Fuchs
   Daniel Garcia-Sanchez
@@ -159,6 +165,9 @@ Contributors for 9.0: (updated 2018-04-19)
   Anne Glerum
   Christoph Goering
   Alexander Grayver
+  Joshua Hanophy
+  Logan Harbour
+  Graham Harper
   Timo Heister
   Luca Heltai
   Samuel Imfeld
@@ -168,15 +177,21 @@ Contributors for 9.0: (updated 2018-04-19)
   Andreas Kergassner
   Eldar Khattatov
   Ingo Kligge
+  Alexander Knieps
   Uwe Köcher
   Joachim Kopp
   Katharina Kormann
+  Kurt Kremitzki
   Martin Kronbichler
+  Dustin Kumor
   Ross Kynch
   Konstantin Ladutenko
   Tulio Ligneul
   Karl Ljungkvist
   Matthias Maier
+  Jonathan Matthews
+  Stefan Meggendorfer
+  Pratik Nayak
   Santiago Ospina
   Alexey Ozeritsky
   Jean-Paul Pelteret
@@ -185,13 +200,19 @@ Contributors for 9.0: (updated 2018-04-19)
   E. G. Puckett
   Lei Qiao
   Ce Qin
+  Reza Rastak
+  Roland Richter
   Jonathan Robey
   Alberto Sartori
+  Svenja Schoeder
   Daniel Shapero
   Ben Shields
+  Sebastian Stark
   Simon Sticko
   Oliver Sutton
   Bruno Turcksin
+  Antoni Vidal
+  Jiaxin Wang
   Zhuoran Wang
   Xiaoyu Wei
   David Wells
