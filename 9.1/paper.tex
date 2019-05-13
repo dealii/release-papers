@@ -227,6 +227,96 @@ the release announcement.)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Full support for $hp$ adaptivity in parallel computations}
 
+\dealii{} has had support for $hp$ adaptive methods since around 2005
+(documented in \cite{BangerthKayserHerold2007} and for parallel
+computations on distributed meshes since around 2010 (see
+\cite{BangerthBursteddeHeisterKronbichler11}), but not for both at the
+same time. The challenges to combine these are related to a number of
+areas:
+\begin{enumerate}
+\item Data structures: The data structures necessary to store the
+  indices of degrees of freedom are necessarily substantially more
+  complicated for $hp$ algorithms than for the $h$-adaptive schemes
+  that were already implemented. This is because the number of degrees
+  of freedom per cell is now no longer constant. Furthermore,
+  faces and edges may need to store more than one set of indices if
+  the adjacent cells use different polynomial degrees; in the case of
+  edges, the number of sets of indices may also be of variable size.
+
+  All of this poses challenges in the parallel context because some of
+  the information may not be known, or not be known right away, for
+  cells that are not locally owned (i.e., for ghost and ``artificial''
+  cells), and for which the data structures stored on different
+  processors have to reconciled.
+  
+\item Algorithms: Already for $h$ adaptive meshes, enumerating all
+  degrees of freedom on the global mesh is difficult as evidenced by
+  the complications of the algorithms shown in Section 3.1 of
+  \cite{BangerthBursteddeHeisterKronbichler11}, which requires more
+  than a page of text and is implemented in many hundreds of lines of
+  code).
+
+  These difficulties are even more pronounced when using $hp$
+  adaptivity. The main obstacle is the desire to unify the indices of
+  matching degrees of freedom on adjacent cells, such as the edge
+  since degree of freedom of a $Q_2$ element with the middle one of
+  the three edge degrees of freedom of a $Q_4$ element on a
+  neighboring cell. Section 4.2 of
+  \cite{BangerthKayserHerold2007} discusses a sequential algorithm
+  that eliminates one of these degrees of freedom in favor of another,
+  but in this introduces a ``master'' and a ``slave'' side of the
+  interface. This is of no major consequence in sequential
+  computations, but is inconvenient in parallel computations if the
+  ``master'' side is a ghost cell whose degree of freedom indices are
+  not (yet) available while enumerating local degrees of freedom, or
+  if the master is an artificial cell whose information will never be
+  available on a processor.
+
+  An earlier implementation of the algorithm enumerating degrees of
+  freedom, already available in \dealii{} 9.0, simply did not unify
+  indices on processor boundaries. However, this makes the total
+  number of degrees of freedom dependent on both the partition of the
+  mesh and the number of processors available. We have therefore
+  re-implemented the algorithm so that the unification does happen
+  also on processor boundaries, and will report on the details
+  elsewhere.
+  
+\item Data transfer patterns: An important algorithm in parallel
+  finite element methods is the exchange of information stored on
+  cells during mesh repartitioning. This happens, for example, when
+  interpolating the solution from one mesh to the next,
+  adaptively-refined mesh, or when adapting the polynomial degrees of
+  freedom associated with each cell and repartitioning in order to
+  balance the computational cost of each processor's partition. When
+  using $h$ adaptive methods, the amount of data associated with each
+  cell is fixed and the algorithms that implement the data transfer
+  are consequently relatively simple. On the other hand, in $hp$
+  contexts, each cell may have a different number of unknowns
+  associated with it, and the algorithms that transfer the data are
+  substantially more complicated. Furthermore, the amount of data
+  associated with each cell may be large on cells with higher
+  polynomial degrees, and might profit from compression before
+  sending.
+
+\item Balancing computational cost: For $h$-adaptive algorithms, the
+  amount of work associated with each cell is essentially the same
+  both during the assembly of linear systems as well as during the
+  solver phase. For $hp$-adaptive methods, this is no longer the
+  case. Consequently, balancing the cost of work between different
+  processors' partitions is no longer as easy as ensuring that every
+  processor owns a roughly equal number of cells. Rather, one needs to
+  introduce a weighting factor for each cell that describes its
+  relative cost compared to some reference. To make things work, the
+  relative cost of assembly on a cell might now match the relative
+  cost of the linear solver associated with this cell, leading to
+  difficult trade-offs in defining optimal weighting factors.
+\end{enumerate}
+
+All of these issues have been addressed in the current release and are
+available to users. We will report on the details of the algorithms
+and their performance in a separate publication.
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Interfaces to the HDF5 file format and libraries}
 
