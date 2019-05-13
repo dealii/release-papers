@@ -198,19 +198,17 @@ Contributors for 9.1: (updated 2019-05-12)
 
 
 0b/ Check for doxygen formatting problems by running contrib/utilities/checkdoxygen.py:
-      find include -name "*h" -print | xargs -n 1 ./contrib/utilities/checkdoxygen.py
+      find include -name "*.h" -print | xargs -n 1 ./contrib/utilities/checkdoxygen.py
     and push the corresponding changes
 
 
 0c/ Fix formatting bugs reported by:
 
     cd include;
-    find . -name "*h" -print | while read file;do ../contrib/utilities/wrapcomments.py $file >temp;done
+    find . -name "*.h" -print | while read file;do ../contrib/utilities/wrapcomments.py $file >temp;done
 
     [ NOTE: Do not use wrapcomments.py to actually reflow comments - the
-      script is broken at the moment - Timo & Matthias 2019/05/13 ]
-
-    [ make sure you don't mess up polynomials_bdm.h ... ]
+      script causes too much churn with little value - Timo & Matthias 2019/05/13 ]
 
     Also check:
     grep -l '@ref[^"]*"[^"]*$' **/*.h
