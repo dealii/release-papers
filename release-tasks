@@ -473,19 +473,24 @@ Thanks!
 
     In a clean working copy of the tagged release version run the script
 
+      cd <install>/doc/doxygen/deal.II
       ./make_offline_doc.sh 9.0.0
       # or alternatively for a release candidate
       ./make_offline_doc.sh 9.0.0-rc1
 
-    to create dealii-9.0.0-offline_documentation.tar.gz
-    (dealii-9.0.0-rc1-offline_documentation.tar.gz). This step needs to be
-    done on a machine that has both a reasonably new doxygen version as
-    well as a dot version that can produce pngs. wolfgang's bloc507d has
-    both of these programs installed in /home/bangerth/bin/x86/bin.
+    to prepare the offline documentation
 
-    d) Also sign it:
 
-      gpg --detach-sign --armor dealii-9.0.0-offline_documentation.tar.gz
+    d) Create dealii-9.1.0-offline_documentation.tar.gz (or for a
+       prerelease: dealii-9.1.0-rc1-offline_documentation.tar.gz)
+
+      cd <install>
+      tar -cvf dealii-9.1.0-offline_documentation.tar doc
+      gzip dealii-9.1.0-offline_documentation.tar
+
+    e) Also sign it:
+
+      gpg --detach-sign --armor dealii-9.1.0-offline_documentation.tar.gz
 
 
 14a/ Create a pre-release on github:
