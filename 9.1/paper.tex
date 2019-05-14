@@ -147,6 +147,7 @@ The major changes of this release are:
 \item Improved support for automatic and symbolic differentiation;
 \item Full support for $hp$ adaptivity in parallel computations;
 \item Interfaces to the HDF5 file format and libraries.
+\item Significantly extended GPU support.
 \item Four new tutorial programs step-61, step-62, step-63, step-64,
   as well as one new code gallery program.
 \end{itemize}
@@ -161,6 +162,11 @@ following section. There are a number of other noteworthy changes in this releas
   multigrid solvers by up to 10-15\% on geometries with affine
   (parallelogram and parallelpiped) cells, and up to
   5\% on geometries with cells bounded by curved edges and faces.
+\item Various variants of geometric multigrid solvers and matrix-free
+  implementations were run on up to 304,128 cores during the acceptance phase of
+  the SuperMUC-NG supercomputer, verifying the scalability of our
+  implementations. Some performance bottlenecks on distributed triangulation
+  with more than 100k MPI ranks have been fixed.
 \marginpar{Luca: Please expand}
 \item ParsedConvergenceTable.
 \item The \texttt{FE\_BernardiRaugel} class implements the
@@ -252,7 +258,7 @@ areas:
   cells that are not locally owned (i.e., for ghost and ``artificial''
   cells), and for which the data structures stored on different
   processors have to reconciled.
-  
+
 \item Algorithms: Already for $h$ adaptive meshes, enumerating all
   degrees of freedom on the global mesh is difficult as evidenced by
   the complications of the algorithms shown in Section 3.1 of
@@ -284,7 +290,7 @@ areas:
   re-implemented the algorithm so that the unification does happen
   also on processor boundaries, and will report on the details
   elsewhere.
-  
+
 \item Data transfer patterns: An important algorithm in parallel
   finite element methods is the exchange of information stored on
   cells during mesh repartitioning. This happens, for example, when
@@ -323,6 +329,18 @@ and their performance in a separate publication.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Interfaces to the HDF5 file format and libraries}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{GPU support via CUDA}
+
+The GPU support was significantly extended for the current release. On the one hand, the MPI-parallel vector class
+\texttt{LinearAlgebra::distributed::Vector} has gained a second template
+argument \texttt{MemorySpace} which can either be \texttt{Host} or
+\texttt{CUDA}. In the latter case, the data resides in the GPU memory. Also,
+the ghost exchange can be performed completely via CUDA in case a compatible
+MPI library is found (as is usual on large GPU-based supercomputers).
+
+Furthermore, a new tutorial program \texttt{step-64} has been added that demonstrates the usage of matrix-free methods on Nvidia GPUs. GPUs are advantageous for these kind of operations because of their superior hardware characteristics, in particular a higher memory bandwidth than server CPUs within a given power envelope. The matrix-free GPU components integrated in \dealii have been analyzed against CPUs in \cite{KronbichlerLjungkvist2019}, where the application to geometric multigrid solvers is discussed.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and improved tutorial and code gallery programs}
@@ -369,7 +387,7 @@ architecture is \cite{BangerthHartmannKanschat2007}. If you rely on
 specific features of the library, please consider citing any of the
 following:
 \begin{itemize}
- \item For geometric multigrid: \cite{Kanschat2004,JanssenKanschat2011,ClevengerHeisterKanschatKronbichler2019,KronbichlerLjungkvist2019};
+ \item For geometric multigrid: \cite{Kanschat2004,JanssenKanschat2011,ClevengerHeisterKanschatKronbichler2019};
  \item For distributed parallel computing: \cite{BangerthBursteddeHeisterKronbichler11};
  \item For $hp$ adaptivity: \cite{BangerthKayserHerold2007};
   \item For partition-of-unity (PUM) and enrichment methods of the
