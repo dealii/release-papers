@@ -145,6 +145,7 @@ GNU Lesser General Public License (LGPL). Downloads are available at
 \url{https://www.dealii.org/} and \url{https://github.com/dealii/dealii}.
 
 The major changes of this release are:
+%
 \begin{itemize}
   \item Improved support for automatic and symbolic differentiation (see
     Section~\ref{subsec:ad}),
@@ -160,66 +161,77 @@ The major changes of this release are:
     as well as one new code gallery program (see
     Section~\ref{subsec:steps}).
 \end{itemize}
-These will all be discussed in more detail in the
-following section. There are a number of other noteworthy changes in this release:
+%
+The major changes are discussed in detail in Section~\ref{sec:major}. There
+are a number of other noteworthy changes in the current \dealii{} release
+that we briefly outline in the remainder of this section:
+%
 \begin{itemize}
-\item A number of bug fixes and performance improvements to the
+\item
+  The release contains bug fixes and performance improvements of the
   matrix-free framework and related geometric multigrid solvers. In
-  particular, the implementation of the Chebyshev iteration, an often
-  used smoother in the matrix-free context, has been revised to reduce
-  vector accesses. This speeds up matrix-free
-  multigrid solvers by up to 10-15\% on geometries with affine
-  (parallelogram and parallelpiped) cells, and up to
-  5\% on geometries with cells bounded by curved edges and faces.
-\item Various variants of geometric multigrid solvers and matrix-free
-  implementations were run on up to 304,128 cores during the acceptance phase of
-  the SuperMUC-NG supercomputer, verifying the scalability of our
-  implementations. Some performance bottlenecks on distributed triangulation
-  with more than 100k MPI ranks have been fixed.
-\marginpar{Luca: Please expand}
-\item ParsedConvergenceTable.
-\item The \texttt{FE\_BernardiRaugel} class implements the
-  non-standard Bernardi-Raugel (BR) element that can be used as one part of
-  a stable velocity/pressure pair for the Stokes equation
-  \cite{BR85}. The BR element can be seen as either an enriched
-  version of the $Q_1^d$ element with added bubble functions on each
-  edge (in 2d) or face (in 3d), or as a reduced version of the $Q_2^d$
-  element. It addresses the fact that the $Q_1^d\times Q_0$
-  combination is not inf-sup stable (requiring a larger velocity
-  space), and that the $Q_2^d\times Q_1$ combination is stable but
-  sub-optimal since the velocity space is too large relative to the
-  pressure space to provide additional accuracy commensurate with the
+  particular, the implementation of the Chebyshev iteration, an often used
+  smoother in the matrix-free context, has been revised to reduce vector
+  accesses. This speeds up matrix-free multigrid solvers by up to 10-15\%
+  on geometries with affine (parallelogram and parallelpiped) cells, and up
+  to 5\% on geometries with cells bounded by curved edges and faces.
+
+\item
+  Various variants of geometric multigrid solvers and matrix-free
+  implementations were run on up to 304,128 cores during the acceptance
+  phase of the SuperMUC-NG supercomputer, verifying the scalability of our
+  implementations. Some performance bottlenecks on distributed
+  triangulation with more than 100k MPI ranks have been fixed.
+
+\item
+  A new class \texttt{ParsedConvergenceTable} has been introduced.
+  \textcolor{red}{TODO}
+  \marginpar{Luca: Please expand}
+
+\item
+  The \texttt{FE\_BernardiRaugel} class implements the non-standard
+  Bernardi-Raugel (BR) element that can be used to construct a stable
+  velocity-pressure pair for the Stokes equation \cite{BR85}. The BR
+  element is an enriched version of the $Q_1^d$ element with added bubble
+  functions on each edge (in 2d) or face (in 3d). It addresses the fact
+  that the $Q_1^d\times Q_0$ combination is not inf-sup stable (requiring a
+  larger velocity space), and that the $Q_2^d\times Q_1$ combination is
+  stable but sub-optimal since the velocity space is too large relative to
+  the pressure space to provide additional accuracy commensurate with the
   cost of the large number of velocity unknowns. The BR space is
   intermediate to the $Q_1^d$ and $Q_2^d$ spaces.
 
-  The current implementation of the element only works for
-  parallelogram meshes due to difficulties associated with the mapping
-  of shape functions: The shape functions of the $Q_1^d$ part of the
-  element need to be mapped as scalars, as is common for the vector
-  components of the $Q_1^d$ element; on the other hand, the
-  vector-valued edge bubble functions need to be mapped using the
-  Piola transform as is common for the Raviart-Thomas
-  element. \dealii{} does not currently have the ability to use
-  different mappings for individual shape functions, though this
-  functionality is planned for the next release.
+  The element is currently only implemented for parallelogram meshes due to
+  difficulties associated with the mapping of shape functions: The shape
+  functions of the $Q_1^d$ part of the element need to be mapped as
+  scalars, as is common for the vector components of the $Q_1^d$ element;
+  on the other hand, the vector-valued edge bubble functions need to be
+  mapped using the Piola transform as is common for the Raviart-Thomas
+  element. \dealii{} does not currently have the ability to use different
+  mappings for individual shape functions, though this functionality is
+  planned for the next release.
 
-\item The \texttt{FE\_NedelecSZ} class is an alternative
-  implementation of the ideas behind the N{\'e}d{\'e}elec element. It is based
-  on the work of Zaglmayr \cite{Zag06} and overcomes the
-  sign conflict issues present in traditional N{\'e}d{\'e}lec
-  elements that arise from the edge and face parameterizations used
-  in the basis functions. Therefore, this element should provide
-  consistent results for general quadrilateral and hexahedral
-  elements for which the relative orientations of edges and faces as
-  seen from all adjacent cells are often difficult to establish.
-  The way this element addresses the sign conflict problem is to assign
-  local edges and faces a globally defined orientation. The
-  implementation is described in \cite{Kynch2017}.
+\item
+  The \texttt{FE\_NedelecSZ} class is a new implementation of the
+  N{\'e}d{\'e}lec element on quadrilaterals and hexahedra. It is based on
+  the work of Zaglmayr \cite{Zag06} and overcomes the sign conflict issues
+  present in traditional N{\'e}d{\'e}lec elements that arise from the edge
+  and face parameterizations used in the basis functions. Therefore, this
+  element should provide consistent results for general quadrilateral and
+  hexahedral elements for which the relative orientations of edges and
+  faces (as seen from all adjacent cells) are often difficult to establish.
+  The \texttt{FE\_NedelecSZ} element addresses the sign conflict problem by
+  assigning a globally defined orientation to local edges and faces. A
+  detailed overview of the implementation of the \texttt{FE\_NedelecSZ}
+  element in \dealii{} can be found in \cite{Kynch2017}.
 
-  \marginpar{Maybe also mention the rtree interfaces?}
+\item
+  A new interface to \texttt{boost::geometry::index::rtree} has been added.
+  \textcolor{red}{TODO}
 \end{itemize}
-
-Beyond these changes, the changelog lists more than 200 other features and bugfixes.
+%
+In addition to these changes, the changelog lists more than 200 other
+features and bugfixes.
 
 
 
@@ -227,10 +239,13 @@ Beyond these changes, the changelog lists more than 200 other features and bugfi
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Significant changes to the library}
+\section{Major changes to the library}
+\label{sec:major}
 
 This release of \dealii contains a number of large and significant changes
-that will be discussed in the following sections. It of course also contains a
+that will be discussed in this section.
+
+It of course also contains a
 vast number of smaller changes and added functionality; the details of these
 can be found
 \href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_0_1_and_9_1_0.html}{
