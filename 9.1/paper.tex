@@ -141,24 +141,24 @@ overview of the new features of this major release and serves as a citable
 reference for the \dealii software library version 9.1. \dealii is an
 object-oriented finite element library used around the world in the
 development of finite element solvers. It is available for free under the
-GNU Lesser General Public License (LGPL) from the \dealii homepage at
-\url{http://www.dealii.org/}.
+GNU Lesser General Public License (LGPL). Downloads are available at
+\url{https://www.dealii.org/} and \url{https://github.com/dealii/dealii}.
 
 The major changes of this release are:
 \begin{itemize}
-\item Improved support for automatic and symbolic differentiation;
-\item Full support for $hp$ adaptivity in parallel computations;
-\item Interfaces to the HDF5 file format and libraries.
-\item Significantly extended GPU support.
-\item Parallel GMG:
-  \begin{itemize}
-  \item see \cite{ClevengerHeisterKanschatKronbichler2019}
-  \item performance optimizations
-    \item new features?
-    \item largest runs now at XYZ (Kronbichler?)
-    \end{itemize}
-\item Four new tutorial programs step-61, step-62, step-63, step-64,
-  as well as one new code gallery program.
+  \item Improved support for automatic and symbolic differentiation (see
+    Section~\ref{subsec:ad}),
+  \item Full support for $hp$ adaptivity in parallel computations (see
+    Section~\ref{subsec:hp}),
+  \item Interfaces to the HDF5 file format and libraries (see
+    Section~\ref{subsec:hdf5}),
+  \item Significantly extended GPU support (see Section~\ref{subsec:gpu}),
+  \item Parallel geometric multigrid (GMG) improvements (see
+    \cite{ClevengerHeisterKanschatKronbichler2019} and
+    Section~\ref{subsec:gmg}),
+  \item Four new tutorial programs (step-61, step-62, step-63, step-64),
+    as well as one new code gallery program (see
+    Section~\ref{subsec:steps}).
 \end{itemize}
 These will all be discussed in more detail in the
 following section. There are a number of other noteworthy changes in this release:
@@ -240,9 +240,11 @@ the release announcement.)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Improved support for automatic and symbolic differentiation}
+\label{subsec:ad}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Full support for $hp$ adaptivity in parallel computations}
+\label{subsec:hp}
 
 \dealii{} has had support for $hp$ adaptive methods since around 2005
 (documented in \cite{BangerthKayserHerold2007} and for parallel
@@ -336,9 +338,11 @@ and their performance in a separate publication.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Interfaces to the HDF5 file format and libraries}
+\label{subsec:hdf5}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{GPU support via CUDA}
+\label{subsec:gpu}
 
 The GPU support was significantly extended for the current release. On the one hand, the MPI-parallel vector class
 \texttt{LinearAlgebra::distributed::Vector} has gained a second template
@@ -350,7 +354,14 @@ MPI library is found (as is usual on large GPU-based supercomputers).
 Furthermore, a new tutorial program \texttt{step-64} has been added that demonstrates the usage of matrix-free methods on Nvidia GPUs. GPUs are advantageous for these kind of operations because of their superior hardware characteristics, in particular a higher memory bandwidth than server CPUs within a given power envelope. The matrix-free GPU components integrated in \dealii have been analyzed against CPUs in \cite{KronbichlerLjungkvist2019}, where the application to geometric multigrid solvers is discussed.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Parallel geometric multigrid improvements}
+\label{subsec:gmg}
+\marginpar{performance optimizations, new features,
+largest runs now at XYZ (Kronbichler?)}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and improved tutorial and code gallery programs}
+\label{subsec:steps}
 
 talk about the new programs; also mention updating for C++11 style
 
