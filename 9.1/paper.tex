@@ -361,32 +361,36 @@ and their performance in a separate publication.
 
 The GPU support was significantly extended for the current release:
 \begin{itemize}
+  \item \texttt{CUDAWrappers::PreconditionILU} and \texttt{CUDAWrappers::PreconditionIC}
+    can be used for preconditioning \texttt{CUDAWrappers::SparseMatrix} objects.
   \item \texttt{LinearAlgebra::distributed::Vector}: the MPI-parallel vector
     class has gained a second template argument \texttt{MemorySpace} which can
     either be \texttt{Host} or \texttt{CUDA}. In the latter case, the data
     resides in the GPU memory. By default, the template parameter is
-    \texttt{Host} and the behavior is unchanged compared to previous versions. 
+    \texttt{Host} and the behavior is unchanged compared to previous versions.
     When using CUDA, the ghost exchange can be performed either by first copy
-    the relevant data to the host, performing a MPI communication, and finally
+    the relevant data to the host, performing MPI communication, and finally
     move the data to the device or, if CUDA-aware MPI is available, by
-    performing the MPI directly from GPU to GPU.
-  \item Constrained degrees of freedom: the matrix-free framework now now
-    supports constraints degrees of freedom. The implementation is based on
+    performing MPI communication directly between GPUs.
+  \item Constrained degrees of freedom: the matrix-free framework now
+    supports constrained degrees of freedom. The implementation is based on
     \cite{ljungkvist2017}. With this addition, not only the user can impose Dirichlet
-    boundary conditions but the matrix-free framework can be used on adapted
-    meshes. The only restriction is that for two-dimensional meshes, the degree
-    of finite elements must be odd.  There is no such restriction in three
+    boundary conditions but also the matrix-free framework can be used with adaptively
+    refined meshes. The only restriction is that for two-dimensional meshes the
+    finite element degree must be odd.  There is no such restriction in three
     dimensions.
   \item MPI matrix-free: using \texttt{LinearAlgebra::distributed::Vector}, the
-    matrix-free framework can scale to multiple multiple GPUS by taking
-    advantage of MPI. Each MPI process can only use GPU and therefore, if
+    matrix-free framework can scale to multiple GPUs by taking
+    advantage of MPI. Each MPI process can only use one GPU and therefore, if
     multiple GPUs are available in one node, it is necessary to have as many
-    ranks as GPUs. Using Nvidia Multi-Process Device (MPS), it is also possible
+    ranks as there are GPUs. Using Nvidia Multi-Process Service (MPS), it is also possible
     for multiple processes to use the same GPU. This can be advantageous if the
-    amount of work on one rank is not sufficient to fully utilize GPU.
+    amount of work on one rank is not sufficient to fully utilize a GPU.
 \end{itemize}
 
-Furthermore, a new tutorial program \texttt{step-64} has been added that demonstrates the usage of matrix-free methods on Nvidia GPUs. GPUs are advantageous for these kind of operations because of their superior hardware characteristics, in particular a higher memory bandwidth than server CPUs within a given power envelope. The matrix-free GPU components integrated in \dealii have been analyzed against CPUs in \cite{KronbichlerLjungkvist2019}, where the application to geometric multigrid solvers is discussed.
+The matrix-free GPU components integrated in \dealii have been analyzed against
+CPUs in \cite{KronbichlerLjungkvist2019}, where the application to geometric
+multigrid solvers is discussed.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Parallel geometric multigrid improvements}
@@ -400,6 +404,11 @@ largest runs now at XYZ (Kronbichler?)}
 
 talk about the new programs; also mention updating for C++11 style
 
+
+\texttt{step-64} demonstrates the usage of matrix-free methods on Nvidia GPUs.
+GPUs are advantageous for these kind of operations because of their superior
+hardware characteristics, in particular a higher memory bandwidth than server
+CPUs within a given power envelope.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Incompatible changes}
