@@ -271,6 +271,9 @@ Contributors for 9.1: (updated 2019-05-12)
 1a/ Adjust doc/users/doxygen.html to link to the to-be-created TAG file.
     then do a pull request
 
+1b/ Review the generated changes.h file for dead links, duplicated entries,
+    obsolete entries (e.g., commit 1 adds feature A, commit 2 fixes feature A), etc.
+
 4/  If a x.y.0 release, it is now time to create a release branch:
 
   git checkout -b dealii-9.1       # exactly 'dealii-X.Y' to remain consistent!
