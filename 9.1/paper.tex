@@ -5,6 +5,7 @@
 %\usepackage{cite}
 \usepackage{anslistings}
 \usepackage{multicol}
+\usepackage{pdfsync}
 
 \usepackage{pgfplots}
 \usepackage{pgfplotstable}
@@ -183,10 +184,12 @@ that we briefly outline in the remainder of this section:
   implementations. Some performance bottlenecks on distributed
   triangulation with more than 100k MPI ranks have been fixed.
 
-\item
-  A new class \texttt{ParsedConvergenceTable} has been introduced.
-  \textcolor{red}{TODO}
-  \marginpar{Luca: Please expand}
+\item A new class \texttt{ParsedConvergenceTable} has been introduced
+  that greatly simplifies the construction of convergence tables,
+  reading the options for the generation of the table from a parameter
+  file, and providing methods that, combined with a parameter file,
+  allow one to generate convergence tables using one-liners in user
+  codes.
 
 \item
   The \texttt{FE\_BernardiRaugel} class implements the non-standard
@@ -225,9 +228,13 @@ that we briefly outline in the remainder of this section:
   detailed overview of the implementation of the \texttt{FE\_NedelecSZ}
   element in \dealii{} can be found in \cite{Kynch2017}.
 
-\item
-  A new interface to \texttt{boost::geometry::index::rtree} has been added.
-  \textcolor{red}{TODO}
+\item All of the elementary geometrical objects of the library (namely
+  \texttt{Point<dim>}, \texttt{Segment<dim>}, and
+  \texttt{BoundingBox<dim>}) have been augmented with the traits
+  needed to comply with \texttt{boost::geometry} concepts. A new
+  interface to \texttt{boost::geometry::index::rtree} has been added
+  that simplifies the construction of spacial indices based on points,
+  bounding boxes, or segments.
 \end{itemize}
 %
 In addition to these changes, the changelog lists more than 200 other
@@ -478,7 +485,10 @@ following:
  \item For \texttt{LinearOperator} and \texttt{PackagedOperation} facilities:
    \cite{MaierBardelloniHeltai-2016-a,MaierBardelloniHeltai-2016-b}.
  \item For uses of the \texttt{WorkStream} interface:
-   \cite{TKB16}.
+   \cite{TKB16};
+   \item Fur uses of the \texttt{ParameterAcceptor} concept,
+     \texttt{MeshWorker::ScratchData}, and
+     \texttt{ParsedConvergenceTable}: \cite{SartoriGiulianiBardelloni-2018-a}.
 \end{itemize}
 
 \marginpar{I'm sure we have new interfaces. HDF5 and the various AD/SD
