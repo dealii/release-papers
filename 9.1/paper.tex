@@ -269,7 +269,7 @@ the release announcement.)
 \label{subsec:hp}
 
 \dealii{} has had support for $hp$ adaptive methods since around 2005
-(documented in \cite{BangerthKayserHerold2007} and for parallel
+(documented in \cite{BangerthKayserHerold2007}) and for parallel
 computations on distributed meshes since around 2010 (see
 \cite{BangerthBursteddeHeisterKronbichler11}), but not for both at the
 same time. The challenges to combine these are related to a number of
@@ -300,7 +300,7 @@ areas:
   These difficulties are even more pronounced when using $hp$
   adaptivity. The main obstacle is the desire to unify the indices of
   matching degrees of freedom on adjacent cells, such as the edge
-  since degree of freedom of a $Q_2$ element with the middle one of
+  degree of freedom of a $Q_2$ element with the middle one of
   the three edge degrees of freedom of a $Q_4$ element on a
   neighboring cell. Section 4.2 of
   \cite{BangerthKayserHerold2007} discusses a sequential algorithm
@@ -326,8 +326,8 @@ areas:
   finite element methods is the exchange of information stored on
   cells during mesh repartitioning. This happens, for example, when
   interpolating the solution from one mesh to the next,
-  adaptively-refined mesh, or when adapting the polynomial degrees of
-  freedom associated with each cell and repartitioning in order to
+  adaptively-refined mesh, or when adapting the polynomial degrees
+  associated with each cell and repartitioning in order to
   balance the computational cost of each processor's partition. When
   using $h$ adaptive methods, the amount of data associated with each
   cell is fixed and the algorithms that implement the data transfer
@@ -347,8 +347,8 @@ areas:
   processors' partitions is no longer as easy as ensuring that every
   processor owns a roughly equal number of cells. Rather, one needs to
   introduce a weighting factor for each cell that describes its
-  relative cost compared to some reference. To make things work, the
-  relative cost of assembly on a cell might now match the relative
+  relative cost compared to some reference. To make things worse, the
+  relative cost of assembly on a cell might not match the relative
   cost of the linear solver associated with this cell, leading to
   difficult trade-offs in defining optimal weighting factors.
 \end{enumerate}
@@ -375,18 +375,18 @@ The GPU support was significantly extended for the current release:
     either be \texttt{Host} or \texttt{CUDA}. In the latter case, the data
     resides in the GPU memory. By default, the template parameter is
     \texttt{Host} and the behavior is unchanged compared to previous versions.
-    When using CUDA, the ghost exchange can be performed either by first copy
+    When using CUDA, the ghost exchange can be performed either by first copying
     the relevant data to the host, performing MPI communication, and finally
     move the data to the device or, if CUDA-aware MPI is available, by
     performing MPI communication directly between GPUs.
   \item Constrained degrees of freedom: the matrix-free framework now
-    supports constrained degrees of freedom. The implementation is based on
-    \cite{ljungkvist2017}. With this addition, not only the user can impose Dirichlet
-    boundary conditions but also the matrix-free framework can be used with adaptively
-    refined meshes. The only restriction is that for two-dimensional meshes the
+    supports constrained degrees of freedom. The implementation is based on the algorithms described in
+    \cite{ljungkvist2017}. With this addition, both Dirichlet
+    boundary conditions and the constraints arising for adaptively
+    refined meshes can be imposed with in the matrix-free framework. The only restriction is that for two-dimensional meshes the
     finite element degree must be odd.  There is no such restriction in three
     dimensions.
-  \item MPI matrix-free: using \texttt{LinearAlgebra::distributed::Vector}, the
+  \item MPI matrix-free computations: using \texttt{LinearAlgebra::distributed::Vector}, the
     matrix-free framework can scale to multiple GPUs by taking
     advantage of MPI. Each MPI process can only use one GPU and therefore, if
     multiple GPUs are available in one node, it is necessary to have as many
@@ -395,7 +395,7 @@ The GPU support was significantly extended for the current release:
     amount of work on one rank is not sufficient to fully utilize a GPU.
 \end{itemize}
 
-The matrix-free GPU components integrated in \dealii have been analyzed against
+The matrix-free GPU components integrated in \dealii have been compared against
 CPUs in \cite{KronbichlerLjungkvist2019}, where the application to geometric
 multigrid solvers is discussed.
 
