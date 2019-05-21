@@ -1,0 +1,105 @@
+Version 9.1.0 of deal.II, the object-oriented finite element library awarded the
+J. H. Wilkinson Prize for Numerical Software, has been released. It is
+available for free under an Open Source license from the deal.II homepage at
+
+                   https://www.dealii.org/
+
+The major changes of this release are:
+
+  - Improved support for automatic and symbolic differentiation
+
+    EXPAND
+
+  - Full support for hp adaptivity in parallel computations. deal.II has
+    had support for hp-adaptive methods since around 2005, but not for both
+    at the same time. In order to gain support for parallel hp adaptivity a
+    number of algorithmic issues were addressed in this release. Details
+    can be found in the release paper.
+
+  - Interfaces to the HDF5 file format and libraries
+
+    EXPAND
+
+  - GPU support was significantly extended for the current release:
+    Added features include preconditioners for CUDAWrappers::SparseMatrix
+    objects, support for MPI-parallel CUDA data structures, support for
+    constraints in the matrix-free framework (and thus also support for
+    adaptively refined meshes).
+
+  - Parallel geometric multigrid (GMG) improvements
+
+    EXPAND
+
+  - Four new tutorial programs (step-61, step-62, step-63, step-64)
+    and a new code gallery program
+
+    EXPAND
+
+  - The release contains bug fixes and performance improvements of the
+    matrix-free framework and related geometric multigrid solvers. In
+    particular, the implementation of the Chebyshev iteration, an often
+    used smoother in the matrix-free context, has been revised to reduce
+    vector accesses. This speeds up matrix-free multigrid solvers by up to
+    10-15% on geometries with affine (parallelogram and parallelpiped)
+    cells, and up to 5% on geometries with cells bounded by curved edges
+    and faces.
+
+  - Various variants of geometric multigrid solvers and matrix-free
+    implementations were run on up to 304,128 cores during the acceptance
+    phase of the SuperMUC-NG supercomputer, verifying the scalability of
+    our implementations. Some performance bottlenecks on distributed
+    triangulation with more than 100k MPI ranks have been fixed.
+
+  - The FE_BernardiRaugel class implements the non-standard
+    Bernardi-Raugel element that can be used to construct a stable
+    velocity-pressure pair for the Stokes equation. The Bernardi-Raugel
+    element is an enriched version of the Q_1^d element with added bubble
+    functions on each edge (in 2d) or face (in 3d). It addresses the fact
+    that the Q_1^d - Q_0 combination is not inf-sup stable (requiring a
+    larger velocity space), and that the Q_2^d - Q_1 combination is
+    stable but sub-optimal since the velocity space is too large relative to
+    the pressure space to provide additional accuracy commensurate with the
+    cost of the large number of velocity unknowns. The Bernardi-Raugel
+    space is intermediate to the Q_1^d and Q_2^d spaces.
+
+  - The FE_NedelecSZ class is a new implementation of the Nédélec element
+    on quadrilaterals and hexahedra. It overcomes the sign conflict issues
+    present in traditional Nédélec elements that arise from the edge
+    and face parameterizations used in the basis functions. Therefore, this
+    element should provide consistent results for general quadrilateral and
+    hexahedral elements for which the relative orientations of edges and
+    faces (as seen from all adjacent cells) are often difficult to establish.
+
+  - A new class ParsedConvergenceTable has been introduced. The class
+    simplifies the construction of convergence tables, reading the options
+    for the generation of the table from a parameter file. It provides a
+    series of methods that can be used to compute the error given a
+    reference exact solution, or the difference between two numerical
+    solutions, or any other custom computation of the error, given via
+    std::function objects.
+
+  - A new interface to \texttt{boost::geometry::index::rtree} has been added.
+
+    EXPAND
+
+  - More than 200 other features and bugfixes.
+
+For more information see
+  - the preprint at https://www.dealii.org/deal91-preprint.pdf
+  - the list of changes at
+    https://www.dealii.org/developer/doxygen/deal.II/changes_between_9_0_1_and_9_1_0.html
+
+The main features of deal.II are:
+  - Extensive documentation and 63 fully-functional example programs
+  - Support for dimension-independent programming
+  - Locally refined adaptive meshes
+  - Multigrid support
+  - A zoo of different finite elements
+  - Fast linear algebra
+  - Built-in support for shared memory and distributed parallel computing,
+    scaling from laptops to clusters with 100,000+ processor cores
+  - Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
+  - Output for a wide variety of visualization platforms.
+
+Martin Kronblicher and Matthias Maier,
+on behalf of the deal.II developer team and many contributors.

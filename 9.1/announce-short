@@ -1,0 +1,24 @@
+Version 9.1.0 of deal.II, the object-oriented finite element library awarded
+the J. H. Wilkinson Prize for Numerical Software, has been released. It is
+available for free under an Open Source license from the deal.II homepage at
+https://www.dealii.org/
+
+The major changes of this release are:
+  - Improved support for automatic and symbolic differentiation
+  - Full support for $hp$ adaptivity in parallel computations
+  - Interfaces to the HDF5 file format and libraries
+  - Significantly extended GPU support
+  - Parallel geometric multigrid (GMG) improvements
+  - Four new tutorial programs (step-61, step-62, step-63, step-64)
+    and a new code gallery program
+
+The main features of deal.II are:
+  - Extensive documentation and 63 working example programs
+  - Support for dimension-independent programming
+  - Locally refined adaptive meshes and multigrid support
+  - A zoo of different finite elements
+  - Built-in support for shared memory and distributed parallel computing,
+    scaling from laptops to clusters with 100,000+ of processor cores
+  - Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
+
+The deal.II developers
