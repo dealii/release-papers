@@ -6,9 +6,16 @@ available for free under an Open Source license from the deal.II homepage at
 
 The major changes of this release are:
 
-  - Improved support for automatic and symbolic differentiation
-
-    EXPAND
+  - The support for automatic and symbolic differentiation within deal.II has
+    been completely overhauled and significantly extended. The automatic
+    differentiation facilities integrate a broad spectrum of functionality,
+    including support in the evaluation of finite element shape functions
+    (FEValues) and associated point and tensor data structures. Functionality
+    from both the ADOL-C as well as Sacado library in various modes is
+    included. For symbolic differentiation, new wrappers to the
+    high-performance SymEngine library allow an alternative approach
+    addressing the syntax levels of expressions to compute derivatives, rather
+    than the algorithmic approach underlying automatic differentiations.
 
   - Full support for hp adaptivity in parallel computations. deal.II has
     had support for hp-adaptive methods since around 2005, but not for both
@@ -16,9 +23,10 @@ The major changes of this release are:
     number of algorithmic issues were addressed in this release. Details
     can be found in the release paper.
 
-  - Interfaces to the HDF5 file format and libraries
-
-    EXPAND
+  - A new interfaces to the HDF5 interface has been added in order to leverage
+    its capabilities in terms of high-performance I/O for large amount of
+    data. The HDF5 interfaces in deal.II support read and write operations
+    both in serial and with MPI.
 
   - GPU support was significantly extended for the current release:
     Added features include preconditioners for CUDAWrappers::SparseMatrix
@@ -26,29 +34,27 @@ The major changes of this release are:
     constraints in the matrix-free framework (and thus also support for
     adaptively refined meshes).
 
-  - Parallel geometric multigrid (GMG) improvements
+  - Four new tutorial programs have been added, step-61 demonstrating an
+    implementation of the so-called weak Galerkin method, step-62 solving the
+    elastic wave equation with perfectly matched layers to calculate the
+    resonance frequency and bandgap of photonic crystals, step-63 on block and
+    point smoothers for geometric multigrid in the context of
+    convection-diffusion problems, and step-64 implementing a Helmholtz solver
+    with GPU using matrix-free methods. Furthermore, a new code gallery
+    program solving a Bayesian inverse problem has been added.
 
-    EXPAND
-
-  - Four new tutorial programs (step-61, step-62, step-63, step-64)
-    and a new code gallery program
-
-    EXPAND
-
-  - The release contains bug fixes and performance improvements of the
+  - The release contains performance improvements and bug fixes of the
     matrix-free framework and related geometric multigrid solvers. In
-    particular, the implementation of the Chebyshev iteration, an often
-    used smoother in the matrix-free context, has been revised to reduce
-    vector accesses. This speeds up matrix-free multigrid solvers by up to
-    10-15% on geometries with affine (parallelogram and parallelpiped)
-    cells, and up to 5% on geometries with cells bounded by curved edges
-    and faces.
+    particular, the implementation of the Chebyshev iteration, an often used
+    smoother in the matrix-free context, has been revised to reduce vector
+    accesses. Altogether, matrix-free multigrid solvers run up to 15% faster
+    than in the previous version.
 
   - Various variants of geometric multigrid solvers and matrix-free
     implementations were run on up to 304,128 MPI ranks during the acceptance
-    phase of the SuperMUC-NG supercomputer, verifying the scalability of
-    our implementations. Some performance bottlenecks on distributed
-    triangulation with more than 100k ranks have been fixed.
+    phase of the SuperMUC-NG supercomputer, verifying the scalability of our
+    implementations to this scale. Some geometric multigrid data structures
+    were revised to avoid bottlenecks showing up with more than 100k ranks.
 
   - The FE_BernardiRaugel class implements the non-standard
     Bernardi-Raugel element that can be used to construct a stable
@@ -78,9 +84,11 @@ The major changes of this release are:
     solutions, or any other custom computation of the error, given via
     std::function objects.
 
-  - A new interface to \texttt{boost::geometry::index::rtree} has been added.
-
-    EXPAND
+  - A new interface to \texttt{boost::geometry::index::rtree} has been
+    added. The rtree provides a data structure for handling bounding boxes
+    that cover the whole triangulation, and allow to identify e.g. the cell a
+    certain point is located in logarithmic time, or queries regarding the
+    cell owners of far-field cells in a distributed setup.
 
   - More than 200 other features and bugfixes.
 
