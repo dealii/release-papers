@@ -45,10 +45,10 @@ The major changes of this release are:
     and faces.
 
   - Various variants of geometric multigrid solvers and matrix-free
-    implementations were run on up to 304,128 cores during the acceptance
+    implementations were run on up to 304,128 MPI ranks during the acceptance
     phase of the SuperMUC-NG supercomputer, verifying the scalability of
     our implementations. Some performance bottlenecks on distributed
-    triangulation with more than 100k MPI ranks have been fixed.
+    triangulation with more than 100k ranks have been fixed.
 
   - The FE_BernardiRaugel class implements the non-standard
     Bernardi-Raugel element that can be used to construct a stable
