@@ -18,19 +18,19 @@ The major changes of this release are:
     than the algorithmic approach underlying automatic differentiations.
 
   - Full support for hp adaptivity in parallel computations. deal.II has
-    had support for hp-adaptive methods since around 2005, but not for both
-    at the same time. In order to gain support for parallel hp adaptivity a
-    number of algorithmic issues were addressed in this release. Details
+    had support for hp-adaptive methods since around 2005, but not yet in
+    combination with MPI. In order to gain support for parallel hp adaptivity
+    a number of algorithmic issues were addressed in this release. Details
     can be found in the release paper.
 
-  - A new interfaces to the HDF5 interface has been added in order to leverage
+  - A new HDF5 interface has been added in order to leverage
     its capabilities in terms of high-performance I/O for large amount of
     data. The HDF5 interfaces in deal.II support read and write operations
     both in serial and with MPI.
 
   - GPU support was significantly extended for the current release:
     Added features include preconditioners for CUDAWrappers::SparseMatrix
-    objects, support for MPI-parallel CUDA data structures, support for
+    objects, support for MPI-parallel CUDA data structures, and support for
     constraints in the matrix-free framework (and thus also support for
     adaptively refined meshes).
 
@@ -40,7 +40,7 @@ The major changes of this release are:
     resonance frequency and bandgap of photonic crystals, step-63 on block and
     point smoothers for geometric multigrid in the context of
     convection-diffusion problems, and step-64 implementing a Helmholtz solver
-    with GPU using matrix-free methods. Furthermore, a new code gallery
+    with matrix-free methods running on GPUs. Furthermore, a new code gallery
     program solving a Bayesian inverse problem has been added.
 
   - The release contains performance improvements and bug fixes of the
