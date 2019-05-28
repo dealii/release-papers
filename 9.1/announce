@@ -109,5 +109,5 @@ The main features of deal.II are:
   - Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
   - Output for a wide variety of visualization platforms.
 
-Martin Kronblicher and Matthias Maier,
+Martin Kronbichler and Matthias Maier,
 on behalf of the deal.II developer team and many contributors.
