@@ -150,6 +150,8 @@ The major changes of this release are:
 \begin{itemize}
   \item Improved support for automatic differentiation (see
     Section~\ref{subsec:ad}),
+  \item Dedicated support for symbolic algebra (see
+    Section~\ref{subsec:sd}),
   \item Full support for $hp$ adaptivity in parallel computations (see
     Section~\ref{subsec:hp}),
   \item Interfaces to the HDF5 file format and libraries (see
@@ -304,6 +306,53 @@ Furthermore, through the implementation of \texttt{TapedDrivers} and
 generic helper classes hide library-dependent implementational details and facilitate 
 switching between the supported libraries and AD number types based on the 
 user's requirements.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Dedicated support for symbolic algebra, including algebra differentiation}
+\label{subsec:sd}
+To complement the automatic differentiation features in \dealii{}, this release sees
+the first step towards integrating and supporting a highly performant computer algebra 
+system (CAS) via the SymEngine library.
+The \texttt{Expression} class in the namespace \texttt{Differentiation::SD} interfaces
+to SymEngine and forms the basis of symbolic computations, offering a full set of 
+overloaded operators and a C++ style interface. This class offers the following 
+basic functionality:
+\begin{itemize}
+\item symbolic variable definition,
+\item symbolic function definition,
+\item expression creation using standard C++ syntax,
+\item expression parsing,
+\item comparison operations,
+\item logical operations,
+\item conditional expression construction,
+\item differentiation,
+\item substitution (partial and complete), and
+\item serialization.
+\end{itemize}
+We also provide an extensive set of math operations, with a syntax mimicing that used 
+in the C++ standard library. Using \dealii{}'s \texttt{Expression} class as a basis, we 
+have developed a set of functions that can be used to create \dealii{} \texttt{Tensor}s
+and \texttt{SymmetricTensor}s of symbolic variables and symbolic functions. This
+gives full symbolic tensor algebra support using the pre-existing \texttt{Tensor}
+and \texttt{SymmetricTensor} class and associated functions. A set of utility functions to
+\begin{itemize}
+\item \texttt{differentiate} scalar expressions, tensor and symmetric tensors of expressions
+with respect to other scalar expressions, tensor and symmetric tensors of expressions,
+\item create symbolic substitution maps,
+\item resolve explicit dependencies between expressions, and
+\item perform scalar and tensor valued substitution (including conversion from symbolic to 
+real-valued scalars and tensors)
+\end{itemize}
+have also been implemented.
+
+In the next release we expect to implement classes to assist in performing assembly operations 
+in the same spirit as that which has been done in the \texttt{Differentiation::AD} namespace,
+although in a fully symbolic manner.
+We will also address increase the performance of the \texttt{Expression} class by leveraging
+the optimization capabilities of SymEngine, including common subexpression elimination (CSE), 
+as well as by generating high performance code-paths to evaluate these expressions through the
+use of a custom-generated \texttt{std::function} (so-called ``lambda'' optimization) or by 
+compiling expressions using the LLVM JIT compiler.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Full support for $hp$ adaptivity in parallel computations}
