@@ -148,7 +148,7 @@ GNU Lesser General Public License (LGPL). Downloads are available at
 The major changes of this release are:
 %
 \begin{itemize}
-  \item Improved support for automatic and symbolic differentiation (see
+  \item Improved support for automatic differentiation (see
     Section~\ref{subsec:ad}),
   \item Full support for $hp$ adaptivity in parallel computations (see
     Section~\ref{subsec:hp}),
@@ -261,8 +261,49 @@ in the file that lists all changes for this release}, see \cite{changes91}.
 the release announcement.)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Improved support for automatic and symbolic differentiation}
+\subsection{Improved support for automatic differentiation}
 \label{subsec:ad}
+
+In the previous release, numerous classes that are used to assemble linear systems
+and right hand sides, as well those used to define constitutive laws, were given 
+full support for ``white-listed'' automatically differentiable (AD) number types 
+from the ADOL-C and Sacado libraries.
+In the current release we have provided a unified interface to these
+AD libraries focussing two specific use contexts, namely
+\begin{enumerate}
+\item the construction and linearization of finite element residuals, and
+\item the construction and linearization of constitutive model kinetic variables.
+\end{enumerate}
+
+In the first context, the finite element degrees of freedom are considered the
+independent variables. From these primitives, the \texttt{EnergyFunctional} helper
+class in the namespace \texttt{Differentiation::AD} may be used to compute both the 
+residual and its linearization by directly defining the contribution to the 
+(twice differentiated) scalar total energy functional from each cell. Similarly, 
+the \texttt{ResidualLinearization} class requires the (once-differentiated) finite 
+element residual to be defined on a per cell basis,  and this contribution is 
+automatically linearized.
+
+The second context aims directly at constitutive model formulations, and serves to
+compute the directional derivatives of components of (multi-field) constitutive laws
+with respect to the scalar, vector, tensor and symmetric tensor fields in terms 
+of which they are parameterized. The \texttt{ScalarFunction} class may be used to 
+define a scalar function (such as strain energy function) that may be twice 
+differentiated, while the \texttt{VectorFunction} may be used to define a vector
+function (such as a set of kinematic fields) that may be differentiated once.
+Since the total derivatives of all components are computed at once, these two helper 
+classes provide an interface to retrieve each sub-component of the gradient and 
+Hessian (for a \texttt{ScalarFunction}) or values and Jacobian (for a 
+\texttt{VectorFunction}).
+
+Although these aforementioned helper classes have been documented with a specific
+use in mind, they remain generic and may (with a reinterpretation of the meaning of
+the independent and dependent variables) be used for other purposes as well.
+Furthermore, through the implementation of \texttt{TapedDrivers} and 
+\texttt{TapelessDrivers} classes that interface with the active AD library, the 
+generic helper classes hide library-dependent implementational details and facilitate 
+switching between the supported libraries and AD number types based on the 
+user's requirements.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Full support for $hp$ adaptivity in parallel computations}
