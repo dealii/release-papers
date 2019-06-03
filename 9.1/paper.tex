@@ -510,15 +510,44 @@ largest runs now at XYZ (Kronbichler?)}
 \subsection{New and improved tutorial and code gallery programs}
 \label{subsec:steps}
 
-\marginpar{Missing}
+Many of the \dealii{} tutorial programs were substantially revised as
+part of this release. In particular, we have converted many places
+that now allow for simpler code through the use of C++11 features such
+as range-based for loops and lambda functions.
 
-talk about the new programs; also mention updating for C++11 style
+In addition, there are four new tutorial programs and one new code
+gallery program:
+\begin{itemize}
+\item \texttt{step-61} is a program that implements the ``weak
+  Galerkin'' method to solve the Laplace equation. Weak Galerkin
+  methods are related to the Hybridized Discontinuous Galerkin method
+  in that they introduce degrees of freedom on the interfaces between
+  cells, but they do not require the reformulation of the problem as a
+  first-order system and instead re-define what the gradient of a
+  discontinuous function is.
 
+\item \texttt{step-62} demonstrates the solution of problems related
+  to phononic or photonic crystals. Among the techniques shown in this
+  program is the solution of complex-valued linear systems, and the
+  use of absorbing boundary conditions through the Perfectly Matched
+  Layer technique.
 
-\texttt{step-64} demonstrates the usage of matrix-free methods on Nvidia GPUs.
+\item \texttt{step-63} implements a multigrid preconditioner
+  and solver for the advection-diffusion equation, yielding optimal
+  complexity.
+
+\item \texttt{step-64} demonstrates the usage of matrix-free methods on Nvidia GPUs.
 GPUs are advantageous for these kind of operations because of their superior
 hardware characteristics, in particular a higher memory bandwidth than server
 CPUs within a given power envelope.
+
+\item The \texttt{MCMC-Laplace} code gallery program is a code useful
+  for the forward solution that is used as a building block in
+  Bayesian inverse problems, and for sampling the parameter space
+  through a Metropolis-Hastings sampler (a kind of Monte Carlo
+  Markov Chain method).
+\end{itemize}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Incompatible changes}
