@@ -126,7 +126,7 @@
 
 \begin{abstract}
   This paper provides an overview of the new features of the finite element
-  library \dealii version 9.1.
+  library \dealii, version 9.1.
 \end{abstract}
 
 
@@ -136,7 +136,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview}
 
-\dealii version 9.1.0 was released May XX, 2019
+\dealii version 9.1.0 was released May 21, 2019
 This paper provides an
 overview of the new features of this major release and serves as a citable
 reference for the \dealii software library version 9.1. \dealii is an
@@ -204,7 +204,7 @@ that we briefly outline in the remainder of this section:
   stable but sub-optimal since the velocity space is too large relative to
   the pressure space to provide additional accuracy commensurate with the
   cost of the large number of velocity unknowns. The BR space is
-  intermediate to the $Q_1^d$ and $Q_2^d$ spaces.
+  thus intermediate to the $Q_1^d$ and $Q_2^d$ spaces.
 
   The element is currently only implemented for parallelogram meshes due to
   difficulties associated with the mapping of shape functions: The shape
@@ -235,7 +235,7 @@ that we briefly outline in the remainder of this section:
   \texttt{BoundingBox<dim>}) have been augmented with the traits
   needed to comply with \texttt{boost::geometry} concepts. A new
   interface to \texttt{boost::geometry::index::rtree} has been added
-  that simplifies the construction of spacial indices based on points,
+  that simplifies the construction of spatial indices based on points,
   bounding boxes, or segments.
 \end{itemize}
 %
@@ -269,12 +269,17 @@ the release announcement.)
 In the previous release, numerous classes that are used to assemble linear systems
 and right hand sides, as well those used to define constitutive laws, were given 
 full support for ``white-listed'' automatically differentiable (AD) number types 
-from the ADOL-C and Sacado libraries.
+from the ADOL-C and Sacado libraries. This included the classes that
+represent the local contributions of one cell to the global linear
+system (i.e., \texttt{FullMatrix} and \texttt{Vector}) as well as the
+classes commonly used for the computations at individual quadrature
+points (primarily the \texttt{Tensor} and \texttt{SymmetricTensor}
+classes of various ranks).
 In the current release we have provided a unified interface to these
-AD libraries focussing two specific use contexts, namely
+AD libraries, focussing on two specific use contexts:
 \begin{enumerate}
-\item the construction and linearization of finite element residuals, and
-\item the construction and linearization of constitutive model kinetic variables.
+\item The construction and linearization of finite element residuals; and
+\item The construction and linearization of constitutive model kinetic variables.
 \end{enumerate}
 
 In the first context, the finite element degrees of freedom are considered the
@@ -313,6 +318,7 @@ user's requirements.
 To complement the automatic differentiation features in \dealii{}, this release sees
 the first step towards integrating and supporting a highly performant computer algebra 
 system (CAS) via the SymEngine library.
+\marginpar{Could use a reference to SymEngine}
 The \texttt{Expression} class in the namespace \texttt{Differentiation::SD} interfaces
 to SymEngine and forms the basis of symbolic computations, offering a full set of 
 overloaded operators and a C++ style interface. This class offers the following 
@@ -329,26 +335,26 @@ basic functionality:
 \item substitution (partial and complete), and
 \item serialization.
 \end{itemize}
-We also provide an extensive set of math operations, with a syntax mimicing that used 
-in the C++ standard library. Using \dealii{}'s \texttt{Expression} class as a basis, we 
+\dealii{} now also provides an extensive set of math operations, with a syntax mimicking that used 
+in the C++ standard library. Using the \texttt{Expression} class as a basis, we 
 have developed a set of functions that can be used to create \dealii{} \texttt{Tensor}s
 and \texttt{SymmetricTensor}s of symbolic variables and symbolic functions. This
 gives full symbolic tensor algebra support using the pre-existing \texttt{Tensor}
-and \texttt{SymmetricTensor} class and associated functions. A set of utility functions to
+and \texttt{SymmetricTensor} classes and associated functions. We have
+also implemented a set of utility functions with the following features:
 \begin{itemize}
 \item \texttt{differentiate} scalar expressions, tensor and symmetric tensors of expressions
-with respect to other scalar expressions, tensor and symmetric tensors of expressions,
-\item create symbolic substitution maps,
-\item resolve explicit dependencies between expressions, and
+with respect to other scalar expressions, tensor and symmetric tensors of expressions;
+\item create symbolic substitution maps;
+\item resolve explicit dependencies between expressions; and
 \item perform scalar and tensor valued substitution (including conversion from symbolic to 
-real-valued scalars and tensors)
+real-valued scalars and tensors).
 \end{itemize}
-have also been implemented.
 
 In the next release we expect to implement classes to assist in performing assembly operations 
 in the same spirit as that which has been done in the \texttt{Differentiation::AD} namespace,
 although in a fully symbolic manner.
-We will also address increase the performance of the \texttt{Expression} class by leveraging
+We will also address performance issues of the \texttt{Expression} class by leveraging
 the optimization capabilities of SymEngine, including common subexpression elimination (CSE), 
 as well as by generating high performance code-paths to evaluate these expressions through the
 use of a custom-generated \texttt{std::function} (so-called ``lambda'' optimization) or by 
@@ -378,14 +384,14 @@ areas:
   the information may not be known, or not be known right away, for
   cells that are not locally owned (i.e., for ghost and ``artificial''
   cells), and for which the data structures stored on different
-  processors have to reconciled.
+  processors have to be reconciled.
 
 \item Algorithms: Already for $h$ adaptive meshes, enumerating all
-  degrees of freedom on the global mesh is difficult as evidenced by
+  degrees of freedom on the global mesh is difficult, as evidenced by
   the complications of the algorithms shown in Section 3.1 of
   \cite{BangerthBursteddeHeisterKronbichler11}, which requires more
-  than a page of text and is implemented in many hundreds of lines of
-  code).
+  than one page of text and is implemented in many hundreds of lines of
+  code.
 
   These difficulties are even more pronounced when using $hp$
   adaptivity. The main obstacle is the desire to unify the indices of
@@ -395,7 +401,7 @@ areas:
   neighboring cell. Section 4.2 of
   \cite{BangerthKayserHerold2007} discusses a sequential algorithm
   that eliminates one of these degrees of freedom in favor of another,
-  but in this introduces a ``master'' and a ``slave'' side of the
+  but it introduces a ``master'' and a ``slave'' side of the
   interface. This is of no major consequence in sequential
   computations, but is inconvenient in parallel computations if the
   ``master'' side is a ghost cell whose degree of freedom indices are
@@ -416,7 +422,7 @@ areas:
   finite element methods is the exchange of information stored on
   cells during mesh repartitioning. This happens, for example, when
   interpolating the solution from one mesh to the next,
-  adaptively-refined mesh, or when adapting the polynomial degrees
+  adaptively-refined mesh; or when adapting the polynomial degrees
   associated with each cell and repartitioning in order to
   balance the computational cost of each processor's partition. When
   using $h$ adaptive methods, the amount of data associated with each
@@ -430,7 +436,7 @@ areas:
   sending.
 
 \item Balancing computational cost: For $h$-adaptive algorithms, the
-  amount of work associated with each cell is essentially the same
+  amount of work associated with each cell is essentially the same,
   both during the assembly of linear systems as well as during the
   solver phase. For $hp$-adaptive methods, this is no longer the
   case. Consequently, balancing the cost of work between different
@@ -452,18 +458,20 @@ and their performance in a separate publication.
 \subsection{Interfaces to the HDF5 file format and libraries}
 \label{subsec:hdf5}
 
+\marginpar{Missing}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{GPU support via CUDA}
 \label{subsec:gpu}
 
-The GPU support was significantly extended for the current release:
+GPU support was significantly extended for the current release:
 \begin{itemize}
-  \item \texttt{CUDAWrappers::PreconditionILU} and \texttt{CUDAWrappers::PreconditionIC}
-    can be used for preconditioning \texttt{CUDAWrappers::SparseMatrix} objects.
+  \item The \texttt{CUDAWrappers::PreconditionILU} and \texttt{CUDAWrappers::PreconditionIC}
+    classes can now be used for preconditioning \texttt{CUDAWrappers::SparseMatrix} objects.
   \item \texttt{LinearAlgebra::distributed::Vector}: the MPI-parallel vector
     class has gained a second template argument \texttt{MemorySpace} which can
     either be \texttt{Host} or \texttt{CUDA}. In the latter case, the data
-    resides in the GPU memory. By default, the template parameter is
+    resides in GPU memory. By default, the template parameter is
     \texttt{Host} and the behavior is unchanged compared to previous versions.
     When using CUDA, the ghost exchange can be performed either by first copying
     the relevant data to the host, performing MPI communication, and finally
@@ -472,9 +480,11 @@ The GPU support was significantly extended for the current release:
   \item Constrained degrees of freedom: the matrix-free framework now
     supports constrained degrees of freedom. The implementation is based on the algorithms described in
     \cite{ljungkvist2017}. With this addition, both Dirichlet
-    boundary conditions and the constraints arising for adaptively
-    refined meshes can be imposed with in the matrix-free framework. The only restriction is that for two-dimensional meshes the
-    finite element degree must be odd.  There is no such restriction in three
+    boundary conditions and the constraints arising from adaptively
+    refined meshes can be imposed within the matrix-free framework. The only restriction is that for two-dimensional meshes the
+    finite element degree must be odd.  
+    \marginpar{Can we explain this restriction? It seems odd (pun intended)...}
+    There is no such restriction in three
     dimensions.
   \item MPI matrix-free computations: using \texttt{LinearAlgebra::distributed::Vector}, the
     matrix-free framework can scale to multiple GPUs by taking
@@ -492,12 +502,15 @@ multigrid solvers is discussed.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Parallel geometric multigrid improvements}
 \label{subsec:gmg}
-\marginpar{performance optimizations, new features,
+
+\marginpar{Missing: performance optimizations, new features,
 largest runs now at XYZ (Kronbichler?)}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and improved tutorial and code gallery programs}
 \label{subsec:steps}
+
+\marginpar{Missing}
 
 talk about the new programs; also mention updating for C++11 style
 
@@ -514,13 +527,14 @@ The 9.1 release includes
 \href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_0_1_and_9_1_0.html}
      {around 15 incompatible changes}; see \cite{changes91}. The majority of these changes
 should not be visible to typical user codes; some remove previously
-deprecated classes and functions, and the majority change internal
+deprecated classes and functions; and the majority change internal
 interfaces that are not usually used in external
 applications. However, some are worth mentioning:
 \begin{itemize}
 \item The \texttt{VectorView} class was removed. We recommend either copying the
       vector subset into a \texttt{Vector} or using a \texttt{BlockVector}.
-\item The function \texttt{Subscriptor::subscribe} now requires a pointer to a
+\item The function \texttt{Subscriptor::subscribe()}, used through the
+  \texttt{SmartPointer} class, now requires a pointer to a
       \texttt{std::atomic<bool>} that tracks whether or not the pointer to the
       subscribed-to object is still valid.
 \item The \texttt{ConstraintMatrix} class gained a template parameter for scalar
@@ -548,7 +562,7 @@ software, we ask that papers using the library reference one of the
 
 There are various ways to reference \dealii. To acknowledge the use of
 the current version of the library, \textbf{please reference the present
-document}. For up to date information and bibtex snippets for this document
+document}. For up to date information and a bibtex entry for this document
 see:
 \begin{center}
  \url{https://www.dealii.org/publications.html}
@@ -576,9 +590,9 @@ following:
    \cite{MaierBardelloniHeltai-2016-a,MaierBardelloniHeltai-2016-b}.
  \item For uses of the \texttt{WorkStream} interface:
    \cite{TKB16};
-   \item For uses of the \texttt{ParameterAcceptor} concept,
-     \texttt{MeshWorker::ScratchData}, and
-     \texttt{ParsedConvergenceTable}: \cite{SartoriGiulianiBardelloni-2018-a}.
+   \item For uses of the \texttt{ParameterAcceptor} concept, the
+     \texttt{MeshWorker::ScratchData} base class, and the
+     \texttt{ParsedConvergenceTable} class: \cite{SartoriGiulianiBardelloni-2018-a}.
 \end{itemize}
 
 \marginpar{I'm sure we have new interfaces. HDF5 and the various AD/SD
