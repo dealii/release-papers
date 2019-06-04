@@ -484,6 +484,9 @@ GPU support was significantly extended for the current release:
     refined meshes can be imposed within the matrix-free framework. The only restriction is that for two-dimensional meshes the
     finite element degree must be odd.  
     \marginpar{Can we explain this restriction? It seems odd (pun intended)...}
+    \marginpar{BT: No, we cannot. I have spent at least two full weeks trying to
+    understand why it doesn't work, i.e., gives the wrong result, but I don't know. We decided at the time that
+    even with the current limitation this was a useful addition.}
     There is no such restriction in three
     dimensions.
   \item MPI matrix-free computations: using \texttt{LinearAlgebra::distributed::Vector}, the
