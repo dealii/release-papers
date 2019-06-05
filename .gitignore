@@ -1,12 +1,13 @@
+*~
 *.aux
 *.bbl
 *.blg
+*.dvi
+*.fdb_latexmk
+*.fls
 *.log
 *.out
 *.pdf
-*.fdb_latexmk
-*.fls
-*~
-*.dvi
+*.pdfsync
 *.ps
 *.synctex.gz
