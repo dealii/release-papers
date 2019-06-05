@@ -36,6 +36,7 @@
     Daniel Arndt,
     Wolfgang Bangerth,
     Denis Davydov,
+    Marc Fehling,
     Graham Harper,
     Timo Heister,
     Luca Heltai,
@@ -71,10 +72,16 @@
   91058 Erlangen, Germany.
   {\texttt{\{denis.davydov,jean-paul.pelteret\}@fau.de}}}
 
+\author[4]{Marc~Fehling}
+\affil[4]{Institute for Advanced Simulation,
+  Forschungszentrum J\"{u}lich GmbH,
+  52425 J\"{u}lich, Germany.
+  {\texttt{m.fehling@fz-juelich.de}}}
+
 \author[2]{Graham Harper}
 
-\author[4]{Timo~Heister}
-\affil[4]{Mathematical Sciences,
+\author[5]{Timo~Heister}
+\affil[5]{Mathematical Sciences,
   O-110 Martin Hall,
   Clemson University,
   Clemson, SC 29634, USA
@@ -83,37 +90,37 @@
   Salt Lake City, UT 84112.
   {\texttt{heister@sci.utah.edu}}}
 %
-\author[5]{Luca~Heltai}
-\affil[5]{SISSA,
+\author[6]{Luca~Heltai}
+\affil[6]{SISSA,
   International School for Advanced Studies,
   Via Bonomea 265,
   34136, Trieste, Italy.
   {\texttt{luca.heltai@sissa.it}}}
 
-\author[6]{Martin~Kronbichler}
-\affil[6]{Institute for Computational Mechanics,
+\author[7]{Martin~Kronbichler}
+\affil[7]{Institute for Computational Mechanics,
   Technical University of Munich,
   Boltzmannstr.~15, 85748 Garching, Germany.
   {\texttt{kronbichler@lnm.mw.tum.de}}}
 
-\author[7]{Ross~Maguire~Kynch}
-\affil[7]{Renishaw Plc,
+\author[8]{Ross~Maguire~Kynch}
+\affil[8]{Renishaw Plc,
   Miskin, CF72 8XY, Wales, UK.
   {\texttt{rkynch@gmail.com}}}
 
-\author[8]{Matthias~Maier}
-\affil[8]{Department of Mathematics,
+\author[9]{Matthias~Maier}
+\affil[9]{Department of Mathematics,
   Texas A\&M University,
   3368 TAMU,
   College Station, TX 77845, USA.
   {\texttt{maier@math.tamu.edu}}}
 
-\author[4]{Jean-Paul~Pelteret}
+\author[3]{Jean-Paul~Pelteret}
 
 \author[*1]{Bruno~Turcksin}
 
-\author[9]{David Wells}
-\affil[9]{Department of Mathematics, University of North Carolina,
+\author[10]{David Wells}
+\affil[10]{Department of Mathematics, University of North Carolina,
   Chapel Hill, NC 27516, USA.
   {\texttt{drwells@email.unc.edu}}}
 
@@ -162,7 +169,7 @@ The major changes of this release are:
     Section~\ref{subsec:ad}),
   \item Dedicated support for symbolic algebra (see
     Section~\ref{subsec:sd}),
-  \item Full support for $hp$ adaptivity in parallel computations (see
+  \item Full support for $hp$~adaptivity in parallel computations (see
     Section~\ref{subsec:hp}),
   \item Interfaces to the HDF5 file format and libraries (see
     Section~\ref{subsec:hdf5}),
@@ -371,10 +378,10 @@ use of a custom-generated \texttt{std::function} (so-called ``lambda'' optimizat
 compiling expressions using the LLVM JIT compiler.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Full support for $hp$ adaptivity in parallel computations}
+\subsection{Full support for $hp$~adaptivity in parallel computations}
 \label{subsec:hp}
 
-\dealii{} has had support for $hp$ adaptive methods since around 2005
+\dealii{} has had support for $hp$~adaptive methods since around 2005
 (documented in \cite{BangerthKayserHerold2007}) and for parallel
 computations on distributed meshes since around 2010 (see
 \cite{BangerthBursteddeHeisterKronbichler11}), but not for both at the
@@ -382,8 +389,8 @@ same time. The challenges to combine these are related to a number of
 areas:
 \begin{enumerate}
 \item Data structures: The data structures necessary to store the
-  indices of degrees of freedom are necessarily substantially more
-  complicated for $hp$ algorithms than for the $h$-adaptive schemes
+  indices of degrees of freedom are substantially more
+  complicated for $hp$~algorithms than for the $h$~adaptive schemes
   that were already implemented. This is because the number of degrees
   of freedom per cell is now no longer constant. Furthermore,
   faces and edges may need to store more than one set of indices if
@@ -396,20 +403,20 @@ areas:
   cells), and for which the data structures stored on different
   processors have to be reconciled.
 
-\item Algorithms: Already for $h$ adaptive meshes, enumerating all
-  degrees of freedom on the global mesh is difficult, as evidenced by
+\item Algorithms: Already for $h$~adaptive meshes, enumerating all
+  degrees of freedom uniquely on the global mesh is difficult, as evidenced by
   the complications of the algorithms shown in Section 3.1 of
   \cite{BangerthBursteddeHeisterKronbichler11}, which requires more
   than one page of text and is implemented in many hundreds of lines of
   code.
 
-  These difficulties are even more pronounced when using $hp$
-  adaptivity. The main obstacle is the desire to unify the indices of
-  matching degrees of freedom on adjacent cells, such as the edge
-  degree of freedom of a $Q_2$ element with the middle one of
-  the three edge degrees of freedom of a $Q_4$ element on a
-  neighboring cell. Section 4.2 of
-  \cite{BangerthKayserHerold2007} discusses a sequential algorithm
+  These difficulties are even more pronounced when using $hp$~adaptivity.
+  The main obstacle is the desire to unify the indices of
+  matching degrees of freedom on adjacent cells whenever elements with
+  continuous polynomials are used. For example, the edge degree of freedom
+  of a $Q_2$~element has to be merged with the middle one of the three
+  edge degrees of freedom of a $Q_4$~element on a neighboring cell.
+  Section 4.2 of \cite{BangerthKayserHerold2007} discusses a sequential algorithm
   that eliminates one of these degrees of freedom in favor of another,
   but it introduces a ``master'' and a ``slave'' side of the
   interface. This is of no major consequence in sequential
@@ -431,24 +438,26 @@ areas:
 \item Data transfer patterns: An important algorithm in parallel
   finite element methods is the exchange of information stored on
   cells during mesh repartitioning. This happens, for example, when
-  interpolating the solution from one mesh to the next,
-  adaptively-refined mesh; or when adapting the polynomial degrees
+  interpolating the solution from one mesh to the next
+  adaptively refined mesh; or when adapting the polynomial degrees
   associated with each cell and repartitioning in order to
   balance the computational cost of each processor's partition. When
-  using $h$ adaptive methods, the amount of data associated with each
+  using $h$~adaptive methods, the amount of data associated with each
   cell is fixed and the algorithms that implement the data transfer
-  are consequently relatively simple. On the other hand, in $hp$
-  contexts, each cell may have a different number of unknowns
+  are consequently relatively simple. On the other hand, in $hp$~contexts,
+  each cell may have a different number of unknowns
   associated with it, and the algorithms that transfer the data are
-  substantially more complicated. Furthermore, the amount of data
-  associated with each cell may be large on cells with higher
-  polynomial degrees, and might profit from compression before
-  sending.
+  substantially more complicated. In order to implement those, we rely
+  on recent enhancements of the \pfrst~library (documented in
+  \cite{Burstedde2018}) to transfer data of variable size across
+  processors. Furthermore, the amount of data associated with each
+  cell may be large on cells with higher polynomial degrees, and
+  might profit from compression before sending.
 
-\item Balancing computational cost: For $h$-adaptive algorithms, the
+\item Balancing computational cost: For $h$~adaptive algorithms, the
   amount of work associated with each cell is essentially the same,
   both during the assembly of linear systems as well as during the
-  solver phase. For $hp$-adaptive methods, this is no longer the
+  solver phase. For $hp$~adaptive methods, this is no longer the
   case. Consequently, balancing the cost of work between different
   processors' partitions is no longer as easy as ensuring that every
   processor owns a roughly equal number of cells. Rather, one needs to
@@ -456,7 +465,10 @@ areas:
   relative cost compared to some reference. To make things worse, the
   relative cost of assembly on a cell might not match the relative
   cost of the linear solver associated with this cell, leading to
-  difficult trade-offs in defining optimal weighting factors.
+  difficult trade-offs in defining optimal weighting factors. In this
+  release, we supplied the basic functionality to attach any amount
+  of weighting factors to cells, but users still have to find reasonable
+  weights for themselves.
 \end{enumerate}
 
 All of these issues have been addressed in the current release and are
@@ -617,7 +629,7 @@ following:
 \begin{itemize}
  \item For geometric multigrid: \cite{Kanschat2004,JanssenKanschat2011,ClevengerHeisterKanschatKronbichler2019};
  \item For distributed parallel computing: \cite{BangerthBursteddeHeisterKronbichler11};
- \item For $hp$ adaptivity: \cite{BangerthKayserHerold2007};
+ \item For $hp$~adaptivity: \cite{BangerthKayserHerold2007};
   \item For partition-of-unity (PUM) and enrichment methods of the
     finite element space: \cite{Davydov2016};
  \item For matrix-free and fast assembly techniques:
@@ -657,7 +669,7 @@ following:
 \item nanoflann \cite{nanoflann}
 \item NetCDF \cite{rew1990netcdf}
 \item OpenCASCADE \cite{opencascade-web-page}
-\item p4est \cite{p4est}
+\item p4est \cite{Burstedde2018,p4est}
 \item PETSc \cite{petsc-user-ref,petsc-web-page}
 \item ROL \cite{ridzal2014rapid}
 \item ScaLAPACK \cite{slug}
@@ -699,7 +711,6 @@ this release:\\
   the Ginkgo developers,
   Stefano Dominici,
   Nivesh Dommaraju,
-  Marc Fehling,
   Niklas Fehn,
   Isuru Fernando,
   Andreas Fink,
