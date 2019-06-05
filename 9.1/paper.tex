@@ -14,6 +14,8 @@
 \usepackage{graphicx}
 \usepackage{xspace}
 
+\usepackage[normalem]{ulem}
+
 \pgfplotsset{compat=1.9}
 
 \newcommand{\specialword}[1]{\texttt{#1}}
@@ -500,17 +502,26 @@ GPU support was significantly extended for the current release:
     move the data to the device or, if CUDA-aware MPI is available, by
     performing MPI communication directly between GPUs.
   \item Constrained degrees of freedom: the matrix-free framework now
-    supports constrained degrees of freedom. The implementation is based on the algorithms described in
-    \cite{ljungkvist2017}. With this addition, both Dirichlet
-    boundary conditions and the constraints arising from adaptively
-    refined meshes can be imposed within the matrix-free framework. The only restriction is that for two-dimensional meshes the
-    finite element degree must be odd.
-    \marginpar{Can we explain this restriction? It seems odd (pun intended)...}
-    \marginpar{BT: No, we cannot. I have spent at least two full weeks trying to
-    understand why it doesn't work, i.e., gives the wrong result, but I don't know. We decided at the time that
-    even with the current limitation this was a useful addition.}
-    There is no such restriction in three
-    dimensions.
+    supports constrained degrees of freedom. The implementation is based on
+    the algorithms described in \cite{ljungkvist2017}. With this addition,
+    both Dirichlet boundary conditions and the constraints arising from
+    adaptively refined meshes can be imposed within the matrix-free
+    framework.
+    \textcolor{red}{%
+    \sout{The only restriction is that for two-dimensional meshes the
+    finite element degree must be odd. There is no such restriction in
+    three dimensions.}
+    \emph{%
+    WB: Can we explain this restriction? It seems odd (pun intended)...
+    BT: No, we cannot. I have spent at least two full weeks trying to
+    understand why it doesn't work, i.e., gives the wrong result, but I
+    don't know. We decided at the time that even with the current
+    limitation this was a useful addition.
+    MM: I suggest that we then simply not mention the limitation and treat
+    it as a known bug. As it is currently worded it can be easily
+    interpreted as a fundamental limitation, i.\,e. ``FE with even degree
+    are not admissible.''}}
+
   \item MPI matrix-free computations: using \texttt{LinearAlgebra::distributed::Vector}, the
     matrix-free framework can scale to multiple GPUs by taking
     advantage of MPI. Each MPI process can only use one GPU and therefore, if
@@ -528,8 +539,8 @@ multigrid solvers is discussed.
 \subsection{Parallel geometric multigrid improvements}
 \label{subsec:gmg}
 
-\marginpar{Missing: performance optimizations, new features,
-largest runs now at XYZ (Kronbichler?)}
+\textcolor{red}{Missing: performance optimizations, new features, largest
+runs now at XYZ (Kronbichler?)}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and improved tutorial and code gallery programs}
@@ -650,7 +661,9 @@ following:
 \end{itemize}
 
 \marginpar{I'm sure we have new interfaces. HDF5 and the various AD/SD
-  libraries come to mind. Please update.}
+  libraries come to mind. Please update. MM: The list actually looks pretty
+  complete (I have not verified that we actually cite *all* canonical
+  publications for a given library).}
 \dealii can interface with many other libraries:
 \begin{multicols}{3}
 \begin{itemize}
@@ -690,15 +703,9 @@ The two previous releases of \dealii can be cited as
 \section{Acknowledgments}
 
 \dealii is a world-wide project with dozens of contributors around the
-globe. Other than the authors of this paper, the following people contributed code to
-this release:\\
-%
-% get this from the changes/*/* files using the command listed in the
-% release-tasks paper and remove the authors of this paper
-%
-% updated 5/12/2019
-\marginpar{Remove all other authors of this paper}
-\marginpar{Do we want to spell out who the Gingko devs are?}
+globe. Other than the authors of this paper, the following people
+contributed code to this release:\\
+% updated 6/05/2019
   Giovanni Alzetta,
   Mathias Anselmann,
   Daniel Appel,
@@ -708,7 +715,6 @@ this release:\\
   Pi-Yueh Chuang,
   T. Conrad Clevenger,
   Sambit Das,
-  the Ginkgo developers,
   Stefano Dominici,
   Nivesh Dommaraju,
   Niklas Fehn,
@@ -719,7 +725,6 @@ this release:\\
   Alexander Grayver,
   Joshua Hanophy,
   Logan Harbour,
-  Graham Harper,
   Daniel Jodlbauer,
   Stefan Kaessmair,
   Eldar Khattatov,
@@ -727,7 +732,6 @@ this release:\\
   Uwe K{\"o}cher,
   Kurt Kremitzki,
   Dustin Kumor,
-  Ross Kynch,
   Damien Lebrun-Grandie,
   Jonathan Matthews,
   Stefan Meggendorfer,
