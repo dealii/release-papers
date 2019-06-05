@@ -36,7 +36,7 @@
     Daniel Arndt,
     Wolfgang Bangerth,
     Denis Davydov,
-    Graham Harper
+    Graham Harper,
     Timo Heister,
     Luca Heltai,
     Martin Kronbichler,
@@ -61,7 +61,7 @@
 \author[2]{Wolfgang~Bangerth}
 \affil[2]{Department of Mathematics, Colorado State University, Fort
   Collins, CO 80523-1874, USA.
-  {\texttt{bangerth@colostate.edu}, 
+  {\texttt{bangerth@colostate.edu},
    \texttt{harper@math.colostate.edu}}}
 
 \author[3]{Denis~Davydov}
@@ -277,8 +277,8 @@ the release announcement.)
 \label{subsec:ad}
 
 In the previous release, numerous classes that are used to assemble linear systems
-and right hand sides, as well those used to define constitutive laws, were given 
-full support for ``white-listed'' automatically differentiable (AD) number types 
+and right hand sides, as well those used to define constitutive laws, were given
+full support for ``white-listed'' automatically differentiable (AD) number types
 from the ADOL-C and Sacado libraries. This included the classes that
 represent the local contributions of one cell to the global linear
 system (i.e., \texttt{FullMatrix} and \texttt{Vector}) as well as the
@@ -294,44 +294,44 @@ AD libraries, focussing on two specific use contexts:
 
 In the first context, the finite element degrees of freedom are considered the
 independent variables. From these primitives, the \texttt{EnergyFunctional} helper
-class in the namespace \texttt{Differentiation::AD} may be used to compute both the 
-residual and its linearization by directly defining the contribution to the 
-(twice differentiated) scalar total energy functional from each cell. Similarly, 
-the \texttt{ResidualLinearization} class requires the (once-differentiated) finite 
-element residual to be defined on a per cell basis,  and this contribution is 
+class in the namespace \texttt{Differentiation::AD} may be used to compute both the
+residual and its linearization by directly defining the contribution to the
+(twice differentiated) scalar total energy functional from each cell. Similarly,
+the \texttt{ResidualLinearization} class requires the (once-differentiated) finite
+element residual to be defined on a per cell basis,  and this contribution is
 automatically linearized.
 
 The second context aims directly at constitutive model formulations, and serves to
 compute the directional derivatives of components of (multi-field) constitutive laws
-with respect to the scalar, vector, tensor and symmetric tensor fields in terms 
-of which they are parameterized. The \texttt{ScalarFunction} class may be used to 
-define a scalar function (such as strain energy function) that may be twice 
+with respect to the scalar, vector, tensor and symmetric tensor fields in terms
+of which they are parameterized. The \texttt{ScalarFunction} class may be used to
+define a scalar function (such as strain energy function) that may be twice
 differentiated, while the \texttt{VectorFunction} may be used to define a vector
 function (such as a set of kinematic fields) that may be differentiated once.
-Since the total derivatives of all components are computed at once, these two helper 
-classes provide an interface to retrieve each sub-component of the gradient and 
-Hessian (for a \texttt{ScalarFunction}) or values and Jacobian (for a 
+Since the total derivatives of all components are computed at once, these two helper
+classes provide an interface to retrieve each sub-component of the gradient and
+Hessian (for a \texttt{ScalarFunction}) or values and Jacobian (for a
 \texttt{VectorFunction}).
 
 Although these aforementioned helper classes have been documented with a specific
 use in mind, they remain generic and may (with a reinterpretation of the meaning of
 the independent and dependent variables) be used for other purposes as well.
-Furthermore, through the implementation of \texttt{TapedDrivers} and 
-\texttt{TapelessDrivers} classes that interface with the active AD library, the 
-generic helper classes hide library-dependent implementational details and facilitate 
-switching between the supported libraries and AD number types based on the 
+Furthermore, through the implementation of \texttt{TapedDrivers} and
+\texttt{TapelessDrivers} classes that interface with the active AD library, the
+generic helper classes hide library-dependent implementational details and facilitate
+switching between the supported libraries and AD number types based on the
 user's requirements.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Dedicated support for symbolic algebra, including algebra differentiation}
 \label{subsec:sd}
 To complement the automatic differentiation features in \dealii{}, this release sees
-the first step towards integrating and supporting a highly performant computer algebra 
+the first step towards integrating and supporting a highly performant computer algebra
 system (CAS) via the SymEngine library.
 \marginpar{Could use a reference to SymEngine}
 The \texttt{Expression} class in the namespace \texttt{Differentiation::SD} interfaces
-to SymEngine and forms the basis of symbolic computations, offering a full set of 
-overloaded operators and a C++ style interface. This class offers the following 
+to SymEngine and forms the basis of symbolic computations, offering a full set of
+overloaded operators and a C++ style interface. This class offers the following
 basic functionality:
 \begin{itemize}
 \item symbolic variable definition,
@@ -345,8 +345,8 @@ basic functionality:
 \item substitution (partial and complete), and
 \item serialization.
 \end{itemize}
-\dealii{} now also provides an extensive set of math operations, with a syntax mimicking that used 
-in the C++ standard library. Using the \texttt{Expression} class as a basis, we 
+\dealii{} now also provides an extensive set of math operations, with a syntax mimicking that used
+in the C++ standard library. Using the \texttt{Expression} class as a basis, we
 have developed a set of functions that can be used to create \dealii{} \texttt{Tensor}s
 and \texttt{SymmetricTensor}s of symbolic variables and symbolic functions. This
 gives full symbolic tensor algebra support using the pre-existing \texttt{Tensor}
@@ -357,17 +357,17 @@ also implemented a set of utility functions with the following features:
 with respect to other scalar expressions, tensor and symmetric tensors of expressions;
 \item create symbolic substitution maps;
 \item resolve explicit dependencies between expressions; and
-\item perform scalar and tensor valued substitution (including conversion from symbolic to 
+\item perform scalar and tensor valued substitution (including conversion from symbolic to
 real-valued scalars and tensors).
 \end{itemize}
 
-In the next release we expect to implement classes to assist in performing assembly operations 
+In the next release we expect to implement classes to assist in performing assembly operations
 in the same spirit as that which has been done in the \texttt{Differentiation::AD} namespace,
 although in a fully symbolic manner.
 We will also address performance issues of the \texttt{Expression} class by leveraging
-the optimization capabilities of SymEngine, including common subexpression elimination (CSE), 
+the optimization capabilities of SymEngine, including common subexpression elimination (CSE),
 as well as by generating high performance code-paths to evaluate these expressions through the
-use of a custom-generated \texttt{std::function} (so-called ``lambda'' optimization) or by 
+use of a custom-generated \texttt{std::function} (so-called ``lambda'' optimization) or by
 compiling expressions using the LLVM JIT compiler.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -492,7 +492,7 @@ GPU support was significantly extended for the current release:
     \cite{ljungkvist2017}. With this addition, both Dirichlet
     boundary conditions and the constraints arising from adaptively
     refined meshes can be imposed within the matrix-free framework. The only restriction is that for two-dimensional meshes the
-    finite element degree must be odd.  
+    finite element degree must be odd.
     \marginpar{Can we explain this restriction? It seems odd (pun intended)...}
     \marginpar{BT: No, we cannot. I have spent at least two full weeks trying to
     understand why it doesn't work, i.e., gives the wrong result, but I don't know. We decided at the time that
