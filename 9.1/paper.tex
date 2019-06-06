@@ -179,7 +179,7 @@ The major changes of this release are:
     Section~\ref{subsec:sd}),
   \item Full support for $hp$~adaptivity in parallel computations (see
     Section~\ref{subsec:hp}),
-  \item Interfaces to the HDF5 file format and libraries (see
+  \item An interface to the HDF5 file format and libraries (see
     Section~\ref{subsec:hdf5}),
   \item Significantly extended GPU support (see Section~\ref{subsec:gpu}),
   \item Parallel geometric multigrid (GMG) improvements (see
@@ -483,10 +483,40 @@ and their performance in a separate publication.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Interfaces to the HDF5 file format and libraries}
+\subsection{Interface to the HDF5 file format and libraries}
 \label{subsec:hdf5}
+\texttt{HDF5} is an open-source library and file format designed to store large amounts of data.
+The \texttt{HDF5} format is specially tailored for high volume parallel I/O operations using MPI.
+\texttt{HDF5} files are self-describing and allow complex data relationships and a large variety
+of datatypes. In addition the \texttt{HDF5} format is designed for long-term preservation of
+data; a \texttt{HDF5} file created by a HPC system can be easily read by a commodity laptop.
 
-\marginpar{Missing}
+The new \dealii{}'s \texttt{HDF5} interface allows to write \texttt{HDF5} files and manipulate
+datasets, groups, and attributes in serial and in parallel using MPI. The
+\texttt{HDF5} MPI library calls that modify the structure of the file are
+always collective, whereas writing and reading raw data in a dataset can be done
+independently or collectively. In the \dealii{}'s \texttt{HDF5} interface all the calls are
+set to collective in order to maximize performance. This means that all the MPI
+processes have to contribute to every single call, even if they don't have data to write.
+We have added the following classes to the \dealii{}'s \texttt{HDF5} namespace. 
+\begin{itemize}
+\item The new \texttt{HDF5::File} class can be used to open and create \texttt{HDF5} files
+in serial or in parallel. 
+\item The new \texttt{HDF5::Group} class can be used to open and create groups.
+ \texttt{HDF5} files have a tree structure. The root contains groups and
+the groups can contain other groups.
+\item The new \texttt{HDF5::DataSet} class can be used to open and create datasets which
+can be placed inside groups or at the root of the \texttt{HDF5} file. A dataset can be a
+vector, a matrix, or a tensor. It is possible to read and write in the dataset using
+hyperslabs or unordered data. Hyperslabs are portions of datasets
+which can be a contiguous collection of points in a dataset, or a regular
+pattern of points or blocks in a datataset.
+\item It is possible to define attributes in the \texttt{HDF5::File}, \texttt{HDF5::Group} and
+\texttt{HDF5::DataSet} classes. An attribute is a small metadata such as a number or a string.
+Attributes are commonly used to store simulation parameters.
+\end{itemize}
+As we have shown in \texttt{step-62}, the \dealii{}'s \texttt{HDF5} interface can be easily used
+to exchange data with python and jupyter notebooks.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{GPU support via CUDA}
