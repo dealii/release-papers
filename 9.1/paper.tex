@@ -211,10 +211,9 @@ that we briefly outline in the remainder of this section:
   functions on each edge (in 2d) or face (in 3d). It addresses the fact
   that the $Q_1^d\times Q_0$ combination is not inf-sup stable (requiring a
   larger velocity space), and that the $Q_2^d\times Q_0$ combination is
-  stable but sub-optimal since the velocity space is too large relative to
-  the pressure space to provide additional accuracy commensurate with the
-  cost of the large number of velocity unknowns. The BR space is
-  thus intermediate to the $Q_1^d$ and $Q_2^d$ spaces.
+  stable but converges with only first-order at the cost of the large
+  number of velocity unknowns. The BR space is thus intermediate to the
+  $Q_1^d$ and $Q_2^d$ spaces.
 
   The element is currently only implemented for parallelogram meshes due to
   difficulties associated with the mapping of shape functions: The shape
