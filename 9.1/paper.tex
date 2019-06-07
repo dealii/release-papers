@@ -163,7 +163,7 @@
 
 \dealii version 9.1.0 was released May 21, 2019.
 This paper provides an
-overview of the new features of this major release and serves as a citable
+overview of the new features of this release and serves as a citable
 reference for the \dealii software library version 9.1. \dealii is an
 object-oriented finite element library used around the world in the
 development of finite element solvers. It is available for free under the
@@ -196,20 +196,16 @@ that we briefly outline in the remainder of this section:
 %
 \begin{itemize}
 \item
-  The release contains bug fixes and performance improvements of the
-  matrix-free framework and related geometric multigrid solvers. In
-  particular, the implementation of the Chebyshev iteration, an often used
-  smoother in the matrix-free context, has been revised to reduce vector
-  accesses. This speeds up matrix-free multigrid solvers by up to 10-15\%
-  on geometries with affine (parallelogram and parallelpiped) cells, and up
-  to 5\% on geometries with cells bounded by curved edges and faces.
-
-\item
-  Various variants of geometric multigrid solvers and matrix-free
-  implementations were run on up to 304,128 MPI ranks during the acceptance
-  phase of the SuperMUC-NG supercomputer, verifying the scalability of our
-  implementations. Some performance bottlenecks on distributed
-  triangulation with more than 100k ranks have been fixed.
+  The release contains a number of performance improvements and bug fixes for
+  the matrix-free framework. One notable improvement is the support for
+  renumbering of degrees of freedom within the cells for discontinuous
+  elements, avoiding some reshuffling operations across the SIMD lanes
+  with vectorization over several cells and faces, which is especially
+  useful on processors with AVX-512 vectorization (8 doubles), speeding up
+  operations by up to 10\%. Secondly, the strategy for the most efficient
+  tensor product evaluators according to the performance analysis of
+  \cite{KronbichlerKormann2019} in the context of more quadrature points than
+  shape functions has been revised for better performance.
 
 \item A new class \texttt{ParsedConvergenceTable} has been introduced
   that greatly simplifies the construction of convergence tables,
@@ -300,7 +296,7 @@ classes commonly used for the computations at individual quadrature
 points (primarily the \texttt{Tensor} and \texttt{SymmetricTensor}
 classes of various ranks).
 In the current release we have provided a unified interface to these
-AD libraries, focussing on two specific use contexts:
+AD libraries, focusing on two specific use contexts:
 \begin{enumerate}
 \item The construction and linearization of finite element residuals; and
 \item The construction and linearization of constitutive model kinetic variables.
@@ -312,7 +308,7 @@ class in the namespace \texttt{Differentiation::AD} may be used to compute both 
 residual and its linearization by directly defining the contribution to the
 (twice differentiated) scalar total energy functional from each cell. Similarly,
 the \texttt{ResidualLinearization} class requires the (once-differentiated) finite
-element residual to be defined on a per cell basis,  and this contribution is
+element residual to be defined on a per-cell basis,  and this contribution is
 automatically linearized.
 
 The second context aims directly at constitutive model formulations, and serves to
@@ -488,8 +484,8 @@ and their performance in a separate publication.
 \texttt{HDF5} is an open-source library and file format designed to store large amounts of data.
 The \texttt{HDF5} format is specially tailored for high volume parallel I/O operations using MPI.
 \texttt{HDF5} files are self-describing and allow complex data relationships and a large variety
-of datatypes. In addition the \texttt{HDF5} format is designed for long-term preservation of
-data; a \texttt{HDF5} file created by a HPC system can be easily read by a commodity laptop.
+of datatypes. In addition, the \texttt{HDF5} format is designed for long-term preservation of
+data; a \texttt{HDF5} file created by an HPC system can be easily read by a commodity laptop.
 
 \dealii{}'s new  \texttt{HDF5} interface allows to write \texttt{HDF5} files and manipulate
 datasets, groups, and attributes in serial and in parallel using MPI. The
@@ -498,10 +494,10 @@ always collective, whereas writing and reading raw data in a dataset can be done
 independently or collectively. In the \dealii{}'s \texttt{HDF5} interface all the calls are
 set to collective in order to maximize performance. This means that all the MPI
 processes have to contribute to every single call, even if they don't have data to write.
-We have added the following classes to the \dealii{}'s \texttt{HDF5} namespace. 
+We have added the following classes to the \dealii{}'s \texttt{HDF5} namespace.
 \begin{itemize}
 \item The new \texttt{HDF5::File} class can be used to open and create \texttt{HDF5} files
-in serial or in parallel. 
+in serial or in parallel.
 \item The new \texttt{HDF5::Group} class can be used to open and create groups.
  \texttt{HDF5} files have a tree structure. The root contains groups and
 the groups can contain other groups.
@@ -573,8 +569,50 @@ multigrid solvers is discussed.
 \subsection{Parallel geometric multigrid improvements}
 \label{subsec:gmg}
 
-\textcolor{red}{Missing: performance optimizations, new features, largest
-runs now at XYZ (Kronbichler?)}
+For the 9.1 release, the geometric multigrid facilities have been extended and
+revised for performance. The geometric multigrid algorithms for uniform and
+adaptively refined meshes in \dealii are based on so-called local coarsening,
+i.e., smoothening is applied level-per-level, skipping parts of the domain
+where the mesh is not as refined. The algorithm for the assignment of the
+owner on level cells and the implications on load balancing have been analyzed
+in detail in \cite{ClevengerHeisterKanschatKronbichler2019}. While most of the
+functionality was already available since the 8.5 release of \dealii presented
+in \cite{dealII85}, several components have been finalized, such as the
+support for certain renumbering algorithms that are beneficial for matrix-free
+execution, and interfaces that allow the combination with matrix-free GPU
+computations according to \cite{KronbichlerLjungkvist2019}.
+
+A number of data structures and implementations in \dealii have been adapted
+to ensure scalability of the matrix-free algorithms and geometric multigrid
+infrastructure on more than 100,000 MPI ranks. Geometric multigrid solver for
+the Poisson equation as described in \cite{KronbichlerWall2018} have been used
+as performance tests during the acceptance phase of the SuperMUC-NG
+supercomputer in Garching, Germany. Scaling tests have been performed on up to
+the full machine with 304,128 cores of the Intel Xeon Skylake architecture and
+arithmetic performance of around 5 PFlop/s for a geometric multigrid solver
+with polynomials of degree 4 has been reached. Compared to the official
+LINPACK performance of the machine of 19.5 PFlop (the machine is listed on
+position 8 of the top-500 list of November 2018), this can be considered an
+extremely good value for a PDE solver which have classically only reached a
+few percent of the LINPACK performance, and given the optimization steps
+contained in the matrix-free module of \dealii that aim to minimize the time
+to solution rather than maximize the number of floating point operations. The
+largest Poisson problem that has been solved on 304k cores contained 2.15
+trillion unknowns (or 7.1 million unknowns per MPI rank) and was solved in 3.5
+seconds. Also, CFD production runs with up to $10^{11}$ unknowns and $10^5$
+time steps have been completed in less than seven hours, demonstrating the
+capabilities of \dealii for large-scale parallel computations.
+
+Furthermore, the implementation of the Chebyshev iteration, \dealii's most
+popular smoother in the matrix-free context, has been revised to reduce the
+vector accesses. The vector operations have become an increasing bottleneck
+due to the level of optimization available for the operator evaluation with
+our matrix-free framework \cite{KronbichlerKormann2019}, especially on newer
+CPUs which can perform a large number of arithmetic operations per byte loaded
+from main memory. This speeds up matrix-free multigrid solvers by up to
+10--15\% on geometries with affine (parallelogram and parallelpiped) cells,
+and up to 5\% on deformed cells.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and improved tutorial and code gallery programs}
@@ -807,6 +845,12 @@ f\"ur Technisch-Wissenschaftliches Hoch- und H\"ochstleistungsrechnen
 
 T.~Heister was also partially supported by NSF Award DMS-1522191, and
 by Technical Data Analysis, Inc. through US Navy SBIR N16A-T003.
+
+M.~Kronbichler was supported by the Bayerisches Kompetenznetzwerk
+f\"ur Technisch-Wissen\-schaft\-li\-ches Hoch- und H\"ochstleistungsrechnen
+(KONWIHR) in the context of the project
+``Performance tuning of high-order discontinuous Galerkin solvers for
+SuperMUC-NG''.
 
 M.~Maier was partially supported by ARO MURI Award No. W911NF-14-0247.
 
