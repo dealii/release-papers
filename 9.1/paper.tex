@@ -224,7 +224,7 @@ that we briefly outline in the remainder of this section:
   that the $Q_1^d\times Q_0$ combination is not inf-sup stable (requiring a
   larger velocity space), and that the $Q_2^d\times Q_0$ combination is
   stable but converges with only first-order at the cost of the large
-  number of velocity unknowns. The BR space is thus intermediate to the
+  number of velocity unknowns. The BR space is thus intermediate between the
   $Q_1^d$ and $Q_2^d$ spaces.
 
   The element is currently only implemented for parallelogram meshes due to
@@ -280,8 +280,6 @@ vast number of smaller changes and added functionality; the details of these
 can be found
 \href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_0_1_and_9_1_0.html}{
 in the file that lists all changes for this release}, see \cite{changes91}.
-(The file is also linked to from the web site of each release as well as
-the release announcement.)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Improved support for automatic differentiation}
@@ -314,7 +312,7 @@ automatically linearized.
 
 The second context aims directly at constitutive model formulations, and serves to
 compute the directional derivatives of components of (multi-field) constitutive laws
-with respect to the scalar, vector, tensor and symmetric tensor fields in terms
+with respect to the scalar, vector, tensor, and symmetric tensor fields in terms
 of which they are parameterized. The \texttt{ScalarFunction} class may be used to
 define a scalar function (such as strain energy function) that may be twice
 differentiated, while the \texttt{VectorFunction} may be used to define a vector
@@ -363,8 +361,8 @@ gives full symbolic tensor algebra support using the pre-existing \texttt{Tensor
 and \texttt{SymmetricTensor} classes and associated functions. We have
 also implemented a set of utility functions with the following features:
 \begin{itemize}
-\item \texttt{differentiate} scalar expressions, tensor and symmetric tensors of expressions
-with respect to other scalar expressions, tensor and symmetric tensors of expressions;
+\item \texttt{differentiate} scalar, tensor, and symmetric tensor expressions
+with respect to other scalar, tensor, or symmetric tensor expressions;
 \item create symbolic substitution maps;
 \item resolve explicit dependencies between expressions; and
 \item perform scalar and tensor valued substitution (including conversion from symbolic to
@@ -372,7 +370,7 @@ real-valued scalars and tensors).
 \end{itemize}
 
 In the next release we expect to implement classes to assist in performing assembly operations
-in the same spirit as that which has been done in the \texttt{Differentiation::AD} namespace,
+in the same spirit as it is already possible using automatic differentation using the \texttt{Differentiation::AD} namespace,
 although in a fully symbolic manner.
 We will also address performance issues of the \texttt{Expression} class by leveraging
 the optimization capabilities of SymEngine, including common subexpression elimination (CSE),
@@ -513,7 +511,7 @@ pattern of points or blocks in a datataset.
 Attributes are commonly used to store simulation parameters.
 \end{itemize}
 As we have shown in \texttt{step-62}, the \dealii{}'s \texttt{HDF5} interface can be easily used
-to exchange data with python and jupyter notebooks.
+to exchange data with Python and Jupyter notebooks.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{GPU support via CUDA}
@@ -530,7 +528,7 @@ GPU support was significantly extended for the current release:
     \texttt{Host} and the behavior is unchanged compared to previous versions.
     When using CUDA, the ghost exchange can be performed either by first copying
     the relevant data to the host, performing MPI communication, and finally
-    move the data to the device or, if CUDA-aware MPI is available, by
+    moving the data to the device or, if CUDA-aware MPI is available, by
     performing MPI communication directly between GPUs.
   \item Constrained degrees of freedom: the matrix-free framework now
     supports constrained degrees of freedom. The implementation is based on
@@ -595,9 +593,11 @@ with polynomials of degree 4 has been reached. Compared to the official
 LINPACK performance of the machine of 19.5 PFlop/s (the machine is listed on
 position 8 of the top-500 list of November 2018), this can be considered an
 extremely good value for a PDE solver which have classically only reached a
-few percent of the LINPACK performance, and given the optimization steps
-contained in the matrix-free module of \dealii that aim to minimize the time
-to solution rather than maximize the number of floating point operations. The
+few percent of the LINPACK performance.
+More importantly, this is achieved within a flexible framework supporting
+arbitrary polynomial order on adaptively refined, unstructured meshes and
+with algorithms in the matrix-free module of \dealii designed to minimize time
+to solution and scalability, rather than maximizing the number of floating point operations. The
 largest Poisson problem that has been solved on 304k cores contained 2.15
 trillion unknowns (or 7.1 million unknowns per MPI rank) and was solved in 3.5
 seconds. Also, CFD production runs with up to $10^{11}$ unknowns and $10^5$
@@ -609,7 +609,7 @@ classes. While a few bottlenecks have already been resolved, we plan several
 further improvements in setup times for the next release.
 
 Furthermore, the implementation of the Chebyshev iteration, \dealii's most
-popular smoother in the matrix-free context, has been revised to reduce the
+popular smoother in the matrix-free context, has been revised to reduce the number of
 vector accesses. The vector operations have become an increasing bottleneck
 due to the level of optimization available for the operator evaluation with
 our matrix-free framework \cite{KronbichlerKormann2019}, especially on newer
@@ -645,17 +645,19 @@ gallery program:
   use of absorbing boundary conditions through the Perfectly Matched
   Layer technique.
 
-\item \texttt{step-63} implements a multigrid preconditioner
+\item \texttt{step-63} implements a geometric multigrid preconditioner
   and solver for the advection-diffusion equation, yielding optimal
-  complexity.
+  complexity. The tutorial compares
+  point-based smoothers to cell-based smoothers and
+  demonstrates the effect of downstream ordering on smoother performance.
 
 \item \texttt{step-64} demonstrates the usage of matrix-free methods on Nvidia GPUs.
-GPUs are advantageous for these kind of operations because of their superior
+GPUs are shown to be advantageous for these kind of operations because of their superior
 hardware characteristics, in particular a higher memory bandwidth than server
 CPUs within a given power envelope.
 
 \item The \texttt{MCMC-Laplace} code gallery program is a code useful
-  for the forward solution that is used as a building block in
+  for the forward solution used as a building block in
   Bayesian inverse problems, and for sampling the parameter space
   through a Metropolis-Hastings sampler (a kind of Monte Carlo
   Markov Chain method).
@@ -679,7 +681,7 @@ applications. However, some are worth mentioning:
   \texttt{SmartPointer} class, now requires a pointer to a
       \texttt{std::atomic<bool>} that tracks whether or not the pointer to the
       subscribed-to object is still valid.
-\item The \texttt{ConstraintMatrix} class gained a template parameter for scalar
+\item The \texttt{ConstraintMatrix} class gained a template parameter for the scalar
       type and was been renamed \texttt{AffineConstraints}. Several methods that
       take vectors or matrices as arguments,
       such as \texttt{AffineConstraints::distribute\_local\_to\_global()},
@@ -835,13 +837,15 @@ Research Foundation (DFG) under the project ``High-order discontinuous
 Galerkin for the exa-scale'' (\mbox{ExaDG}) within the priority program ``Software
 for Exascale Computing'' (SPPEXA).
 
-W.~Bangerth and T.~Heister were partially
+W.~Bangerth, T.~C.~Clevenger, and T.~Heister were partially
 supported by the National Science Foundation under award OAC-1835673
 as part of the Cyberinfrastructure for Sustained Scientific Innovation (CSSI)
-program; by award DMS-1821210; and by the Computational Infrastructure
+program  and by the Computational Infrastructure
 in Geodynamics initiative (CIG), through the National Science
 Foundation under Award No.~EAR-1550901 and The
 University of California -- Davis.
+
+W.~Bangerth and T.~Heister were also partially supported by award DMS-1821210.
 
 D.~Davydov was supported by the German Research Foundation (DFG), grant DA
 1664/2-1 and the Bayerisches Kompetenznetzwerk
