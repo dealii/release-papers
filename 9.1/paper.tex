@@ -601,7 +601,11 @@ largest Poisson problem that has been solved on 304k cores contained 2.15
 trillion unknowns (or 7.1 million unknowns per MPI rank) and was solved in 3.5
 seconds. Also, CFD production runs with up to $10^{11}$ unknowns and $10^5$
 time steps have been completed in less than seven hours, demonstrating the
-capabilities of \dealii for large-scale parallel computations.
+capabilities of \dealii for large-scale parallel computations. The tests
+also revealed several relatively expensive operations in the setup of the
+multigrid unknowns in \dealii's \texttt{DoFHandler} and \texttt{MGTransfer}
+classes. While a few bottlenecks have already been resolved, we plan several
+further improvements in setup times for the next release.
 
 Furthermore, the implementation of the Chebyshev iteration, \dealii's most
 popular smoother in the matrix-free context, has been revised to reduce the
