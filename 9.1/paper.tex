@@ -242,9 +242,14 @@ that we briefly outline in the remainder of this section:
   N{\'e}d{\'e}lec element on quadrilaterals and hexahedra. It is based on
   the work of Zaglmayr \cite{Zag06} and overcomes the sign conflict issues
   present in traditional N{\'e}d{\'e}lec elements that arise from the edge
-  and face parameterizations used in the basis functions. Therefore, this
+  and face parameterizations used in the basis functions.
+  Because of the sign conflict it is only possible to use the traditional
+  N{\'e}d{\'e}lec element either in a grid configuration or in a complex
+  tetrahedra mesh configuration. It is not possible to use traditional
+  N{\'e}d{\'e}lec in a complex hexahedra mesh configuration. This
   element should provide consistent results for general quadrilateral and
-  hexahedral elements for which the relative orientations of edges and
+  hexahedral elements in a complex mesh configuration
+  for which the relative orientations of edges and
   faces (as seen from all adjacent cells) are often difficult to establish.
   The \texttt{FE\_NedelecSZ} element addresses the sign conflict problem by
   assigning a globally defined orientation to local edges and faces. A
