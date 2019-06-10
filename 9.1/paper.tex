@@ -340,6 +340,13 @@ user's requirements.
 To complement the automatic differentiation features in \dealii{}, this release sees
 the first step towards integrating and supporting a highly performant computer algebra
 system (CAS) via the SymEngine library \cite{symengine-web-page}.
+This allows the development of exact algebraic expressions using variables that are
+manipulated symbolically and may represent any value (or supported data structure).
+In the context of finite element simulations, typical applications include (but, due to
+the generality of the CAS, are not limited to) the development of constitutive models
+and the implementation of finite element assembly operations through the construction
+and linearization of finite element residuals.
+
 The \texttt{Expression} class in the namespace \texttt{Differentiation::SD} interfaces
 to SymEngine and forms the basis of symbolic computations, offering a full set of
 overloaded operators and a C++ style interface. This class offers the following
