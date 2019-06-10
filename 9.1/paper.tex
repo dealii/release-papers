@@ -371,8 +371,10 @@ gives full symbolic tensor algebra support using the pre-existing \texttt{Tensor
 and \texttt{SymmetricTensor} classes and associated functions. We have
 also implemented a set of utility functions with the following features:
 \begin{itemize}
-\item \texttt{differentiate} scalar, tensor, and symmetric tensor expressions
-with respect to other scalar, tensor, or symmetric tensor expressions;
+\item \texttt{differentiate} scalar expressions with respect to other scalar expressions, as well as
+tensors and symmetric tensors of expressions;
+\item \texttt{differentiate} tensors and symmetric tensors of expressions
+with respect to scalar expressions, as well as other tensors and symmetric tensors of expressions;
 \item create symbolic substitution maps;
 \item resolve explicit dependencies between expressions; and
 \item perform scalar and tensor valued substitution (including conversion from symbolic to
