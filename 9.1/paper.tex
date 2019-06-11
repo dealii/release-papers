@@ -583,28 +583,28 @@ multigrid solvers is discussed.
 For the 9.1 release, the geometric multigrid facilities have been extended and
 revised for performance. The geometric multigrid algorithms for uniform and
 adaptively refined meshes in \dealii are based on so-called local coarsening,
-i.e., smoothening is applied level-per-level, skipping parts of the domain
+i.e., smoothening is done level-per-level, skipping parts of the domain
 where the mesh is not as refined. The algorithm for the assignment of the
 owner on level cells and the implications on load balancing have been analyzed
 in detail in \cite{ClevengerHeisterKanschatKronbichler2019}. While most of the
-functionality was already available since the 8.5 release of \dealii presented
+functionality has already been available since the 8.5 release of \dealii presented
 in \cite{dealII85}, several components have been finalized, such as the
 support for certain renumbering algorithms that are beneficial for matrix-free
 execution, and interfaces that allow the combination with matrix-free GPU
-computations according to \cite{KronbichlerLjungkvist2019}.
+computations as showcased in \cite{KronbichlerLjungkvist2019}.
 
 A number of data structures and implementations in \dealii have been adapted
 to ensure scalability of the matrix-free algorithms and geometric multigrid
-infrastructure on more than 100,000 MPI ranks. Geometric multigrid solver for
-the Poisson equation as described in \cite{KronbichlerWall2018} have been used
-as performance tests during the acceptance phase of the SuperMUC-NG
+infrastructure on more than 100,000 MPI ranks. A geometric multigrid solver for
+the Poisson equation as described in \cite{KronbichlerWall2018} has been used
+as a performance test during the acceptance phase of the SuperMUC-NG
 supercomputer in Garching, Germany. Scaling tests have been performed on up to
 the full machine with 304,128 cores of the Intel Xeon Skylake architecture and
 an arithmetic performance of around 5 PFlop/s for a geometric multigrid solver
 with polynomials of degree 4 has been reached. Compared to the official
 LINPACK performance of the machine of 19.5 PFlop/s (the machine is listed on
 position 8 of the top-500 list of November 2018), this can be considered an
-extremely good value for a PDE solver which have classically only reached a
+extremely good value for PDE solvers which have classically only reached a
 few percent of the LINPACK performance.
 More importantly, this is achieved within a flexible framework supporting
 arbitrary polynomial order on adaptively refined, unstructured meshes and
@@ -612,13 +612,13 @@ with algorithms in the matrix-free module of \dealii designed to minimize time
 to solution and scalability, rather than maximizing the number of floating point operations. The
 largest Poisson problem that has been solved on 304k cores contained 2.15
 trillion unknowns (or 7.1 million unknowns per MPI rank) and was solved in 3.5
-seconds. Also, CFD production runs with up to $10^{11}$ unknowns and $10^5$
+seconds. Also, CFD production runs with $10^{11}$ unknowns and $10^5$
 time steps have been completed in less than seven hours, demonstrating the
 capabilities of \dealii for large-scale parallel computations. The scaling tests
 also revealed several relatively expensive operations in the setup of the
 multigrid unknowns in \dealii's \texttt{DoFHandler} and \texttt{MGTransfer}
-classes. While a few bottlenecks have already been resolved, we plan several
-further improvements in setup times for the next release.
+classes. While a few bottlenecks have already been resolved for the present
+release, we plan several further improvements of the setup stage for the next release.
 
 Furthermore, the implementation of the Chebyshev iteration, \dealii's most
 popular smoother in the matrix-free context, has been revised to reduce the number of
@@ -671,7 +671,7 @@ CPUs within a given power envelope.
 \item The \texttt{MCMC-Laplace} code gallery program is a code useful
   for the forward solution used as a building block in
   Bayesian inverse problems, and for sampling the parameter space
-  through a Metropolis-Hastings sampler (a kind of Monte Carlo
+  through a Metropolis--Hastings sampler (a kind of Monte Carlo
   Markov Chain method).
 \end{itemize}
 
