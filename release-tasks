@@ -198,7 +198,7 @@ Contributors for 9.1: (updated 2019-05-12)
 
 
 0b/ Check for doxygen formatting problems by running contrib/utilities/checkdoxygen.py:
-      find doc examples include -name "*.h" -o -name "*.dox" -print | xargs -n 1 ./contrib/utilities/checkdoxygen.py
+      find doc examples include \( -name "*.h" -o -name "*.dox" \) -print | xargs -n 1 ./contrib/utilities/checkdoxygen.py
 +
     and push the corresponding changes
 
