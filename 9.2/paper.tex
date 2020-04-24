@@ -44,7 +44,7 @@
 %     Graham Harper,
     Timo Heister,
 %     Luca Heltai,
-%     Martin Kronbichler,
+    Martin Kronbichler,
 %     Ross Maguire Kynch,
 %     Matthias Maier,
 %     Jean-Paul Pelteret,
@@ -62,39 +62,39 @@
 %   Oak Ridge National Laboratory, 1 Bethel Valley Rd.,
 %   TN 37831, USA.
 %   {\texttt{\{arndtd,turcksinbr\}@ornl.gov}}}
-% 
+%
 % \author[2]{Wolfgang~Bangerth}
 % \affil[2]{Department of Mathematics, Colorado State University, Fort
 %   Collins, CO 80523-1874, USA.
 %   {\texttt{bangerth@colostate.edu},
 %    \texttt{harper@math.colostate.edu}}}
-% 
+%
 % \author[3]{Thomas~C.~Clevenger}
 % \affil[3]{School of Mathematical and Statistical Sciences,
 %   Clemson University,
 %   Clemson, SC, 29634, USA
 %   {\texttt{\{tcleven, heister\}@clemson.edu}}}
-% 
+%
 % \author[4]{Denis~Davydov}
 % \affil[4]{Chair of Applied Mechanics,
 %   Friedrich-Alexander-Universit\"{a}t Erlangen-N\"{u}rnberg,
 %   Egerlandstr.\ 5,
 %   91058 Erlangen, Germany.
 %   {\texttt{\{denis.davydov,jean-paul.pelteret\}@fau.de}}}
-% 
+%
 % \author[5]{Marc~Fehling}
 % \affil[5]{Institute for Advanced Simulation,
 %   Forschungszentrum J\"{u}lich GmbH,
 %   52425 J\"{u}lich, Germany.
 %   {\texttt{m.fehling@fz-juelich.de}}}
-% 
+%
 % \author[6]{Daniel Garcia-Sanchez}
 % \affil[6]{Sorbonne Universit\'es, UPMC Univ.\ Paris 06, CNRS-UMR 7588,
 %   Institut des NanoSciences de Paris, F-75005, Paris, France
 %   {\texttt{daniel.garcia-sanchez@insp.upmc.fr}}}
-% 
+%
 % \author[2]{Graham Harper}
-% 
+%
 \author[3]{Timo~Heister}
  \affil[3]{School of Mathematical and Statistical Sciences,
    Clemson University,
@@ -108,30 +108,30 @@
 %   Via Bonomea 265,
 %   34136, Trieste, Italy.
 %   {\texttt{luca.heltai@sissa.it}}}
-% 
-% \author[9]{Martin~Kronbichler}
-% \affil[9]{Institute for Computational Mechanics,
-%   Technical University of Munich,
-%   Boltzmannstr.~15, 85748 Garching, Germany.
-%   {\texttt{kronbichler@lnm.mw.tum.de}}}
-% 
+%
+ \author[9]{Martin~Kronbichler}
+ \affil[9]{Institute for Computational Mechanics,
+   Technical University of Munich,
+   Boltzmannstr.~15, 85748 Garching, Germany.
+   {\texttt{kronbichler@lnm.mw.tum.de}}}
+%
 % \author[10]{Ross~Maguire~Kynch}
 % \affil[10]{Zienkiewicz Centre for Computational Engineering,
 %   College of Engineering, Swansea University,
 %   Bay Campus, Fabian Way, Swansea SA1 8EN, Wales, UK.
 %   {\texttt{rkynch@gmail.com}}}
-% 
+%
 % \author[11]{Matthias~Maier}
 % \affil[11]{Department of Mathematics,
 %   Texas A\&M University,
 %   3368 TAMU,
 %   College Station, TX 77845, USA.
 %   {\texttt{maier@math.tamu.edu}}}
-% 
+%
 % \author[4]{Jean-Paul~Pelteret}
-% 
+%
 % \author[*1]{Bruno~Turcksin}
-% 
+%
 % \author[12]{David Wells}
 % \affil[12]{Department of Mathematics, University of North Carolina,
 %   Chapel Hill, NC 27516, USA.
@@ -213,14 +213,14 @@ that we briefly outline in the remainder of this section:
 %   tensor product evaluators according to the performance analysis of
 %   \cite{KronbichlerKormann2019} in the context of more quadrature points than
 %   shape functions has been revised for better performance.
-% 
+%
 % \item A new class \texttt{ParsedConvergenceTable} has been introduced
 %   that greatly simplifies the construction of convergence tables,
 %   reading the options for the generation of the table from a parameter
 %   file, and providing methods that, combined with a parameter file,
 %   allow one to generate convergence tables using one-liners in user
 %   codes.
-% 
+%
 % \item
 %   The \texttt{FE\_BernardiRaugel} class implements the non-standard
 %   Bernardi-Raugel (BR) element that can be used to construct a stable
@@ -232,7 +232,7 @@ that we briefly outline in the remainder of this section:
 %   stable but converges with only first-order at the cost of the large
 %   number of velocity unknowns. The BR space is thus intermediate between the
 %   $Q_1^d$ and $Q_2^d$ spaces.
-% 
+%
 %   The element is currently only implemented for parallelogram meshes due to
 %   difficulties associated with the mapping of shape functions: The shape
 %   functions of the $Q_1^d$ part of the element need to be mapped as
@@ -242,7 +242,7 @@ that we briefly outline in the remainder of this section:
 %   element. \dealii{} does not currently have the ability to use different
 %   mappings for individual shape functions, though this functionality is
 %   planned for the next release.
-% 
+%
 % \item
 %   The \texttt{FE\_NedelecSZ} class is a new implementation of the
 %   N{\'e}d{\'e}lec element on quadrilaterals and hexahedra. It is based on
@@ -256,7 +256,7 @@ that we briefly outline in the remainder of this section:
 %   assigning a globally defined orientation to local edges and faces. A
 %   detailed overview of the implementation of the \texttt{FE\_NedelecSZ}
 %   element in \dealii{} can be found in \cite{Kynch2017}.
-% 
+%
 % \item All of the elementary geometrical objects of the library (namely
 %   \texttt{Point<dim>}, \texttt{Segment<dim>}, and
 %   \texttt{BoundingBox<dim>}) have been augmented with the traits
@@ -302,40 +302,15 @@ part of this release. In particular, we have converted many places
 that now allow for simpler code through the use of C++11 features such
 as range-based for loops and lambda functions.
 
-In addition, there are four new tutorial programs and one new code
-gallery program:
+In addition, there are seven new tutorial programs:
 \begin{itemize}
-\item 
-% \texttt{step-61} is a program that implements the ``weak
-%   Galerkin'' method to solve the Laplace equation. Weak Galerkin
-%   methods are related to the Hybridized Discontinuous Galerkin method
-%   in that they introduce degrees of freedom on the interfaces between
-%   cells, but they do not require the reformulation of the problem as a
-%   first-order system and instead re-define what the gradient of a
-%   discontinuous function is.
-% 
-% \item \texttt{step-62} demonstrates the solution of problems related
-%   to phononic or photonic crystals. Among the techniques shown in this
-%   program is the solution of complex-valued linear systems, and the
-%   use of absorbing boundary conditions through the Perfectly Matched
-%   Layer technique.
-% 
-% \item \texttt{step-63} implements a geometric multigrid preconditioner
-%   and solver for the advection-diffusion equation, yielding optimal
-%   complexity. The tutorial compares
-%   point-based smoothers to cell-based smoothers and
-%   demonstrates the effect of downstream ordering on smoother performance.
-% 
-% \item \texttt{step-64} demonstrates the usage of matrix-free methods on Nvidia GPUs.
-% GPUs are shown to be advantageous for these kind of operations because of their superior
-% hardware characteristics, in particular a higher memory bandwidth than server
-% CPUs within a given power envelope.
-% 
-% \item The \texttt{MCMC-Laplace} code gallery program is a code useful
-%   for the forward solution used as a building block in
-%   Bayesian inverse problems, and for sampling the parameter space
-%   through a Metropolis--Hastings sampler (a kind of Monte Carlo
-%   Markov Chain method).
+\item \texttt{step-47}
+\item \texttt{step-50}
+\item \texttt{step-58}
+\item \texttt{step-65}
+\item \texttt{step-67}
+\item \texttt{step-69}
+\item \texttt{step-70}
 \end{itemize}
 
 
@@ -343,8 +318,8 @@ gallery program:
 \subsection{Incompatible changes}
 
 The 9.2 release includes
-\href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_0_1_and_9_1_0.html}
-     {around 15 incompatible changes}; see \cite{changes91}. The majority of these changes
+\href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_1_1_and_9_2_0.html}
+     {around 15 incompatible changes}; see \cite{changes92}. The majority of these changes
 should not be visible to typical user codes; some remove previously
 deprecated classes and functions; and the majority change internal
 interfaces that are not usually used in external
@@ -450,7 +425,7 @@ Please consider citing the appropriate references if you use interfaces to these
 libraries.
 
 The two previous releases of \dealii can be cited as
-\cite{dealII85,dealII90}.
+\cite{dealII90,dealII91}.
 
 
 \section{Acknowledgments}
