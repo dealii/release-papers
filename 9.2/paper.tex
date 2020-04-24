@@ -156,7 +156,7 @@
 
 \begin{abstract}
   This paper provides an overview of the new features of the finite element
-  library \dealii, version 9.1.
+  library \dealii, version 9.2.
 \end{abstract}
 
 
@@ -166,10 +166,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview}
 
-\dealii version 9.1.0 was released May 21, 2019.
+\dealii version 9.2.0 was released May XYZ, 2020.
 This paper provides an
 overview of the new features of this release and serves as a citable
-reference for the \dealii software library version 9.1. \dealii is an
+reference for the \dealii software library version 9.2. \dealii is an
 object-oriented finite element library used around the world in the
 development of finite element solvers. It is available for free under the
 GNU Lesser General Public License (LGPL). Downloads are available at
@@ -178,21 +178,22 @@ GNU Lesser General Public License (LGPL). Downloads are available at
 The major changes of this release are:
 %
 \begin{itemize}
-  \item Improved support for automatic differentiation (see
-    Section~\ref{subsec:ad}),
-  \item Dedicated support for symbolic algebra (see
-    Section~\ref{subsec:sd}),
-  \item Full support for $hp$~adaptivity in parallel computations (see
-    Section~\ref{subsec:hp}),
-  \item An interface to the HDF5 file format and libraries (see
-    Section~\ref{subsec:hdf5}),
-  \item Significantly extended GPU support (see Section~\ref{subsec:gpu}),
-  \item Parallel geometric multigrid (GMG) improvements (see
-    \cite{ClevengerHeisterKanschatKronbichler2019} and
-    Section~\ref{subsec:gmg}),
-  \item Four new tutorial programs (step-61, step-62, step-63, step-64),
-    as well as one new code gallery program (see
-    Section~\ref{subsec:steps}).
+\item
+%   \item Improved support for automatic differentiation (see
+%     Section~\ref{subsec:ad}),
+%   \item Dedicated support for symbolic algebra (see
+%     Section~\ref{subsec:sd}),
+%   \item Full support for $hp$~adaptivity in parallel computations (see
+%     Section~\ref{subsec:hp}),
+%   \item An interface to the HDF5 file format and libraries (see
+%     Section~\ref{subsec:hdf5}),
+%   \item Significantly extended GPU support (see Section~\ref{subsec:gpu}),
+%   \item Parallel geometric multigrid (GMG) improvements (see
+%     \cite{ClevengerHeisterKanschatKronbichler2019} and
+%     Section~\ref{subsec:gmg}),
+%   \item Four new tutorial programs (step-61, step-62, step-63, step-64),
+%     as well as one new code gallery program (see
+%     Section~\ref{subsec:steps}).
 \end{itemize}
 %
 The major changes are discussed in detail in Section~\ref{sec:major}. There
@@ -201,67 +202,68 @@ that we briefly outline in the remainder of this section:
 %
 \begin{itemize}
 \item
-  The release contains a number of performance improvements and bug fixes for
-  the matrix-free framework. One notable improvement is the support for
-  renumbering of degrees of freedom within the cells for discontinuous
-  elements, avoiding some reshuffling operations across the SIMD lanes
-  with vectorization over several cells and faces, which is especially
-  useful on processors with AVX-512 vectorization (8 doubles), speeding up
-  operations by up to 10\%. Secondly, the strategy for the most efficient
-  tensor product evaluators according to the performance analysis of
-  \cite{KronbichlerKormann2019} in the context of more quadrature points than
-  shape functions has been revised for better performance.
-
-\item A new class \texttt{ParsedConvergenceTable} has been introduced
-  that greatly simplifies the construction of convergence tables,
-  reading the options for the generation of the table from a parameter
-  file, and providing methods that, combined with a parameter file,
-  allow one to generate convergence tables using one-liners in user
-  codes.
-
-\item
-  The \texttt{FE\_BernardiRaugel} class implements the non-standard
-  Bernardi-Raugel (BR) element that can be used to construct a stable
-  velocity-pressure pair for the Stokes equation \cite{BR85}. The BR
-  element is an enriched version of the $Q_1^d$ element with added bubble
-  functions on each edge (in 2d) or face (in 3d). It addresses the fact
-  that the $Q_1^d\times Q_0$ combination is not inf-sup stable (requiring a
-  larger velocity space), and that the $Q_2^d\times Q_0$ combination is
-  stable but converges with only first-order at the cost of the large
-  number of velocity unknowns. The BR space is thus intermediate between the
-  $Q_1^d$ and $Q_2^d$ spaces.
-
-  The element is currently only implemented for parallelogram meshes due to
-  difficulties associated with the mapping of shape functions: The shape
-  functions of the $Q_1^d$ part of the element need to be mapped as
-  scalars, as is common for the vector components of the $Q_1^d$ element;
-  on the other hand, the vector-valued edge bubble functions need to be
-  mapped using the Piola transform as is common for the Raviart-Thomas
-  element. \dealii{} does not currently have the ability to use different
-  mappings for individual shape functions, though this functionality is
-  planned for the next release.
-
-\item
-  The \texttt{FE\_NedelecSZ} class is a new implementation of the
-  N{\'e}d{\'e}lec element on quadrilaterals and hexahedra. It is based on
-  the work of Zaglmayr \cite{Zag06} and overcomes the sign conflict issues
-  present in traditional N{\'e}d{\'e}lec elements that arise from the edge
-  and face parameterizations used in the basis functions. Therefore, this
-  element should provide consistent results for general quadrilateral and
-  hexahedral elements for which the relative orientations of edges and
-  faces (as seen from all adjacent cells) are often difficult to establish.
-  The \texttt{FE\_NedelecSZ} element addresses the sign conflict problem by
-  assigning a globally defined orientation to local edges and faces. A
-  detailed overview of the implementation of the \texttt{FE\_NedelecSZ}
-  element in \dealii{} can be found in \cite{Kynch2017}.
-
-\item All of the elementary geometrical objects of the library (namely
-  \texttt{Point<dim>}, \texttt{Segment<dim>}, and
-  \texttt{BoundingBox<dim>}) have been augmented with the traits
-  needed to comply with \texttt{boost::geometry} concepts. A new
-  interface to \texttt{boost::geometry::index::rtree} has been added
-  that simplifies the construction of spatial indices based on points,
-  bounding boxes, or segments.
+% \item
+%   The release contains a number of performance improvements and bug fixes for
+%   the matrix-free framework. One notable improvement is the support for
+%   renumbering of degrees of freedom within the cells for discontinuous
+%   elements, avoiding some reshuffling operations across the SIMD lanes
+%   with vectorization over several cells and faces, which is especially
+%   useful on processors with AVX-512 vectorization (8 doubles), speeding up
+%   operations by up to 10\%. Secondly, the strategy for the most efficient
+%   tensor product evaluators according to the performance analysis of
+%   \cite{KronbichlerKormann2019} in the context of more quadrature points than
+%   shape functions has been revised for better performance.
+% 
+% \item A new class \texttt{ParsedConvergenceTable} has been introduced
+%   that greatly simplifies the construction of convergence tables,
+%   reading the options for the generation of the table from a parameter
+%   file, and providing methods that, combined with a parameter file,
+%   allow one to generate convergence tables using one-liners in user
+%   codes.
+% 
+% \item
+%   The \texttt{FE\_BernardiRaugel} class implements the non-standard
+%   Bernardi-Raugel (BR) element that can be used to construct a stable
+%   velocity-pressure pair for the Stokes equation \cite{BR85}. The BR
+%   element is an enriched version of the $Q_1^d$ element with added bubble
+%   functions on each edge (in 2d) or face (in 3d). It addresses the fact
+%   that the $Q_1^d\times Q_0$ combination is not inf-sup stable (requiring a
+%   larger velocity space), and that the $Q_2^d\times Q_0$ combination is
+%   stable but converges with only first-order at the cost of the large
+%   number of velocity unknowns. The BR space is thus intermediate between the
+%   $Q_1^d$ and $Q_2^d$ spaces.
+% 
+%   The element is currently only implemented for parallelogram meshes due to
+%   difficulties associated with the mapping of shape functions: The shape
+%   functions of the $Q_1^d$ part of the element need to be mapped as
+%   scalars, as is common for the vector components of the $Q_1^d$ element;
+%   on the other hand, the vector-valued edge bubble functions need to be
+%   mapped using the Piola transform as is common for the Raviart-Thomas
+%   element. \dealii{} does not currently have the ability to use different
+%   mappings for individual shape functions, though this functionality is
+%   planned for the next release.
+% 
+% \item
+%   The \texttt{FE\_NedelecSZ} class is a new implementation of the
+%   N{\'e}d{\'e}lec element on quadrilaterals and hexahedra. It is based on
+%   the work of Zaglmayr \cite{Zag06} and overcomes the sign conflict issues
+%   present in traditional N{\'e}d{\'e}lec elements that arise from the edge
+%   and face parameterizations used in the basis functions. Therefore, this
+%   element should provide consistent results for general quadrilateral and
+%   hexahedral elements for which the relative orientations of edges and
+%   faces (as seen from all adjacent cells) are often difficult to establish.
+%   The \texttt{FE\_NedelecSZ} element addresses the sign conflict problem by
+%   assigning a globally defined orientation to local edges and faces. A
+%   detailed overview of the implementation of the \texttt{FE\_NedelecSZ}
+%   element in \dealii{} can be found in \cite{Kynch2017}.
+% 
+% \item All of the elementary geometrical objects of the library (namely
+%   \texttt{Point<dim>}, \texttt{Segment<dim>}, and
+%   \texttt{BoundingBox<dim>}) have been augmented with the traits
+%   needed to comply with \texttt{boost::geometry} concepts. A new
+%   interface to \texttt{boost::geometry::index::rtree} has been added
+%   that simplifies the construction of spatial indices based on points,
+%   bounding boxes, or segments.
 \end{itemize}
 %
 In addition to these changes, the changelog lists more than 200 other
@@ -286,350 +288,9 @@ can be found
 in the file that lists all changes for this release}, see \cite{changes91}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Improved support for automatic differentiation}
-\label{subsec:ad}
+\subsection{bla1}
+\label{subsec:bla1}
 
-In the previous release, numerous classes that are used to assemble linear systems
-and right hand sides, as well those used to define constitutive laws, were given
-full support for ``white-listed'' automatically differentiable (AD) number types
-from the ADOL-C and Sacado libraries. This included the classes that
-represent the local contributions of one cell to the global linear
-system (i.e., \texttt{FullMatrix} and \texttt{Vector}) as well as the
-classes commonly used for the computations at individual quadrature
-points (primarily the \texttt{Tensor} and \texttt{SymmetricTensor}
-classes of various ranks).
-In the current release we have provided a unified interface to these
-AD libraries, focusing on two specific use contexts:
-\begin{enumerate}
-\item The construction and linearization of finite element residuals; and
-\item The construction and linearization of constitutive model kinetic variables.
-\end{enumerate}
-
-In the first context, the finite element degrees of freedom are considered the
-independent variables. From these primitives, the \texttt{EnergyFunctional} helper
-class in the namespace \texttt{Differentiation::AD} may be used to compute both the
-residual and its linearization by directly defining the contribution to the
-(twice differentiated) scalar total energy functional from each cell. Similarly,
-the \texttt{ResidualLinearization} class requires the (once-differentiated) finite
-element residual to be defined on a per-cell basis,  and this contribution is
-automatically linearized.
-
-The second context aims directly at constitutive model formulations, and serves to
-compute the directional derivatives of components of (multi-field) constitutive laws
-with respect to the scalar, vector, tensor, and symmetric tensor fields in terms
-of which they are parameterized. The \texttt{ScalarFunction} class may be used to
-define a scalar function (such as strain energy function) that may be twice
-differentiated, while the \texttt{VectorFunction} may be used to define a vector
-function (such as a set of kinematic fields) that may be differentiated once.
-Since the total derivatives of all components are computed at once, these two helper
-classes provide an interface to retrieve each sub-component of the gradient and
-Hessian (for a \texttt{ScalarFunction}) or values and Jacobian (for a
-\texttt{VectorFunction}).
-
-Although these aforementioned helper classes have been documented with a specific
-use in mind, they remain generic and may (with a reinterpretation of the meaning of
-the independent and dependent variables) be used for other purposes as well.
-Furthermore, through the implementation of \texttt{TapedDrivers} and
-\texttt{TapelessDrivers} classes that interface with the active AD library, the
-generic helper classes hide library-dependent implementation details and facilitate
-switching between the supported libraries and AD number types based on the
-user's requirements.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Dedicated support for symbolic algebra, including algebra differentiation}
-\label{subsec:sd}
-To complement the automatic differentiation features in \dealii{}, this release sees
-the first step towards integrating and supporting a highly performant computer algebra
-system (CAS) via the SymEngine library \cite{symengine-web-page}.
-This allows the development of exact algebraic expressions using variables that are
-manipulated symbolically and may represent any value (or supported data structure).
-In the context of finite element simulations, typical applications include (but, due to
-the generality of the CAS, are not limited to) the development of constitutive models
-and the implementation of finite element assembly operations through the construction
-and linearization of finite element residuals.
-
-The \texttt{Expression} class in the namespace \texttt{Differentiation::SD} interfaces
-to SymEngine and forms the basis of symbolic computations, offering a full set of
-overloaded operators and a C++ style interface. This class offers the following
-basic functionality:
-\begin{itemize}
-\item symbolic variable definition,
-\item symbolic function definition,
-\item expression creation using standard C++ syntax,
-\item expression parsing,
-\item comparison operations,
-\item logical operations,
-\item conditional expression construction,
-\item differentiation,
-\item substitution (partial and complete), and
-\item serialization.
-\end{itemize}
-\dealii{} now also provides an extensive set of math operations, with a syntax mimicking that used
-in the C++ standard library. Using the \texttt{Expression} class as a basis, we
-have developed a set of functions that can be used to create \dealii{} \texttt{Tensor}s
-and \texttt{SymmetricTensor}s of symbolic variables and symbolic functions. This
-gives full symbolic tensor algebra support using the pre-existing \texttt{Tensor}
-and \texttt{SymmetricTensor} classes and associated functions. We have
-also implemented a set of utility functions with the following features:
-\begin{itemize}
-\item \texttt{differentiate} scalar expressions with respect to other scalar expressions, as well as
-tensors and symmetric tensors of expressions;
-\item \texttt{differentiate} tensors and symmetric tensors of expressions
-with respect to scalar expressions, as well as other tensors and symmetric tensors of expressions;
-\item create symbolic substitution maps;
-\item resolve explicit dependencies between expressions; and
-\item perform scalar and tensor valued substitution (including conversion from symbolic to
-real-valued scalars and tensors).
-\end{itemize}
-
-In the next release we expect to implement classes to assist in performing assembly operations
-in the same spirit as it is already possible using automatic differentiation using the
-\texttt{Differentiation::AD} namespace, although in a fully symbolic manner.
-We will also address performance issues of the \texttt{Expression} class by leveraging
-the optimization capabilities of SymEngine, including common subexpression elimination (CSE),
-as well as by generating high performance code-paths to evaluate these expressions through the
-use of a custom-generated \texttt{std::function} (so-called ``lambda'' optimization) or by
-compiling expressions using the LLVM JIT compiler.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Full support for $hp$~adaptivity in parallel computations}
-\label{subsec:hp}
-
-\dealii{} has had support for $hp$~adaptive methods since around 2005
-(documented in \cite{BangerthKayserHerold2007}) and for parallel
-computations on distributed meshes since around 2010 (see
-\cite{BangerthBursteddeHeisterKronbichler11}), but not for both at the
-same time. The challenges to combine these are related to a number of
-areas:
-\begin{enumerate}
-\item Data structures: The data structures necessary to store the
-  indices of degrees of freedom are substantially more
-  complicated for $hp$~algorithms than for the $h$~adaptive schemes
-  that were already implemented. This is because the number of degrees
-  of freedom per cell is now no longer constant. Furthermore,
-  faces and edges may need to store more than one set of indices if
-  the adjacent cells use different polynomial degrees; in the case of
-  edges, the number of sets of indices may also be of variable size.
-
-  All of this poses challenges in the parallel context because some of
-  the information may not be known, or not be known right away, for
-  cells that are not locally owned (i.e., for ghost and ``artificial''
-  cells), and for which the data structures stored on different
-  processors have to be reconciled.
-
-\item Algorithms: Already for $h$~adaptive meshes, enumerating all
-  degrees of freedom uniquely on the global mesh is difficult, as evidenced by
-  the complications of the algorithms shown in Section 3.1 of
-  \cite{BangerthBursteddeHeisterKronbichler11}, which requires more
-  than one page of text and is implemented in many hundreds of lines of
-  code.
-
-  These difficulties are even more pronounced when using $hp$~adaptivity.
-  The main obstacle is the desire to unify the indices of
-  matching degrees of freedom on adjacent cells whenever elements with
-  continuous polynomials are used. For example, the edge degree of freedom
-  of a $Q_2$~element has to be merged with the middle one of the three
-  edge degrees of freedom of a $Q_4$~element on a neighboring cell.
-  Section 4.2 of \cite{BangerthKayserHerold2007} discusses a sequential algorithm
-  that eliminates one of these degrees of freedom in favor of another,
-  but it introduces a ``master'' and a ``slave'' side of the
-  interface. This is of no major consequence in sequential
-  computations, but is inconvenient in parallel computations if the
-  ``master'' side is a ghost cell whose degree of freedom indices are
-  not (yet) available while enumerating local degrees of freedom, or
-  if the master is an artificial cell whose information will never be
-  available on a processor.
-
-  An earlier implementation of the algorithm enumerating degrees of
-  freedom, already available in \dealii{} 9.0, simply did not unify
-  indices on processor boundaries. However, this makes the total
-  number of degrees of freedom dependent on both the partition of the
-  mesh and the number of processors available. We have therefore
-  re-implemented the algorithm so that the unification does happen
-  also on processor boundaries, and will report on the details
-  elsewhere.
-
-\item Data transfer patterns: An important algorithm in parallel
-  finite element methods is the exchange of information stored on
-  cells during mesh repartitioning. This happens, for example, when
-  interpolating the solution from one mesh to the next
-  adaptively refined mesh; or when adapting the polynomial degrees
-  associated with each cell and repartitioning in order to
-  balance the computational cost of each processor's partition. When
-  using $h$~adaptive methods, the amount of data associated with each
-  cell is fixed and the algorithms that implement the data transfer
-  are consequently relatively simple. On the other hand, in $hp$~contexts,
-  each cell may have a different number of unknowns
-  associated with it, and the algorithms that transfer the data are
-  substantially more complicated. In order to implement those, we rely
-  on recent enhancements of the \pfrst~library (documented in
-  \cite{Burstedde2018}) to transfer data of variable size across
-  processors. Furthermore, the amount of data associated with each
-  cell may be large on cells with higher polynomial degrees, and
-  might profit from compression before sending.
-
-\item Balancing computational cost: For $h$~adaptive algorithms, the
-  amount of work associated with each cell is essentially the same,
-  both during the assembly of linear systems as well as during the
-  solver phase. For $hp$~adaptive methods, this is no longer the
-  case. Consequently, balancing the cost of work between different
-  processors' partitions is no longer as easy as ensuring that every
-  processor owns a roughly equal number of cells. Rather, one needs to
-  introduce a weighting factor for each cell that describes its
-  relative cost compared to some reference. To make things worse, the
-  relative cost of assembly on a cell might not match the relative
-  cost of the linear solver associated with this cell, leading to
-  difficult trade-offs in defining optimal weighting factors. In this
-  release, we supplied the basic functionality to attach any amount
-  of weighting factors to cells, but users still have to find reasonable
-  weights for themselves.
-\end{enumerate}
-
-All of these issues have been addressed in the current release and are
-available to users. We will report on the details of the algorithms
-and their performance in a separate publication.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Interface to the HDF5 file format and libraries}
-\label{subsec:hdf5}
-\texttt{HDF5} is an open-source library and file format designed to store large amounts of data.
-The \texttt{HDF5} format is specially tailored for high volume parallel I/O operations using MPI.
-\texttt{HDF5} files are self-describing and allow complex data relationships and a large variety
-of datatypes. In addition, the \texttt{HDF5} format is designed for long-term preservation of
-data; a \texttt{HDF5} file created by an HPC system can be easily read by a commodity laptop.
-
-\dealii{}'s new  \texttt{HDF5} interface allows to write \texttt{HDF5} files and manipulate
-datasets, groups, and attributes in serial and in parallel using MPI. The
-\texttt{HDF5} MPI library calls that modify the structure of the file are
-always collective, whereas writing and reading raw data in a dataset can be done
-independently or collectively. In the \dealii{}'s \texttt{HDF5} interface all the calls are
-set to collective in order to maximize performance. This means that all the MPI
-processes have to contribute to every single call, even if they don't have data to write.
-We have added the following classes to the \dealii{}'s \texttt{HDF5} namespace.
-\begin{itemize}
-\item The new \texttt{HDF5::File} class can be used to open and create \texttt{HDF5} files
-in serial or in parallel.
-\item The new \texttt{HDF5::Group} class can be used to open and create groups.
- \texttt{HDF5} files have a tree structure. The root contains groups and
-the groups can contain other groups.
-\item The new \texttt{HDF5::DataSet} class can be used to open and create datasets which
-can be placed inside groups or at the root of the \texttt{HDF5} file. A dataset can be a
-vector, a matrix, or a tensor. It is possible to read and write in the dataset using
-hyperslabs or unordered data. Hyperslabs are portions of datasets
-which can be a contiguous collection of points in a dataset, or a regular
-pattern of points or blocks in a dataset.
-\item It is possible to define attributes in the \texttt{HDF5::File}, \texttt{HDF5::Group} and
-\texttt{HDF5::DataSet} classes. An attribute is a small metadata such as a number or a string.
-Attributes are commonly used to store simulation parameters.
-\end{itemize}
-As we have shown in \texttt{step-62}, the \dealii{}'s \texttt{HDF5} interface can be easily used
-to exchange data with Python and Jupyter notebooks.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{GPU support via CUDA}
-\label{subsec:gpu}
-
-GPU support was significantly extended for the current release:
-\begin{itemize}
-  \item The \texttt{CUDAWrappers::PreconditionILU} and \texttt{CUDAWrappers::PreconditionIC}
-    classes can now be used for preconditioning \texttt{CUDAWrappers::SparseMatrix} objects.
-  \item \texttt{LinearAlgebra::distributed::Vector}: the MPI-parallel vector
-    class has gained a second template argument \texttt{MemorySpace} which can
-    either be \texttt{Host} or \texttt{CUDA}. In the latter case, the data
-    resides in GPU memory. By default, the template parameter is
-    \texttt{Host} and the behavior is unchanged compared to previous versions.
-    When using CUDA, the ghost exchange can be performed either by first copying
-    the relevant data to the host, performing MPI communication, and finally
-    moving the data to the device or, if CUDA-aware MPI is available, by
-    performing MPI communication directly between GPUs.
-  \item Constrained degrees of freedom: the matrix-free framework now
-    supports constrained degrees of freedom. The implementation is based on
-    the algorithms described in \cite{ljungkvist2017}. With this addition,
-    both Dirichlet boundary conditions and the constraints arising from
-    adaptively refined meshes can be imposed within the matrix-free
-    framework.
-%     \textcolor{red}{%
-%     \sout{The only restriction is that for two-dimensional meshes the
-%     finite element degree must be odd. There is no such restriction in
-%     three dimensions.}
-%     \emph{%
-%     WB: Can we explain this restriction? It seems odd (pun intended)...
-%     BT: No, we cannot. I have spent at least two full weeks trying to
-%     understand why it doesn't work, i.e., gives the wrong result, but I
-%     don't know. We decided at the time that even with the current
-%     limitation this was a useful addition.
-%     MM: I suggest that we then simply not mention the limitation and treat
-%     it as a known bug. As it is currently worded it can be easily
-%     interpreted as a fundamental limitation, i.\,e. ``FE with even degree
-%     are not admissible.''}}
-
-  \item MPI matrix-free computations: using \texttt{LinearAlgebra::distributed::Vector}, the
-    matrix-free framework can scale to multiple GPUs by taking
-    advantage of MPI. Each MPI process can only use one GPU and therefore, if
-    multiple GPUs are available in one node, it is necessary to have as many
-    ranks as there are GPUs. Using Nvidia Multi-Process Service (MPS), it is also possible
-    for multiple processes to use the same GPU. This can be advantageous if the
-    amount of work on one rank is not sufficient to fully utilize a GPU.
-\end{itemize}
-
-The matrix-free GPU components integrated in \dealii have been compared against
-CPUs in \cite{KronbichlerLjungkvist2019}, where the application to geometric
-multigrid solvers is discussed.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Parallel geometric multigrid improvements}
-\label{subsec:gmg}
-
-For the 9.1 release, the geometric multigrid facilities have been extended and
-revised for performance. The geometric multigrid algorithms for uniform and
-adaptively refined meshes in \dealii are based on so-called local coarsening,
-i.e., smoothening is done level-per-level, skipping parts of the domain
-where the mesh is not as refined. The algorithm for the assignment of the
-owner on level cells and the implications on load balancing have been analyzed
-in detail in \cite{ClevengerHeisterKanschatKronbichler2019}. While most of the
-functionality has already been available since the 8.5 release of \dealii presented
-in \cite{dealII85}, several components have been finalized, such as the
-support for certain renumbering algorithms that are beneficial for matrix-free
-execution, and interfaces that allow the combination with matrix-free GPU
-computations as showcased in \cite{KronbichlerLjungkvist2019}.
-
-A number of data structures and implementations in \dealii have been adapted
-to ensure scalability of the matrix-free algorithms and geometric multigrid
-infrastructure on more than 100,000 MPI ranks. A geometric multigrid solver for
-the Poisson equation as described in \cite{KronbichlerWall2018} has been used
-as a performance test during the acceptance phase of the SuperMUC-NG
-supercomputer in Garching, Germany. Scaling tests have been performed on up to
-the full machine with 304,128 cores of the Intel Xeon Skylake architecture and
-an arithmetic performance of around 5 PFlop/s for a geometric multigrid solver
-with polynomials of degree 4 has been reached. Compared to the official
-LINPACK performance of the machine of 19.5 PFlop/s (the machine is listed on
-position 8 of the top-500 list of November 2018), this can be considered an
-extremely good value for PDE solvers which have classically only reached a
-few percent of the LINPACK performance.
-More importantly, this is achieved within a flexible framework supporting
-arbitrary polynomial order on adaptively refined, unstructured meshes and
-with algorithms in the matrix-free module of \dealii designed to minimize time
-to solution and scalability, rather than maximizing the number of floating point operations. The
-largest Poisson problem that has been solved on 304k cores contained 2.15
-trillion unknowns (or 7.1 million unknowns per MPI rank) and was solved in 3.5
-seconds. Also, CFD production runs with $10^{11}$ unknowns and $10^5$
-time steps have been completed in less than seven hours, demonstrating the
-capabilities of \dealii for large-scale parallel computations. The scaling tests
-also revealed several relatively expensive operations in the setup of the
-multigrid unknowns in \dealii's \texttt{DoFHandler} and \texttt{MGTransfer}
-classes. While a few bottlenecks have already been resolved for the present
-release, we plan several further improvements of the setup stage for the next release.
-
-Furthermore, the implementation of the Chebyshev iteration, \dealii's most
-popular smoother in the matrix-free context, has been revised to reduce the number of
-vector accesses. The vector operations have become an increasing bottleneck
-due to the level of optimization available for the operator evaluation with
-our matrix-free framework \cite{KronbichlerKormann2019}, especially on newer
-CPUs which can perform a large number of arithmetic operations per byte loaded
-from main memory. This speeds up matrix-free multigrid solvers by up to
-10--15\% on geometries with affine (parallelogram and parallelpiped) cells,
-and up to 5\% on deformed cells.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -644,43 +305,44 @@ as range-based for loops and lambda functions.
 In addition, there are four new tutorial programs and one new code
 gallery program:
 \begin{itemize}
-\item \texttt{step-61} is a program that implements the ``weak
-  Galerkin'' method to solve the Laplace equation. Weak Galerkin
-  methods are related to the Hybridized Discontinuous Galerkin method
-  in that they introduce degrees of freedom on the interfaces between
-  cells, but they do not require the reformulation of the problem as a
-  first-order system and instead re-define what the gradient of a
-  discontinuous function is.
-
-\item \texttt{step-62} demonstrates the solution of problems related
-  to phononic or photonic crystals. Among the techniques shown in this
-  program is the solution of complex-valued linear systems, and the
-  use of absorbing boundary conditions through the Perfectly Matched
-  Layer technique.
-
-\item \texttt{step-63} implements a geometric multigrid preconditioner
-  and solver for the advection-diffusion equation, yielding optimal
-  complexity. The tutorial compares
-  point-based smoothers to cell-based smoothers and
-  demonstrates the effect of downstream ordering on smoother performance.
-
-\item \texttt{step-64} demonstrates the usage of matrix-free methods on Nvidia GPUs.
-GPUs are shown to be advantageous for these kind of operations because of their superior
-hardware characteristics, in particular a higher memory bandwidth than server
-CPUs within a given power envelope.
-
-\item The \texttt{MCMC-Laplace} code gallery program is a code useful
-  for the forward solution used as a building block in
-  Bayesian inverse problems, and for sampling the parameter space
-  through a Metropolis--Hastings sampler (a kind of Monte Carlo
-  Markov Chain method).
+\item 
+% \texttt{step-61} is a program that implements the ``weak
+%   Galerkin'' method to solve the Laplace equation. Weak Galerkin
+%   methods are related to the Hybridized Discontinuous Galerkin method
+%   in that they introduce degrees of freedom on the interfaces between
+%   cells, but they do not require the reformulation of the problem as a
+%   first-order system and instead re-define what the gradient of a
+%   discontinuous function is.
+% 
+% \item \texttt{step-62} demonstrates the solution of problems related
+%   to phononic or photonic crystals. Among the techniques shown in this
+%   program is the solution of complex-valued linear systems, and the
+%   use of absorbing boundary conditions through the Perfectly Matched
+%   Layer technique.
+% 
+% \item \texttt{step-63} implements a geometric multigrid preconditioner
+%   and solver for the advection-diffusion equation, yielding optimal
+%   complexity. The tutorial compares
+%   point-based smoothers to cell-based smoothers and
+%   demonstrates the effect of downstream ordering on smoother performance.
+% 
+% \item \texttt{step-64} demonstrates the usage of matrix-free methods on Nvidia GPUs.
+% GPUs are shown to be advantageous for these kind of operations because of their superior
+% hardware characteristics, in particular a higher memory bandwidth than server
+% CPUs within a given power envelope.
+% 
+% \item The \texttt{MCMC-Laplace} code gallery program is a code useful
+%   for the forward solution used as a building block in
+%   Bayesian inverse problems, and for sampling the parameter space
+%   through a Metropolis--Hastings sampler (a kind of Monte Carlo
+%   Markov Chain method).
 \end{itemize}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Incompatible changes}
 
-The 9.1 release includes
+The 9.2 release includes
 \href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_0_1_and_9_1_0.html}
      {around 15 incompatible changes}; see \cite{changes91}. The majority of these changes
 should not be visible to typical user codes; some remove previously
@@ -688,22 +350,23 @@ deprecated classes and functions; and the majority change internal
 interfaces that are not usually used in external
 applications. However, some are worth mentioning:
 \begin{itemize}
-\item The \texttt{VectorView} class was removed. We recommend either copying the
-      vector subset into a \texttt{Vector} or using a \texttt{BlockVector}.
-\item The function \texttt{Subscriptor::subscribe()}, used through the
-  \texttt{SmartPointer} class, now requires a pointer to a
-      \texttt{std::atomic<bool>} that tracks whether or not the pointer to the
-      subscribed-to object is still valid.
-\item The \texttt{ConstraintMatrix} class gained a template parameter for the scalar
-      type and was been renamed \texttt{AffineConstraints}. Several methods that
-      take vectors or matrices as arguments,
-      such as \texttt{AffineConstraints::distribute\_local\_to\_global()},
-      now require that all matrix and vector arguments have matching number
-      types.
-\item Similarly, the functions \texttt{create\_mass\_matrix} and
-      \texttt{create\_boundary\_mass\_matrix} in the \texttt{MatrixCreator}
-      namespace no longer
-      support matrix and vector objects of different types.
+\item
+% \item The \texttt{VectorView} class was removed. We recommend either copying the
+%       vector subset into a \texttt{Vector} or using a \texttt{BlockVector}.
+% \item The function \texttt{Subscriptor::subscribe()}, used through the
+%   \texttt{SmartPointer} class, now requires a pointer to a
+%       \texttt{std::atomic<bool>} that tracks whether or not the pointer to the
+%       subscribed-to object is still valid.
+% \item The \texttt{ConstraintMatrix} class gained a template parameter for the scalar
+%       type and was been renamed \texttt{AffineConstraints}. Several methods that
+%       take vectors or matrices as arguments,
+%       such as \texttt{AffineConstraints::distribute\_local\_to\_global()},
+%       now require that all matrix and vector arguments have matching number
+%       types.
+% \item Similarly, the functions \texttt{create\_mass\_matrix} and
+%       \texttt{create\_boundary\_mass\_matrix} in the \texttt{MatrixCreator}
+%       namespace no longer
+%       support matrix and vector objects of different types.
 \end{itemize}
 
 
