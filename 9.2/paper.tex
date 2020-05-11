@@ -310,7 +310,7 @@ in the file that lists all changes for this release}, see \cite{changes91}.
 Large-scale simulations with 304,128 cores have revealed bottlenecks in release 
 9.1 during initialization due to the usage of expensive collective operations 
 like \texttt{MPI\_Allgather()} and \texttt{MPI\_\allowbreak Alltoall()}, e.g., during the 
-pre-computationof the index ranges of all processes, which have been stored in  an array. 
+pre-computation of the index ranges of all processes, which have been stored in  an array. 
 This information is needed to set up 
 the  \texttt{Utilities::MPI::Par\-ti\-ti\-oner} class. 
 In release 9.2, we have removed such arrays and have replaced 
@@ -332,7 +332,7 @@ which uses only point-to-point communications and a single \texttt{MPI\_IBarrier
 %The class \texttt{ConsensusAlgorithms::Selector} selects one of the two previous 
 %algorithms, depending on the number of processes.
 
-Users can use the new algorithms for their own dynamic-sparse problems by 
+Users can apply the new algorithms for their own dynamic-sparse problems by 
 providing a list of target 
 processes and pack/unpack routines either by implementing the interface 
 \texttt{CA::\allowbreak Process} or by providing \texttt{std::function} 
@@ -361,11 +361,11 @@ all processes and the actual mesh used for computations is constructed by repeat
 refinement. However, this has its limitations in industrial applications where, often, the mesh comes 
 from an external mesh generator in the form of a file that already contains millions 
 or tens of millions of cells. For such configurations, applications might already 
-run out of  main memory while reading the complete mesh by each MPI process. 
+run out of  main memory, while reading the complete mesh by each MPI process. 
 
 The new class \texttt{parallel::fullydistributed::Triangulation} targets this issue 
 by distributing also the coarse grid. Such 
-a triangulation can be created by providing a \texttt{Triangulation\-De\-scrip\-tion::Description} struct to each process, containing 
+a triangulation can be created by providing to each process a \texttt{Triangulation\-De\-scrip\-tion::Description} struct, containing 
 1) the relevant data to construct the local part of the coarse grid, 2) the 
 translation of the local coarse-cell IDs to globally unique IDs, 3) the hierarchy 
 of mesh refinements, and 4) the owner of the cells on the active mesh level as well 
@@ -387,7 +387,7 @@ changes to the mesh are allowed at the moment.
 %ready. A sensible process group size might contain all processes of one compute node.
 
 
-The new (fully) distributed triangulation class works---in contrast to  
+The new fully distributed triangulation class works---in contrast to  
 \texttt{parallel::distributed::\allowbreak Tri\-an\-gu\-la\-tion}---not only for 2D- and 3D- but also for 
 1D-problems. It can be used in the context of geometric multigrid methods and 
 supports periodic boundary conditions. Furthermore, hanging nodes are supported.
@@ -422,12 +422,12 @@ The length of the  vector can now be queried by  \texttt{VectorizedArray::size()
 Furthermore, the \texttt{VectorizedArray} class supports range-based iterations over its entries and, i.a., the following 
 algorithms: \texttt{std::\allowbreak ad\-vance()}, \texttt{std::distance()}, and \texttt{std::max\_element()}.
 
-It has been also extended with the second optional template argument 
+This class has been also extended with the second optional template argument 
 \texttt{VectorizedArray<Number, size>} with \texttt{size} being related to the 
 vector length, i.e., the number of lanes to be used and the instruction set to be 
 used. By default, the number is set to the highest value supported by the given 
 hardware. A full list of supported 
-vector lengths are presented in Table~\ref{tab:vectorizedarray}.
+vector lengths is presented in Table~\ref{tab:vectorizedarray}.
 
 All matrix-free related classes (like \texttt{MatrixFree} and \texttt{FEEvaluation}) 
 have been templated with the floating-point number type \texttt{Number} (e.g. \texttt{double} or \texttt{float}); the computations were performed implicitly 
