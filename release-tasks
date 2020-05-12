@@ -116,78 +116,102 @@ Best
 
 
 -1c/ The list of contributors to the current release should also be copied to
-     the end of the release paper:
+     the end of the release paper
 
-Developers:
-  Daniel Arndt
-  Wolfgang Bangerth
-  Denis Davydov
-  Timo Heister
-  Luca Heltai
-  Guido Kanschat
-  Martin Kronbichler
-  Matthias Maier
-  Jean-Paul Pelteret
-  Bruno Turcksin
-  David Wells
-
-Contributors for 9.1: (updated 2019-05-12)
-  Giovanni Alzetta
-  Mathias Anselmann
-  Daniel Appel
-  Daniel Arndt
-  Wolfgang Bangerth
-  Alexander Blank
-  Vishal Boddu
-  Benjamin Brands
-  Pi-Yueh Chuang
-  T. Conrad Clevenger
-  Sambit Das
-  Denis Davydov
-  Ginkgo developers
-  Stefano Dominici
-  Nivesh Dommaraju
-  Marc Fehling
-  Niklas Fehn
-  Isuru Fernando
-  Andreas Fink
-  Daniel Garcia-Sanchez
-  Rene Gassmoeller
-  Alexander Grayver
-  Joshua Hanophy
-  Logan Harbour
-  Graham Harper
-  Timo Heister
-  Luca Heltai
-  Daniel Jodlbauer
-  Stefan Kaessmair
-  Eldar Khattatov
-  Alexander Knieps
-  Uwe Köcher
-  Kurt Kremitzki
-  Martin Kronbichler
-  Dustin Kumor
-  Ross Kynch
-  Damien Lebrun-Grandie
-  Matthias Maier
-  Jonathan Matthews
-  Stefan Meggendorfer
-  Pratik Nayak
-  Jean-Paul Pelteret
-  Lei Qiao
-  Ce Qin
-  Reza Rastak
-  Roland Richter
-  Alberto Sartori
-  Svenja Schoeder
-  Sebastian Stark
-  Bruno Turcksin
-  Antoni Vidal
-  Jiaxin Wang
-  Yuxiang Wang
-  Zhuoran Wang
-  David Wells
-
+      Pasquale Africa
+      Ashna Aggarwal
+      Giovanni Alzetta
+      Mathias Anselmann
+      Daniel Arndt
+      Wolfgang Bangerth
+      Kirana Bergstrom
+      Manaswinee Bezbaruah
+      Bruno Blais
+      Benjamin Brands
+      Yong-Yong Cai
+      Fabian Castelli
+      Conrad Clevenger
+      Katherine Cosburn
+      Denis Davydov
+      Elias Dejene
+      Stefano Dominici
+      Brett Dong
+      Luel Emishaw
+      Marc Fehling
+      Niklas Fehn
+      Rebecca Fildes
+      Menno Fraters
+      Andres Galindo
+      Daniel Garcia-Sanchez
+      Rene Gassmoeller
+      Melanie Gerault
+      Nicola Giuliani
+      Brandon Gleeson
+      Anne Glerum
+      Krishnakumar Gopalakrishnan
+      Alexander Grayver
+      Graham Harper
+      Mohammed Hassan
+      Nicole Hayes
+      Bang He
+      Johannes Heinz
+      Timo Heister
+      Luca Heltai
+      Jiuhua Hu
+      Lise-Marie Imbert-Gerard
+      Mannu Jayadharan
+      Manu Jayadharan
+      Daniel Jodlbauer
+      Marie Kajan
+      Guido Kanschat
+      Alexander Knieps
+      Martin Kronbichler
+      Paras Kumar
+      Konstantin Ladutenko
+      Charu Lata
+      Adam Lee
+      Wenyu Lei
+      Matthias Maier
+      Katrin Mang
+      Mae Markowski
+      Franco Milicchio
+      Adriana Morales Miranda
+      Peter Munch
+      Bob Myhill
+      Emily Novak
+      Omotayo Omosebi
+      Alexey Ozeritskiy
+      Jean-Paul Pelteret
+      Rebecca Pereira
+      Geneva Porter
+      Laura Prieto Saavedra
+      Reza Rastak
+      Roland Richter
+      Jonathan Robey
+      Irabiel Romero
+      Matthew Russell
+      Tonatiuh Sanchez-Vizuet
+      Doug Shi-Dong
+      Konrad Simon
+      Stephanie Sparks
+      Natasha S. Sharma
+      Sebastian Stark
+      Simon Sticko
+      Jihuan Tian
+      Jan Philipp Thiele
+      Ignacio Tomas
+      Sara Tro
+      Bruno Turcksin
+      Ferdinand Vanmaele
+      Zhuoran Wang
+      David Wells
+      Michal Wichrowski
+      Julius Witte
+      Winnifried Wollner
+      Ming Yang
+      Mario Zepeda Aguilar
+      Wenjuan Zhang
+      Victor Zheng
 
 0/ Do some basic testing as always
 
