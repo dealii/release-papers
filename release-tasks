@@ -221,12 +221,6 @@ Best
     and look for anything that should obviously be fixed.
 
 
-0b/ Check for doxygen formatting problems by running contrib/utilities/checkdoxygen.py:
-      find doc examples include \( -name "*.h" -o -name "*.dox" \) -print | xargs -n 1 ./contrib/utilities/checkdoxygen.py
-+
-    and push the corresponding changes
-
-
 0c/ Fix formatting bugs reported by:
 
     cd include;
@@ -245,15 +239,10 @@ Best
 0d/ Check that doxygen produces no errors when generating offline docs.
     Especially check that the tutorial dot graph gets generated
 
-
 0e/ Run the copyright script:
       ./contrib/utilities/update-copyright
-      git checkout -b update-copyright
-      git commit -a -m "Update copyright years."
-      git push origin update-copyright
-      hub pull-request -m "Update copyright years."
-    and push the corresponding changes
-
+    and make a PR.
+    Important: commit message needs to be "Update copyright years"
 
 0f/ update Trilinos and PETSc to the latest release on the tester and update the blurb at:
     doc/external-libs/trilinos.html
@@ -382,6 +371,7 @@ Thanks!
 
 8/ Remove unfinished tutorial programs.
    For 9.0, these are steps 47, 50
+   For 9.1, these are none
 
    a) Delete directories on the branch:
 

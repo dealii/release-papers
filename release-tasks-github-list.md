@@ -12,7 +12,6 @@ Release preparation steps:
 - [ ] <b>-1c</b> Update the list of contributors in the release paper
 - [ ] <b>0</b>   Do some basic testing as always
 - [ ] <b>0a</b>  Rerun cppcheck across the source files
-- [ ] <b>0b</b>  Check for doxygen formatting problems
 - [ ] <b>0c</b>  Fix formatting bugs reported by various command line queries
 - [ ] <b>0d</b>  Check that doxygen produces no errors when generating offline docs.
 - [ ] <b>0e</b>  Run the copyright script
