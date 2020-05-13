@@ -40,7 +40,7 @@ For more information see
     https://www.dealii.org/developer/doxygen/deal.II/changes_between_9_1_1_and_9_2_0.html
 
 The main features of deal.II are:
-  - Extensive documentation and 63 fully-functional example programs
+  - Extensive documentation and 66 fully-functional example programs
   - Support for dimension-independent programming
   - Locally refined adaptive meshes
   - Multigrid support
