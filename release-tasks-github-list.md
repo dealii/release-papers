@@ -45,6 +45,10 @@ Release steps:
     - Download the source tarball from github, verify that its contents is what we expect
     - Cryptographically sign it (detached, armored signature)
     - Create full offline_doc tarball and sign it
+
+Postrelease steps:
+--
+
 - [ ] <b>14a</b> Create a pre-release on github and upload files (and detached signatures)
 - [ ] <b>15</b>  Generate the documentation on the webserver.
 - [ ] <b>16</b>  Adjust header.include on homepage
