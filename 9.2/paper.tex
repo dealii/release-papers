@@ -224,9 +224,12 @@ in the file that lists all changes for this release}, see \cite{changes91}.
 Many of the \dealii{} tutorial programs were revised in a variety of
 ways as part of this release. A particular example is that we have
 converted a number of programs to use range-based for loops (a C++11
-feature) for loops over a range of integer indices, given that the
+feature) for loops over a range of integer indices such as loops over
+all quadrature points or all indices of degrees of freedom during
+assembly. This makes sense given that the
 range-based way of writing loops seems to be the idiomatic approach
-these days.
+these days, and that we had previously already converted loops over
+all cells in this way.
 
 In addition, there are a number of new tutorial programs:
 \begin{itemize}
