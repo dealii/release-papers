@@ -469,7 +469,7 @@ Thanks!
     repository state, see https://github.com/dealii/dealii/releases
 
     b) Download the source tarball from github, verify that its contents is
-    what we expect, e.g.
+       what we expect, e.g.
 
       # in a clean git repository:
       git checkout v9.0.0 # or git checkout v9.0.0-rc1
@@ -477,26 +477,44 @@ Thanks!
       tar --strip-components=1 -xvf dealii-9.0.0.tar.gz (or dealii-9.0.0-rc1.tar.gz)
       git status
 
-    Now, the last git status must not show any modified contents!
-      TH: this is not true, because of .gitattributes, so ignore changes in ./tests/
+       Now, the last git status will only record some deleted files but
+       must not show any modified file contents!
 
-    Cryptographically sign it (detached, armored signature):
+       Cryptographically sign it (detached, armored signature):
 
       gpg --detach-sign --armor dealii-9.0.0.tar.gz
 
-      (Guido, Timo and Matthias have a suitable gpg in the "pgp strong set")
-
     c) Create full offline_doc tarball
 
-    In a clean working copy of the tagged release version run the script
+      * check out the code-gallery at the correct path
+
+      * install MathJax locally and export the path, for example
+
+      export MATHJAX_ROOT="/usr/share/mathjax"
+
+      * Generate and install the documentation from a clean working
+        directory containing the tagged release and configure with:
+
+      cmake -DDOCUMENATION=ON -DDEAL_II_DOXYGEN_WITH_MATHJAX=ON -DDEAL_II_DOXYGEN_USE_ONLINE_MATHJAX=OFF -DCMAKE_INSTALL_PREFIX=<install>
+
+      * generate and install the documentation and examples
+
+      make/ninja documentation
+      make/ninja examples
+
+      * Download images:
 
       cd <install>/doc/doxygen/deal.II
-      ./make_offline_doc.sh 9.0.0
-      # or alternatively for a release candidate
-      ./make_offline_doc.sh 9.0.0-rc1
+      <source dir>/contrib/utilities/make_offline_doc.sh
 
-    to prepare the offline documentation
+      * (in the same directory) copy mathjax and fix includes:
 
+      cp -r "$MATHJAX_ROOT" mathjax
+      sed -i -e "s#$MATHJAX_ROOT#mathjax# **/*.html
+
+      * Grep the documentation for "full path leaks", for example grep for your
+        user name and the git repository location and fix up all remaining
+        locations (in particular deal.tag)
 
     d) Create dealii-9.1.0-offline_documentation.tar.gz (or for a
        prerelease: dealii-9.1.0-rc1-offline_documentation.tar.gz)
