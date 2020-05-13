@@ -495,7 +495,7 @@ Thanks!
       * Generate and install the documentation from a clean working
         directory containing the tagged release and configure with:
 
-      cmake -DDOCUMENATION=ON -DDEAL_II_DOXYGEN_WITH_MATHJAX=ON -DDEAL_II_DOXYGEN_USE_ONLINE_MATHJAX=OFF -DDEAL_II_COMPILE_EXAMPLES=OFF -DCMAKE_INSTALL_PREFIX=<install>
+      cmake -DDOCUMENTATION=ON -DDEAL_II_DOXYGEN_WITH_MATHJAX=ON -DDEAL_II_DOXYGEN_USE_ONLINE_MATHJAX=OFF -DDEAL_II_COMPILE_EXAMPLES=OFF -DCMAKE_INSTALL_PREFIX=<install>
 
       * generate and install the documentation and examples
 
