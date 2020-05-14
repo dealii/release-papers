@@ -538,8 +538,8 @@ applications. However, some are worth mentioning:
 \begin{itemize}
 \item The functions:
 \begin{itemize}
-\item \texttt{DoFHandler::loccaly\_owned\_dofs\_per\_processor()}
-\item \texttt{DoFHandler::loccaly\_owned\_mg\_dofs\_per\_processor()}
+\item \texttt{DoFHandler::locally\_owned\_dofs\_per\_processor()}
+\item \texttt{DoFHandler::locally\_owned\_mg\_dofs\_per\_processor()}
 \end{itemize} have been deprecated. As discussed in Subsection~\ref{subsec:performance}, deal.II does not store information for all processes on all processes processes, but only the local information or the locally-relevant information. Users are asked to construct the global information on their own, e.g. by calling \texttt{Utilities::MPI::Allgather(locally\_owned\_info(), comm)}.
 \item 
 
