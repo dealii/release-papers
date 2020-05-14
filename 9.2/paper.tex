@@ -231,55 +231,6 @@ in the file that lists all changes for this release}, see \cite{changes91}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Improved large-scale performance}
-\label{subsec:performance}
-
-Large-scale simulations with 304,128 cores have revealed bottlenecks in release 
-9.1 during initialization due to the usage of expensive collective operations 
-like \texttt{MPI\_Allgather()} and \texttt{MPI\_\allowbreak Alltoall()}, e.g., during the 
-pre-computation of the index ranges of all processes, which have been stored in  an array. 
-This information is needed to set up 
-the  \texttt{Utilities::MPI::Par\-ti\-ti\-oner} class. 
-In release 9.2, we have removed such arrays and have replaced 
-the \texttt{MPI\_Allgather}/\allowbreak\texttt{MPI\_\allowbreak Alltoall} 
-function calls by consensus algorithms~\cite{hoefler2010scalable}, which can be 
-found in the namespace \texttt{Utilities::\allowbreak MPI::\allowbreak ConsensusAlgorithms} (short: \texttt{CA}): now, only the locally relevant information about the index ranges is (re)computed when needed, using these algorithms. 
-We provide two flavors of the consensus algorithm: the two-step 
-approach \texttt{CA::PEX} and the \texttt{CA::NBX}, 
-which uses only point-to-point communications and a single \texttt{MPI\_IBarrier()}.
-
-%Consensus algorithms are algorithms dedicated to efficient dynamic-sparse 
-%communication patterns. In this context, the term ``dynamic-sparse'' means 
-%that by the time this function is called, the other processes do not know 
-%yet that they have to answer requests and
-%each process only has to communicate with a small subset of processes of the 
-%MPI communicator. We provide two flavors of the consensus algorithm: the two-step 
-%approach \texttt{ConsensusAlgorithms::PEX} and the \texttt{ConsensusAlgorithms::NBX}, 
-%which uses only point-to-point communications and a single \texttt{MPI\_IBarrier()}. 
-%The class \texttt{ConsensusAlgorithms::Selector} selects one of the two previous 
-%algorithms, depending on the number of processes.
-
-Users can apply the new algorithms for their own dynamic-sparse problems by 
-providing a list of target 
-processes and pack/unpack routines either by implementing the interface 
-\texttt{CA::\allowbreak Process} or by providing \texttt{std::function} 
-objects to \texttt{CA::AnonymousProcess}.
-
-By replacing the collective communications during setup and removing the arrays 
-that contain information for each process (enabled by the application of consensus 
-algorithms and other modifications---a full list of modifications leading to this 
-improvement can be found online), we were able to significantly improve the setup 
-time for large-scale simulations and to solve a Poisson problem with multigrid 
-with 12T unknowns. 
-Figure~\ref{} compares the timings of a simulation (incl. setup) with the 
-previous release 9.1 and with the current release 9.2. 
-{\color{red}TODO[Peter/Martin] description of the results}
-
-The new code has been also applied to solve problems with adaptively refined 
-meshes with more than 4B unknowns. {\color{red}TODO[Timo]}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{A new fully distributed triangulation class}
 \label{subsec:pft}
 
@@ -449,6 +400,69 @@ vectorization within an element~\cite{KronbichlerKormann2019}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Improved large-scale performance}
+\label{subsec:performance}
+
+Large-scale simulations with 304,128 cores have revealed bottlenecks in release 
+9.1 during initialization due to the usage of expensive collective operations 
+like \texttt{MPI\_Allgather()} and \texttt{MPI\_\allowbreak Alltoall()}, e.g., during the 
+pre-computation of the index ranges of all processes, which have been stored in  an array. 
+This information is needed to set up 
+the  \texttt{Utilities::MPI::Par\-ti\-ti\-oner} class. 
+In release 9.2, we have removed such arrays and have replaced 
+the \texttt{MPI\_Allgather}/\allowbreak\texttt{MPI\_\allowbreak Alltoall} 
+function calls by consensus algorithms~\cite{hoefler2010scalable}, which can be 
+found in the namespace \texttt{Utilities::\allowbreak MPI::\allowbreak ConsensusAlgorithms} (short: \texttt{CA}): now, only the locally relevant information about the index ranges is (re)computed when needed, using these algorithms. 
+We provide two flavors of the consensus algorithm: the two-step 
+approach \texttt{CA::PEX} and the \texttt{CA::NBX}, 
+which uses only point-to-point communications and a single \texttt{MPI\_IBarrier()}.
+
+%Consensus algorithms are algorithms dedicated to efficient dynamic-sparse 
+%communication patterns. In this context, the term ``dynamic-sparse'' means 
+%that by the time this function is called, the other processes do not know 
+%yet that they have to answer requests and
+%each process only has to communicate with a small subset of processes of the 
+%MPI communicator. We provide two flavors of the consensus algorithm: the two-step 
+%approach \texttt{ConsensusAlgorithms::PEX} and the \texttt{ConsensusAlgorithms::NBX}, 
+%which uses only point-to-point communications and a single \texttt{MPI\_IBarrier()}. 
+%The class \texttt{ConsensusAlgorithms::Selector} selects one of the two previous 
+%algorithms, depending on the number of processes.
+
+Users can apply the new algorithms for their own dynamic-sparse problems by 
+providing a list of target 
+processes and pack/unpack routines either by implementing the interface 
+\texttt{CA::\allowbreak Process} or by providing \texttt{std::function} 
+objects to \texttt{CA::AnonymousProcess}.
+
+By replacing the collective communications during setup and removing the arrays 
+that contain information for each process (enabled by the application of consensus 
+algorithms and other modifications---a full list of modifications leading to this 
+improvement can be found online), we were able to significantly improve the setup 
+time for large-scale simulations and to solve a Poisson problem with multigrid 
+with 12T unknowns. 
+Figure~\ref{} compares the timings of a simulation (incl. setup) with the 
+previous release 9.1 and with the current release 9.2. 
+{\color{red}TODO[Peter/Martin] description of the results}
+
+The new code has been also applied to solve problems with adaptively refined 
+meshes with more than 4B unknowns. {\color{red}TODO[Timo]}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Better support for parallel $hp$-adaptive algorithms}
+\label{subsec:hp}
+
+\todo[inline]{Marc: Your section}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Support for particle-based methods}
+\label{subsec:particles}
+
+\todo[inline]{Luca: Your section}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and improved tutorial and code gallery programs}
 \label{subsec:steps}
 
@@ -492,21 +506,7 @@ and discusses performance-related aspects.
     makes it into the release.}
 \end{itemize}
 
-\todo[inline]{Do we have new code gallery programs}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Better support for parallel $hp$-adaptive algorithms}
-\label{subsec:hp}
-
-\todo[inline]{Marc: Your section}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Support for particle-based methods}
-\label{subsec:particles}
-
-\todo[inline]{Luca: Your section}
-
+\todo[inline]{Do we have new code gallery programs?}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Python interfaces}
