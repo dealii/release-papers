@@ -1,0 +1,23 @@
+Version 9.2.0 of deal.II, the object-oriented finite element library awarded
+the J. H. Wilkinson Prize for Numerical Software, has been released. It is
+available for free under an Open Source license from the deal.II homepage at
+https://www.dealii.org/
+
+The major changes of this release are:
+  - Six new tutorial programs (steps 47, 50, 58, 65, 67, 69)
+    demonstrating solving a variety of equations and illustrating
+    functionality in deal.II.
+  - Improvements for large parallel computations.
+  - Better support for particle methods as well as hp-adaptivity.
+  - Better Python interfaces.
+
+The main features of deal.II are:
+  - Extensive documentation and 66 working example programs
+  - Support for dimension-independent programming
+  - Locally refined adaptive meshes and multigrid support
+  - A zoo of different finite elements
+  - Built-in support for shared memory and distributed parallel computing,
+    scaling from laptops to clusters with 100,000+ of processor cores
+  - Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
+
+The deal.II developers

@@ -389,7 +389,7 @@ Thanks!
       https://svnhp.dealii.org/trunk/homepage/images/steps/readme.txt
 
 
-9/  Write up a short release note and save it as announce-9.0
+9/  Write up a short release note and save it as release-papers/x.y/announce
 9a/ Write the release paper in the release-papers/ subdirectory
 
 10/ Test the branch thoroughly:
