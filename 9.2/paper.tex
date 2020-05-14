@@ -481,9 +481,32 @@ In addition, there are a number of new tutorial programs:
 \item \texttt{step-47}
 \todo[inline]{Zhuoran to write}
 \item \texttt{step-50}
-\todo[inline]{Timo/Conrad/... to write}
-\item \texttt{step-58}
-\todo[inline]{Wolfgang to write}  
+  \todo[inline]{Timo/Conrad/... to write}
+  
+\item \texttt{step-58} is a program that solves the nonlinear
+  Schr{\"o}dinger equation, which in non-dimensional form reads
+  \begin{align*}
+  - i \frac{\partial \psi}{\partial t}
+  - \frac 12 \Delta \psi
+  + V \psi
+  + \kappa |\psi|^2 \psi
+  &= 0,
+  \end{align*}
+  augmented by appropriate initial and boundary conditions and using
+  an appropriate form for the potential $V=V(\mathbf x)$. The
+  tutorial program focused on two specific aspects for which this
+  equation serves as an excellent test case: (i) Solving
+  complex-valued problems without splitting the equation into its
+  real and imaginary parts (as \texttt{step-29} does, for
+  example). (ii) Using operator splitting techniques. The equation is
+  a particularly good test case for this technique because the only
+  nonlinear term, $\kappa |\psi|^2 \psi$, does not contain any
+  derivatives and consequently forms an ODE to be solved at each time
+  step in an operator splitting scheme (for which, furthermore, there
+  exists an analytic solution), whereas the remainder of the
+  equation is linear and easily solved using standard finite element
+  techniques.
+
 \item \texttt{step-65} presents \texttt{TransfiniteInterpolationManifold}, a
 manifold class that can propagate curved boundary information into the
 interior of a computational domain, and \texttt{MappingQCache}, which can sample 
