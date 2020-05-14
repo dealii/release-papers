@@ -512,7 +512,8 @@ manifold class that can propagate curved boundary information into the
 interior of a computational domain, and \texttt{MappingQCache}, which can sample 
 the information of expensive manifolds in the points of a \texttt{MappingQ} and 
 cache it for further use.
-\item \texttt{step-67} presents an explicit time integrator for the
+
+\item \texttt{step-67} is an explicit time integrator for the
 compressible Euler equations discretized with a high-order discontinuous
 Galerkin scheme using the matrix-free infrastructure. Besides the use of
 matrix-free evaluators for systems of equations and over-integration, it also
@@ -522,8 +523,10 @@ products. Furthermore, this tutorial demonstrates the usage of new
 pre and post operations, which can be passed to \texttt{cell\_loop()}, to schedule operations on sections of vectors close 
 to the matrix-vector product to increase data locality 
 and discusses performance-related aspects.
+
 \item \texttt{step-69}
-\todo[inline]{Matthias/Ignacio to write}  
+  \todo[inline]{Matthias/Ignacio to write}
+  
 \item \texttt{step-70}
   \todo[inline]{Also need to update announce and announce-short if this
     makes it into the release.}
@@ -551,29 +554,21 @@ deprecated classes and functions; and the majority change internal
 interfaces that are not usually used in external
 applications. However, some are worth mentioning:
 \begin{itemize}
-\item The functions:
-\begin{itemize}
-\item \texttt{DoFHandler::locally\_owned\_dofs\_per\_processor()}
-\item \texttt{DoFHandler::locally\_owned\_mg\_dofs\_per\_processor()}
-\end{itemize} have been deprecated. As discussed in Subsection~\ref{subsec:performance}, deal.II does not store information for all processes on all processes processes, but only the local information or the locally-relevant information. Users are asked to construct the global information on their own, e.g. by calling \texttt{Utilities::MPI::Allgather(locally\_owned\_info(), comm)}.
-\item 
-
-% \item The \texttt{VectorView} class was removed. We recommend either copying the
-%       vector subset into a \texttt{Vector} or using a \texttt{BlockVector}.
-% \item The function \texttt{Subscriptor::subscribe()}, used through the
-%   \texttt{SmartPointer} class, now requires a pointer to a
-%       \texttt{std::atomic<bool>} that tracks whether or not the pointer to the
-%       subscribed-to object is still valid.
-% \item The \texttt{ConstraintMatrix} class gained a template parameter for the scalar
-%       type and was been renamed \texttt{AffineConstraints}. Several methods that
-%       take vectors or matrices as arguments,
-%       such as \texttt{AffineConstraints::distribute\_local\_to\_global()},
-%       now require that all matrix and vector arguments have matching number
-%       types.
-% \item Similarly, the functions \texttt{create\_mass\_matrix} and
-%       \texttt{create\_boundary\_mass\_matrix} in the \texttt{MatrixCreator}
-%       namespace no longer
-%       support matrix and vector objects of different types.
+\item Two functions that provide information about all processes,
+  namely
+  \begin{itemize}
+ \item \texttt{DoFHandler::locally\_owned\_dofs\_per\_processor()}
+ \item \texttt{DoFHandler::locally\_owned\_mg\_dofs\_per\_processor()}
+  \end{itemize}
+have been deprecated. As discussed in
+Subsection~\ref{subsec:performance}, deal.II by default no longer
+stores information for all processes on all processes, but only the
+local information or the locally-relevant information. On the other
+hand, if necessary, global information can still be computed using,
+for example, calling \texttt{Utilities::MPI::Allgather(locally\_owned\_info(), comm)}.
+\item
+  \todo[inline]{What else is worth mentioning? Someone needs to go
+    through the list of incompatible changes...}
 \end{itemize}
 
 
