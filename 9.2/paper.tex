@@ -14,6 +14,8 @@
 \usepackage{graphicx}
 \usepackage{xspace}
 
+\usepackage{siunitx}
+
 %\renewcommand{\baselinestretch}{2.0}
 
 \usepackage[normalem]{ulem}
@@ -197,14 +199,26 @@ The major changes of this release are:
 %     Section~\ref{subsec:ad}),
 \end{itemize}
 %
-The major changes are discussed in detail in Section~\ref{sec:major}. There
+These major changes are discussed in detail in Section~\ref{sec:major}. There
 are a number of other noteworthy changes in the current \dealii{} release
 that we briefly outline in the remainder of this section:
 %
 \begin{itemize}
-\item x \todo[inline]{Wolfgang to write about complex-valued output}
-\item y \todo[inline]{Timo to write about problems and fixes for
-  computations with more than $2^{32}$ unknowns}
+\item \dealii{} had decent support for solving complex-valued problems
+  (e.g., ones in quantum mechanics -- like the example covered by the
+  \texttt{step-58} tutorial program covered below -- or for
+  time-harmonic problems) for a while already. However, there were two
+  areas in which support was missing. First, the UMFPACK direct solver
+  packaged with \dealii{} did not support solving complex-valued
+  linear problems. This has now been addressed: UMFPACK actually can
+  solve such systems, we just needed to write the appropriate
+  interfaces. Second, the \texttt{DataOut} class that is responsible
+  for converting nodal data into information that can then be written
+  into files for visualization did not know how to deal with vector-
+  and tensor-valued fields whose components are complex numbers. An
+  example for this is to solve the time-harmonic version of the
+  Maxwell equations that has the electric and magnetic fields as
+  solution. This, too, has been addressed in this release.
 \item z \todo[inline]{What else? Maybe mention the updated step-12?}
 \end{itemize}
 %
@@ -394,10 +408,15 @@ vectorization within an element~\cite{KronbichlerKormann2019} in the future.
 \subsection{Improved large-scale performance}
 \label{subsec:performance}
 
-Large-scale simulations with 304,128 cores have revealed bottlenecks in setup
-routines due to the usage of expensive collective operations
-like \texttt{MPI\_Allgather()} and \texttt{MPI\_\allowbreak Alltoall()}, storing
-problem sizes and offsets from all processors in the MPI universe.
+Large-scale simulations with 304,128 cores have revealed bottlenecks in release 
+9.1 during initialization of a number of distributed data structures due to the usage of expensive collective operations 
+like \texttt{MPI\_Allgather()} and \texttt{MPI\_\allowbreak
+  Alltoall()}. Typical examples are the
+pre-computation of those indices of the vector entries (or
+other linear index ranges) owned by
+each process, which were previously stored in  an array on every process. 
+This information is needed to set up 
+the  \texttt{Utilities::MPI::Par\-ti\-ti\-oner} class.
 In release 9.2, we have replaced these functions in favor of
 consensus algorithms~\cite{hoefler2010scalable}, which can be
 found in the namespace \texttt{Utilities::\allowbreak MPI::\allowbreak ConsensusAlgorithms} (short: \texttt{CA}).
@@ -421,22 +440,24 @@ providing a list of target
 processes and pack/unpack routines either by implementing the interface
 \texttt{CA::\allowbreak Process} or by providing \texttt{std::function}
 objects to \texttt{CA::AnonymousProcess}.
+
 \todo[inline]{Aren't the target processes the result of the operation, and the
   input global numbers of indices that we request?}
 
-By replacing the collective communications during setup and removing the arrays
+By replacing the collective communications during set up and removing the arrays
 that contain information for each process (enabled by the application of consensus
 algorithms and other modifications---a full list of modifications leading to this
-improvement can be found online), we were able to significantly improve the setup
+improvement can be found online), we were able to significantly
+improve the set up
 time for large-scale simulations and to solve a Poisson problem with multigrid
-with 12T unknowns.
+with \num{12e12} unknowns.
 \todo[inline]{Where did we solve for 12T unknowns? The largest I [Martin] have done is 2.1T unknowns.}
-Figure~\ref{} compares the timings of a simulation (incl. setup) with the
+Figure~\ref{} compares the timings of a simulation (including set up) with the
 previous release 9.1 and with the current release 9.2.
 {\color{red}TODO[Peter/Martin] description of the results}
 
 The new code has been also applied to solve problems with adaptively refined
-meshes with more than 4B unknowns. {\color{red}TODO[Timo]}
+meshes with more than \num{4e9} unknowns. {\color{red}TODO[Timo]}
 
 \todo[inline]{We did solve adaptive problems with more than 4B unknowns before, but some were broken for a while during this release stage due to the consensus algorithms. But we did not test systems or block vectors before. But we should not make it sound too negative.}
 
@@ -596,8 +617,7 @@ to the matrix-vector product to increase data locality.
   \todo[inline]{Matthias/Ignacio to write}
 
 \item \texttt{step-70}
-  \todo[inline]{Also need to update announce and announce-short if this
-    makes it into the release.}
+  \todo[inline]{Luca, please write.}
 \end{itemize}
 
 \todo[inline]{Do we have new code gallery programs?}
@@ -688,6 +708,7 @@ following:
 \end{itemize}
 
 \dealii can interface with many other libraries:
+\todo[inline]{We picked up gingko. Anything else?}
 \begin{multicols}{3}
 \begin{itemize}
 \item ADOL-C \cite{Griewank1996a,adol-c}

@@ -4,7 +4,7 @@ available for free under an Open Source license from the deal.II homepage at
 https://www.dealii.org/
 
 The major changes of this release are:
-  - Six new tutorial programs (steps 47, 50, 58, 65, 67, 69)
+  - Seven new tutorial programs (steps 47, 50, 58, 65, 67, 69, 70)
     demonstrating solving a variety of equations and illustrating
     functionality in deal.II.
   - Improvements for large parallel computations.

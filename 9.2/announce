@@ -6,14 +6,15 @@ available for free under an Open Source license from the deal.II homepage at
 
 The major changes of this release are:
 
-  - Six new tutorial programs: step-47 solves the biharmonic equation;
+  - Seven new tutorial programs: step-47 solves the biharmonic equation;
     step-50 demonstrates algebraic and geometric multigrid methods for
     large, parallel computations on adaptively refined meshes, and
     compares matrix-based and matrix-free implementations; step-58
     solves the nonlinear Schroedinger equation; step-65 illustrates
     working with complex geometries and curved domains; step-67 and
     step-69 implementing different approaches for the Euler equations
-    in compressible gas dynamics.
+    in compressible gas dynamics; step-70 illustrates flow around a
+    moving obstacle.
 
   - Substantial improvements to the Python interfaces, including
     Jupyter versions of the step-49 and step-53 tutorial program.
