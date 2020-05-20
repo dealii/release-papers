@@ -520,8 +520,8 @@ Thanks!
        prerelease: dealii-9.1.0-rc1-offline_documentation.tar.gz)
 
       cd <install>
-      tar -cvf dealii-9.1.0-offline_documentation.tar doc
-      gzip dealii-9.1.0-offline_documentation.tar
+      tar --numeric-owner --owner=0 --group=0 -cvf dealii-9.2.0-offline_documentation.tar doc examples
+      gzip dealii-9.2.0-offline_documentation.tar
 
     e) Also sign it:
 
