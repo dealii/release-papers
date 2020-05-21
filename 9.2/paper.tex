@@ -463,6 +463,21 @@ meshes with more than 4B unknowns. {\color{red}TODO[Timo]}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Improved performance of symbolic framework}
+\label{subsec:symbdiff}
+
+\todo[inline]{J-P's section}
+
+BatchOptimizer for symbolic expressions
+\begin{itemize}
+\item CSE for dictionary-based expressions
+\item ``lambdify'' (via SymEngine)
+\item Offloading to LLVM JIT compiler (via SymEngine)
+\item Serialization, so complex expressions can be compiled offline
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and improved tutorial and code gallery programs}
 \label{subsec:steps}
 
