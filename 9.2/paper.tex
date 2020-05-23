@@ -131,15 +131,15 @@
   3368 TAMU,
   College Station, TX 77845, USA.
   {\texttt{maier@math.tamu.edu}}}
-  
-  \author[9,13]{Peter Munch}
-  
 
- \affil[13]{Institute of Materials Research, Materials Mechanics, 
- Helmholtz-Zentrum Geesthacht, 
+  \author[9,13]{Peter Munch}
+
+
+ \affil[13]{Institute of Materials Research, Materials Mechanics,
+ Helmholtz-Zentrum Geesthacht,
  Max-Planck-Str. 1, 21502 Geesthacht, Germany.
-   {\texttt{peter.muench@hzg.de}}}  
-  
+   {\texttt{peter.muench@hzg.de}}}
+
 %
 % \author[4]{Jean-Paul~Pelteret}
 %
@@ -194,7 +194,7 @@ The major changes of this release are:
 \item xy \todo[inline]{Update once we have the subsections in Section 2;
   provide cross-references to each of these subsections}
 %   \item Improved support for automatic differentiation (see
-%     Section~\ref{subsec:ad}), 
+%     Section~\ref{subsec:ad}),
 \end{itemize}
 %
 The major changes are discussed in detail in Section~\ref{sec:major}. There
@@ -234,47 +234,47 @@ in the file that lists all changes for this release}, see \cite{changes91}.
 \subsection{A new fully distributed triangulation class}
 \label{subsec:pft}
 
-By release 9.1, all triangulation classes of \texttt{deal.II} have in common that the coarse grid is shared by 
-all processes and the actual mesh used for computations is constructed by repeated 
-refinement. However, this has its limitations in industrial applications where, often, the mesh comes 
-from an external mesh generator in the form of a file that already contains millions 
-or tens of millions of cells. For such configurations, applications might already 
-run out of  main memory, while reading the complete mesh by each MPI process. 
+By release 9.1, all triangulation classes of \texttt{deal.II} have in common that the coarse grid is shared by
+all processes and the actual mesh used for computations is constructed by repeated
+refinement. However, this has its limitations in industrial applications where, often, the mesh comes
+from an external mesh generator in the form of a file that already contains millions
+or tens of millions of cells. For such configurations, applications might exhaust
+available memory already while reading the mesh on each MPI process.
 
-The new class \texttt{parallel::fullydistributed::Triangulation} targets this issue 
-by distributing also the coarse grid. Such 
-a triangulation can be created by providing to each process a \texttt{Triangulation\-De\-scrip\-tion::Description} struct, containing 
-1) the relevant data to construct the local part of the coarse grid, 2) the 
-translation of the local coarse-cell IDs to globally unique IDs, 3) the hierarchy 
-of mesh refinements, and 4) the owner of the cells on the active mesh level as well 
-as on the multigrid levels. Once the triangulation is set up with this struct, no adaptive
-changes to the mesh are allowed at the moment.
- 
-%The \texttt{TriangulationDescription::Description} struct can be filled manually or 
-%by the utility functions from the \texttt{TriangulationDescription::Utilities} 
-%namespace. The function \texttt{create\_\allowbreak description\_\allowbreak 
-%from\_ \allowbreak triangulation()} can convert a base triangulation (partitioned 
-%serial \texttt{Tri\-angulation} and \texttt{parallel::distributed::Triangulation}) 
-%to such a struct. The advantage of this approach is that all known utility 
-%functions from the namespaces \texttt{GridIn} and \texttt{GridTools} can be used 
-%on the base triangulations before converting them to the structs. Since this 
-%function suffers from the same main memory problems as described above, we also 
-%provide the function \texttt{create\_description\_from\_triangulation\_in\_groups()}, 
-%which creates the structs only on the master process in a process group. These 
-%structs are filled one by one and are sent to the relevant processes once they are 
+The new class \texttt{parallel::fullydistributed::Triangulation} targets this issue
+by distributing also the coarse grid. Such
+a triangulation can be created by providing to each process a \texttt{Triangulation\-De\-scrip\-tion::Description} struct, containing
+1) the relevant data to construct the local part of the coarse grid, 2) the
+translation of the local coarse-cell IDs to globally unique IDs, 3) the hierarchy
+of mesh refinements, and 4) the owner of the cells on the active mesh level as well
+as on the multigrid levels. For the current release, triangulations is set up
+this way cannot be adaptively refined after construction, which is planned to be
+improved for the next release.
+
+%The \texttt{TriangulationDescription::Description} struct can be filled manually or
+%by the utility functions from the \texttt{TriangulationDescription::Utilities}
+%namespace. The function \texttt{create\_\allowbreak description\_\allowbreak
+%from\_ \allowbreak triangulation()} can convert a base triangulation (partitioned
+%serial \texttt{Tri\-angulation} and \texttt{parallel::distributed::Triangulation})
+%to such a struct. The advantage of this approach is that all known utility
+%functions from the namespaces \texttt{GridIn} and \texttt{GridTools} can be used
+%on the base triangulations before converting them to the structs. Since this
+%function suffers from the same main memory problems as described above, we also
+%provide the function \texttt{create\_description\_from\_triangulation\_in\_groups()},
+%which creates the structs only on the master process in a process group. These
+%structs are filled one by one and are sent to the relevant processes once they are
 %ready. A sensible process group size might contain all processes of one compute node.
 
 
-The new fully distributed triangulation class works---in contrast to  
-\texttt{parallel::distributed::\allowbreak Tri\-an\-gu\-la\-tion}---not only for 2D- and 3D- but also for 
-1D-problems. It can be used in the context of geometric multigrid methods and 
-supports periodic boundary conditions. Furthermore, hanging nodes are supported.
+The new fully distributed triangulation class supports 1D, 2D, and 3D meshes
+including geometric multigrid hierarchies, periodic boundary conditions, and
+hanging nodes.
 
-%We intend to extend the usability of the new triangulation class in regard of 
-%different aspects, e.g., I/O. In addition, we would like to enable adaptive mesh 
-%refinement, a feature of the other triangulation classes, which is very much 
-%appreciated by many users. For repartitioning, we plan to use an oracle approach 
-%known from \texttt{parallel::distributed::Triangulation}. Here, we would like to 
+%We intend to extend the usability of the new triangulation class in regard of
+%different aspects, e.g., I/O. In addition, we would like to enable adaptive mesh
+%refinement, a feature of the other triangulation classes, which is very much
+%appreciated by many users. For repartitioning, we plan to use an oracle approach
+%known from \texttt{parallel::distributed::Triangulation}. Here, we would like to
 %rely on a user-provided partitioner, which might also be a graph partitioner.
 
 
@@ -287,41 +287,38 @@ supports periodic boundary conditions. Furthermore, hanging nodes are supported.
 %\item VectorizedArrayType
 %\end{itemize}
 
-The class \texttt{VectorizedArray<Number>} is a key ingredient for the high 
-node-level performance of the matrix-free algorithms in deal.II~\cite{KronbichlerKormann2012, KronbichlerKormann2019}. It is a wrapper 
-class around $n$ vector entries of type \texttt{Number} and delegates relevant 
-function calls to appropriate Intrinsics instructions. Up to release 9.1, the 
-vector length $n$ has been set at compile time of the library to the highest 
+The class \texttt{VectorizedArray<Number>} is a key ingredient for the high
+node-level performance of the matrix-free algorithms in deal.II~\cite{KronbichlerKormann2012, KronbichlerKormann2019}. It is a wrapper
+class around a short vector of $n$ entries of type \texttt{Number} and maps
+arithmetic operations to appropriate single-instruction/multiple-data (SIMD)
+concepts by intrinsic functions.
+The class \texttt{VectorizedArray} has been made more user-friendly in this release by making
+it compatible with the STL algorithms found in the header \texttt{<algorithm>}.
+The length of the  vector can now be queried by  \texttt{VectorizedArray::size()} and its underlying number type by \texttt{VectorizedArray::value\_type}.
+Furthermore, the \texttt{VectorizedArray} class now supports range-based iterations over its entries.
+
+Up to release 9.1, the
+vector length $n$ has been set at compile time of the library to the highest
 possible value supported by the given processor architecture.
-
-The class \texttt{VectorizedArray} has been made more user-friendly by making 
-it compatible with the STL algorithms found in the header \texttt{<algorithm>}. 
-The length of the  vector can now be queried by  \texttt{VectorizedArray::size()} and its underlying number type by \texttt{VectorizedArray::value\_type}. 
-Furthermore, the \texttt{VectorizedArray} class supports range-based iterations over its entries and, i.a., the following 
-algorithms: \texttt{std::\allowbreak ad\-vance()}, \texttt{std::distance()}, and \texttt{std::max\_element()}.
-
-This class has been also extended with the second optional template argument 
-\texttt{VectorizedArray<Number, size>} with \texttt{size} being related to the 
-vector length, i.e., the number of lanes to be used and the instruction set to be 
-used. By default, the number is set to the highest value supported by the given 
-hardware. A full list of supported 
+Now, a second optional template argument
+\texttt{VectorizedArray<Number, size>} can be given with \texttt{size} explicitly controlling
+the vector length within the capabilities of a particular instruction set.
+A full list of supported
 vector lengths is presented in Table~\ref{tab:vectorizedarray}.
+\todo[inline]{This table lacks the AltiVec support}
 
-All matrix-free related classes (like \texttt{MatrixFree} and \texttt{FEEvaluation}) 
-have been templated with the floating-point number type \texttt{Number} (e.g. \texttt{double} or \texttt{float}); the computations were performed implicitly 
-on \texttt{VectorizedArray<Number>} structs with the highest 
-instruction-set-architecture extension, with each lane responsible for a separate 
-cell (vectoriziation over elements). In release 9.2, all matrix-free classes 
-have been extended with a new optional template argument specifying the 
-\texttt{VectorizedArrayType}. This allows users to select the vector length/ISA and, 
-as a consequence, the number of cells to be processed at once directly in their applications: 
-The deal.II-based 
-library \texttt{hyper.deal}~\cite{munch2020hyperdeal}, which solves the 6D Vlasov--Poisson equation with high-order 
-discontinuous Galerkin methods (with more than 1024 degrees of freedom per cell), works with \texttt{MatrixFree} objects of different SIMD-vector 
+To account for the variable-size \texttt{VectorizedArray} class, all matrix-free related classes (like \texttt{MatrixFree} and \texttt{FEEvaluation})
+have been extended with a new optional template argument specifying the
+\texttt{VectorizedArrayType}. This allows users to select the vector length/ISA and,
+as a consequence, the number of cells to be processed at once directly in their applications:
+The deal.II-based
+library \texttt{hyper.deal}~\cite{munch2020hyperdeal}, which solves the 6D Vlasov--Poisson equation with high-order
+discontinuous Galerkin methods (with more than a thousand degrees of freedom per cell), constructs a tensor product of two \texttt{MatrixFree} objects of different SIMD-vector
 length in the same application and benefits---in terms of performance---by the possibility of decreasing the number of cells processed by a single SIMD instruction.
 
+
 \begin{table}
-\caption{Supported vector lengths of the class \texttt{VectorizedArray} and 
+\caption{Supported vector lengths of the class \texttt{VectorizedArray} and
 the corresponding instruction-set-architecture extensions. }\label{tab:vectorizedarray}
 \centering
 \begin{tabular}{ccc}
@@ -329,9 +326,9 @@ the corresponding instruction-set-architecture extensions. }\label{tab:vectorize
 \textbf{double} & \textbf{float} & \textbf{ISA}\\
 \midrule
 VectorizedArray<double, 1> & VectorizedArray<float, 1> & (auto-vectorization) \\
-VectorizedArray<double, 2> & VectorizedArray<float, 4> & SSE2 \\ 
-VectorizedArray<double, 4> & VectorizedArray<float, 8> & AVX/AVX2 \\ 
-VectorizedArray<double, 8> & VectorizedArray<float, 16> & AVX-512 \\ 
+VectorizedArray<double, 2> & VectorizedArray<float, 4> & SSE2 \\
+VectorizedArray<double, 4> & VectorizedArray<float, 8> & AVX/AVX2 \\
+VectorizedArray<double, 8> & VectorizedArray<float, 16> & AVX-512 \\
 \bottomrule
 \end{tabular}
 
@@ -346,22 +343,21 @@ VectorizedArray<Number, size> & std::experimental::fixed\_size\_simd<Number, siz
 \end{tabular}
 \end{table}
 
-A side effect of introducing the new template argument \texttt{VectorizedArrayType} 
-in the \texttt{MatrixFree} classes is that any data structures 
-\texttt{VectorizedArrayType} can be processed if they support required 
-functionalities like \texttt{size()} or \texttt{value\_type}. In this context, we 
-would like to highlight that the new \texttt{C++20} feature \texttt{std::simd} 
-can be processed by the matrix-free infrastructure with minor internal 
-adjustment as an open pull request shows 
-(see \url{https://github.com/dealii/dealii/pull/9994}).  
-Table~\ref{tab:simd} gives a comparison of the deal.II-specific SIMD classes and 
-the equivalent C++20 classes. 
-%We welcome the standardization of the SIMD 
-%parallelization paradigm in C++ and intend to replace step by step our own 
-%wrapper class, which has been continuously developed over the last decade. We 
-%would like to emphasize that the work invested in this class was not in vain, 
-%since many performance-relevant utility functions implemented with \texttt{VectorizedArray} in mind (e.g., \texttt{vectorized\_load\_and\_transpose} 
-%and \texttt{vectorized\_transpose\_and\_store}) will be still used, since they 
+Furthermore, the new interfaces enable using any data structure
+\texttt{VectorizedArrayType} as long as it supports required
+functionalities like \texttt{size()} or \texttt{value\_type}. This prepares
+for the \texttt{C++23} feature \texttt{std::simd} that will be enabled in the future.
+Table~\ref{tab:simd} gives a comparison of the deal.II-specific SIMD classes and
+the equivalent C++20 classes. Finally, this change also prepares for specialized
+code paths exploiting
+vectorization within an element~\cite{KronbichlerKormann2019} in the future.
+
+%We welcome the standardization of the SIMD
+%parallelization paradigm in C++ and intend to replace step by step our own
+%wrapper class, which has been continuously developed over the last decade. We
+%would like to emphasize that the work invested in this class was not in vain,
+%since many performance-relevant utility functions implemented with \texttt{VectorizedArray} in mind (e.g., \texttt{vectorized\_load\_and\_transpose}
+%and \texttt{vectorized\_transpose\_and\_store}) will be still used, since they
 %have not become part of the standard.
 
 %Further additions to the \texttt{MatrixFree} infrastructure consist of:
@@ -369,26 +365,22 @@ the equivalent C++20 classes.
 %\item a new variant of \texttt{MatrixFree::cell\_loop()}: It takes two
 %\texttt{std::function} objects with ranges on the locally owned degrees of freedom, one
 %with work to be scheduled before the cell operation first touches some
-%unknowns and another with work to be executed after the cell operation last 
+%unknowns and another with work to be executed after the cell operation last
 %touches them. The goal of
 %these functions is to bring vector operations close to the time when the
 %vector entries are accessed by the cell operation, which increases the cache
-%hit rate of modern processors by improved temporal locality. 
-%\item a new form of loop \texttt{MatrixFree::loop\_cell\_centric()}: This 
-%kind of loop can be used in the context of discontinuous Galerkin methods, 
-%where both cell and face integrals have to be evaluated. While in the case of 
-%the traditional \texttt{loop}, cell and face integrals have been performed 
-%independently, the new loop performs all cell and face integrals of a cell in 
-%one go. This includes that each face integral has to be evaluated twice, but 
-%entries have to be written into the solution vector only once with improved 
-%data locality. Previous publications based on \texttt{deal.II} have shown the 
-%relevance of the latter aspect for reaching higher performance. 
+%hit rate of modern processors by improved temporal locality.
+%\item a new form of loop \texttt{MatrixFree::loop\_cell\_centric()}: This
+%kind of loop can be used in the context of discontinuous Galerkin methods,
+%where both cell and face integrals have to be evaluated. While in the case of
+%the traditional \texttt{loop}, cell and face integrals have been performed
+%independently, the new loop performs all cell and face integrals of a cell in
+%one go. This includes that each face integral has to be evaluated twice, but
+%entries have to be written into the solution vector only once with improved
+%data locality. Previous publications based on \texttt{deal.II} have shown the
+%relevance of the latter aspect for reaching higher performance.
 %\end{itemize}
 
-In a next step, we intend to support that users could set 
-\texttt{VectorizedArrayType} to \texttt{Number}, which would lead to the usage not 
-of \texttt{VectorizedArray<Number, 1>} but of a specialized code-path exploiting 
-vectorization within an element~\cite{KronbichlerKormann2019}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Advances in GPU support}
@@ -403,48 +395,48 @@ vectorization within an element~\cite{KronbichlerKormann2019}.
 \subsection{Improved large-scale performance}
 \label{subsec:performance}
 
-Large-scale simulations with 304,128 cores have revealed bottlenecks in release 
-9.1 during initialization due to the usage of expensive collective operations 
-like \texttt{MPI\_Allgather()} and \texttt{MPI\_\allowbreak Alltoall()}, e.g., during the 
-pre-computation of the index ranges of all processes, which have been stored in  an array. 
-This information is needed to set up 
-the  \texttt{Utilities::MPI::Par\-ti\-ti\-oner} class. 
-In release 9.2, we have removed such arrays and have replaced 
-the \texttt{MPI\_Allgather}/\allowbreak\texttt{MPI\_\allowbreak Alltoall} 
-function calls by consensus algorithms~\cite{hoefler2010scalable}, which can be 
-found in the namespace \texttt{Utilities::\allowbreak MPI::\allowbreak ConsensusAlgorithms} (short: \texttt{CA}): now, only the locally relevant information about the index ranges is (re)computed when needed, using these algorithms. 
-We provide two flavors of the consensus algorithm: the two-step 
-approach \texttt{CA::PEX} and the \texttt{CA::NBX}, 
-which uses only point-to-point communications and a single \texttt{MPI\_IBarrier()}.
+Large-scale simulations with 304,128 cores have revealed bottlenecks in setup
+routines due to the usage of expensive collective operations
+like \texttt{MPI\_Allgather()} and \texttt{MPI\_\allowbreak Alltoall()}, storing
+problem sizes and offsets from all processors in the MPI universe.
+In release 9.2, we have replaced these functions in favor of
+consensus algorithms~\cite{hoefler2010scalable}, which can be
+found in the namespace \texttt{Utilities::\allowbreak MPI::\allowbreak ConsensusAlgorithms} (short: \texttt{CA}).
+Now, only the locally relevant information about the index ranges is
+(re)computed when needed, which, for more than 100 MPI processes, uses
+point-to-point communications and a single \texttt{MPI\_IBarrier()}.
 
-%Consensus algorithms are algorithms dedicated to efficient dynamic-sparse 
-%communication patterns. In this context, the term ``dynamic-sparse'' means 
-%that by the time this function is called, the other processes do not know 
+%Consensus algorithms are algorithms dedicated to efficient dynamic-sparse
+%communication patterns. In this context, the term ``dynamic-sparse'' means
+%that by the time this function is called, the other processes do not know
 %yet that they have to answer requests and
-%each process only has to communicate with a small subset of processes of the 
-%MPI communicator. We provide two flavors of the consensus algorithm: the two-step 
-%approach \texttt{ConsensusAlgorithms::PEX} and the \texttt{ConsensusAlgorithms::NBX}, 
-%which uses only point-to-point communications and a single \texttt{MPI\_IBarrier()}. 
-%The class \texttt{ConsensusAlgorithms::Selector} selects one of the two previous 
+%each process only has to communicate with a small subset of processes of the
+%MPI communicator. We provide two flavors of the consensus algorithm: the two-step
+%approach \texttt{ConsensusAlgorithms::PEX} and the \texttt{ConsensusAlgorithms::NBX},
+%which uses only point-to-point communications and a single \texttt{MPI\_IBarrier()}.
+%The class \texttt{ConsensusAlgorithms::Selector} selects one of the two previous
 %algorithms, depending on the number of processes.
 
-Users can apply the new algorithms for their own dynamic-sparse problems by 
-providing a list of target 
-processes and pack/unpack routines either by implementing the interface 
-\texttt{CA::\allowbreak Process} or by providing \texttt{std::function} 
+Users can apply the new algorithms for their own dynamic-sparse problems by
+providing a list of target
+processes and pack/unpack routines either by implementing the interface
+\texttt{CA::\allowbreak Process} or by providing \texttt{std::function}
 objects to \texttt{CA::AnonymousProcess}.
+\todo[inline]{Aren't the target processes the result of the operation, and the
+  input global numbers of indices that we request?}
 
-By replacing the collective communications during setup and removing the arrays 
-that contain information for each process (enabled by the application of consensus 
-algorithms and other modifications---a full list of modifications leading to this 
-improvement can be found online), we were able to significantly improve the setup 
-time for large-scale simulations and to solve a Poisson problem with multigrid 
-with 12T unknowns. 
-Figure~\ref{} compares the timings of a simulation (incl. setup) with the 
-previous release 9.1 and with the current release 9.2. 
+By replacing the collective communications during setup and removing the arrays
+that contain information for each process (enabled by the application of consensus
+algorithms and other modifications---a full list of modifications leading to this
+improvement can be found online), we were able to significantly improve the setup
+time for large-scale simulations and to solve a Poisson problem with multigrid
+with 12T unknowns.
+\todo[inline]{Where did we solve for 12T unknowns? The largest I [Martin] have done is 2.1T unknowns.}
+Figure~\ref{} compares the timings of a simulation (incl. setup) with the
+previous release 9.1 and with the current release 9.2.
 {\color{red}TODO[Peter/Martin] description of the results}
 
-The new code has been also applied to solve problems with adaptively refined 
+The new code has been also applied to solve problems with adaptively refined
 meshes with more than 4B unknowns. {\color{red}TODO[Timo]}
 
 
@@ -497,7 +489,7 @@ In addition, there are a number of new tutorial programs:
 \todo[inline]{Zhuoran to write}
 \item \texttt{step-50}
   \todo[inline]{Timo/Conrad/... to write}
-  
+
 \item \texttt{step-58} is a program that solves the nonlinear
   Schr{\"o}dinger equation, which in non-dimensional form reads
   \begin{align*}
@@ -524,8 +516,8 @@ In addition, there are a number of new tutorial programs:
 
 \item \texttt{step-65} presents \texttt{TransfiniteInterpolationManifold}, a
 manifold class that can propagate curved boundary information into the
-interior of a computational domain, and \texttt{MappingQCache}, which can sample 
-the information of expensive manifolds in the points of a \texttt{MappingQ} and 
+interior of a computational domain, and \texttt{MappingQCache}, which can sample
+the information of expensive manifolds in the points of a \texttt{MappingQ} and
 cache it for further use.
 
 \item \texttt{step-67} is an explicit time integrator for the
@@ -534,14 +526,14 @@ Galerkin scheme using the matrix-free infrastructure. Besides the use of
 matrix-free evaluators for systems of equations and over-integration, it also
 presents \texttt{MatrixFreeOperators::CellwiseInverseMassMatrix}, a fast implementation
 of the action of the inverse mass matrix in the DG setting using tensor
-products. Furthermore, this tutorial demonstrates the usage of new 
-pre and post operations, which can be passed to \texttt{cell\_loop()}, to schedule operations on sections of vectors close 
-to the matrix-vector product to increase data locality 
+products. Furthermore, this tutorial demonstrates the usage of new
+pre and post operations, which can be passed to \texttt{cell\_loop()}, to schedule operations on sections of vectors close
+to the matrix-vector product to increase data locality
 and discusses performance-related aspects.
 
 \item \texttt{step-69}
   \todo[inline]{Matthias/Ignacio to write}
-  
+
 \item \texttt{step-70}
   \todo[inline]{Also need to update announce and announce-short if this
     makes it into the release.}
