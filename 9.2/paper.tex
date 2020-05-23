@@ -305,7 +305,6 @@ Now, a second optional template argument
 the vector length within the capabilities of a particular instruction set.
 A full list of supported
 vector lengths is presented in Table~\ref{tab:vectorizedarray}.
-\todo[inline]{This table lacks the AltiVec support}
 
 To account for the variable-size \texttt{VectorizedArray} class, all matrix-free related classes (like \texttt{MatrixFree} and \texttt{FEEvaluation})
 have been extended with a new optional template argument specifying the
@@ -326,17 +325,17 @@ the corresponding instruction-set-architecture extensions. }\label{tab:vectorize
 \textbf{double} & \textbf{float} & \textbf{ISA}\\
 \midrule
 VectorizedArray<double, 1> & VectorizedArray<float, 1> & (auto-vectorization) \\
-VectorizedArray<double, 2> & VectorizedArray<float, 4> & SSE2 \\
+VectorizedArray<double, 2> & VectorizedArray<float, 4> & SSE2/AltiVec \\
 VectorizedArray<double, 4> & VectorizedArray<float, 8> & AVX/AVX2 \\
 VectorizedArray<double, 8> & VectorizedArray<float, 16> & AVX-512 \\
 \bottomrule
 \end{tabular}
 
-\caption{Comparison of relevant SIMD-related classes in deal.II and C++20.}\label{tab:simd}
+\caption{Comparison of relevant SIMD-related classes in deal.II and \texttt{C++23}.}\label{tab:simd}
 \centering
 \begin{tabular}{cc}
 \toprule
-\textbf{VectorizedArray (deal.II)} & \textbf{std::simd (C++20)} \\
+\textbf{VectorizedArray (deal.II)} & \textbf{std::simd (\texttt{C++23})} \\
 \midrule
 VectorizedArray<Number> & std::experimental::native\_simd<Number> \\
 VectorizedArray<Number, size> & std::experimental::fixed\_size\_simd<Number, size> \\ \bottomrule
@@ -348,7 +347,7 @@ Furthermore, the new interfaces enable using any data structure
 functionalities like \texttt{size()} or \texttt{value\_type}. This prepares
 for the \texttt{C++23} feature \texttt{std::simd} that will be enabled in the future.
 Table~\ref{tab:simd} gives a comparison of the deal.II-specific SIMD classes and
-the equivalent C++20 classes. Finally, this change also prepares for specialized
+the equivalent \texttt{C++23} classes. Finally, this change also prepares for specialized
 code paths exploiting
 vectorization within an element~\cite{KronbichlerKormann2019} in the future.
 
