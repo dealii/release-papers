@@ -446,7 +446,61 @@ meshes with more than 4B unknowns. {\color{red}TODO[Timo]}
 \subsection{Better support for parallel $hp$-adaptive algorithms}
 \label{subsec:hp}
 
-\todo[inline]{Marc: Your section}
+With the previous release, \dealii supports $hp$-adaptive finite element methods
+on distributed memory systems \cite{dealII91}. We implemented the bare functionality
+for $hp$-adaptive methods with the objective to offer the greatest flexibility in
+their application. Here, reference finite elements still had to be assigned manually
+to each cell, which may not lead to an optimal mesh and is tedious.
+
+With the current release, $hp$-adaptive finite element methods have been further
+expanded in both the range of features in terms of decision strategies and their 
+user interface, effectively making the more attractive to use. We introduced many
+new functions that automatize the general workflow for applying $hp$-decision
+strategies, which run on top of the previous low-level implementation for both serial
+and parallel applications.
+
+The interface is now as simple to use as the one for pure adaptive mesh refinement.
+Consider the following (incomplete) listing as an example: We estimate both error and
+smoothness of the finite element approximation. Further, we flag certain fractions of
+cells with the highest and lowest errors for refinement and coarsening, respectively
+(here: 30\% / 3\%). From those cells listed for adaptation, we specify a subset of them
+for $h$- and $p$-adaptation (here: 10\% / 90\%).
+\begin{c++}
+Vector<float> estimated_error_per_cell (n_active_cells);
+KellyErrorEstimator::estimate(
+  dof_handler, ..., solution, estimated_error_per_cell, ...);
+GridRefinement::refine_and_coarsen_fixed_number(
+  triangulation, estimated_error_per_cell, 0.3, 0.03);
+
+Vector<float> estimated_smoothness_per_cell (n_active_cells);
+SmoothnessEstimator::Legendre::coefficient_decay(
+  ..., dof_handler, solution, estimated_smoothness_per_cell);
+hp::Refinement::p_adaptivity_fixed_number(
+  dof_handler, estimated_smoothness_per_cell, 0.9, 0.9);
+hp::Refinement::choose_p_over_h (dof_handler);
+
+triangulation.execute_coarsening_and_refinement();
+\end{c++}
+
+In particular, we implemented decision strategies based on refinement history and
+smoothness estimation, and made sure that they work for refinement as well as
+coarsening in terms of $h$- and $p$-adaptation in serial and parallel applications.
+
+The former relies on knowing an estimate for the upper error bound \cite[Thm.~3.4]{BabuskaSuri1990}.
+For successive refinements, we can predict how the error will change on basis of
+current error estimates and adaptation flags. In the next refinement cycle, these
+predicted error estimates allow us to decide whether the choice of adaptation in
+the previous cycle was justified, and provide the foundation for it in the next
+one \cite{MelenkWohlmuth2001}.
+
+In general, $p$-refinement is favorable over $h$-refinement in smooth regions of
+the finite element approximation \cite[Thm.~3.4]{BabuskaSuri1990}. Thus, estimating
+its smoothness provides a suitable decision indicator for $hp$-adaptation. For this
+purpose, we expand the finite element approximation into a series of orthogonal
+basis functions of increasing complexity, and consider the decay of their expansion
+coefficients as the estimation of smoothness. This has been implemented for both
+Fourier coefficients \cite{BangerthKayserHerold2007} and Legendre coefficients
+\cite{Mavriplis1994,HoustonSeniorSueli2003,HoustonSueli2005,EibnerMelenk2007}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
