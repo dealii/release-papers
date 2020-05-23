@@ -518,9 +518,15 @@ In addition, there are a number of new tutorial programs:
 
 \item \texttt{step-65} presents \texttt{TransfiniteInterpolationManifold}, a
 manifold class that can propagate curved boundary information into the
-interior of a computational domain, and \texttt{MappingQCache}, which can sample
-the information of expensive manifolds in the points of a \texttt{MappingQ} and
-cache it for further use.
+interior of a computational domain by transfinite interpolation \cite{Gordon82}.
+This manifold is a prototype for many other manifolds in that it is relatively
+expensive to compute the new points, especially for higher order mappings. Since
+typical programs query higher-order geometries in a large variety of contexts,
+the contribution of the mapping to the run time can be significant. As a
+solution, the tutorial also presents the class \texttt{MappingQCache}, which
+samples the information of expensive manifolds in the points of a
+\texttt{MappingQ} and caches it. The tutorial shows that this makes all queries
+to the geometry very cheap.
 
 \item \texttt{step-67} is an explicit time integrator for the
 compressible Euler equations discretized with a high-order discontinuous
@@ -529,9 +535,9 @@ matrix-free evaluators for systems of equations and over-integration, it also
 presents \texttt{MatrixFreeOperators::CellwiseInverseMassMatrix}, a fast implementation
 of the action of the inverse mass matrix in the DG setting using tensor
 products. Furthermore, this tutorial demonstrates the usage of new
-pre and post operations, which can be passed to \texttt{cell\_loop()}, to schedule operations on sections of vectors close
-to the matrix-vector product to increase data locality
-and discusses performance-related aspects.
+pre and post operations, which can be passed to
+\texttt{MatrixFree::cell\_loop()}, to schedule operations on sections of vectors close
+to the matrix-vector product to increase data locality.
 
 \item \texttt{step-69}
   \todo[inline]{Matthias/Ignacio to write}
