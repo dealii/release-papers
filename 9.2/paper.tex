@@ -294,117 +294,6 @@ hanging nodes.
 %rely on a user-provided partitioner, which might also be a graph partitioner.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Advances of the SIMD capabilities and the matrix-free infrastructure}
-\label{subsec:mf}
-
-%\begin{itemize}
-%\item ECL
-%\item VectorizedArrayType
-%\end{itemize}
-
-The class \texttt{VectorizedArray<Number>} is a key ingredient for the high
-node-level performance of the matrix-free algorithms in deal.II~\cite{KronbichlerKormann2012, KronbichlerKormann2019}. It is a wrapper
-class around a short vector of $n$ entries of type \texttt{Number} and maps
-arithmetic operations to appropriate single-instruction/multiple-data (SIMD)
-concepts by intrinsic functions.
-The class \texttt{VectorizedArray} has been made more user-friendly in this release by making
-it compatible with the STL algorithms found in the header \texttt{<algorithm>}.
-The length of the  vector can now be queried by  \texttt{VectorizedArray::size()} and its underlying number type by \texttt{VectorizedArray::value\_type}.
-Furthermore, the \texttt{VectorizedArray} class now supports range-based iterations over its entries.
-
-Up to release 9.1, the
-vector length $n$ has been set at compile time of the library to the highest
-possible value supported by the given processor architecture.
-Now, a second optional template argument
-\texttt{VectorizedArray<Number, size>} can be given with \texttt{size} explicitly controlling
-the vector length within the capabilities of a particular instruction set.
-A full list of supported
-vector lengths is presented in Table~\ref{tab:vectorizedarray}.
-
-To account for the variable-size \texttt{VectorizedArray} class, all matrix-free related classes (like \texttt{MatrixFree} and \texttt{FEEvaluation})
-have been extended with a new optional template argument specifying the
-\texttt{VectorizedArrayType}. This allows users to select the vector length/ISA and,
-as a consequence, the number of cells to be processed at once directly in their applications:
-The deal.II-based
-library \texttt{hyper.deal}~\cite{munch2020hyperdeal}, which solves the 6D Vlasov--Poisson equation with high-order
-discontinuous Galerkin methods (with more than a thousand degrees of freedom per cell), constructs a tensor product of two \texttt{MatrixFree} objects of different SIMD-vector
-length in the same application and benefits---in terms of performance---by the possibility of decreasing the number of cells processed by a single SIMD instruction.
-
-
-\begin{table}
-\caption{Supported vector lengths of the class \texttt{VectorizedArray} and
-the corresponding instruction-set-architecture extensions. }\label{tab:vectorizedarray}
-\centering
-\begin{tabular}{ccc}
-\toprule
-\textbf{double} & \textbf{float} & \textbf{ISA}\\
-\midrule
-VectorizedArray<double, 1> & VectorizedArray<float, 1> & (auto-vectorization) \\
-VectorizedArray<double, 2> & VectorizedArray<float, 4> & SSE2/AltiVec \\
-VectorizedArray<double, 4> & VectorizedArray<float, 8> & AVX/AVX2 \\
-VectorizedArray<double, 8> & VectorizedArray<float, 16> & AVX-512 \\
-\bottomrule
-\end{tabular}
-
-\caption{Comparison of relevant SIMD-related classes in deal.II and \texttt{C++23}.}\label{tab:simd}
-\centering
-\begin{tabular}{cc}
-\toprule
-\textbf{VectorizedArray (deal.II)} & \textbf{std::simd (\texttt{C++23})} \\
-\midrule
-VectorizedArray<Number> & std::experimental::native\_simd<Number> \\
-VectorizedArray<Number, size> & std::experimental::fixed\_size\_simd<Number, size> \\ \bottomrule
-\end{tabular}
-\end{table}
-
-Furthermore, the new interfaces enable using any data structure
-\texttt{VectorizedArrayType} as long as it supports required
-functionalities like \texttt{size()} or \texttt{value\_type}. This prepares
-for the \texttt{C++23} feature \texttt{std::simd} that will be enabled in the future.
-Table~\ref{tab:simd} gives a comparison of the deal.II-specific SIMD classes and
-the equivalent \texttt{C++23} classes. Finally, this change also prepares for specialized
-code paths exploiting
-vectorization within an element~\cite{KronbichlerKormann2019} in the future.
-
-%We welcome the standardization of the SIMD
-%parallelization paradigm in C++ and intend to replace step by step our own
-%wrapper class, which has been continuously developed over the last decade. We
-%would like to emphasize that the work invested in this class was not in vain,
-%since many performance-relevant utility functions implemented with \texttt{VectorizedArray} in mind (e.g., \texttt{vectorized\_load\_and\_transpose}
-%and \texttt{vectorized\_transpose\_and\_store}) will be still used, since they
-%have not become part of the standard.
-
-%Further additions to the \texttt{MatrixFree} infrastructure consist of:
-%\begin{itemize}
-%\item a new variant of \texttt{MatrixFree::cell\_loop()}: It takes two
-%\texttt{std::function} objects with ranges on the locally owned degrees of freedom, one
-%with work to be scheduled before the cell operation first touches some
-%unknowns and another with work to be executed after the cell operation last
-%touches them. The goal of
-%these functions is to bring vector operations close to the time when the
-%vector entries are accessed by the cell operation, which increases the cache
-%hit rate of modern processors by improved temporal locality.
-%\item a new form of loop \texttt{MatrixFree::loop\_cell\_centric()}: This
-%kind of loop can be used in the context of discontinuous Galerkin methods,
-%where both cell and face integrals have to be evaluated. While in the case of
-%the traditional \texttt{loop}, cell and face integrals have been performed
-%independently, the new loop performs all cell and face integrals of a cell in
-%one go. This includes that each face integral has to be evaluated twice, but
-%entries have to be written into the solution vector only once with improved
-%data locality. Previous publications based on \texttt{deal.II} have shown the
-%relevance of the latter aspect for reaching higher performance.
-%\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Advances in GPU support}
-\label{subsec:gpu}
-
-\begin{itemize}
-\item overlapping of computation and communication in the case of CUDA-aware MPI
-\end{itemize}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Improved large-scale performance}
@@ -548,6 +437,127 @@ BatchOptimizer for symbolic expressions
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Advances of the SIMD capabilities and the matrix-free infrastructure}
+\label{subsec:mf}
+
+%\begin{itemize}
+%\item ECL
+%\item VectorizedArrayType
+%\end{itemize}
+
+The class \texttt{VectorizedArray<Number>} is a key ingredient for the high
+node-level performance of the matrix-free algorithms in deal.II~\cite{KronbichlerKormann2012, KronbichlerKormann2019}. It is a wrapper
+class around a short vector of $n$ entries of type \texttt{Number} and maps
+arithmetic operations to appropriate single-instruction/multiple-data (SIMD)
+concepts by intrinsic functions.
+The class \texttt{VectorizedArray} has been made more user-friendly in this release by making
+it compatible with the STL algorithms found in the header \texttt{<algorithm>}.
+The length of the  vector can now be queried by  \texttt{VectorizedArray::size()} and its underlying number type by \texttt{VectorizedArray::value\_type}.
+Furthermore, the \texttt{VectorizedArray} class now supports range-based iterations over its entries.
+
+Up to release 9.1, the
+vector length $n$ has been set at compile time of the library to the highest
+possible value supported by the given processor architecture.
+Now, a second optional template argument
+\texttt{VectorizedArray<Number, size>} can be given with \texttt{size} explicitly controlling
+the vector length within the capabilities of a particular instruction set.
+A full list of supported
+vector lengths is presented in Table~\ref{tab:vectorizedarray}.
+
+To account for the variable-size \texttt{VectorizedArray} class, all matrix-free related classes (like \texttt{MatrixFree} and \texttt{FEEvaluation})
+have been extended with a new optional template argument specifying the
+\texttt{VectorizedArrayType}. This allows users to select the vector length/ISA and,
+as a consequence, the number of cells to be processed at once directly in their applications:
+The deal.II-based
+library \texttt{hyper.deal}~\cite{munch2020hyperdeal}, which solves the 6D Vlasov--Poisson equation with high-order
+discontinuous Galerkin methods (with more than a thousand degrees of freedom per cell), constructs a tensor product of two \texttt{MatrixFree} objects of different SIMD-vector
+length in the same application and benefits---in terms of performance---by the possibility of decreasing the number of cells processed by a single SIMD instruction.
+
+
+\begin{table}
+\caption{Supported vector lengths of the class \texttt{VectorizedArray} and
+the corresponding instruction-set-architecture extensions. }\label{tab:vectorizedarray}
+\centering
+\begin{tabular}{ccc}
+\toprule
+\textbf{double} & \textbf{float} & \textbf{ISA}\\
+\midrule
+VectorizedArray<double, 1> & VectorizedArray<float, 1> & (auto-vectorization) \\
+VectorizedArray<double, 2> & VectorizedArray<float, 4> & SSE2/AltiVec \\
+VectorizedArray<double, 4> & VectorizedArray<float, 8> & AVX/AVX2 \\
+VectorizedArray<double, 8> & VectorizedArray<float, 16> & AVX-512 \\
+\bottomrule
+\end{tabular}
+
+\caption{Comparison of relevant SIMD-related classes in deal.II and \texttt{C++23}.}\label{tab:simd}
+\centering
+\begin{tabular}{cc}
+\toprule
+\textbf{VectorizedArray (deal.II)} & \textbf{std::simd (\texttt{C++23})} \\
+\midrule
+VectorizedArray<Number> & std::experimental::native\_simd<Number> \\
+VectorizedArray<Number, size> & std::experimental::fixed\_size\_simd<Number, size> \\ \bottomrule
+\end{tabular}
+\end{table}
+
+Furthermore, the new interfaces enable using any data structure
+\texttt{VectorizedArrayType} as long as it supports required
+functionalities like \texttt{size()} or \texttt{value\_type}. This prepares
+for the \texttt{C++23} feature \texttt{std::simd} that will be enabled in the future.
+Table~\ref{tab:simd} gives a comparison of the deal.II-specific SIMD classes and
+the equivalent \texttt{C++23} classes. Finally, this change also prepares for specialized
+code paths exploiting
+vectorization within an element~\cite{KronbichlerKormann2019} in the future.
+
+%We welcome the standardization of the SIMD
+%parallelization paradigm in C++ and intend to replace step by step our own
+%wrapper class, which has been continuously developed over the last decade. We
+%would like to emphasize that the work invested in this class was not in vain,
+%since many performance-relevant utility functions implemented with \texttt{VectorizedArray} in mind (e.g., \texttt{vectorized\_load\_and\_transpose}
+%and \texttt{vectorized\_transpose\_and\_store}) will be still used, since they
+%have not become part of the standard.
+
+%Further additions to the \texttt{MatrixFree} infrastructure consist of:
+%\begin{itemize}
+%\item a new variant of \texttt{MatrixFree::cell\_loop()}: It takes two
+%\texttt{std::function} objects with ranges on the locally owned degrees of freedom, one
+%with work to be scheduled before the cell operation first touches some
+%unknowns and another with work to be executed after the cell operation last
+%touches them. The goal of
+%these functions is to bring vector operations close to the time when the
+%vector entries are accessed by the cell operation, which increases the cache
+%hit rate of modern processors by improved temporal locality.
+%\item a new form of loop \texttt{MatrixFree::loop\_cell\_centric()}: This
+%kind of loop can be used in the context of discontinuous Galerkin methods,
+%where both cell and face integrals have to be evaluated. While in the case of
+%the traditional \texttt{loop}, cell and face integrals have been performed
+%independently, the new loop performs all cell and face integrals of a cell in
+%one go. This includes that each face integral has to be evaluated twice, but
+%entries have to be written into the solution vector only once with improved
+%data locality. Previous publications based on \texttt{deal.II} have shown the
+%relevance of the latter aspect for reaching higher performance.
+%\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Advances in GPU support}
+\label{subsec:gpu}
+
+\begin{itemize}
+\item overlapping of computation and communication in the case of CUDA-aware MPI
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Expanded use of C++11 facilities}
+\label{subsec:cxx}
+
+\todo[inline]{Reza: Short paragraph about constexpr}
+
+\todo[inline]{Mention as last sentence that next release will use C++14.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and improved tutorial and code gallery programs}
 \label{subsec:steps}
 
@@ -628,7 +638,7 @@ to the matrix-vector product to increase data locality.
 \subsection{Python interfaces}
 \label{subsec:python}
 
-\todo[inline]{What's new here? mention step-49 and step-53 versions written in python.}
+\todo[inline]{Alexander: What's new here? mention step-49 and step-53 versions written in python.}
 
 
 
