@@ -114,7 +114,7 @@
 \author[6]{Alexander~V.~Grayver}
 \affil[6]{Institute of Geophysics,
   ETH Zurich,
-  8092 Z\"{u}rich, Switzerland.
+  Sonneggstrasse 5, 8092 Z\"{u}rich, Switzerland.
   {\texttt{agrayver@ethz.ch}}}
 
 \author[3]{Timo~Heister}
@@ -649,10 +649,48 @@ to the matrix-vector product to increase data locality.
 \subsection{Python interfaces}
 \label{subsec:python}
 
-\todo[inline]{Alexander: What's new here? mention step-49 and step-53 versions written in python.}
+\begin{figure}
+\renewcommand\figurename{Listing}
+
+\centering
+
+\begin{python}
+import PyDealII.Release as dealii
+
+triangulation = dealii.Triangulation('2D')
+triangulation.generate_hyper_shell(center = dealii.Point([0, 0]), 
+                    inner_radius = 0.5, outer_radius = 1.,
+                    n_cells = 0, colorize = True)
+
+triangulation.refine_global(2)
+
+for cell in triangulation.active_cells():
+    cell.material_id = 1 if cell.center().x > 0 else 2
+    
+    for face in cell.faces():
+        if face.at_boundary() and\
+           face.boundary_id == 1:
+            cell.refine_flag ='isotropic'
+            
+triangulation.execute_coarsening_and_refinement()
+\end{python}
+
+\includegraphics{python_mesh.png}
+
+\caption{Python code that uses \texttt{deal.II}'s Python interface to generate a mesh shown at the bottom (coloured by the cell's material id).}
+\label{python_wrapper}
+\end{figure}
 
 
+The initial support for Python has come in \texttt{deal.II 9.0}. The present release significantly extends the Python interface. Specficically, a large number of methods from the C++ classes such as \texttt{Triangulation, CellAccessor, TriaAccessor, Mapping, Manifold, GridTools} can now be invoked from within the Python. The accent was made on methods and functions that are widely used at a mesh preparation stage when a mesh is created and parameters related to the boundary, manifold and material identifiers are assigned. 
 
+A triangulation object can be read in or created using a number of simplistic geometries offered by the \texttt{GridGenerator}'s functions. Further information such as boundary, material and manifold identifiers can be assigned to cells and respective faces or edges (see Listing \ref{python_wrapper}). The introspective nature of the Python language makes it easy to infer the list of supported methods from the Python objects, for example by typing \texttt{dir(PyDealII.Release.Triangulation)}.
+
+All triangulations created within the Python are serial. Once the mesh is designed, triangulation can be serialized along with the auxiliary information about possible refinement, boundaries, materials and manifolds. This object can be easily deserialized within a C++ program for subsequent production runs. Although saved triangulations are serial, it is possible to use them for construction of \texttt{parallel::shared, parallel::disrtibuted, and parallel::fullydistributed} (see also Section \ref{subsec:pft}) types of triangulations respecting the refinement and all the auxiliary information. 
+
+To facilitate the illustration of the new Python bindings, tutorial programs \href{https://github.com/dealii/dealii/blob/dealii-9.2/examples/step-49/step-49.ipynb}{step-49} and \href{https://github.com/dealii/dealii/blob/dealii-9.2/examples/step-53/step-53.ipynb}{step-53} were replicated in a form of the Jupyter notebooks.
+
+Note that the current Python interface does not yet provide access to the actual \texttt{deal.II}'s finite element machinery, that is classes such as \texttt{DoFHandler, FE\_*, FEValues}, etc. It is envisaged that a progress towards this will be made for the next release. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Incompatible changes}
