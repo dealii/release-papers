@@ -23,6 +23,9 @@
 \usepackage{todonotes}
 
 \pgfplotsset{compat=1.9}
+\definecolor{gnuplot@lightblue}{RGB}{87,181,232}
+\definecolor{gnuplot@green}{RGB}{0,158,115}
+\definecolor{gnuplot@purple}{RGB}{148,0,212}
 
 \newcommand{\specialword}[1]{\texttt{#1}}
 \newcommand{\dealii}{{\specialword{deal.II}}\xspace}
@@ -310,14 +313,14 @@ hanging nodes.
 \subsection{Improved large-scale performance}
 \label{subsec:performance}
 
-Large-scale simulations with 304,128 cores have revealed bottlenecks in release 
-9.1 during initialization of a number of distributed data structures due to the usage of expensive collective operations 
+Large-scale simulations with 304,128 cores have revealed bottlenecks in release
+9.1 during initialization of a number of distributed data structures due to the usage of expensive collective operations
 like \texttt{MPI\_Allgather()} and \texttt{MPI\_\allowbreak
   Alltoall()}. Typical examples are the
 pre-computation of those indices of the vector entries (or
 other linear index ranges) owned by
-each process, which were previously stored in  an array on every process. 
-This information is needed to set up 
+each process, which were previously stored in  an array on every process.
+This information is needed to set up
 the  \texttt{Utilities::MPI::Par\-ti\-ti\-oner} class.
 In release 9.2, we have replaced these functions in favor of
 consensus algorithms~\cite{hoefler2010scalable}, which can be
@@ -352,11 +355,120 @@ algorithms and other modifications---a full list of modifications leading to thi
 improvement can be found online), we were able to significantly
 improve the set up
 time for large-scale simulations and to solve a Poisson problem with multigrid
-with \num{12e12} unknowns.
-\todo[inline]{Where did we solve for 12T unknowns? The largest I [Martin] have done is 2.1T unknowns.}
-Figure~\ref{...} {\color{red}Update reference} compares the timings of a simulation (including set up) with the
-previous release 9.1 and with the current release 9.2.
-{\color{red}TODO[Peter/Martin] description of the results}
+with \num{2.1e12} unknowns.
+Figure~\ref{fig:init_costs} compares the timings of simulations of various problem
+sizes (including set up) on 49,152 MPI ranks using a matrix-free solver according
+to~\cite{KronbichlerKormann2019,KronbichlerWall2018} discontinuous elements of
+degree $5$ in a geometric multigrid (GMG) scheme with the previous release 9.1
+and with the current release 9.2. While the times for the V-cycle have shown
+excellent scaling before, many initialization routines have been considerably
+improved, especially the enumeration of unknowns on the multigrid levels and
+the setup of the multigrid transfer.
+
+\pgfplotstableread{
+dofs  grid  distdofs  mfsetup  mgtransfer  smoother  vcycle
+14155776  0.347457  0.02424084  0.03346427  0.0105426  0.0108817  0.0035033
+28311552  0.35134  0.0215024  0.0340963  0.0095201  0.010616  0.0035887
+56623104  0.41577  0.0243593  0.0432297  0.011557  0.011667  0.0041244
+113246208  0.42172  0.0323919  0.0427806  0.012983  0.011834  0.0043853
+226492416  0.43565  0.0404079  0.0421606  0.012867  0.017305  0.0056340
+452984832  0.5055  0.0500101  0.0562977  0.017739  0.022763  0.0061992
+905969664  0.54552  0.065865  0.0641994  0.019445  0.037431  0.0087932
+1811939328  0.5672  0.104909  0.080807  0.025395  0.063548  0.0133252
+3623878656  0.65541  0.165071  0.129717  0.042294  0.12644  0.0218619
+7247757312  0.74521  0.251417  0.221072  0.073314  0.21807  0.0339264
+14495514624  0.84789  0.403463  0.36894  0.11425  0.4091  0.0669798
+28991029248  0.91983  0.52435  0.5363  0.14189  0.79178  0.1322448
+57982058496  1.0339  0.87448  0.93134  0.23863  1.5896  0.2539445
+115964116992  1.2667  1.46016  1.70806  0.44101  3.1409  0.4956625
+231928233984  1.7597  2.58121  3.3741  0.77624  6.2628  0.9857200
+}\tableinit
+
+\pgfplotstableread{
+dofs  grid  distdofs  mfsetup  mgtransfer  smoother  vcycle
+14155776  2.0148  0.9086  0.433886  1.3099  0.010685  0.0035033
+28311552  1.8746  0.91078  0.576777  1.3093  0.010752  0.0035887
+56623104  2.0924  0.98058  0.574183  1.4459  0.011831  0.0041244
+113246208  2.3788  1.22025  0.547492  1.7919  0.011979  0.0043853
+226492416  2.1254  1.50329  0.839219  1.7832  0.017819  0.0056340
+452984832  2.4325  2.10171  0.711708  2.0263  0.023393  0.0061992
+905969664  3.8911  3.58355  1.08478  2.5844  0.045697  0.0087932
+1811939328  4.1803  4.379  0.784804  1.8947  0.061552  0.0133252
+3623878656  2.6654  5.6073  0.833896  1.8912  0.1188  0.0218619
+7247757312  2.7422  7.8463  0.741733  1.8477  0.21291  0.0339264
+14495514624  2.765  9.9848  0.99218  1.8248  0.40665  0.0669798
+28991029248  3.2901  15.0526  1.5124  2.6723  0.81013  0.1322448
+57982058496  3.1927  21.0562  1.72831  2.1998  1.5905  0.2539445
+115964116992  4.1485  31.0087  2.67998  2.9091  3.2009  0.4956625
+231928233984  4.1787  47.195  4.2821  3.9558  6.3362  0.9857200
+}\tableinitold
+
+\begin{figure}
+  \begin{tikzpicture}
+    \begin{loglogaxis}[
+      width=0.51\textwidth,
+      height=0.38\textwidth,
+          xlabel={\# DoFs},
+          ylabel={time [s]},
+          title={9.1 release},
+          xtick={1.4e7,5.7e7,2.3e8,9.1e8,3.6e9,1.4e10,5.8e10,2.3e11},
+          xticklabels={1.4$\times 10^7$,5.7$\times 10^7$,2.3$\times 10^8$,9.1$\times 10^8$,3.6$\times 10^9$,1.4$\times 10^{10}$,5.8$\times 10^{10}$,2.3$\times 10^{11}$},
+          tick label style={font=\scriptsize},
+          xticklabel style={rotate=25,anchor=north east},
+          label style={font=\scriptsize},
+          legend style={font=\scriptsize},
+          %legend to name=legend:scalingMG,
+          %legend cell align=left,
+          %legend columns = 3,
+          ymin=2e-3,ymax=8e1,
+          grid, thick]
+          \addplot table[x index = 0, y index={1}] {\tableinitold};
+          \addplot[red,mark=square*] table[x index = 0, y index={2}] {\tableinitold};
+          \addplot[gnuplot@green,mark=otimes] table[x index = 0, y index={3}] {\tableinitold};
+          \addplot[gnuplot@lightblue,mark=triangle] table[x index = 0, y index={4}] {\tableinitold};
+          \addplot[gnuplot@purple,mark=diamond] table[x index = 0, y index={5}] {\tableinitold};
+          \addplot[black,mark=x] table[x index = 0, y index={6}] {\tableinitold};
+    \end{loglogaxis}
+  \end{tikzpicture}
+  \hfill
+  \begin{tikzpicture}
+    \begin{loglogaxis}[
+      width=0.51\textwidth,
+      height=0.38\textwidth,
+          xlabel={\# DoFs},
+          ylabel={time [s]},
+          title={9.2 release},
+          xtick={1.4e7,5.7e7,2.3e8,9.1e8,3.6e9,1.4e10,5.8e10,2.3e11},
+          xticklabels={1.4$\times 10^7$,5.7$\times 10^7$,2.3$\times 10^8$,9.1$\times 10^8$,3.6$\times 10^9$,1.4$\times 10^{10}$,5.8$\times 10^{10}$,2.3$\times 10^{11}$},
+          tick label style={font=\scriptsize},
+          xticklabel style={rotate=25,anchor=north east}, thick,
+          label style={font=\scriptsize},
+          legend style={font=\scriptsize},
+          legend to name=legend:init,
+          legend cell align=left,
+          legend columns = 6,
+          ymin=2e-3,ymax=8e1,
+          grid]
+          \addplot table[x index = 0, y index={1}] {\tableinit};
+          \addlegendentry{create mesh};
+          \addplot[red,mark=square*] table[x index = 0, y index={2}] {\tableinit};
+          \addlegendentry{enumerate (mg) dofs};
+          \addplot[gnuplot@green,mark=otimes] table[x index = 0, y index={3}] {\tableinit};
+          \addlegendentry{init matrix-free};
+          \addplot[gnuplot@lightblue,mark=triangle] table[x index = 0, y index={4}] {\tableinit};
+          \addlegendentry{init GMG transfer};
+          \addplot[gnuplot@purple,mark=diamond] table[x index = 0, y index={5}] {\tableinit};
+          \addlegendentry{init smoother};
+          \addplot[black,mark=x] table[x index = 0, y index={6}] {\tableinit};
+          \addlegendentry{GMG V-cycle};
+    \end{loglogaxis}
+  \end{tikzpicture}
+  \\
+  \strut\hfill\pgfplotslegendfromname{legend:init}\hfill\strut
+  \caption{Comparison of initialization costs of various data structures in the 9.1 release (left) and the new 9.2 release (right).}
+  \label{fig:init_costs}
+\end{figure}
+
 
 The new code has been also applied to solve problems with adaptively refined
 meshes with more than \num{4e9} unknowns. {\color{red}TODO[Timo]}
