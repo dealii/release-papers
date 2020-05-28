@@ -170,7 +170,7 @@
 \author[13]{Zhuoran Wang}
 \affil[13]{Department of Mathematics, Colorado State University, Fort Collins,
           CO 80523-1874, USA.
-{\texttt{zhrwang@colostate.edu}}}         
+{\texttt{zhrwang@math.colostate.edu}}}
 \renewcommand{\labelitemi}{--}
 
 
@@ -754,8 +754,16 @@ all cells in this way.
 
 In addition, there are a number of new tutorial programs:
 \begin{itemize}
-\item \texttt{step-47}
-\todo[inline]{Zhuoran to write}
+\item \texttt{step-47} solves the biharmonic equation with the
+  clamped boundary condition. This program is based on the $C^0$ interior
+  penalty method for fourth order problems. In order to overcome
+  shortcomings of classical approaches, this method uses $C^0$ Lagrange finite
+  elements and introduces ``jump`` and ``average`` on interfaces of elements.
+  The resulting system is obtained through integration by parts, symmetrization,
+  and stabilization. Appropriate choices for the penalty parameter are
+  discussed based on numerical results.
+
+
 \item \texttt{step-50}
   \todo[inline]{Timo/Conrad/... to write}
 
