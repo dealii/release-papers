@@ -75,7 +75,7 @@
    Computional Sciences and Engineering Division,
    Oak Ridge National Laboratory, 1 Bethel Valley Rd.,
    TN 37831, USA.
-   \texttt{arndtd@ornl.gov}}
+   \texttt{arndtd/turcksinbr@ornl.gov}}
 
  \author[2]{Wolfgang~Bangerth}
  \affil[2]{Department of Mathematics and Department of Geosciences, Colorado State University, Fort
@@ -292,7 +292,7 @@ a triangulation can be created by providing to each process a \texttt{Triangulat
 translation of the local coarse-cell IDs to globally unique IDs, (iii) the hierarchy
 of mesh refinement steps, and (iv) the owner of the cells on the active mesh level as well
 as on the multigrid levels. For the current release, triangulations set up
-this way cannot be adaptively refined after construction, though we plann to
+this way cannot be adaptively refined after construction, though we plan to
 improve this for the next release.
 
 %The \texttt{TriangulationDescription::Description} struct can be filled manually or
@@ -688,9 +688,27 @@ vectorization within an element~\cite{KronbichlerKormann2019} in the future.
 \subsection{Advances in GPU support}
 \label{subsec:gpu}
 
-\begin{itemize}
-\item overlapping of computation and communication in the case of CUDA-aware MPI
-\end{itemize}
+For this release, the most noteworthy improvements for the GPU support are the
+simplification of the kernel written by user, improvement of the error messages,
+and overlapping of computation and communication when using CUDA-aware MPI with
+the matrix-free framework. In order to simplify user code, we know recompute the
+local degree of freedom and quadrature point indices instead of having the user
+keeping track of them. A new option to overlap computation and communication is
+now available when using CUDA-aware MPI and matrix-free. The underlying idea is
+that only the degrees of freedom (dofs) on the boundary of the local domain
+require communication. Before evaluating the matrix-free operator at these
+degrees of freedom, we need to communicate the ghosted dofs from other
+processors.  Similarly once the operator has been evaluated, we need to update
+the resulting global vector with values from other processors. The strategy that
+we are using consist in splitting the dofs in three groups: one group of dofs
+that are on the local boundary and two groups each owning half of the interior
+dofs. When evaluating the matrix-free operator, we start the MPI communication
+to get the ghosted dofs and evaluate the operator on one of the two interior
+dofs group. When the evaluation is done, we wait for the MPI to be over and
+then, evaluate the operator on the boundary dofs group. When this evaluation is
+over, we start the communication to update the global vector, we evaluate the
+operator on the last of group of dofs, and finally wait for the MPI
+communication to finish.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -833,7 +851,7 @@ triangulation.execute_coarsening_and_refinement()
 \end{figure}
 
 
-The initial support for Python has come in \texttt{deal.II 9.0}. The present release significantly extends the Python interface. Specficically, a large number of methods from the C++ classes such as \texttt{Triangulation, CellAccessor, TriaAccessor, Mapping, Manifold, GridTools} can now be invoked from within the Python. The accent was made on methods and functions that are widely used at a mesh preparation stage when a mesh is created and parameters related to the boundary, manifold and material identifiers are assigned.
+The initial support for Python has come in \texttt{deal.II 9.0}. The present release significantly extends the Python interface. Specifically, a large number of methods from the C++ classes such as \texttt{Triangulation, CellAccessor, TriaAccessor, Mapping, Manifold, GridTools} can now be invoked from Python. The accent was made on methods and functions that are widely used at a mesh preparation stage when a mesh is created and parameters related to the boundary, manifold and material identifiers are assigned.
 
 A triangulation object can be read in or created using a number of simplistic geometries offered by the \texttt{GridGenerator}'s functions. Further information such as boundary, material and manifold identifiers can be assigned to cells and respective faces or edges (see Listing \ref{python_wrapper}). The introspective nature of the Python language makes it easy to infer the list of supported methods from the Python objects, for example by typing \texttt{dir(PyDealII.Release.Triangulation)}.
 
