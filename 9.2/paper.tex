@@ -201,6 +201,7 @@
 \section{Overview}
 
 \dealii version 9.2.0 was released May XYZ, 2020.
+\todo[inline]{Need to update date.}
 This paper provides an
 overview of the new features of this release and serves as a citable
 reference for the \dealii software library version 9.2. \dealii is an
@@ -224,9 +225,10 @@ that we briefly outline in the remainder of this section:
 %
 \begin{itemize}
 \item \dealii{} had decent support for solving complex-valued problems
-  (e.g., ones in quantum mechanics -- like the example covered by the
+  for a while already
+  (e.g., ones in quantum mechanics -- like the equation used in the
   \texttt{step-58} tutorial program covered below -- or for
-  time-harmonic problems) for a while already. However, there were two
+  time-harmonic problems). However, there were two
   areas in which support was missing. First, the UMFPACK direct solver
   packaged with \dealii{} did not support solving complex-valued
   linear problems. This has now been addressed: UMFPACK actually can
@@ -238,26 +240,19 @@ that we briefly outline in the remainder of this section:
   example for this is to solve the time-harmonic version of the
   Maxwell equations that has the electric and magnetic fields as
   solution. This, too, has been addressed in this release.
-\item The class \texttt{DiscreteTime} is introduced to provide a more
+\item The new \texttt{DiscreteTime} class provides a more
   consistent, more readable, and less error-prone approach to control
   time-stepping algorithms within time-dependent simulations.
-  The mutating interface of this class is designed to be minimal
+  The interface of this class is designed to be minimal
   to enforce a number of important programming invariants, reducing
   the possibility of mistakes in the user code.
-  When time-incrementation is requested within the user code, the class makes
-  sure that time increases by a non-zero step size and the current step
-  number is incremented accordingly.
-  Furthermore, \texttt{DiscreteTime} ensures that the final time step ends
-  precisely on a predefined end time. Therefore, the final step size is
-  automatically lengthened or shortened to accommodate this feature.
-  In addition, the class provides useful access methods which return the step
-  number $n$, the values of the simulation time corresponding to $t_{n-1}$,
-  $t_n$, and $t_{n+1}$, and the step-size values $t_n - t_{n-1}$ and
-  $t_{n+1} - t_n$.
+  An example is that \texttt{DiscreteTime} ensures that the final time step ends
+  precisely on a predefined end time, automatically
+  lengthening or shortening to final time step.
 \item z \todo[inline]{What else? Maybe mention the updated step-12?}
 \end{itemize}
 %
-In addition to these changes, the changelog lists more than 200 other
+The changelog lists more than 240 other
 features and bugfixes.
 
 
@@ -271,7 +266,6 @@ features and bugfixes.
 
 This release of \dealii contains a number of large and significant changes
 that will be discussed in this section.
-
 It of course also contains a
 vast number of smaller changes and added functionality; the details of these
 can be found
@@ -283,22 +277,23 @@ in the file that lists all changes for this release}, see \cite{changes91}.
 \subsection{A new fully distributed triangulation class}
 \label{subsec:pft}
 
-By release 9.1, all triangulation classes of \texttt{deal.II} have in common that the coarse grid is shared by
-all processes and the actual mesh used for computations is constructed by repeated
-refinement. However, this has its limitations in industrial applications where, often, the mesh comes
+Previously, all triangulation classes of \texttt{deal.II} had in common that the coarse grid is replicated by
+all processes in a parallel environment, and the actual mesh used for computations is constructed by repeated
+refinement. However, this has its limitations in industrial
+applications, where frequently the mesh comes
 from an external mesh generator in the form of a file that already contains millions
 or tens of millions of cells. For such configurations, applications might exhaust
 available memory already while reading the mesh on each MPI process.
 
-The new class \texttt{parallel::fullydistributed::Triangulation} targets this issue
+The new \texttt{parallel::fullydistributed::Triangulation} class targets this issue
 by distributing also the coarse grid. Such
 a triangulation can be created by providing to each process a \texttt{Triangulation\-De\-scrip\-tion::Description} struct, containing
-1) the relevant data to construct the local part of the coarse grid, 2) the
-translation of the local coarse-cell IDs to globally unique IDs, 3) the hierarchy
-of mesh refinements, and 4) the owner of the cells on the active mesh level as well
-as on the multigrid levels. For the current release, triangulations is set up
-this way cannot be adaptively refined after construction, which is planned to be
-improved for the next release.
+(i) the relevant data to construct the local part of the coarse grid, (ii) the
+translation of the local coarse-cell IDs to globally unique IDs, (iii) the hierarchy
+of mesh refinement steps, and (iv) the owner of the cells on the active mesh level as well
+as on the multigrid levels. For the current release, triangulations set up
+this way cannot be adaptively refined after construction, though we plann to
+improve this for the next release.
 
 %The \texttt{TriangulationDescription::Description} struct can be filled manually or
 %by the utility functions from the \texttt{TriangulationDescription::Utilities}
@@ -332,11 +327,11 @@ hanging nodes.
 \subsection{Improved large-scale performance}
 \label{subsec:performance}
 
-Large-scale simulations with 304,128 cores have revealed bottlenecks in release
-9.1 during initialization of a number of distributed data structures due to the usage of expensive collective operations
+Large-scale simulations with up to 304,128 cores have revealed bottlenecks in release
+9.1 during initialization of a number of distributed data structures, due to the usage of expensive collective operations
 like \texttt{MPI\_Allgather()} and \texttt{MPI\_\allowbreak
   Alltoall()}. Typical examples are the
-pre-computation of those indices of the vector entries (or
+pre-computation of the indices of those vector entries (or
 other linear index ranges) owned by
 each process, which were previously stored in  an array on every process.
 This information is needed to set up
@@ -375,11 +370,11 @@ improvement can be found online), we were able to significantly
 improve the set up
 time for large-scale simulations and to solve a Poisson problem with multigrid
 with \num{2.1e12} unknowns.
-Figure~\ref{fig:init_costs} compares the timings of simulations of various problem
-sizes (including set up) on 49,152 MPI ranks using a matrix-free solver according
-to~\cite{KronbichlerKormann2019,KronbichlerWall2018} discontinuous elements of
-degree $5$ in a geometric multigrid (GMG) scheme with the previous release 9.1
-and with the current release 9.2. While the scaling for the V-cycle had been
+Figure~\ref{fig:init_costs} compares timings of simulations of various problem
+sizes (including set up) on 49,152 MPI ranks using a matrix-free
+solver~\cite{KronbichlerKormann2019,KronbichlerWall2018}; this solver uses discontinuous elements of
+degree $5$ in a geometric multigrid (GMG) scheme. The comparison between the previous release 9.1
+and the current release 9.2 shows that while the scaling for the V-cycle had been
 very good before, many initialization routines have been considerably
 improved, especially the enumeration of unknowns on the multigrid levels and
 the setup of the multigrid transfer.
@@ -484,22 +479,29 @@ dofs  grid  distdofs  mfsetup  mgtransfer  smoother  vcycle
   \end{tikzpicture}
   \\
   \strut\hfill\pgfplotslegendfromname{legend:init}\hfill\strut
-  \caption{Comparison of initialization costs of various data structures in the 9.1 release (left) and the new 9.2 release (right) when run on 49,152 MPI ranks.}
+  \caption{\it Comparison of initialization costs of various data structures in the 9.1 release (left) and the new 9.2 release (right) when run on 49,152 MPI ranks.}
   \label{fig:init_costs}
 \end{figure}
 
 
-The new code has been also applied to solve problems with adaptively refined
-meshes with more than \num{4e9} unknowns. {\color{red}TODO[Timo]}
+\todo[inline]{Timo: Do you want to say something about that the new code has been also applied to solve problems with adaptively refined
+meshes with more than \num{4e9} unknowns?}
 
-\todo[inline]{We did solve adaptive problems with more than 4B unknowns before, but some were broken for a while during this release stage due to the consensus algorithms. But we did not test systems or block vectors before. But we should not make it sound too negative.}
+\todo[inline]{Timo says: We did solve adaptive problems with more than
+  4B unknowns before, but some were broken for a while during this
+  release stage due to the consensus algorithms. But we did not test
+  systems or block vectors before. But we should not make it sound too
+  negative.}
+
+\todo[inline]{Wolfgang says: Should we just not mention any of this at
+  all? The section stands well on its own.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Better support for parallel $hp$-adaptive algorithms}
 \label{subsec:hp}
 
-With the previous release, \dealii supports $hp$-adaptive finite element methods
+Since the previous release, \dealii has had support for $hp$-adaptive finite element methods
 on distributed memory systems \cite{dealII91}. We implemented the bare functionality
 for $hp$-adaptive methods with the objective to offer the greatest flexibility in
 their application. Here, reference finite elements still had to be assigned manually
@@ -512,12 +514,12 @@ many new functions that automatize the general workflow for applying $hp$-decisi
 strategies, which run on top of the previous low-level implementation for both serial
 and parallel applications.
 
-The interface is now as simple to use as the one for pure adaptive mesh refinement.
+The interface is now as simple to use as the one for $h$-adaptive mesh refinement.
 Consider the following (incomplete) listing as an example: We estimate both error and
 smoothness of the finite element approximation. Further, we flag certain fractions of
 cells with the highest and lowest errors for refinement and coarsening, respectively
-(here: 30\% / 3\%). From those cells listed for adaptation, we specify a subset of them
-for $h$- and $p$-adaptation (here: 10\% / 90\%).
+(here: 30\%/3\%). From those cells listed for adaptation, we designate a subset
+for $h$- and $p$-adaptation (here: 10\%/90\%).
 \begin{c++}
 Vector<float> estimated_error_per_cell (n_active_cells);
 KellyErrorEstimator::estimate(
@@ -540,11 +542,12 @@ smoothness estimation, and made sure that they work for refinement as well as
 coarsening in terms of $h$- and $p$-adaptation in serial and parallel applications.
 
 The former relies on knowing an estimate for the upper error bound \cite[Thm.~3.4]{BabuskaSuri1990}.
-For successive refinements, we can predict how the error will change on basis of
+For successive refinements, we can predict how the error will change
+based on
 current error estimates and adaptation flags. In the next refinement cycle, these
 predicted error estimates allow us to decide whether the choice of adaptation in
-the previous cycle was justified, and provide the foundation for it in the next
-one \cite{MelenkWohlmuth2001}.
+the previous cycle was justified, and provide a criterion for the choice in the next
+cycle \cite{MelenkWohlmuth2001}.
 
 In general, $p$-refinement is favorable over $h$-refinement in smooth regions of
 the finite element approximation \cite[Thm.~3.4]{BabuskaSuri1990}. Thus, estimating
