@@ -858,8 +858,18 @@ pre and post operations, which can be passed to
 \texttt{MatrixFree::cell\_loop()}, to schedule operations on sections of vectors close
 to the matrix-vector product to increase data locality.
 
-\item \texttt{step-69}
-  \todo[inline]{Matthias/Ignacio to write}
+\item \texttt{step-69} presents a first-order scheme solving compressible
+Euler's equations of gas dynamics using a graph-based scheme. The time-update
+at each node requires the evaluation of a right-hand side that depends
+(nonlinearly) on information from the previous time-step that spans more than
+one cell. Therefore, assembly loops operate directly on the sparsity graph in
+order to retrieve information from the entire stencil associated to each
+node. From a programming perspective, \texttt{step-69} features a number of
+techniques that are of interest for a wider audience: It discusses a hybrid
+thread and MPI parallelized scheme with efficient (MPI node) local
+numbering of degrees of freedom. It showcases how to perform asynchronous
+write-out of results using a background thread with \texttt{std::async},
+and discusses a simple but effective checkpointing and restart technique.
 
 \item \texttt{step-70}
   \todo[inline]{Luca, please write.}
