@@ -246,8 +246,22 @@ that we briefly outline in the remainder of this section:
   example for this is to solve the time-harmonic version of the
   Maxwell equations that has the electric and magnetic fields as
   solution. This, too, has been addressed in this release.
-  \item \todo[inline]{Reza: Please add a short summary of the
-    \texttt{DiscreteTime} class}
+\item The class \texttt{DiscreteTime} is introduced to provide a more
+  consistent, more readable, and less error-prone approach to control
+  time-stepping algorithms within time-dependent simulations.
+  The mutating interface of this class is designed to be minimal
+  to enforce a number of important programming invariants, reducing
+  the possibility of mistakes in the user code.
+  When time-incrementation is requested within the user code, the class makes
+  sure that time increases by a non-zero step size and the current step
+  number is incremented accordingly.
+  Furthermore, \texttt{DiscreteTime} ensures that the final time step ends
+  precisely on a predefined end time. Therefore, the final step size is
+  automatically lengthened or shortened to accommodate this feature.
+  In addition, the class provides useful access methods which return the step
+  number $n$, the values of the simulation time corresponding to $t_{n-1}$,
+  $t_n$, and $t_{n+1}$, and the step-size values $t_n - t_{n-1}$ and
+  $t_{n+1} - t_n$.
 \item z \todo[inline]{What else? Maybe mention the updated step-12?}
 \end{itemize}
 %
