@@ -849,7 +849,7 @@ to the geometry very cheap.
 
 \item \texttt{step-67} is an explicit time integrator for the
 compressible Euler equations discretized with a high-order discontinuous
-Galerkin scheme using the matrix-free infrastructure. Besides the use of
+Galerkin (DG) scheme using the matrix-free infrastructure. Besides the use of
 matrix-free evaluators for systems of equations and over-integration, it also
 presents \texttt{MatrixFreeOperators::CellwiseInverseMassMatrix}, a fast implementation
 of the action of the inverse mass matrix in the DG setting using tensor
