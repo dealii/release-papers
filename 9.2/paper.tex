@@ -266,7 +266,17 @@ that we briefly outline in the remainder of this section:
   An example is that \texttt{DiscreteTime} ensures that the final time step ends
   precisely on a predefined end time, automatically
   lengthening or shortening to final time step.
-\item z \todo[inline]{What else? Maybe mention the updated step-12?}
+\item A key component of \dealii{} are the \texttt{FEValues} and
+  \texttt{FEFaceValues} classes that evaluate finite element functions
+  at quadrature points located on cells and faces of a cell,
+  respectively~\cite{BangerthHartmannKanschat2007}. This release now
+  contains a class \texttt{FEInterfaceValues} that considers the
+  restriction of the shape functions from \textit{both} sides of a face and
+  allows evaluating jumps and averages of shape functions along this
+  face. These are common components of the bilinear forms of
+  discontinuous Galerkin schemes (as well as schemes for fourth-order
+  equations, see the discussion of \texttt{step-47} below) and greatly
+  simplify the implementation of these methods.
 \end{itemize}
 %
 The changelog lists more than 240 other
