@@ -294,8 +294,8 @@ in the file that lists all changes for this release}, see \cite{changes91}.
 
 Previously, all triangulation classes of \texttt{deal.II} had in common that the coarse grid is replicated by
 all processes in a parallel environment, and the actual mesh used for computations is constructed by repeated
-refinement. However, this has its limitations in industrial
-applications, where frequently the mesh comes
+refinement. However, this has its limitations in
+applications where the mesh comes
 from an external mesh generator in the form of a file that already contains millions
 or tens of millions of cells. For such configurations, applications might exhaust
 available memory already while reading the mesh on each MPI process.
@@ -707,7 +707,7 @@ vectorization within an element~\cite{KronbichlerKormann2019} in the future.
 For this release, the most noteworthy improvements for the GPU support are the
 simplification of the kernel written by user, improvement of the error messages,
 and overlapping of computation and communication when using CUDA-aware MPI with
-the matrix-free framework. In order to simplify user code, we know recompute the
+the matrix-free framework. In order to simplify user code, we now recompute the
 local degree of freedom and quadrature point indices instead of having the user
 keeping track of them. A new option to overlap computation and communication is
 now available when using CUDA-aware MPI and matrix-free. The underlying idea is
@@ -1150,6 +1150,8 @@ f\"ur Technisch-Wissen\-schaft\-li\-ches Hoch- und H\"ochstleistungsrechnen
 (KONWIHR) in the context of the project
 ``Performance tuning of high-order discontinuous Galerkin solvers for
 SuperMUC-NG''.
+
+A.~V.~Grayver was partially supported by the European Space Agency Swarm DISC program.
 
 M.~Maier was partially supported by ARO MURI Award No. W911NF-14-0247 and
 NSF Award DMS-1912847.
