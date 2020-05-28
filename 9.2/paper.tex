@@ -70,7 +70,7 @@
   pdftitle={The deal.II Library, Version 9.2, 2020},
 }
 
-\title{The \dealii Library, Version 9.2}
+\title{The \dealii{} Library, Version 9.2}
 
  \author[*1]{Daniel Arndt}
  \affil[1]{Computational Engineering and Energy Sciences Group,
@@ -217,11 +217,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview}
 
-\dealii version 9.2.0 was released May XYZ, 2020.
+\dealii{} version 9.2.0 was released May XYZ, 2020.
 \todo[inline]{Need to update date.}
 This paper provides an
 overview of the new features of this release and serves as a citable
-reference for the \dealii software library version 9.2. \dealii is an
+reference for the \dealii{} software library version 9.2. \dealii{} is an
 object-oriented finite element library used around the world in the
 development of finite element solvers. It is available for free under the
 GNU Lesser General Public License (LGPL). Downloads are available at
@@ -291,7 +291,7 @@ features and bugfixes.
 \section{Major changes to the library}
 \label{sec:major}
 
-This release of \dealii contains a number of large and significant changes
+This release of \dealii{} contains a number of large and significant changes
 that will be discussed in this section.
 It of course also contains a
 vast number of smaller changes and added functionality; the details of these
@@ -304,7 +304,7 @@ in the file that lists all changes for this release}, see \cite{changes91}.
 \subsection{A new fully distributed triangulation class}
 \label{subsec:pft}
 
-Previously, all triangulation classes of \texttt{deal.II} had in common that the coarse grid is replicated by
+Previously, all triangulation classes of \dealii{} had in common that the coarse grid is replicated by
 all processes in a parallel environment, and the actual mesh used for computations is constructed by repeated
 refinement. However, this has its limitations in many
 applications where the mesh comes
@@ -529,7 +529,7 @@ meshes with more than \num{4e9} unknowns?}
 \subsection{Better support for parallel $hp$-adaptive algorithms}
 \label{subsec:hp}
 
-Since the previous release, \dealii has had support for $hp$-adaptive finite element methods
+Since the previous release, \dealii{} has had support for $hp$-adaptive finite element methods
 on distributed memory systems \cite{dealII91}. We implemented the bare functionality
 for $hp$-adaptive methods with the objective to offer the greatest flexibility in
 their application. Here, reference finite elements still had to be assigned manually
@@ -620,7 +620,7 @@ BatchOptimizer for symbolic expressions
 %\end{itemize}
 
 The class \texttt{VectorizedArray<Number>} is a key component to achieve the high
-node-level performance of the matrix-free algorithms in deal.II~\cite{KronbichlerKormann2012, KronbichlerKormann2019}. It is a wrapper
+node-level performance of the matrix-free algorithms in \dealii{}~\cite{KronbichlerKormann2012, KronbichlerKormann2019}. It is a wrapper
 class around a short vector of $n$ entries of type \texttt{Number} and maps
 arithmetic operations to appropriate single-instruction/multiple-data (SIMD)
 concepts by intrinsic functions.
@@ -639,7 +639,7 @@ the vector length within the capabilities of a particular instruction set.
 vector lengths is presented in Table~\ref{tab:vectorizedarray}.)
 This allows users to select the vector length/ISA and,
 as a consequence, the number of cells to be processed at once in matrix-free
-operator evaluations. For example, the deal.II-based
+operator evaluations. For example, the \dealii{}-based
 library \texttt{hyper.deal}~\cite{munch2020hyperdeal}, which solves the 6D Vlasov--Poisson equation with high-order
 discontinuous Galerkin methods (with more than a thousand degrees of freedom per cell), constructs a tensor product of two \texttt{MatrixFree} objects of different SIMD-vector
 length in the same application and benefits---in terms of performance---by the possibility of decreasing the number of cells processed by a single SIMD instruction.
@@ -660,11 +660,11 @@ VectorizedArray<double, 8> & VectorizedArray<float, 16> & AVX-512 \\
 \bottomrule
 \end{tabular}
 
-\caption{\it Comparison of relevant SIMD-related classes in deal.II and \texttt{C++23}.}\label{tab:simd}
+\caption{\it Comparison of relevant SIMD-related classes in \dealii{} and \texttt{C++23}.}\label{tab:simd}
 \centering
 \begin{tabular}{cc}
 \toprule
-\textbf{VectorizedArray (deal.II)} & \textbf{std::simd (\texttt{C++23})} \\
+\textbf{VectorizedArray (\dealii{})} & \textbf{std::simd (\texttt{C++23})} \\
 \midrule
 VectorizedArray<Number> & std::experimental::native\_simd<Number> \\
 VectorizedArray<Number, size> & std::experimental::fixed\_size\_simd<Number, size> \\ \bottomrule
@@ -675,7 +675,7 @@ The new interface of \texttt{VectorizedArray} also enables replacement
 by any type with a matching interface. Specifically, this prepares
 \dealii{} for the \texttt{std::simd} class that is slated to become
 part of the \texttt{C++23} standard.
-Table~\ref{tab:simd} compares the deal.II-specific SIMD classes and
+Table~\ref{tab:simd} compares the \dealii{}-specific SIMD classes and
 the equivalent \texttt{C++23} classes. These changes also prepare for specialized
 code paths exploiting
 vectorization within an element, see~\cite{KronbichlerKormann2019}.
@@ -705,7 +705,7 @@ vectorization within an element, see~\cite{KronbichlerKormann2019}.
 %independently, the new loop performs all cell and face integrals of a cell in
 %one go. This includes that each face integral has to be evaluated twice, but
 %entries have to be written into the solution vector only once with improved
-%data locality. Previous publications based on \texttt{deal.II} have shown the
+%data locality. Previous publications based on \dealii{} have shown the
 %relevance of the latter aspect for reaching higher performance.
 %\end{itemize}
 
@@ -804,7 +804,7 @@ In addition, there are a number of new tutorial programs:
   late 1960s. From a twenty-first century perspective, they can only be
   described as bizarre in their construction. They are also exceedingly
   cumbersome to implement if one wants to use general meshes. As a
-  consequence, they have largely fallen out of favor and deal.II currently
+  consequence, they have largely fallen out of favor and \dealii{} currently
   does not contain implementations of these shape functions.
   
 \item \texttt{step-50}
@@ -947,7 +947,7 @@ may have been more widely used:
  \item \texttt{DoFHandler::locally\_owned\_mg\_dofs\_per\_processor()}
   \end{itemize}
 have been deprecated. As discussed in
-Subsection~\ref{subsec:performance}, deal.II by default no longer
+Subection~\ref{subsec:performance}, \dealii{} by default no longer
 stores information for all processes on all processes, but only
 local or locally-relevant information. On the other
 hand, if necessary, global information can still be computed using,
@@ -968,11 +968,11 @@ for example, calling
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{How to cite \dealii}\label{sec:cite}
 
-In order to justify the work the developers of \dealii put into this
+In order to justify the work the developers of \dealii{} put into this
 software, we ask that papers using the library reference one of the
-\dealii papers. This helps us justify the effort we put into it.
+\dealii{} papers. This helps us justify the effort we put into it.
 
-There are various ways to reference \dealii. To acknowledge the use of
+There are various ways to reference \dealii{}. To acknowledge the use of
 the current version of the library, \textbf{please reference the present
 document}. For up to date information and a bibtex entry
 see
@@ -980,7 +980,7 @@ see
  \url{https://www.dealii.org/publications.html}
 \end{center}
 
-The original \texttt{\dealii} paper containing an overview of its
+The original \dealii{} paper containing an overview of its
 architecture is \cite{BangerthHartmannKanschat2007}. If you rely on
 specific features of the library, please consider citing any of the
 following:
@@ -1017,7 +1017,7 @@ following:
 \end{itemize}
 \end{multicols}
 
-\dealii can interface with many other libraries:
+\dealii{} can interface with many other libraries:
 \todo[inline]{We picked up gingko. Anything else?}
 \begin{multicols}{3}
 \begin{itemize}
@@ -1060,13 +1060,13 @@ following:
 Please consider citing the appropriate references if you use interfaces to these
 libraries.
 
-The two previous releases of \dealii can be cited as
+The two previous releases of \dealii{} can be cited as
 \cite{dealII90,dealII91}.
 
 
 \section{Acknowledgments}
 
-\dealii is a world-wide project with dozens of contributors around the
+\dealii{} is a world-wide project with dozens of contributors around the
 globe. Other than the authors of this paper, the following people
 contributed code to this release:\\
 %
@@ -1174,7 +1174,7 @@ Their contributions are much appreciated!
 
 \bigskip
 
-\dealii and its developers are financially supported through a
+\dealii{} and its developers are financially supported through a
 variety of funding sources:
 
 W.~Bangerth, T.~C.~Clevenger, and T.~Heister were partially
@@ -1222,7 +1222,7 @@ Z.~Wang was partially
 supported by the National Science Foundation under award OAC-1835673.
 
 The Interdisciplinary Center for Scientific Computing (IWR) at Heidelberg
-University has provided hosting services for the \dealii web page.
+University has provided hosting services for the \dealii{} web page.
 
 
 \bibliography{paper}{}
