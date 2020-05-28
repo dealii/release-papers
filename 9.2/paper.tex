@@ -926,7 +926,8 @@ The 9.2 release includes
 should not be visible to typical user codes; some remove previously
 deprecated classes and functions; and the majority change internal
 interfaces that are not usually used in external
-applications. However, some are worth mentioning:
+applications. That said, the following are worth mentioning since they
+may have been more widely used:
 \begin{itemize}
 \item Two functions that provide information about all processes,
   namely
@@ -939,10 +940,14 @@ Subsection~\ref{subsec:performance}, deal.II by default no longer
 stores information for all processes on all processes, but only
 local or locally-relevant information. On the other
 hand, if necessary, global information can still be computed using,
-for example, calling \texttt{Utilities::MPI::Allgather(locally\_owned\_info(), comm)}.
-\item
-  \todo[inline]{What else is worth mentioning? Someone needs to go
-    through the list of incompatible changes...}
+for example, calling
+\texttt{Utilities::MPI::Allgather(locally\_owned\_info(), comm)}.
+
+\item A corresponding change has been made in parallel triangulation
+  classes:
+  \texttt{parallel::} \texttt{TriangulationBase::compute\_n\_locally\_owned\_active\_cells\_per\_processor()}
+  can be used to obtain information about how many cells each
+  process owns.
 \end{itemize}
 
 
