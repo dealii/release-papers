@@ -388,8 +388,8 @@ Figure~\ref{fig:init_costs} compares the timings of simulations of various probl
 sizes (including set up) on 49,152 MPI ranks using a matrix-free solver according
 to~\cite{KronbichlerKormann2019,KronbichlerWall2018} discontinuous elements of
 degree $5$ in a geometric multigrid (GMG) scheme with the previous release 9.1
-and with the current release 9.2. While the times for the V-cycle have shown
-excellent scaling before, many initialization routines have been considerably
+and with the current release 9.2. While the scaling for the V-cycle had been
+very good before, many initialization routines have been considerably
 improved, especially the enumeration of unknowns on the multigrid levels and
 the setup of the multigrid transfer.
 
