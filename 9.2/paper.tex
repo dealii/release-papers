@@ -248,6 +248,21 @@ that we briefly outline in the remainder of this section:
   solution. This, too, has been addressed in this release.
   \item \todo[inline]{Reza: Please add a short summary of the
     \texttt{DiscreteTime} class}
+\item Certain types of quantities in a simulation are constants fully known
+  at compile time. They can be pre-calculated and fully stored inside the
+  compiled program binary in order to avoid unnecessary initialization during
+  runtime. This optimization is now enabled for the class templates
+  \texttt{Tensor} and \texttt{SymmetricTensor} by qualifying their constructor,
+  member functions, and overloaded operators as \texttt{constexpr}.
+  For instance, the linear mechanical constitutive model for elastic solids
+  uses a constant fourth-order elasticity tensor
+  $\mathbb{C} = \lambda \boldsymbol{I} \otimes \boldsymbol{I} + 2 \mu \mathbb{I}$
+  which does not depend on the current state of strain.
+  This tensor can be statically initialized by defining it as
+  \texttt{constexpr SymmetricTensor<4, dim>}.
+  As another example, the lattice vectors in a crystal plasticity model are generally
+  constant and known during compilation time, enabling their efficient definition as
+  \texttt{constexpr Tensor<1, dim>}.
 \item z \todo[inline]{What else? Maybe mention the updated step-12?}
 \end{itemize}
 %
