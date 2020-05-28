@@ -606,7 +606,7 @@ BatchOptimizer for symbolic expressions
 %\item VectorizedArrayType
 %\end{itemize}
 
-The class \texttt{VectorizedArray<Number>} is a key ingredient for the high
+The class \texttt{VectorizedArray<Number>} is a key component to achieve the high
 node-level performance of the matrix-free algorithms in deal.II~\cite{KronbichlerKormann2012, KronbichlerKormann2019}. It is a wrapper
 class around a short vector of $n$ entries of type \texttt{Number} and maps
 arithmetic operations to appropriate single-instruction/multiple-data (SIMD)
@@ -614,29 +614,26 @@ concepts by intrinsic functions.
 The class \texttt{VectorizedArray} has been made more user-friendly in this release by making
 it compatible with the STL algorithms found in the header \texttt{<algorithm>}.
 The length of the  vector can now be queried by  \texttt{VectorizedArray::size()} and its underlying number type by \texttt{VectorizedArray::value\_type}.
-Furthermore, the \texttt{VectorizedArray} class now supports range-based iterations over its entries.
+Furthermore, the \texttt{VectorizedArray} class now supports range-based iteration over its entries.
 
-Up to release 9.1, the
-vector length $n$ has been set at compile time of the library to the highest
-possible value supported by the given processor architecture.
+In previous \dealii{} releases, the
+vector length was set at compile time of the library to match the highest
+value supported by the given processor architecture.
 Now, a second optional template argument
-\texttt{VectorizedArray<Number, size>} can be given with \texttt{size} explicitly controlling
+can be specified as \texttt{VectorizedArray<Number, size>}, where \texttt{size} explicitly controls
 the vector length within the capabilities of a particular instruction set.
-A full list of supported
-vector lengths is presented in Table~\ref{tab:vectorizedarray}.
-
-To account for the variable-size \texttt{VectorizedArray} class, all matrix-free related classes (like \texttt{MatrixFree} and \texttt{FEEvaluation})
-have been extended with a new optional template argument specifying the
-\texttt{VectorizedArrayType}. This allows users to select the vector length/ISA and,
-as a consequence, the number of cells to be processed at once directly in their applications:
-The deal.II-based
+(A full list of supported
+vector lengths is presented in Table~\ref{tab:vectorizedarray}.)
+This allows users to select the vector length/ISA and,
+as a consequence, the number of cells to be processed at once in matrix-free
+operator evaluations. For example, the deal.II-based
 library \texttt{hyper.deal}~\cite{munch2020hyperdeal}, which solves the 6D Vlasov--Poisson equation with high-order
 discontinuous Galerkin methods (with more than a thousand degrees of freedom per cell), constructs a tensor product of two \texttt{MatrixFree} objects of different SIMD-vector
 length in the same application and benefits---in terms of performance---by the possibility of decreasing the number of cells processed by a single SIMD instruction.
 
 
 \begin{table}
-\caption{Supported vector lengths of the class \texttt{VectorizedArray} and
+\caption{\it Supported vector lengths of the class \texttt{VectorizedArray} and
 the corresponding instruction-set-architecture extensions. }\label{tab:vectorizedarray}
 \centering
 \begin{tabular}{ccc}
@@ -650,7 +647,7 @@ VectorizedArray<double, 8> & VectorizedArray<float, 16> & AVX-512 \\
 \bottomrule
 \end{tabular}
 
-\caption{Comparison of relevant SIMD-related classes in deal.II and \texttt{C++23}.}\label{tab:simd}
+\caption{\it Comparison of relevant SIMD-related classes in deal.II and \texttt{C++23}.}\label{tab:simd}
 \centering
 \begin{tabular}{cc}
 \toprule
@@ -661,14 +658,14 @@ VectorizedArray<Number, size> & std::experimental::fixed\_size\_simd<Number, siz
 \end{tabular}
 \end{table}
 
-Furthermore, the new interfaces enable using any data structure
-\texttt{VectorizedArrayType} as long as it supports required
-functionalities like \texttt{size()} or \texttt{value\_type}. This prepares
-for the \texttt{C++23} feature \texttt{std::simd} that will be enabled in the future.
-Table~\ref{tab:simd} gives a comparison of the deal.II-specific SIMD classes and
-the equivalent \texttt{C++23} classes. Finally, this change also prepares for specialized
+The new interface of \texttt{VectorizedArray} also enables replacement
+by any type with a matching interface. Specifically, this prepares
+\dealii{} for the \texttt{std::simd} class that is slated to become
+part of the \texttt{C++23} standard.
+Table~\ref{tab:simd} compares the deal.II-specific SIMD classes and
+the equivalent \texttt{C++23} classes. These changes also prepare for specialized
 code paths exploiting
-vectorization within an element~\cite{KronbichlerKormann2019} in the future.
+vectorization within an element, see~\cite{KronbichlerKormann2019}.
 
 %We welcome the standardization of the SIMD
 %parallelization paradigm in C++ and intend to replace step by step our own
@@ -704,26 +701,29 @@ vectorization within an element~\cite{KronbichlerKormann2019} in the future.
 \subsection{Advances in GPU support}
 \label{subsec:gpu}
 
-For this release, the most noteworthy improvements for the GPU support are the
-simplification of the kernel written by user, improvement of the error messages,
+For this release, the most noteworthy improvements in GPU support are the
+simplification of the kernel written by user, improvement of error messaging,
 and overlapping of computation and communication when using CUDA-aware MPI with
-the matrix-free framework. In order to simplify user code, we know recompute the
+the matrix-free framework.
+
+In order to simplify user code, we now recompute
 local degree of freedom and quadrature point indices instead of having the user
 keeping track of them. A new option to overlap computation and communication is
 now available when using CUDA-aware MPI and matrix-free. The underlying idea is
-that only the degrees of freedom (dofs) on the boundary of the local domain
+that only the degrees of freedom (DoFs) on the boundary of the local domain
 require communication. Before evaluating the matrix-free operator at these
-degrees of freedom, we need to communicate the ghosted dofs from other
+degrees of freedom, we need to communicate ghost DoFs from other
 processors.  Similarly once the operator has been evaluated, we need to update
 the resulting global vector with values from other processors. The strategy that
-we are using consist in splitting the dofs in three groups: one group of dofs
+we are now using consists in splitting the DoFs into three groups: one group of DoFs
 that are on the local boundary and two groups each owning half of the interior
-dofs. When evaluating the matrix-free operator, we start the MPI communication
-to get the ghosted dofs and evaluate the operator on one of the two interior
-dofs group. When the evaluation is done, we wait for the MPI to be over and
-then, evaluate the operator on the boundary dofs group. When this evaluation is
-over, we start the communication to update the global vector, we evaluate the
-operator on the last of group of dofs, and finally wait for the MPI
+DoFs. When evaluating the matrix-free operator, we start the MPI communication
+to get the ghosted DoFs and evaluate the operator on one of the two interior
+DoFs group. When the evaluation is done, we wait for the MPI
+communication to be over, and
+then evaluate the operator on the boundary DoFs group. When this evaluation is
+completed, we start the communication to update the global vector, we evaluate the
+operator on the last group of DoFs, and finally wait for the MPI
 communication to finish.
 
 
@@ -732,25 +732,29 @@ communication to finish.
 \label{subsec:cxx}
 
 Certain types of quantities in a simulation are constants fully known
-at compile time. They can be pre-calculated and fully stored inside the
-compiled program binary in order to avoid unnecessary initialization during
-runtime. This optimization is now enabled for the class templates
-\texttt{Tensor} and \texttt{SymmetricTensor} by qualifying their constructor,
-member functions, and overloaded operators as \texttt{constexpr}.
-For instance, the linear mechanical constitutive model for elastic solids
+at compile time. They can be pre-calculated and stored in the
+compiled executable in order to avoid unnecessary initialization during
+runtime. C++11 and later standards enables such computations by
+marking variables and functions with the \texttt{constexpr} keyword.
+
+This optimization is now enabled for the class templates
+\texttt{Tensor} and \texttt{SymmetricTensor}.
+For instance, the linear mechanical constitutive model for isotropic elastic solids
 uses a constant fourth-order elasticity tensor
 $\mathbb{C} = \lambda \boldsymbol{I} \otimes \boldsymbol{I} + 2 \mu \mathbb{I}$
 which does not depend on the current state of strain.
-This tensor can be statically initialized by defining it as
+This tensor can now be statically initialized by defining it as
 \texttt{constexpr SymmetricTensor<4, dim>}.
 As another example, the lattice vectors in a crystal plasticity model are generally
 constant and known during compilation time, enabling their efficient definition as
 \texttt{constexpr Tensor<1, dim>}.
-The capability of defining \texttt{constexpr} variables, functions, and methods
-was introduced by the C++11 standard and was later expanded by the C++14 standard.
-Therefore, the extent of \texttt{constexpr} support in \dealii{} depends on the C++
-standard which is used to compile the library. The next release of \dealii{}
-will fully adopt the features of the C++14 standard.
+
+Declaring variables, functions, and methods as \texttt{constexpr}
+is a C++11 feature that was later expanded by the C++14 standard.
+Thus, parts of the \texttt{constexpr} support in \dealii{} depend on the C++
+standard supported by the compiler used to install the library.
+
+The next release of \dealii{} will require compiler support for the C++14 standard.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -769,16 +773,27 @@ all cells in this way.
 
 In addition, there are a number of new tutorial programs:
 \begin{itemize}
-\item \texttt{step-47} solves the biharmonic equation with the
-  clamped boundary condition. This program is based on the $C^0$ interior
-  penalty method for fourth order problems. In order to overcome
+\item \texttt{step-47} is a new program that solves the biharmonic
+  equation $\Delta^2 u = f$ with
+  ``clamped'' boundary condition given by $u=g, \partial u/\partial
+  n=h$. This program is based on the $C^0$ interior
+  penalty ($C^0$IP) method for fourth order problems
+  \cite{Brenner2005}. In order to overcome
   shortcomings of classical approaches, this method uses $C^0$ Lagrange finite
-  elements and introduces ``jump`` and ``average`` on interfaces of elements.
-  The resulting system is obtained through integration by parts, symmetrization,
-  and stabilization. Appropriate choices for the penalty parameter are
-  discussed based on numerical results.
+  elements and introduces ``jump'' and ``average'' operators on
+  interfaces of elements that penalize the jump of the gradient of the
+  solution in order to obtain convergence to the $H^2$-regular
+  solution of the equation.
 
-
+  The $C^0$IP approach is a modern alternative to classical methods that
+  use $C^1$-conforming elements such as the Argyris
+  element, the Clough-Tocher element and others, all developed in the
+  late 1960s. From a twenty-first century perspective, they can only be
+  described as bizarre in their construction. They are also exceedingly
+  cumbersome to implement if one wants to use general meshes. As a
+  consequence, they have largely fallen out of favor and deal.II currently
+  does not contain implementations of these shape functions.
+  
 \item \texttt{step-50}
   \todo[inline]{Timo/Conrad/... to write}
 
@@ -793,14 +808,15 @@ In addition, there are a number of new tutorial programs:
   \end{align*}
   augmented by appropriate initial and boundary conditions and using
   an appropriate form for the potential $V=V(\mathbf x)$. The
-  tutorial program focused on two specific aspects for which this
+  tutorial program focuses on two specific aspects for which this
   equation serves as an excellent test case: (i) Solving
   complex-valued problems without splitting the equation into its
   real and imaginary parts (as \texttt{step-29} does, for
-  example). (ii) Using operator splitting techniques. The equation is
+  example). (ii)~Using operator splitting techniques. The equation is
   a particularly good test case for this technique because the only
   nonlinear term, $\kappa |\psi|^2 \psi$, does not contain any
-  derivatives and consequently forms an ODE to be solved at each time
+  derivatives and consequently forms an ODE at each node point, to be
+  solved in each time 
   step in an operator splitting scheme (for which, furthermore, there
   exists an analytic solution), whereas the remainder of the
   equation is linear and easily solved using standard finite element
@@ -843,10 +859,23 @@ to the matrix-vector product to increase data locality.
 \label{subsec:python}
 
 \begin{figure}
-\renewcommand\figurename{Listing}
-
 \centering
+\includegraphics[scale=0.5]{python_mesh.png}
+\caption{\it The mesh generated by the Python code shown in the main
+  text. Cells are colored by material id.}
+\label{fig:pymesh}
+\end{figure}
 
+
+Initial support for Python has existed in \dealii{} since version
+9.0. The present release significantly extends the Python
+interface. Specifically, a large number of methods from classes such
+as \texttt{Triangulation, CellAccessor, TriaAccessor, Mapping,
+  Manifold, GridTools} can now be invoked from Python. We have focused
+on methods and functions that are widely used when a mesh is created
+and parameters related to the boundary, manifold, and material
+identifiers are assigned. The following listing gives an idea of how
+such code looks:
 \begin{python}
 import PyDealII.Release as dealii
 
@@ -867,23 +896,23 @@ for cell in triangulation.active_cells():
 
 triangulation.execute_coarsening_and_refinement()
 \end{python}
+The mesh that results from this code is shown in Fig.~\ref{fig:pymesh}.
 
-\includegraphics{python_mesh.png}
+All triangulations created from within Python are serial. However,
+once the mesh is designed, the triangulation can be serialized along
+with the auxiliary information about possible refinement, boundaries,
+materials and manifolds. This object can be easily deserialized within
+a C++ program for subsequent production runs. Furthermore, such a
+serialized triangulation can also be used in the construction of
+\texttt{parallel::shared}, \texttt{parallel::disrtibuted}, and
+\texttt{parallel::fullydistributed} triangulations (see also Section~\ref{subsec:pft}).
 
-\caption{Python code that uses \texttt{deal.II}'s Python interface to generate a mesh shown at the bottom (coloured by the cell's material id).}
-\label{python_wrapper}
-\end{figure}
+To facilitate the illustration of the new Python bindings, tutorial programs \href{https://github.com/dealii/dealii/blob/dealii-9.2/examples/step-49/step-49.ipynb}{step-49} and \href{https://github.com/dealii/dealii/blob/dealii-9.2/examples/step-53/step-53.ipynb}{step-53} were replicated as Jupyter notebooks.
 
-
-The initial support for Python has come in \texttt{deal.II 9.0}. The present release significantly extends the Python interface. Specifically, a large number of methods from the C++ classes such as \texttt{Triangulation, CellAccessor, TriaAccessor, Mapping, Manifold, GridTools} can now be invoked from Python. The accent was made on methods and functions that are widely used at a mesh preparation stage when a mesh is created and parameters related to the boundary, manifold and material identifiers are assigned.
-
-A triangulation object can be read in or created using a number of simplistic geometries offered by the \texttt{GridGenerator}'s functions. Further information such as boundary, material and manifold identifiers can be assigned to cells and respective faces or edges (see Listing \ref{python_wrapper}). The introspective nature of the Python language makes it easy to infer the list of supported methods from the Python objects, for example by typing \texttt{dir(PyDealII.Release.Triangulation)}.
-
-All triangulations created within the Python are serial. Once the mesh is designed, triangulation can be serialized along with the auxiliary information about possible refinement, boundaries, materials and manifolds. This object can be easily deserialized within a C++ program for subsequent production runs. Although saved triangulations are serial, it is possible to use them for construction of \texttt{parallel::shared, parallel::disrtibuted, and parallel::fullydistributed} (see also Section \ref{subsec:pft}) types of triangulations respecting the refinement and all the auxiliary information.
-
-To facilitate the illustration of the new Python bindings, tutorial programs \href{https://github.com/dealii/dealii/blob/dealii-9.2/examples/step-49/step-49.ipynb}{step-49} and \href{https://github.com/dealii/dealii/blob/dealii-9.2/examples/step-53/step-53.ipynb}{step-53} were replicated in a form of the Jupyter notebooks.
-
-Note that the current Python interface does not yet provide access to the actual \texttt{deal.II}'s finite element machinery, that is classes such as \texttt{DoFHandler, FE\_*, FEValues}, etc. It is envisaged that a progress towards this will be made for the next release.
+The introspective nature of the Python language makes it easy to infer
+the list of supported methods from the Python objects, for example by
+typing \texttt{dir(PyDealII.Release.Triangulation)}. 
+The current Python interface does not yet provide access to \dealii{}'s finite element machinery, i.e., classes such as \texttt{DoFHandler, FE\_*, FEValues}, etc. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Incompatible changes}
@@ -904,8 +933,8 @@ applications. However, some are worth mentioning:
   \end{itemize}
 have been deprecated. As discussed in
 Subsection~\ref{subsec:performance}, deal.II by default no longer
-stores information for all processes on all processes, but only the
-local information or the locally-relevant information. On the other
+stores information for all processes on all processes, but only
+local or locally-relevant information. On the other
 hand, if necessary, global information can still be computed using,
 for example, calling \texttt{Utilities::MPI::Allgather(locally\_owned\_info(), comm)}.
 \item
@@ -926,8 +955,8 @@ software, we ask that papers using the library reference one of the
 
 There are various ways to reference \dealii. To acknowledge the use of
 the current version of the library, \textbf{please reference the present
-document}. For up to date information and a bibtex entry for this document
-see:
+document}. For up to date information and a bibtex entry
+see
 \begin{center}
  \url{https://www.dealii.org/publications.html}
 \end{center}
@@ -936,7 +965,9 @@ The original \texttt{\dealii} paper containing an overview of its
 architecture is \cite{BangerthHartmannKanschat2007}. If you rely on
 specific features of the library, please consider citing any of the
 following:
-\begin{itemize}
+\begin{multicols}{2}
+  \vspace*{-36pt}
+  \begin{itemize}
  \item For geometric multigrid: \cite{Kanschat2004,JanssenKanschat2011,ClevengerHeisterKanschatKronbichler2019};
  \item For distributed parallel computing: \cite{BangerthBursteddeHeisterKronbichler11};
  \item For $hp$~adaptivity: \cite{BangerthKayserHerold2007};
@@ -948,6 +979,7 @@ following:
    \cite{DeSimoneHeltaiManigrasso2009};
  \item For curved geometry representations and manifolds:
    \cite{HeltaiBangerthKronbichlerMola2019};
+   \vfill\null  \columnbreak
  \item For integration with CAD files and tools:
    \cite{HeltaiMola2015};
  \item For boundary element computations:
@@ -956,12 +988,15 @@ following:
    \cite{MaierBardelloniHeltai-2016-a,MaierBardelloniHeltai-2016-b};
  \item For uses of the \texttt{WorkStream} interface:
    \cite{TKB16};
-   \item For uses of the \texttt{ParameterAcceptor} concept, the
-     \texttt{MeshWorker::ScratchData} base class, and the
-     \texttt{ParsedConvergenceTable} class:
-     \cite{SartoriGiulianiBardelloni-2018-a};
-   \item For uses of the particle functionality in \dealii{}: \cite{GLHPB18}.
+ \item For uses of the \texttt{ParameterAcceptor} concept, the
+   \texttt{MeshWorker::ScratchData} base class, and the
+   \texttt{ParsedConvergenceTable} class:
+   \cite{SartoriGiulianiBardelloni-2018-a};
+ \item For uses of the particle functionality in \dealii{}:
+   \cite{GLHPB18}.
+   \vfill\null  
 \end{itemize}
+\end{multicols}
 
 \dealii can interface with many other libraries:
 \todo[inline]{We picked up gingko. Anything else?}
