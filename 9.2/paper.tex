@@ -619,30 +619,46 @@ BatchOptimizer for symbolic expressions
 %\item VectorizedArrayType
 %\end{itemize}
 
-The class \texttt{VectorizedArray<Number>} is a key component to achieve the high
-node-level performance of the matrix-free algorithms in \dealii{}~\cite{KronbichlerKormann2012, KronbichlerKormann2019}. It is a wrapper
-class around a short vector of $n$ entries of type \texttt{Number} and maps
-arithmetic operations to appropriate single-instruction/multiple-data (SIMD)
-concepts by intrinsic functions.
-The class \texttt{VectorizedArray} has been made more user-friendly in this release by making
-it compatible with the STL algorithms found in the header \texttt{<algorithm>}.
-The length of the  vector can now be queried by  \texttt{VectorizedArray::size()} and its underlying number type by \texttt{VectorizedArray::value\_type}.
-Furthermore, the \texttt{VectorizedArray} class now supports range-based iteration over its entries.
+The class \texttt{VectorizedArray<Number>} is a key component to achieve
+the high node-level performance of the matrix-free algorithms in
+\dealii{}~\cite{KronbichlerKormann2012, KronbichlerKormann2019}. It is a
+wrapper class around a short vector of $n$ entries of type \texttt{Number}
+and maps arithmetic operations to appropriate
+single-instruction/multiple-data (SIMD) concepts by intrinsic functions.
+The class \texttt{VectorizedArray} has been made more user-friendly in this
+release by making it compatible with the STL algorithms found in the header
+\texttt{<algorithm>}. The length of the  vector can now be queried by
+\texttt{VectorizedArray::size()} and its underlying number type by
+\texttt{VectorizedArray::value\_type}. The \texttt{VectorizedArray} class
+now supports range-based iteration over its entries. In addition \dealii{}
+now supports ternary operations on vectorized data, where for a given
+binary comparison operation a true or false value is selected. For example,
+the vectorized equivalent of \texttt{(left < right) ? true\_value :
+false\_value} can be expressed as
+\begin{c++}
+auto result = compare_and_apply_mask<SIMDComparison::less_than>(
+  left, right, true_value, false_value);
+\end{c++}
+which compares every element of the vectorized array individually and
+selects the corresponding value from the \texttt{true\_value}, or
+\texttt{false\_value} array.
 
-In previous \dealii{} releases, the
-vector length was set at compile time of the library to match the highest
-value supported by the given processor architecture.
-Now, a second optional template argument
-can be specified as \texttt{VectorizedArray<Number, size>}, where \texttt{size} explicitly controls
-the vector length within the capabilities of a particular instruction set.
-(A full list of supported
-vector lengths is presented in Table~\ref{tab:vectorizedarray}.)
-This allows users to select the vector length/ISA and,
-as a consequence, the number of cells to be processed at once in matrix-free
-operator evaluations. For example, the \dealii{}-based
-library \texttt{hyper.deal}~\cite{munch2020hyperdeal}, which solves the 6D Vlasov--Poisson equation with high-order
-discontinuous Galerkin methods (with more than a thousand degrees of freedom per cell), constructs a tensor product of two \texttt{MatrixFree} objects of different SIMD-vector
-length in the same application and benefits---in terms of performance---by the possibility of decreasing the number of cells processed by a single SIMD instruction.
+In previous \dealii{} releases, the vector length was set at compile time
+of the library to match the highest value supported by the given processor
+architecture. Now, a second optional template argument can be specified as
+\texttt{VectorizedArray<Number, size>}, where \texttt{size} explicitly
+controls the vector length within the capabilities of a particular
+instruction set. (A full list of supported vector lengths is presented in
+Table~\ref{tab:vectorizedarray}.) This allows users to select the vector
+length/ISA and, as a consequence, the number of cells to be processed at
+once in matrix-free operator evaluations. For example, the \dealii{}-based
+library \texttt{hyper.deal}~\cite{munch2020hyperdeal}, which solves the 6D
+Vlasov--Poisson equation with high-order discontinuous Galerkin methods
+(with more than a thousand degrees of freedom per cell), constructs a
+tensor product of two \texttt{MatrixFree} objects of different SIMD-vector
+length in the same application and benefits---in terms of performance---by
+the possibility of decreasing the number of cells processed by a single
+SIMD instruction.
 
 
 \begin{table}
