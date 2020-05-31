@@ -279,6 +279,22 @@ that we briefly outline in the remainder of this section:
   discontinuous Galerkin schemes (as well as schemes for fourth-order
   equations, see the discussion of \texttt{step-47} below) and greatly
   simplify the implementation of these methods.
+\item Previously, the \texttt{parallel::distributed::ContinuousQuadratureDataTransfer}
+  class, which transfers local quadrature point data onto the
+  children of newly refined cells, did not allow different regions of the
+  triangulation store quadrature data of different lengths. This release lifts
+  this restriction, which enables efficient quadrature data storage and data
+  transfer within a triangulation containing multiple material models, each with
+  their own number of local state variables and history variables.
+  As an example, in a solid mechanics simulation, we can assign a hyper-elastic
+  material model can be assigned to a region of the mesh with no associated
+  history variables while in another part of the triangulation we incorporate an
+  elasto-plastic constitutive model, requiring the storage of local plasticity
+  data at quadrature points.
+  During each refinement of the mesh, we can use
+  \texttt{ContinuousQuadratureDataTransfer} to transfer and interpolate
+  plasticity data from parent cells to their children, ignoring the cells
+  with the hyper-elastic constitutive model.
 \end{itemize}
 %
 The changelog lists more than 240 other
