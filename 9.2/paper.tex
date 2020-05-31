@@ -286,13 +286,15 @@ that we briefly outline in the remainder of this section:
   this restriction, which enables efficient quadrature data storage and data
   transfer within a triangulation containing multiple material models, each with
   their own number of local state variables and history variables.
-  As an example, in a solid mechanics simulation, a hyper-elastic material
-  model can be assigned to a region of the mesh requiring no history variables
-  while another part of the triangulation uses an elasto-plastic constitutive
-  model, requiring the storage of local plasticity data at quadrature points.
-  During each refinement of the mesh, \texttt{ContinuousQuadratureDataTransfer}
-  can be used to transfer and interpolate plasticity data from parent cells to
-  their children, ignoring the cells with hyper-elastic constitutive model.
+  As an example, in a solid mechanics simulation, we can assign a hyper-elastic
+  material model can be assigned to a region of the mesh with no associated
+  history variables while in another part of the triangulation we incorporate an
+  elasto-plastic constitutive model, requiring the storage of local plasticity
+  data at quadrature points.
+  During each refinement of the mesh, we can use
+  \texttt{ContinuousQuadratureDataTransfer} to transfer and interpolate
+  plasticity data from parent cells to their children, ignoring the cells
+  with the hyper-elastic constitutive model.
 \end{itemize}
 %
 The changelog lists more than 240 other
