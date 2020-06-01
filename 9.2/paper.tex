@@ -416,6 +416,7 @@ improvement can be found online), we were able to significantly
 improve the set up
 time for large-scale simulations and to solve a Poisson problem with multigrid
 with \num{2.1e12} unknowns.
+\todo[inline]{the figure only shows 2e11 unknowns. Is this a typo? If not, do we have a reference?}
 Figure~\ref{fig:init_costs} compares timings of simulations of various problem
 sizes (including set up) on 49,152 MPI ranks using a matrix-free
 solver~\cite{KronbichlerKormann2019,KronbichlerWall2018}; this solver uses discontinuous elements of
@@ -530,18 +531,18 @@ the setup of the multigrid transfer.
 \end{figure}
 
 
-\todo[inline]{Timo: Do you want to say something about that the new code has been also applied to solve problems with adaptively refined
-  meshes with more than \num{4e9} unknowns?}
+As part of this effort, we ran benchmarks on the TACC Frontera system, where we were able to apply the matrix-free geometric multigrid framework to a variable viscosity Stokes system and achieved weak and strong scaling up to 114k MPI ranks with up to
+\num{2.1e11} unknowns. This is likely the currently largest block system solved with \dealii{} and required various optimizations
+and fixes on top of the ones mentioned above:
+1) Bug fixes to concurrent point to point communications.
+2) Fixes multigrid transfer with adaptive refinement and more than \num{4e9} unknowns.
+3) Fixes to index sets in block indices with more than \num{4e9} unknowns.
+4) Fixes to computations with more than \num{4e9} active cells.
+5) Implementation of IDR(s) solvers to reduce memory overhead.
+For more details, see \cite{clevenger_stokes19}.
 
-\todo[inline]{Timo says: We did solve adaptive problems with more than
-  4B unknowns before, but some were broken for a while during this
-  release stage due to the consensus algorithms. But we did not test
-  systems or block vectors before. But we should not make it sound too
-  negative.}
 
-\todo[inline]{Wolfgang says: Should we just not mention any of this at
-  all? The section stands well on its own.}
-
+\todo[inline]{Timo added the paragraph above. Thoughts on how much we should mention (none of this worked with 9.1)?}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Better support for parallel $hp$-adaptive algorithms}
