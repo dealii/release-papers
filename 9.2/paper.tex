@@ -220,8 +220,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview}
 
-\dealii{} version 9.2.0 was released May XYZ, 2020.
-\todo[inline]{Need to update date.}
+\dealii{} version 9.2.0 was released May 20, 2020.
 This paper provides an
 overview of the new features of this release and serves as a citable
 reference for the \dealii{} software library version 9.2. \dealii{} is an
@@ -566,7 +565,9 @@ Consider the following (incomplete) listing as an example: We estimate both erro
 smoothness of the finite element approximation. Further, we flag certain fractions of
 cells with the highest and lowest errors for refinement and coarsening, respectively
 (here: 30\%/3\%). From those cells listed for adaptation, we designate a subset
-for $h$- and $p$-adaptation (here: 10\%/90\%). The parameters of the corresponding
+for $h$- and $p$-adaptation (here: 10\%/90\%).
+\todo[inline]{Timo asks: is this a typo in the code where you say 0.9, 0.9?}
+The parameters of the corresponding
 \texttt{hp::Refinement} function specify the fraction of cells to be $p$-adapted from
 those subsets flagged for refinement and coarsening, respectively.
 \begin{c++}
