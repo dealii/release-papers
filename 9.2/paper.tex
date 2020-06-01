@@ -566,23 +566,22 @@ Consider the following (incomplete) listing as an example: We estimate both erro
 smoothness of the finite element approximation. Further, we flag certain fractions of
 cells with the highest and lowest errors for refinement and coarsening, respectively
 (here: 30\%/3\%). From those cells listed for adaptation, we designate a subset
-for $h$- and $p$-adaptation (here: 10\%/90\%).
-\todo[inline]{Timo asks: is this a typo in the code where you say 0.9, 0.9?}
-The parameters of the corresponding
+for $h$- and $p$-adaptation. The parameters of the corresponding
 \texttt{hp::Refinement} function specify the fraction of cells to be $p$-adapted from
-those subsets flagged for refinement and coarsening, respectively.
+those subsets flagged for refinement and coarsening, respectively (here: 90\%/80\%),
+while the remaining fraction will be $h$-adapted (here: 10\%/20\%).
 \begin{c++}
 Vector<float> estimated_error_per_cell(n_active_cells);
 KellyErrorEstimator::estimate(
-dof_handler, ..., solution, estimated_error_per_cell, ...);
+  dof_handler, ..., solution, estimated_error_per_cell, ...);
 GridRefinement::refine_and_coarsen_fixed_number(
-triangulation, estimated_error_per_cell, 0.3, 0.03);
+  triangulation, estimated_error_per_cell, 0.3, 0.03);
 
 Vector<float> estimated_smoothness_per_cell(n_active_cells);
 SmoothnessEstimator::Legendre::coefficient_decay(
-..., dof_handler, solution, estimated_smoothness_per_cell);
+  ..., dof_handler, solution, estimated_smoothness_per_cell);
 hp::Refinement::p_adaptivity_fixed_number(
-dof_handler, estimated_smoothness_per_cell, 0.9, 0.9);
+  dof_handler, estimated_smoothness_per_cell, 0.9, 0.8);
 hp::Refinement::choose_p_over_h(dof_handler);
 
 triangulation.execute_coarsening_and_refinement();
