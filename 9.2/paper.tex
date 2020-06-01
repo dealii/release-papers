@@ -1026,11 +1026,11 @@ In addition, there are a number of new tutorial programs:
   \item \texttt{step-70} solves a fluid structure interaction problem on
         non-matching parallel distributed triangulations, showing the usage of
         the \texttt{particles::ParticleHandler} class for two different tasks:
-        i) to track the position of quadrature points of a non-matching
-        solid grid immersed in a fluid grid, and ii) to track the position of a
+        (i) to track the position of quadrature points of a non-matching
+        solid grid immersed in a fluid grid, and (ii) to track the position of a
         collection of massless tracers.
 
-        In \texttt{step-70} we consider a mixing problem in the laminar flow
+        The program considers a mixing problem in the laminar flow
         regime. Such problems occur in a wide range of applications ranging
         from chemical engineering to power generation (e.g. turbomachinery).
         Mixing problems are particularly hard to solve numerically, because
@@ -1046,13 +1046,14 @@ In addition, there are a number of new tutorial programs:
 
         The \texttt{particles::ParticleHandler} class is used in this context
         to allow integration of the fluid basis functions on the solid domain
-        (which is immersed and non-matching w.r.t. the fluid grid). This is
+        (which is immersed and non-matching with regard to the fluid grid). This is
         achieved by attaching the information required to perform the
         integration on the solid grid, to the property field of the particles
         associated with the quadrature points of the solid, and advecting those
-        particles according to the solid velocity. In this program, we assign
-        the solid velocity externally, and we do not solve for it, even though
-        the program can be easily extended to allow for the solution of
+        particles according to the solid velocity. In this program, we
+        externally prescribe rather than solve for the
+        the solid velocity; however,
+        the program can easily be extended to allow for the solution of
         coupled elasticity equations on the solid domain.
 \end{itemize}
 
