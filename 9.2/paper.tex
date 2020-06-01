@@ -534,11 +534,11 @@ the setup of the multigrid transfer.
 As part of this effort, we ran benchmarks on the TACC Frontera system, where we were able to apply the matrix-free geometric multigrid framework to a variable viscosity Stokes system and achieved weak and strong scaling up to 114k MPI ranks with up to
 \num{2.1e11} unknowns. This is likely the currently largest block system solved with \dealii{} and required various optimizations
 and fixes on top of the ones mentioned above:
-1) Bug fixes to concurrent point to point communications.
-2) Fixes multigrid transfer with adaptive refinement and more than \num{4e9} unknowns.
-3) Fixes to index sets in block indices with more than \num{4e9} unknowns.
-4) Fixes to computations with more than \num{4e9} active cells.
-5) Implementation of IDR(s) solvers to reduce memory overhead.
+(i) Bug fixes to concurrent point to point communications.
+(ii) Fixes multigrid transfer with adaptive refinement and more than \num{4e9} unknowns.
+(iii) Fixes to index sets in block indices with more than \num{4e9} unknowns.
+(iv) Fixes to computations with more than \num{4e9} active cells.
+(v) Implementation of IDR(s) solvers to reduce memory overhead.
 For more details, see \cite{clevenger_stokes19}.
 
 
@@ -648,7 +648,7 @@ To visualize the motion of particles, the \texttt{Particles::DataOut} class was 
 
 In the previous release we added support for symbolic expressions, leveraging the
 SymEngine library \cite{symengine-web-page}.
-Although effective, evaluating lengthy expressions could be a bottle-neck as this
+Although effective, evaluating lengthy expressions could be a bottleneck as this
 was performed using dictionary-based substitution.
 We have improved on this by implementing a \texttt{BatchOptimizer} class in the 
 namespace \texttt{Differentiation::SD} that collects several \texttt{Expression}s
@@ -656,17 +656,17 @@ and transforms them in such a way that the equivalent result is returned through
 a quicker code path.
 This may be done by simply using common subexpression elimination (CSE) for the
 dictionary-based expressions, by transformation to a set of nested 
-\texttt{std::function}s (the equivalent to \texttt{SymPy}'s "lambdify", with or
-without using CSE), or by offloading to these expressions to the \texttt{LLVM}
+\texttt{std::function} objects (the equivalent to \texttt{SymPy}'s ``lambdify'', with or
+without using CSE), or by offloading these expressions to the \texttt{LLVM}
 just-in-time (JIT) compiler.
-Although, each of these features is implemented and tested in the SymEngine
-library itself, the \texttt{BatchOptimizer} class provides both uniform
+Although each of these features is implemented and tested in the SymEngine
+library itself, the \texttt{BatchOptimizer} class provides both a uniform
 interface to their classes and a convenient interface for scalar expressions,
 as well as tensorial expressions formed using the \texttt{deal.II} tensor and 
 symmetric tensor classes.
 It, like the \texttt{Expression} class, is also serializable.
 
-The way that the batch optimizer may be employed within a user's code is shown
+The way the batch optimizer may be employed within a user's code is shown
 in the pseudo-code below.
 As per usual, one would first define some independent variables, and 
 subsequently compute some symbolic expressions that are dependent on these 
@@ -946,8 +946,9 @@ In addition, there are a number of new tutorial programs:
   in \dealii{} as described in \cite{ClevengerHeisterKanschatKronbichler2019}.
   The problem considered is a variable viscosity Laplace equation and it is solved
   with three different approaches:
-  1. With a matrix-based geometric multigrid based on Trilinos or PETSc. 2. With a matrix-free
-  geometric multigrid. 3. Using algebraic multigrid (Trilinos ML).
+  (i) With a matrix-based geometric multigrid based on Trilinos or
+  PETSc; (ii) with a matrix-free
+  geometric multigrid; (iii) using algebraic multigrid (Trilinos ML).
 
   \todo[inline]{Timo/Conrad/... to write}
 
