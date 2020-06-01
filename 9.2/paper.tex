@@ -573,15 +573,15 @@ while the remaining fraction will be $h$-adapted (here: 10\%/20\%).
 \begin{c++}
 Vector<float> estimated_error_per_cell(n_active_cells);
 KellyErrorEstimator::estimate(
-dof_handler, ..., solution, estimated_error_per_cell, ...);
+  dof_handler, ..., solution, estimated_error_per_cell, ...);
 GridRefinement::refine_and_coarsen_fixed_number(
-triangulation, estimated_error_per_cell, 0.3, 0.03);
+  triangulation, estimated_error_per_cell, 0.3, 0.03);
 
 Vector<float> estimated_smoothness_per_cell(n_active_cells);
 SmoothnessEstimator::Legendre::coefficient_decay(
-..., dof_handler, solution, estimated_smoothness_per_cell);
+  ..., dof_handler, solution, estimated_smoothness_per_cell);
 hp::Refinement::p_adaptivity_fixed_number(
-dof_handler, estimated_smoothness_per_cell, 0.9, 0.8);
+  dof_handler, estimated_smoothness_per_cell, 0.9, 0.8);
 hp::Refinement::choose_p_over_h(dof_handler);
 
 triangulation.execute_coarsening_and_refinement();
