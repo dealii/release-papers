@@ -86,7 +86,7 @@
 
 
 \author[3]{Bruno Blais}
-\affil[3]{Research Unit for Industrial Flows Processes (URPEI),
+\affil[3]{Research Unit for Industrial Flows Processes (URPEI), Department of Chemical Engineering,
           Polytechnique Montréal,
           PO Box 6079, Stn Centre-Ville, Montréal, Québec, Canada, H3C 3A7.
           {\texttt{bruno.blais@polymtl.ca}}}
@@ -609,6 +609,34 @@ Fourier coefficients \cite{BangerthKayserHerold2007} and Legendre coefficients
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Support for particle-based methods}
 \label{subsec:particles}
+
+Support for particles was originally introduced in \dealii{} version 9.0. In \dealii,
+particles can be used as passive tracers, or as part of more complex
+models such as those based on Particle-In-Cells (PIC) approaches \cite{gassmoller2018flexible}.
+
+With the current release, the support for particles has been further expanded: New parallel
+ insertion mechanisms and a basic interface to post-process particles have
+been added, effectively making their usage more flexible and enabling a larger
+range of use cases (e.g. immersed boundaries in step-70). 
+
+Through the addition of the \texttt{Particles::ParticleHandler::insert\_global\_particles} member function,
+ particles can now be inserted in parallel from a vector of points even if these points do not lie
+ on the subdomain from which the insertion is called. This operation requires extensive 
+ communication between the processes to locate   the MPI process the cell in which the particle
+  is located. However, it is made significantly faster  through the usage of bounding boxes
+  that surround the cells of each subdomain. 
+  This function also takes care of transferring the properties attached to the particles to their new owner.
+ This new capacity enables particle generators that insert particles at the location
+ of the support points (\texttt{Particles::Generator::dof\_support\_points}) and at the quadrature points (\texttt{Particles::Generator::quadrature\_points}) of a
+ possibly non-matching triangulation. Consequently, complex particle patterns can be inserted
+ using unstructured hexahedral grids generated outside of \dealii{}.
+ 
+To visualize the motion of particles, the \texttt{Particles::DataOut} class was added to the library.
+In its current version, this class supports writing the particles positions and id in all format supported
+by \dealii, but does not allow writing the properties attached to the particles.
+ 
+ 
+
 
 \todo[inline]{Luca: Your section}
 
@@ -1255,6 +1283,8 @@ W.~Bangerth and T.~Heister were also partially supported by award DMS-1821210.
 %1664/2-1 and the Bayerisches Kompetenznetzwerk
 %f\"ur Technisch-Wissenschaftliches Hoch- und H\"ochstleistungsrechnen
 %(KONWIHR).
+
+B.~Blais was partially supported by the National Science and Engineering Research Council of Canada(NSERC)  through the RGPIN-2020-04510 Discovery Grant
 
 A.~V.~Grayver was partially supported by the European Space Agency
 Swarm DISC program.
