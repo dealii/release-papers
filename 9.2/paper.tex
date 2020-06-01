@@ -645,16 +645,88 @@ To visualize the motion of particles, the \texttt{Particles::DataOut} class was 
 \subsection{Improved performance of the symbolic differentiation framework}
 \label{subsec:symbdiff}
 
-\todo[inline]{J-P's section}
+In the previous release we added support for symbolic expressions, leveraging the
+SymEngine library \cite{symengine-web-page}.
+Although effective, evaluating lengthy expressions could be a bottle-neck as this
+was performed using dictionary-based substitution.
+We have improved on this by implementing a \texttt{BatchOptimizer} class in the 
+namespace \texttt{Differentiation::SD} that collects several \texttt{Expression}s
+and transforms them in such a way that the equivalent result is returned through
+a quicker code path.
+This may be done by simply using common subexpression elimination (CSE) for the
+dictionary-based expressions, by transformation to a set of nested 
+\texttt{std::function}s (the equivalent to \texttt{SymPy}'s "lambdify", with or
+without using CSE), or by offloading to these expressions to the \texttt{LLVM}
+just-in-time (JIT) compiler.
+Although, each of these features is implemented and tested in the SymEngine
+library itself, the \texttt{BatchOptimizer} class provides both uniform
+interface to their classes and a convenient interface for scalar expressions,
+as well as tensorial expressions formed using the \texttt{deal.II} tensor and 
+symmetric tensor classes.
+It, like the \texttt{Expression} class, is also serializable.
 
-BatchOptimizer for symbolic expressions
-\begin{itemize}
-  \item CSE for dictionary-based expressions
-  \item ``lambdify'' (via SymEngine)
-  \item Offloading to LLVM JIT compiler (via SymEngine)
-  \item Serialization, so complex expressions can be compiled offline
-\end{itemize}
+The way that the batch optimizer may be employed within a user's code is shown
+in the pseudo-code below.
+As per usual, one would first define some independent variables, and 
+subsequently compute some symbolic expressions that are dependent on these 
+independent variables. 
+These expression could be, for example, scalar  expressions or tensors of 
+expressions.
+Instead of evaluating these expressions directly, the user would now create an
+optimizer to evaluate the dependent functions.
+In this example, the selected arithmetic type numerical result will be of type
+\texttt{double}, and the \texttt{LLVM} JIT optimizer will be invoked.
+It will employ common subexpression elimination and aggressive optimizations
+during compilation.
+The user then informs the optimizer of all of the independent variables and the
+dependent expressions, and invokes the optimization process.
+This is an expensive call, as it determines an equivalent code path to evaluate
+all of the dependent functions at once.
+However, in many cases each evaluation has significantly less computational cost
+than evaluating the symbolic expressions directly.
+Evaluation is performed when the user constructs a substitution map, giving each
+independent variable a numerical representation, and passes those to the 
+optimizer.
+After this step, the numerical equivalent of the individual dependent expressions
+may finally be retreived from the optimizer.
 
+\begin{c++}
+using namespace Differentiation::SD;
+
+const Expression x("x");
+const Expression y("y");
+...
+const auto f = calculate_f(x, y, ...); // User function
+const auto g = calculate_g(x, y, ...); // User function
+...
+
+BatchOptimizer<double> optimizer (OptimizerType::llvm,
+                                  OptimizationFlags::optimize_all);
+optimizer.register_symbols(x, y, ...);
+optimizer.register_functions(f, g, ...);
+optimizer.optimize();
+
+const auto substitution_map
+  = make_substitution_map({x, ...}, {y, ...}, ...);
+optimizer.substitute(substitution_map);
+
+const auto result_f = optimizer.evaluate(f);
+const auto result_g = optimizer.evaluate(g);
+\end{c++}
+
+This expense of invoking the optimizer may be offset not only by
+the number of evaluations performed, but also by the amount of reuse each
+instance of a \texttt{BatchOptimizer} has.
+In certain circumstances, this can be maximized by generalizing the way in which
+the dependent expressions are formulated.
+For example, in the context of constitutive modelling the material coefficients
+may be made symbolic rather than encoding these into the dependent expressions
+as numerical values.
+The optimizer may then be used to evaluate an entire family of constitutive laws,
+and not a specific one that describes the response of a single material.
+Thereafter, serializing the optimizer instance and reloading the contents during
+subsequent simulations permits the user to skip the optimization process entirely.
+Serialization also enables these complex expressions to be compiled offline.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Advances of the SIMD capabilities and the matrix-free infrastructure}
