@@ -281,17 +281,17 @@ that we briefly outline in the remainder of this section:
   simplify the implementation of these methods.
 \item Previously, the \texttt{parallel::distributed::ContinuousQuadratureDataTransfer}
   class, which transfers local quadrature point data onto the
-  children of newly refined cells, did not allow different regions of the
-  triangulation store quadrature data of different lengths. This release lifts
+  children of newly refined cells, did not allow different cells
+  to store quadrature data of different lengths. This release lifts
   this restriction, which enables efficient quadrature data storage and data
   transfer within a triangulation containing multiple material models, each with
   their own number of local state variables and history variables.
   As an example, in a solid mechanics simulation, we can assign a hyper-elastic
-  material model can be assigned to a region of the mesh with no associated
-  history variables while in another part of the triangulation we incorporate an
+  material model to a region of the mesh with no associated
+  history variables, while in another part of the triangulation we incorporate an
   elasto-plastic constitutive model, requiring the storage of local plasticity
   data at quadrature points.
-  During each refinement of the mesh, we can use
+  During each refinement of the mesh, we can then use
   \texttt{ContinuousQuadratureDataTransfer} to transfer and interpolate
   plasticity data from parent cells to their children, ignoring the cells
   with the hyper-elastic constitutive model.
@@ -610,30 +610,29 @@ Fourier coefficients \cite{BangerthKayserHerold2007} and Legendre coefficients
 \subsection{Support for particle-based methods}
 \label{subsec:particles}
 
-Support for particles was originally introduced in \dealii{} version 9.0. In \dealii,
+Support for particles was originally introduced in \dealii{} version 9.0. These
 particles can be used as passive tracers, or as part of more complex
 models such as those based on Particle-In-Cells (PIC) approaches \cite{GLHPB18}.
 
-With the current release, the support for particles has been further expanded: New parallel
- insertion mechanisms and a basic interface to post-process particles have
+With the current release, support for particles has been further expanded: New parallel
+insertion mechanisms and a basic interface to post-process particles have
 been added, effectively making their usage more flexible and enabling a larger
-range of use cases (e.g. immersed boundaries in step-70). 
+range of use cases (such as the immersed boundaries in step-70, see below).
 
-Through the addition of the \texttt{Particles::ParticleHandler::insert\_global\_particles} member function,
- particles can now be inserted in parallel from a vector of points even if these points do not lie
- on the subdomain from which the insertion is called. This operation requires extensive 
- communication between the processes to locate   the MPI process the cell in which the particle
-  is located. However, it is made significantly faster  through the usage of bounding boxes
-  that surround the cells of each subdomain. 
-  This function also takes care of transferring the properties attached to the particles to their new owner.
- This new capacity enables particle generators that insert particles at the location
- of the support points (\texttt{Particles::Generator::dof\_support\_points}) and at the quadrature points (\texttt{Particles::Generator::quadrature\_points}) of a
- possibly non-matching triangulation. Consequently, complex particle patterns can be inserted
- using unstructured hexahedral grids generated outside of \dealii{}.
+Through the addition of the \texttt{Particles::ParticleHandler::insert\_global\_particles()} member function,
+particles can now be inserted in parallel from a vector of points even if these points do not lie
+on the subdomain from which the insertion is called. This operation requires extensive 
+communication between the processes to locate   the MPI process that
+owns the cell in which the particle
+is located. However, it is made significantly faster  through the usage of bounding boxes
+that surround the cells of each subdomain. 
+This function also takes care of transferring the properties attached to the particles to their new owner.
+This new capability enables particle generators that insert particles at the location
+of the support points (\texttt{Particles::Generator::dof\_support\_points()}) and at the quadrature points (\texttt{Particles::Generator::quadrature\_points()}) of a
+possibly non-matching triangulation. Consequently, complex particle patterns can be inserted
+using unstructured grids generated outside of \dealii{}.
  
 To visualize the motion of particles, the \texttt{Particles::DataOut} class was added to the library.
-In its current version, this class supports writing the particles positions and id in all format supported
-by \dealii, but does not allow writing the properties attached to the particles.
  
  
 
@@ -920,12 +919,13 @@ pre and post operations, which can be passed to
 \texttt{MatrixFree::cell\_loop()}, to schedule operations on sections of vectors close
 to the matrix-vector product to increase data locality.
 
-\item \texttt{step-69} presents a first-order scheme solving compressible
-Euler's equations of gas dynamics with a graph-viscosity stabilization
-technique. Beside the usual conservation properties of mass, momentum and
+\item \texttt{step-69} presents a first-order scheme solving the compressible
+Euler equations of gas dynamics with a graph-viscosity stabilization
+technique. Beside the usual conservation properties of mass, momentum, and
 total energy, the method also guarantees that the constructed solution
-obeys pointwise stability constraints (positivity of density, internal
-energy and a local minimum principle on the specific entropy). As such
+obeys pointwise stability constraints (in particular positivity of
+density and internal
+energy, and a local minimum principle on the specific entropy). As such
 \text{step-69} is strictly speaking more a collocation-type discretization
 than a variational formulation, even though it is implemented with finite
 elements.
@@ -934,10 +934,10 @@ The time-update at each node requires the evaluation of a right-hand side
 that depends (nonlinearly) on information from the previous time-step that
 spans more than one cell. Therefore, assembly loops operate directly on the
 sparsity graph in order to retrieve information from the entire stencil
-associated to each node. From a programming perspective, \texttt{step-69}
+associated with each node. From a programming perspective, \texttt{step-69}
 features a number of techniques that are of interest for a wider audience:
 It discusses a hybrid thread and MPI parallelized scheme with efficient
-(MPI node) local numbering of degrees of freedom. It showcases how to
+MPI node-local numbering of degrees of freedom. It showcases how to
 perform asynchronous write-out of results using a background thread with
 \texttt{std::async}, and discusses a simple but effective checkpointing and
 restart technique.
