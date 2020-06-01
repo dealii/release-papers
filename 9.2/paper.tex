@@ -943,8 +943,14 @@ In addition, there are a number of new tutorial programs:
         consequence, they have largely fallen out of favor and \dealii{} currently
         does not contain implementations of these shape functions.
 
-  \item \texttt{step-50}
-        \todo[inline]{Timo/Conrad/... to write}
+  \item \texttt{step-50} is a program that demonstrates the parallel geometric multigrid features
+  in \dealii{} as described in \cite{ClevengerHeisterKanschatKronbichler2019}.
+  The problem considered is a variable viscosity Laplace equation and it is solved
+  with three different approaches:
+  1. With a matrix-based geometric multigrid based on Trilinos or PETSc. 2. With a matrix-free
+  geometric multigrid. 3. Using algebraic multigrid (Trilinos ML).
+
+  \todo[inline]{Timo/Conrad/... to write}
 
   \item \texttt{step-58} is a program that solves the nonlinear
         Schr{\"o}dinger equation, which in non-dimensional form reads
