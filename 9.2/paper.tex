@@ -535,16 +535,11 @@ Stokes system and achieved weak and strong scaling up to 114K MPI ranks with up 
 \dealii{} and required various optimizations
 and fixes on top of the ones mentioned above:
 (i) Bug fixes to concurrent point to point communications.
-(ii) Fixes multigrid transfer with adaptive refinement and more than \num{4e9} unknowns.
+(ii) Fixes to multigrid transfer with adaptive refinement and more than \num{4e9} unknowns.
 (iii) Fixes to index sets in block indices with more than \num{4e9} unknowns.
 (iv) Fixes to computations with more than \num{4e9} active cells.
 (v) Implementation of IDR(s) solvers to reduce memory overhead.
 For more details, see \cite{clevenger_stokes19}.
-
-
-\todo[inline]{Timo added the paragraph above. Thoughts on how much we should mention (none of this worked with 9.1)?}
-
-\todo[inline]{Martin: I think (ii) worked in 9.1/9.0/8.5, and (iv) definitely worked in the uniform case for 8.5, see Fig 1 in that paper, data line `8B cells'. We just happened to break things in between. But ``fixes'' is a good wording here because it doesn't exclude that some problems with those configurations have been solved before. So I like the text.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Better support for parallel $hp$-adaptive algorithms}
