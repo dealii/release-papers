@@ -531,8 +531,11 @@ the setup of the multigrid transfer.
 \end{figure}
 
 
-As part of this effort, we ran benchmarks on the TACC Frontera system, where we were able to apply the matrix-free geometric multigrid framework to a variable viscosity Stokes system and achieved weak and strong scaling up to 114k MPI ranks with up to
-\num{2.1e11} unknowns. This is likely the currently largest block system solved with \dealii{} and required various optimizations
+As part of this effort, we ran benchmarks on the TACC Frontera system, where we were
+able to apply the matrix-free geometric multigrid framework to a variable viscosity
+Stokes system and achieved weak and strong scaling up to 114K MPI ranks with up to
+\num{2.1e11} unknowns. This is likely the largest block system currently solved with
+\dealii{} and required various optimizations
 and fixes on top of the ones mentioned above:
 (i) Bug fixes to concurrent point to point communications.
 (ii) Fixes multigrid transfer with adaptive refinement and more than \num{4e9} unknowns.
@@ -946,11 +949,13 @@ In addition, there are a number of new tutorial programs:
   in \dealii{} as described in \cite{ClevengerHeisterKanschatKronbichler2019}.
   The problem considered is a variable viscosity Laplace equation and it is solved
   with three different approaches:
-  (i) With a matrix-based geometric multigrid based on Trilinos or
-  PETSc; (ii) with a matrix-free
-  geometric multigrid; (iii) using algebraic multigrid (Trilinos ML).
+  (i) using a matrix-based geometric multigrid based on Trilinos or
+  PETSc; (ii) using a matrix-free
+  geometric multigrid; (iii) using algebraic multigrid (Trilinos ML). The tutorial
+  demonstrates the superiority of the matrix-free method for the problem under consideration,
+  and shows that, for matrix-based formulations, the performance of algebraic and
+  geometric multigrid methods are roughly comparable.
 
-  \todo[inline]{Timo/Conrad/... to write}
 
   \item \texttt{step-58} is a program that solves the nonlinear
         Schr{\"o}dinger equation, which in non-dimensional form reads
