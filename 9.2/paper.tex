@@ -406,20 +406,17 @@ processes and pack/unpack routines either by implementing the interface
 \texttt{CA::\allowbreak Process} or by providing \texttt{std::function}
 objects to \texttt{CA::AnonymousProcess}.
 
-\todo[inline]{Aren't the target processes the result of the operation, and the
-  input global numbers of indices that we request?}
-
 By replacing the collective communications during set up and removing the arrays
 that contain information for each process (enabled by the application of consensus
 algorithms and other modifications---a full list of modifications leading to this
 improvement can be found online), we were able to significantly
 improve the set up
 time for large-scale simulations and to solve a Poisson problem with multigrid
-with \num{2.1e12} unknowns.
-\todo[inline]{the figure only shows 2e11 unknowns. Is this a typo? If not, do we have a reference?}
+with \num{2.1e12} unknowns on the SuperMUC-NG supercomputer with 304,152
+cores~\cite{dealII2020design,Arndt2020sppexa}.
 Figure~\ref{fig:init_costs} compares timings of simulations of various problem
 sizes (including set up) on 49,152 MPI ranks using a matrix-free
-solver~\cite{KronbichlerKormann2019,KronbichlerWall2018}; this solver uses discontinuous elements of
+solver~\cite{Arndt2020sppexa,KronbichlerKormann2019,KronbichlerWall2018}; this solver uses discontinuous elements of
 degree $5$ in a geometric multigrid (GMG) scheme. The comparison between the previous release 9.1
 and the current release 9.2 shows that while the scaling for the V-cycle had been
 very good before, many initialization routines have been considerably
@@ -547,6 +544,8 @@ For more details, see \cite{clevenger_stokes19}.
 
 \todo[inline]{Timo added the paragraph above. Thoughts on how much we should mention (none of this worked with 9.1)?}
 
+\todo[inline]{Martin: I think (ii) worked in 9.1/9.0/8.5, and (iv) definitely worked in the uniform case for 8.5, see Fig 1 in that paper, data line `8B cells'. We just happened to break things in between. But ``fixes'' is a good wording here because it doesn't exclude that some problems with those configurations have been solved before. So I like the text.}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Better support for parallel $hp$-adaptive algorithms}
 \label{subsec:hp}
@@ -653,28 +652,28 @@ In the previous release we added support for symbolic expressions, leveraging th
 SymEngine library \cite{symengine-web-page}.
 Although effective, evaluating lengthy expressions could be a bottleneck as this
 was performed using dictionary-based substitution.
-We have improved on this by implementing a \texttt{BatchOptimizer} class in the 
+We have improved on this by implementing a \texttt{BatchOptimizer} class in the
 namespace \texttt{Differentiation::SD} that collects several \texttt{Expression}s
 and transforms them in such a way that the equivalent result is returned through
 a quicker code path.
 This may be done by simply using common subexpression elimination (CSE) for the
-dictionary-based expressions, by transformation to a set of nested 
+dictionary-based expressions, by transformation to a set of nested
 \texttt{std::function} objects (the equivalent to \texttt{SymPy}'s ``lambdify'', with or
 without using CSE), or by offloading these expressions to the \texttt{LLVM}
 just-in-time (JIT) compiler.
 Although each of these features is implemented and tested in the SymEngine
 library itself, the \texttt{BatchOptimizer} class provides both a uniform
 interface to their classes and a convenient interface for scalar expressions,
-as well as tensorial expressions formed using the \texttt{deal.II} tensor and 
+as well as tensorial expressions formed using the \texttt{deal.II} tensor and
 symmetric tensor classes.
 It, like the \texttt{Expression} class, is also serializable.
 
 The way the batch optimizer may be employed within a user's code is shown
 in the pseudo-code below.
-As per usual, one would first define some independent variables, and 
-subsequently compute some symbolic expressions that are dependent on these 
-independent variables. 
-These expression could be, for example, scalar  expressions or tensors of 
+As per usual, one would first define some independent variables, and
+subsequently compute some symbolic expressions that are dependent on these
+independent variables.
+These expression could be, for example, scalar  expressions or tensors of
 expressions.
 Instead of evaluating these expressions directly, the user would now create an
 optimizer to evaluate the dependent functions.
@@ -689,7 +688,7 @@ all of the dependent functions at once.
 However, in many cases each evaluation has significantly less computational cost
 than evaluating the symbolic expressions directly.
 Evaluation is performed when the user constructs a substitution map, giving each
-independent variable a numerical representation, and passes those to the 
+independent variable a numerical representation, and passes those to the
 optimizer.
 After this step, the numerical equivalent of the individual dependent expressions
 may finally be retreived from the optimizer.
