@@ -74,7 +74,7 @@
 
  \author[*1]{Daniel Arndt}
  \affil[1]{Computational Engineering and Energy Sciences Group,
-   Computional Sciences and Engineering Division,
+   Computational Sciences and Engineering Division,
    Oak Ridge National Laboratory, 1 Bethel Valley Rd.,
    TN 37831, USA.
    \texttt{arndtd/turcksinbr@ornl.gov}}
@@ -686,7 +686,7 @@ Evaluation is performed when the user constructs a substitution map, giving each
 independent variable a numerical representation, and passes those to the
 optimizer.
 After this step, the numerical equivalent of the individual dependent expressions
-may finally be retreived from the optimizer.
+may finally be retrieved from the optimizer.
 
 \begin{c++}
 using namespace Differentiation::SD;
@@ -1114,7 +1114,7 @@ with the auxiliary information about possible refinement, boundaries,
 materials and manifolds. This object can be easily deserialized within
 a C++ program for subsequent production runs. Furthermore, such a
 serialized triangulation can also be used in the construction of
-\texttt{parallel::shared}, \texttt{parallel::disrtibuted}, and
+\texttt{parallel::shared}, \texttt{parallel::distributed}, and
 \texttt{parallel::fullydistributed} triangulations (see also Section~\ref{subsec:pft}).
 
 To facilitate the illustration of the new Python bindings, tutorial programs \href{https://github.com/dealii/dealii/blob/dealii-9.2/examples/step-49/step-49.ipynb}{step-49} and \href{https://github.com/dealii/dealii/blob/dealii-9.2/examples/step-53/step-53.ipynb}{step-53} were replicated as Jupyter notebooks.
@@ -1143,7 +1143,7 @@ may have been more widely used:
           \item \texttt{DoFHandler::locally\_owned\_mg\_dofs\_per\_processor()}
         \end{itemize}
         have been deprecated. As discussed in
-        Subection~\ref{subsec:performance}, \dealii{} by default no longer
+        Subsection~\ref{subsec:performance}, \dealii{} by default no longer
         stores information for all processes on all processes, but only
         local or locally-relevant information. On the other
         hand, if necessary, global information can still be computed using,
