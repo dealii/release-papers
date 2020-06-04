@@ -232,10 +232,26 @@ GNU Lesser General Public License (LGPL). Downloads are available at
 The major changes of this release are:
 %
 \begin{itemize}
-  \item xy \todo[inline]{Update once we have the subsections in Section 2;
-          provide cross-references to each of these subsections}
-        %   \item Improved support for automatic differentiation (see
-        %     Section~\ref{subsec:ad}),
+  \item A new, parallel, fully distributed triangulation class (see
+        Section~\ref{subsec:pft});
+  \item Substantially improved performance for very large computations
+    on tens or hundreds of thousands of processor cores and up to
+    trillions of unknowns (see
+        Section~\ref{subsec:performance});
+  \item Better support for parallel $hp$-adaptive algorithms (see
+        Section~\ref{subsec:hp});
+  \item Support for particle-based methods (see
+        Section~\ref{subsec:particles});
+  \item Improved performance of the symbolic differentiation framework (see
+        Section~\ref{subsec:symbdiff});
+  \item Advances in SIMD capabilities and the matrix-free infrastructure (see
+        Section~\ref{subsec:mf});
+  \item Advances in GPU support (see
+        Section~\ref{subsec:gpu});
+  \item Better use of modern C++ language features (see
+        Section~\ref{subsec:cxx});
+  \item Seven new tutorial programs (see
+        Section~\ref{subsec:steps}).
 \end{itemize}
 %
 These major changes are discussed in detail in Section~\ref{sec:major}. There
@@ -727,7 +743,7 @@ subsequent simulations permits the user to skip the optimization process entirel
 Serialization also enables these complex expressions to be compiled offline.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Advances of the SIMD capabilities and the matrix-free infrastructure}
+\subsection{Advances in SIMD capabilities and the matrix-free infrastructure}
 \label{subsec:mf}
 
 %\begin{itemize}
