@@ -281,9 +281,9 @@ that we briefly outline in the remainder of this section:
         The interface of this class is designed to be minimal
         to enforce a number of important programming invariants, reducing
         the possibility of mistakes in the user code.
-        An example is that \texttt{DiscreteTime} ensures that the final time step ends
+        For instance, \texttt{DiscreteTime} ensures that the final time step ends
         precisely on a predefined end time, automatically
-        lengthening or shortening to final time step.
+        lengthening or shortening the final time step.
   \item A key component of \dealii{} are the \texttt{FEValues} and
         \texttt{FEFaceValues} classes that evaluate finite element functions
         at quadrature points located on cells and faces of a cell,
@@ -892,7 +892,7 @@ communication to finish.
 Certain types of quantities in a simulation are constants fully known
 at compile time. They can be pre-calculated and stored in the
 compiled executable in order to avoid unnecessary initialization during
-runtime. C++11 and later standards enables such computations by
+runtime. C++11 and later standards enable such computations by
 marking variables and functions with the \texttt{constexpr} keyword.
 
 This optimization is now enabled for the class templates
