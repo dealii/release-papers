@@ -278,7 +278,8 @@ that we briefly outline in the remainder of this section:
   \item The new \texttt{DiscreteTime} class provides a more
         consistent, more readable, and less error-prone approach to control
         time-stepping algorithms within time-dependent simulations.
-        The interface of this class is designed to be minimal
+        While providing a rich read-only interface, the non-const interface
+        of this class is designed to be minimal
         to enforce a number of important programming invariants, reducing
         the possibility of mistakes in the user code.
         An example is that \texttt{DiscreteTime} ensures that the final time step ends
