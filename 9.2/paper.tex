@@ -1070,12 +1070,20 @@ In addition, there are a number of new tutorial programs:
         coupled elasticity equations on the solid domain.
 \end{itemize}
 
-\todo[inline]{Do we have new code gallery programs?}
+There are also new programs in the code gallery (a collection of
+user-contributed programs that often solve more complicated problems
+than tutorial programs, and intended as starting points for further
+research rather than as teaching tools):
 \begin{itemize}
-  \item Parallel in time (\url{https://github.com/dealii/code-gallery/pull/49})
-  \item Linear elastoplasticity (\url{https://github.com/dealii/code-gallery/pull/62})
-  \item Thermo-electro-elastic pump (\url{https://github.com/dealii/code-gallery/pull/63})
-  \item Nonlinear poro-viscoelasticity (\url{https://github.com/dealii/code-gallery/pull/72})
+  \item A program based on the XBraids library to solve time-dependent
+    problems in a parallel-in-time fashion. This program was
+    contributed by Joshua Christopher.
+  \item A program that solves the biphasic nonlinear
+    poro-viscoelasticity equations based on Ogden hyperelasticity, to
+    explore the porous and viscous contributions in brain mechanics
+    applications.  This program was contributed by Ester Comellas and
+    Jean-Paul Pelteret. The program also serves as a demonstration of
+    the automatic differentiation capabilities of \dealii{}.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1294,6 +1302,8 @@ Manaswinee Bezbaruah,
 Benjamin Brands,
 Yong-Yong Cai,
 Fabian Castelli,
+Joshua Christopher,
+Ester Comellas,
 Katherine Cosburn,
 Denis Davydov,
 Elias Dejene,
@@ -1435,7 +1445,7 @@ University of Texas at Austin for providing access to HPC resources that have
 contributed to the research results reported within this paper.
 
 Clemson University is acknowledged for generous allotment of compute time on
-Palmetto cluster.
+the Palmetto cluster.
 
 
 \bibliography{paper}{}
