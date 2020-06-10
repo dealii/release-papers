@@ -1236,8 +1236,6 @@ following:
 \end{multicols}
 
 \dealii{} can interface with many other libraries:
-\todo[inline]{We picked up gingko. Anything else?}
-\todo[inline]{Timo says: should we remove deprecated modules already? (nanoflann, netcdf)}
 \begin{multicols}{3}
   \begin{itemize}
     \item ADOL-C \cite{Griewank1996a,adol-c}
@@ -1253,7 +1251,7 @@ following:
     \item METIS \cite{karypis1998fast}
     \item MUMPS \cite{ADE00,MUMPS:1,MUMPS:2,mumps-web-page}
     \item muparser \cite{muparser-web-page}
-    \item nanoflann \cite{nanoflann}
+    \item nanoflann \cite{nanoflann}%
           %
           % nanoflann has been deprecated and will be removed for 9.3. remove
           % this line in the 9.3 release paper
@@ -1276,8 +1274,10 @@ following:
     \item UMFPACK \cite{umfpack}
   \end{itemize}
 \end{multicols}
-Please consider citing the appropriate references if you use interfaces to these
-libraries.
+Please consider citing the appropriate references if you use
+interfaces to these libraries. We note that the nanoflann and NetCDF
+interfaces are now deprecated and will be removed in \dealii{} version
+9.3.
 
 The two previous releases of \dealii{} can be cited as
 \cite{dealII90,dealII91}.
