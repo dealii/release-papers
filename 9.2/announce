@@ -35,9 +35,9 @@ The major changes of this release are:
 
   - More than 320 other new features, improvements, and bugfixes.
 
-For more information see
-  - the preprint at https://www.dealii.org/deal92-preprint.pdf
-  - the list of changes at
+For more information see:
+  - The preprint at https://www.dealii.org/deal92-preprint.pdf
+  - The list of changes at
     https://www.dealii.org/developer/doxygen/deal.II/changes_between_9_1_1_and_9_2_0.html
 
 The main features of deal.II are:
