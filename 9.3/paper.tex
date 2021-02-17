@@ -54,20 +54,20 @@ cross/.default={2pt}}
   pdfauthor={
      Daniel Arndt,
      Wolfgang Bangerth,
-     Bruno Blais,
-     Thomas C. Clevenger,
+     %Bruno Blais,
+     %Thomas C. Clevenger,
     Marc Fehling,
-    Alexander V. Grayver,
+    %Alexander V. Grayver,
     Timo Heister,
     Luca Heltai,
     Martin Kronbichler,
     Matthias Maier,
     Peter Munch,
     Jean-Paul Pelteret,
-    Reza Rastak,
-    Ignacio Thomas,
+    %Reza Rastak,
+    %Ignacio Thomas,
     Bruno Turcksin,
-    Zhuoran Wang,
+    %Zhuoran Wang,
     David Wells
   },
   pdftitle={The deal.II Library, Version 9.3, 2021},
@@ -88,17 +88,17 @@ cross/.default={2pt}}
    \texttt{bangerth@colostate.edu}}
 
 
-\author[3]{Bruno Blais}
-\affil[3]{Research Unit for Industrial Flows Processes (URPEI), Department of Chemical Engineering,
-          Polytechnique Montréal,
-          PO Box 6079, Stn Centre-Ville, Montréal, Québec, Canada, H3C 3A7.
-          {\texttt{bruno.blais@polymtl.ca}}}
+%\author[3]{Bruno Blais}
+%\affil[3]{Research Unit for Industrial Flows Processes (URPEI), Department of Chemical Engineering,
+%          Polytechnique Montréal,
+%          PO Box 6079, Stn Centre-Ville, Montréal, Québec, Canada, H3C 3A7.
+%          {\texttt{bruno.blais@polymtl.ca}}}
 
- \author[4]{Thomas~C.~Clevenger}
- \affil[4]{School of Mathematical and Statistical Sciences,
-   Clemson University,
-   Clemson, SC, 29634, USA
-   {\texttt{tcleven/heister@clemson.edu}}}
+% \author[4]{Thomas~C.~Clevenger}
+% \affil[4]{School of Mathematical and Statistical Sciences,
+%   Clemson University,
+%   Clemson, SC, 29634, USA
+%   {\texttt{tcleven/heister@clemson.edu}}}
 %
 % \author[4]{Denis~Davydov}
 % \affil[4]{Chair of Applied Mechanics,
@@ -121,11 +121,11 @@ cross/.default={2pt}}
 % \author[2]{Graham Harper}
 %
 
-\author[6]{Alexander~V.~Grayver}
-\affil[6]{Institute of Geophysics,
-  ETH Zurich,
-  Sonneggstrasse 5, 8092 Z\"{u}rich, Switzerland.
-  {\texttt{agrayver@ethz.ch}}}
+%\author[6]{Alexander~V.~Grayver}
+%\affil[6]{Institute of Geophysics,
+%  ETH Zurich,
+%  Sonneggstrasse 5, 8092 Z\"{u}rich, Switzerland.
+%  {\texttt{agrayver@ethz.ch}}}
 
 \author[4]{Timo~Heister}
 
@@ -160,24 +160,24 @@ cross/.default={2pt}}
 \affil[11]{Independent researcher.
 {\texttt{jppelteret@gmail.com}}}
 
- \author[12]{Reza Rastak}
- \affil[12]{Department of Civil and Environmental Engineering,
-   Stanford University,
-   Stanford, CA 94305, USA.
-   {\texttt{rastak@stanford.edu}}}
+% \author[12]{Reza Rastak}
+% \affil[12]{Department of Civil and Environmental Engineering,
+%   Stanford University,
+%   Stanford, CA 94305, USA.
+%   {\texttt{rastak@stanford.edu}}}
 
- \author[**13]{Ignacio Tomas}
- \affil[13]{Sandia National Laboratories, Org 1442,
- P.O. Box 5800, MS 1320, Albuquerque, NM, 87185-1320,
-   \texttt{itomas@sandia.gov}}
+% \author[**13]{Ignacio Tomas}
+% \affil[13]{Sandia National Laboratories, Org 1442,
+% P.O. Box 5800, MS 1320, Albuquerque, NM, 87185-1320,
+%   \texttt{itomas@sandia.gov}}
 
 \author[*1]{Bruno~Turcksin}
 %
 
-\author[14]{Zhuoran Wang}
-\affil[14]{Department of Mathematics, Colorado State University, Fort Collins,
-          CO 80523-1874, USA.
-{\texttt{zhrwang@math.colostate.edu}}}
+%\author[14]{Zhuoran Wang}
+%\affil[14]{Department of Mathematics, Colorado State University, Fort Collins,
+%          CO 80523-1874, USA.
+%{\texttt{zhrwang@math.colostate.edu}}}
 
 \author[15]{David Wells}
 \affil[15]{Department of Mathematics, University of North Carolina,
@@ -215,7 +215,7 @@ cross/.default={2pt}}
 
 \begin{abstract}
   This paper provides an overview of the new features of the finite element
-  library \dealii, version 9.2.
+  library \dealii, version 9.3.
 \end{abstract}
 
 
@@ -225,10 +225,10 @@ cross/.default={2pt}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview}
 
-\dealii{} version 9.2.0 was released May 20, 2020.
+\dealii{} version 9.3.0 was released May ??, 2021.
 This paper provides an
 overview of the new features of this release and serves as a citable
-reference for the \dealii{} software library version 9.2. \dealii{} is an
+reference for the \dealii{} software library version 9.3. \dealii{} is an
 object-oriented finite element library used around the world in the
 development of finite element solvers. It is available for free under the
 GNU Lesser General Public License (LGPL). Downloads are available at
@@ -237,26 +237,7 @@ GNU Lesser General Public License (LGPL). Downloads are available at
 The major changes of this release are:
 %
 \begin{itemize}
-  \item A new, parallel, fully distributed triangulation class (see
-        Section~\ref{subsec:pft});
-  \item Substantially improved performance for very large computations
-    on tens or hundreds of thousands of processor cores and up to
-    trillions of unknowns (see
-        Section~\ref{subsec:performance});
-  \item Better support for parallel $hp$-adaptive algorithms (see
-        Section~\ref{subsec:hp});
-  \item Support for particle-based methods (see
-        Section~\ref{subsec:particles});
-  \item Improved performance of the symbolic differentiation framework (see
-        Section~\ref{subsec:symbdiff});
-  \item Advances in SIMD capabilities and the matrix-free infrastructure (see
-        Section~\ref{subsec:mf});
-  \item Advances in GPU support (see
-        Section~\ref{subsec:gpu});
-  \item Better use of modern C++ language features (see
-        Section~\ref{subsec:cxx});
-  \item Seven new tutorial programs (see
-        Section~\ref{subsec:steps}).
+  \item TODO.
 \end{itemize}
 %
 These major changes are discussed in detail in Section~\ref{sec:major}. There
@@ -264,7 +245,7 @@ are a number of other noteworthy changes in the current \dealii{} release
 that we briefly outline in the remainder of this section:
 %
 \begin{itemize}
-  \item globally unique cell IDs
+  \item globally unique cell IDs: TODO
 \end{itemize}
 %
 The changelog lists more than 240 other
@@ -287,7 +268,7 @@ can be found
 \href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_1_1_and_9_2_0.html}{
   in the file that lists all changes for this release}, see \cite{changes92}.
 
-\newpage
+%\newpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Simplex and mixed mesh support}
@@ -686,6 +667,12 @@ supported.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Advances in the particle infrastructure}
+\label{subsec:particles}
+
+TODO
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Advances in the multigrid infrastructure}
 \label{subsec:mg}
 
@@ -857,7 +844,9 @@ all cells in this way.
 In addition, there are a number of new tutorial programs:
 \begin{itemize}
 \item \texttt{step-19} TODO
-\item \texttt{step-67b} is an explicit time integrator for the
+\item \texttt{step-68} TODO
+\item \texttt{step-75} TODO
+\item \texttt{step-76} is an explicit time integrator for the
         compressible Euler equations discretized with a high-order discontinuous
         Galerkin (DG) scheme, using the matrix-free infrastructure just as \texttt{step67} does.
         The tutorial presents advanced topics, like the usage of cell-centric loops and
@@ -865,8 +854,6 @@ In addition, there are a number of new tutorial programs:
         throughput. Furthermore, the utilization of the template parameter
         \texttt{VectorizedArrayType} and the application of lambdas to capture cell and face
         integrals are discussed.
-\item \texttt{step-68} TODO
-\item \texttt{step-75} TODO
 \end{itemize}
 
 There are also new programs in the code gallery (a collection of
@@ -874,7 +861,7 @@ user-contributed programs that often solve more complicated problems
 than tutorial programs, and intended as starting points for further
 research rather than as teaching tools):
 \begin{itemize}
-  \item 
+  \item preCICE: TODO
 \end{itemize}
 
 
@@ -1008,86 +995,7 @@ contributed code to this release:\\
 % we should make sure he's listed.
 %
 % 9.2: updated 5/11/2020 MM
-Pasquale Africa,
-Ashna Aggarwal,
-Giovanni Alzetta,
-Mathias Anselmann,
-Kirana Bergstrom,
-Manaswinee Bezbaruah,
-Benjamin Brands,
-Yong-Yong Cai,
-Fabian Castelli,
-Joshua Christopher,
-Ester Comellas,
-Katherine Cosburn,
-Denis Davydov,
-Elias Dejene,
-Stefano Dominici,
-Brett Dong,
-Luel Emishaw,
-Niklas Fehn,
-Isuru Fernando,
-Rebecca Fildes,
-Menno Fraters,
-Andres Galindo,
-Daniel Garcia-Sanchez,
-Rene Gassmoeller,
-Melanie Gerault,
-Nicola Giuliani,
-Brandon Gleeson,
-Anne Glerum,
-Krishnakumar Gopalakrishnan,
-Graham Harper,
-Mohammed Hassan,
-Nicole Hayes,
-Bang He,
-Johannes Heinz,
-Jiuhua Hu,
-Lise-Marie Imbert-Gerard,
-Manu Jayadharan,
-Daniel Jodlbauer,
-Marie Kajan,
-Guido Kanschat,
-Alexander Knieps,
-Uwe K{\"o}cher,
-Paras Kumar,
-Konstantin Ladutenko,
-Charu Lata,
-Adam Lee,
-Wenyu Lei,
-Katrin Mang,
-Mae Markowski,
-Franco Milicchio,
-Adriana Morales Miranda,
-Bob Myhill,
-Emily Novak,
-Omotayo Omosebi,
-Alexey Ozeritskiy,
-Rebecca Pereira,
-Geneva Porter,
-Laura Prieto Saavedra,
-Roland Richter,
-Jonathan Robey,
-Irabiel Romero,
-Matthew Russell,
-Tonatiuh Sanchez-Vizuet,
-Natasha S. Sharma,
-Doug Shi-Dong,
-Konrad Simon,
-Stephanie Sparks,
-Sebastian Stark,
-Simon Sticko,
-Jan Philipp Thiele,
-Jihuan Tian,
-Sara Tro,
-Ferdinand Vanmaele,
-Michal Wichrowski,
-Julius Witte,
-Winnifried Wollner,
-Ming Yang,
-Mario Zepeda Aguilar,
-Wenjuan Zhang,
-Victor Zheng.
+TODO
 
 Their contributions are much appreciated!
 
