@@ -18,6 +18,8 @@
 
 \usepackage{floatflt}
 
+\usepackage{multirow}
+
 %\renewcommand{\baselinestretch}{2.0}
 
 \usepackage[normalem]{ulem}
@@ -491,7 +493,8 @@ can be found
     \toprule
     \textbf{reference cell} & \textbf{finite element} & \textbf{dimension} & \textbf{degree}\\
     \midrule
-    simplex (line, triangle, tetrahedron) & FE\_P, FE\_DGP  & 1--3 & 1--2 \\
+    \multirow{2}{*}{simplex (line, triangle, tetrahedron)} & FE\_SimplexP, FE\_SimplexDGP  & 1--3 & 1--2 \\
+                                          & FE\_SimplexP\_Bubbles  & 1--3 & 1--2 \\
     pyramid & FE\_PyramidP, FE\_PyramidDGP  & 3 & 1 \\
     wedge & FE\_WedgeP, FE\_WedgeDGP  & 3 & 1--2 \\
     \bottomrule
@@ -518,7 +521,7 @@ the new mesh types can be processed also in parallel.
 
 The internal data structures of \texttt{DoFHandler} used to be hard-coded for pure
 hypercube meshes, while the \texttt{hp::DoFHandler} used to be built around
-CRS-like data structures. Due to the need of CRS data structures in
+CRS-like data structures. Due to the need of CRS data structures in the
 \texttt{DoFHandler} in the context of more general meshes, we have merged
 \texttt{hp::DoFHandler} into the \texttt{DoFHandler}. The class \texttt{hp::DoFHandler}, which is now a dummy derivation of \texttt{DoFHandler}, currently only exists for compatibility reasons. For
 more details see Subsection~\ref{TODO}.
@@ -541,9 +544,9 @@ a pure simplex mesh by selecting an appropriate finite element, mapping, and
 quadrature class:
 
 \begin{c++}
-Simplex::FE_P<dim, spacedim> fe(degree);
-MappingFE<dim, spacedim> mapping(Simplex::FE_P<dim, spacedim>(1));
-Simplex::QGauss<dim> quad(degree + 1);
+FE_SimplexP<dim, spacedim> fe(degree);
+MappingFE<dim, spacedim> mapping(FE_SimplexP<dim, spacedim>(1));
+QGaussSimplex<dim> quad(degree + 1);
 
 DoFHandler<dim> dof_handler(tria);
 dof_handler.distribute_dofs(fe);
@@ -551,21 +554,20 @@ dof_handler.distribute_dofs(fe);
 FEValues<dim, spacedim> fe_values(mapping, fe, quad, flags);
 \end{c++}
 The  list of currently supported finite-element classes is provided in Table~\ref{tab:simplex:fe}. Currently,
-only linear iso-parametric mapping (\texttt{MappingFE}) is available, which takes one of the 
-finite elements mentioned before. For quadrature, the classes \texttt{QGauss}, 
-\texttt{QGaussPyamid}, and \texttt{QGaussWedge} from the \texttt{simplex} namespace are
+only linear iso-parametric mapping (\texttt{MappingFE} and \texttt{MappingFEFields}) is available. For quadrature, the classes \texttt{QGaussSimplex}, \texttt{QWitherdenVincentSimplex},  
+\texttt{QGaussPyamid}, and \texttt{QGaussWedge} are
 available.
 
 \subsubsection{Mixed mesh}
 For mixed meshes, concepts known from the hp context have been applied: 
  different finite-element classes are assigned to different cell types. In the 
 case of a 2D mixed mesh, which can only consists of triangles and
-quadrilaterals, the finite element defined on a triangle (e.g., \texttt{Simplex::FE\_P})
+quadrilaterals, the finite element defined on a triangle (e.g., \texttt{FE\_SimplexP})
 and on a quadrilateral (e.g., \texttt{FE\_Q}) can be collected in a \texttt{hp::FECollection}:
 
 \begin{c++}  
 hp::FECollection<dim, spacedim> fe
-  {Simplex::FE_P<dim, spacedim>(degree), FE_Q<dim, spacedim>(degree)};
+  {FE_SimplexP<dim, spacedim>(degree), FE_Q<dim, spacedim>(degree)};
 \end{c++}
 
 Similarly, \texttt{hp::QCollection} and \texttt{hp::MappingCollection} can be used
@@ -591,7 +593,7 @@ dof_handler.distribute_dofs(fe);
 
 The introduction of simplex and mixed meshes leads to some implications
 for the user if these features should be used. For instance, each cell might have a different type with 
-different number of vertices, lines, and faces so that these quantities cannot be 
+different number of vertices, lines, and faces so that these quantities can not be 
 compile-time constants anymore. This information used to be queried from
 the \texttt{GeometryInfo} class. To avoid using this class, we have extended
 relevant classes, e.g., \texttt{TriaAccessor} or \texttt{TriaCellAccessor},
@@ -626,14 +628,13 @@ for(const auto & cell : tria.active_cell_iterators())
 What is true for cells is also true for faces in 3D: faces can be either triangles
 or quadrilaterals. This is the case even if no mixed mesh is used. As a consequence, some functions, e.g. \texttt{FiniteElementData::n\_dofs\_per\_face()}, have been extended with a new optional argument for the face number.
 
-We tried---where possible---to provide utility functions so that users do not need to access a \texttt{GeometryInfo}-like data structure. However, these functions internally rely on the \texttt{ReferenceCell::\allowbreak internal::\allowbreak Info} classes, which are similarly structured as \texttt{GeometryInfo} and even use it for hypercube cells. Users can query the reference-cell type of geometric entity via:
+We tried---where possible---to provide utility functions so that users do not need to access a \texttt{GeometryInfo}-like data structure. However, these functions internally rely on the \texttt{ReferenceCell} class, which is similarly structured as \texttt{GeometryInfo} and even use it for hypercube cells. Users can query the right \texttt{ReferenceCell} of a geometric entity via:
 \begin{c++}
-const auto reference_cell_type = cell->reference_cell_type();
+const auto reference_cell = cell->reference_cell();
 \end{c++}
-and can access the relevant struct describing the current reference cell or its i-th face via:
+and of its i-th face via:
 \begin{c++}
-ReferenceCell::internal::Info::get_cell(reference_cell_type);
-ReferenceCell::internal::Info::get_face(reference_cell_type, i);
+const auto face_reference_cell = reference_cell.face_reference_cell(i);
 \end{c++}
 
 
@@ -665,6 +666,17 @@ gradients at the quadrature points as we do for tensor-product elements and
 instead rely on full interpolation matrices. This is for now acceptable since only low-order elements are 
 supported. 
 
+\subsubsection{Miscellaneous} 
+
+We have created two new tutorials presenting the new simplex (\texttt{step-3b}) and mixed mesh features
+(\texttt{step-3c}). Similarly as \texttt{step-3}, they solve a Poisson problem, however, focus
+on the changed workflow.
+
+By the time of writing, there have been 74 tests (in the folder \texttt{tests/simplex}) 
+targeting the new simplex and mixed mesh support. In particular, the folder also
+contains ported variants of the following tutorials: 1, 2, 3, 4, 6, 7, 8, 12, 17, 18, 20, 23, 31, 38,
+40, 55, 67, 68, and 74. These might be also good starting points. 
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Advances in the particle infrastructure}
@@ -676,7 +688,7 @@ TODO
 \subsection{Advances in the multigrid infrastructure}
 \label{subsec:mg}
 
-Until now, \dealii has only supported local smoothing multigrid algorithms~\citep{ClevengerHeisterKanschatKronbichler2019}. With release 9.3, the support for global coarsening of continuous (\texttt{FE\_Q}) and discontinuous (\texttt{FE\_DGQ}) elements  in a geometric and a polynomial sense has been added. These multigrid variants promise less iteration numbers and better parallel scalability with the disadvantage of having to deal with hanging nodes during smoothing and of more work per iteration overall.
+Until now, \dealii has only supported local smoothing multigrid algorithms~\citep{ClevengerHeisterKanschatKronbichler2019}. With release 9.3, the support for global coarsening of continuous (\texttt{FE\_Q}, \texttt{FE\_SimplexP}) and discontinuous (\texttt{FE\_DGQ}, \texttt{FE\_SimplexDGP}) elements  in a geometric and a polynomial sense has been added. These multigrid variants promise less iteration numbers and better parallel scalability with the disadvantage of having to deal with hanging nodes during smoothing and of more work per iteration overall.
 
 Global-coarsening algorithms~\citep{becker00} either coarsen each cell of a triangulation or reduce the polynomial degree of the finite element of each cell and hereby obtain a new system with less unknowns (also known as "coarse level"). 
 Repeating such kind of coarsening results in a sequence of multigrid levels.
@@ -693,7 +705,8 @@ Internally, the transfer operators categorize fine/coarse cell pairs according t
 occurrence of refinement 
 (refinement or no-refinement) and to the polynomial-degree pair ($k_f$-$k_c$) into groups. 
 The projection and restriction are performed with efficient matrix-free kernels applying
-1D projection and restriction matrices.
+1D projection and restriction matrices in the case of hypercube cells and via full projection and
+restriction matrices in the case of simplex cells.
 
 
 The user is responsible for setting up the levels (including the operators and the
@@ -719,11 +732,11 @@ The usage of the new transfer operators (and of some of the utility functions) i
 The classes \texttt{FEEvaluation} and \texttt{FEFaceEvaluation} are highly
 templated to reach high performance. In particular, the template parameters include
 the polynomial degree of the finite element $k$ and the number of the 1D quadrature points $q$.
-For applications codes that rely on operators of many different degrees (e.g., because
+For application codes that rely on operators of many different degrees (e.g., because
 they use p-multigrid or hp algorithms), the instantiation
 means a long compilation time. 
 
-In the current release, we have improved the \texttt{FEEvaluation} and the \texttt{FEFaceEvaluation} class implementations, which do
+In the current release, we have improved the \texttt{FEEvaluation} and the \texttt{FEFaceEvaluation} class implementations that do
 not rely on the template parameters $k$ and $q$ (expressed in the code
 with "-1" and "0"):
 \begin{c++}
@@ -784,10 +797,10 @@ other processes and in certain cases local
 communication can be skipped. To prevent race conditions, \texttt{MatrixFree} uses local
 barriers at the beginning and the end of loops (\texttt{loop()}, \texttt{cell\_loop()}, \texttt{loop\_cell\_centric()}).
 
-The novel tutorial \texttt{step-67b} shows the usage of the new MPI-3.0 feature
+The novel tutorial \texttt{step-76} shows the usage of the new MPI-3.0 feature
  in the context of the solution
 of the Euler equations. Here, a speed-up of 27\% could be reached compared to the
-regular version \texttt{step-67}, by using the new feature.
+original version, \texttt{step-67}, by using the new feature.
 For more details and a successful application in the library \texttt{hyper.deal}, see \citep{munch2020hyperdeal}.
 
 \subsubsection{Miscellaneous}
