@@ -663,7 +663,7 @@ gradients at the quadrature points as we do for tensor-product elements and
 instead rely on full interpolation matrices. This is for now acceptable since only low-order elements are
 supported.
 
-\subsubsection{Miscellaneous}
+\subsubsection{Miscellanea}
 
 We have created two new tutorials presenting the new simplex (\texttt{step-3b}) and mixed mesh features
 (\texttt{step-3c}). Similarly as \texttt{step-3}, they solve a Poisson problem, however, focus
@@ -685,38 +685,50 @@ TODO
 \subsection{Advances in the multigrid infrastructure}
 \label{subsec:mg}
 
-Until now, \dealii has only supported local smoothing multigrid algorithms~\citep{ClevengerHeisterKanschatKronbichler2019}. With release 9.3, the support for global coarsening of continuous (\texttt{FE\_Q}, \texttt{FE\_SimplexP}) and discontinuous (\texttt{FE\_DGQ}, \texttt{FE\_SimplexDGP}) elements  in a geometric and a polynomial sense has been added. These multigrid variants promise less iteration numbers and better parallel scalability with the disadvantage of having to deal with hanging nodes during smoothing and of more work per iteration overall.
+Until now, \dealii has only supported local smoothing multigrid
+algorithms~\citep{ClevengerHeisterKanschatKronbichler2019}; in local
+smoothing algorithms, one only applies the smoother to that part of an
+adaptively refined mesh that has cells on a given refinement level,
+but not to parts of the mesh that are coarser than that level.
+The current release now also has support for global coarsening~\citep{becker00} when
+using continuous (\texttt{FE\_Q}, \texttt{FE\_SimplexP}) and
+discontinuous (\texttt{FE\_DGQ}, \texttt{FE\_SimplexDGP})
+elements. Global coarsening builds multigrid levels for the entire
+domain, coarsening \textit{all} cells of a triangulation regardless of
+how many times they have been refined. In addition, the framework now available in
+\dealii{} in not only applicable to geometric coarsening, but can also
+perform coarsening by reducing the polynomial degree used, for example
+to support $hp$-adaptive meshes where it has been shown that one can
+efficiently precondition high-order spaces with lower-order finite
+element operators.
+Finally, the implementation also supports transfer between continuous
+and discontinuous elements by providing \texttt{DoFHandler}s set up
+with these kinds of elements; the scheme therefore allows
+preconditioning of discontinuous schemes with a continuous
+discretization with fewer unknowns, for example.
 
-Global-coarsening algorithms~\citep{becker00} either coarsen each cell of a triangulation or reduce the polynomial degree of the finite element of each cell and hereby obtain a new system with less unknowns (also known as "coarse level").
-Repeating such kind of coarsening results in a sequence of multigrid levels.
+These new multigrid variants promise fewer solver
+iterations and better parallel scalability than the existing local
+smoothing algorithms, but have to deal with
+hanging nodes within each level and general require more computational
+work per iteration overall.
 
-The transfer between two levels has been encoded in the new class \texttt{MGTwoLevelTransfer}, which can be set up via the functions \texttt{MGTwoLevelTransfer::\allowbreak reinit\_\allowbreak geometric\_\allowbreak transfer()} or \texttt{MGTwo\allowbreak LevelTransfer::\allowbreak reinit\_\allowbreak polynomial\_\allowbreak transfer()} for given
+The transfer operators between two levels has been implemented in the new class \texttt{MGTwoLevelTransfer}, which can be set up via the functions \texttt{MGTwoLevelTransfer::\allowbreak reinit\_\allowbreak geometric\_\allowbreak transfer()} or \texttt{MGTwo\allowbreak LevelTransfer::\allowbreak reinit\_\allowbreak polynomial\_\allowbreak transfer()} for given
 \texttt{DoFHandler} and \texttt{AffineConstraint} classes of two levels. The resulting transfer operators
-between two levels can be collected in a single object
-(\texttt{MGTransferGlobalCoarsening}) that can be used just as \texttt{MGTransferMatrixFree} and can be passed to the actual \texttt{Multigrid}
-algorithm. The option that users can set up the transfer operators between two levels on their own enables
-the mix of polynomial  and geometric coarsening, as needed. It should also be noted that a transfer between continuous
-and discontinuous elements is possible by providing \texttt{DoFHandler}s set up with this kind of elements.
-
-Internally, the transfer operators categorize fine/coarse cell pairs according to the
-occurrence of refinement
-(refinement or no-refinement) and to the polynomial-degree pair ($k_f$-$k_c$) into groups.
-The projection and restriction are performed with efficient matrix-free kernels applying
-1D projection and restriction matrices in the case of hypercube cells and via full projection and
-restriction matrices in the case of simplex cells.
-
-
-The user is responsible for setting up the levels (including the operators and the
-smoothers). Please note that global coarsening can currently only be performed between active levels.
-The user can apply utility
-functions from the \texttt{MGTransferGlobalCoarseningTools} namespace to set up the levels. For
-constructing the diagonal or the system matrix for a matrix-free operator,
-needed for the smoother or the coarse-grid solver,
+can then be collected in a single
+\texttt{MGTransferGlobalCoarsening} object that can be used just as \texttt{MGTransferMatrixFree} and can be passed to the actual \texttt{Multigrid}
+algorithm.
+Several common operations are encoded in utility
+functions in the \texttt{MGTransferGlobalCoarseningTools}
+namespace. In practice, matrix-free methods typically require
+constructing the diagonal of the system matrix for smoothing
+operations, and the full matrix on the coarse level for the coarse-grid solver;
 the functions \texttt{create\_diagonal()} and \texttt{create\_matrix()} from
-the \texttt{MatrixFreeTools} namespace can be used (see also Subsection~\ref{subsec:mf}).
+the \texttt{MatrixFreeTools} namespace can be used to this end (see also Subsection~\ref{subsec:mf}).
 
-
-The usage of the new transfer operators (and of some of the utility functions) in the context of a hybrid multigrid algorithm ($hp$-MG with AMG as coarse-grid solver) for $hp$-problems is demonstrated in the new tutorial \texttt{step-75} (see also Subsection~\ref{subsec:steps}).
+The usage of the new transfer operators (and of some of the utility
+functions) in the context of a hybrid multigrid algorithm
+($hp$-multigrid with algebraic multigrid as coarse-grid solver) for $hp$-problems is demonstrated in the new tutorial \texttt{step-75}, see also Section~\ref{subsec:steps}.
 
 
 
@@ -730,20 +742,20 @@ The classes \texttt{FEEvaluation} and \texttt{FEFaceEvaluation} are highly
 templated to reach high performance. In particular, the template parameters include
 the polynomial degree of the finite element $k$ and the number of the 1D quadrature points $q$.
 For application codes that rely on operators of many different degrees (e.g., because
-they use $p$-multigrid or $hp$-algorithms), the instantiation
-means a long compilation time.
+they use $p$-multigrid or $hp$-algorithms), the many instantiations
+necessary and their complexity
+imply long compile times.
 
-In the current release, we have improved the \texttt{FEEvaluation} and the \texttt{FEFaceEvaluation} class implementations that do
+In the current release, we have improved specializations of these classes that do
 not rely on the template parameters $k$ and $q$ (expressed in the code
-with "-1" and "0"):
+with ``-1'' and ``0'') -- for example:
 \begin{c++}
 FEEvaluation<dim, -1, 0, n_components, Number, VectorizedArrayType>
   phi(range, dofhandler_index, quadrature_index, first_selected_component);
 \end{c++}
-The meaning of the new first argument is
-discussed in Subsubsection~\ref{subsubsection:mf:hp}.
-
-These classes select at runtime---for common low and medium polynomial degree/quadrature combinations ($k\le 6$ and $q\in\{ k+1, k+2, \lfloor (3k)/2 \rfloor \}$)---efficient precompiled implementations and default to non-templated
+These classes select at runtime -- for common low and medium
+polynomial degree/quadrature combinations ($k\le 6$ and $q\in\{ k+1,
+k+2, \left\lfloor (3k)/2 \right\rfloor \}$) -- efficient precompiled implementations and default to non-templated
 evaluation kernels else.
 
 In the case that even higher polynomial degrees are needed, one can precompile the
@@ -761,12 +773,13 @@ template struct dealii::internal::FEEvaluationFactory
 DEAL_II_NAMESPACE_CLOSE
 \end{c++}
 
+
 \subsubsection{Parallel matrix-free $hp$-implementation}\label{subsubsection:mf:hp}
 
-With release 9.1, large parts of the $hp$-algorithms in \dealii were parallelized so that
+With release 9.1 \cite{dealII91}, large parts of the $hp$-algorithms in \dealii were parallelized so that
 parallel matrix-based simulations can be performed with the $hp$-infrastructure. In the present
-release, we have extended the setup routines of \texttt{MatrixFree} so that it now also
-provides parallel $hp$-support.
+release, we have extended the setup routines of \texttt{MatrixFree} so that they now also
+provide parallel $hp$-support.
 
 Until now, the \texttt{FEEvaluation} classes used the template parameters $k$ and $q$ to select the correct active FE and quadrature index and users had
 to use the function \texttt{MatrixFree::create\_cell\_\allowbreak subrange\_\allowbreak hp()} or
@@ -776,40 +789,40 @@ the same polynomial degree. This led to user codes that were hard to read due to
 The creation of subranges is now performed internally, and the non-templated versions
 of the \texttt{FEEvaluation} classes are extended for the $hp$-case. To nevertheless determine
 the active FE and quadrature index, the current cell/face range has to be provided
-the constructors of the \texttt{FEEvaluation} classes, from which the relevant information
+to the constructors of the \texttt{FEEvaluation} classes, from which the relevant information
 can be deduced (in the simplex case also the face type). These changes enable
 users to write matrix-free code independently of whether $hp$-capabilities are used or not.
 
 The new tutorial \texttt{step-75} presents how to use the new $hp$-related features in \texttt{MatrixFree}
 in the context of a hybrid-multigrid solver.
 
-\subsubsection{MPI-3.0 shared-memory support}
-The classes \texttt{MatrixFree} and \texttt{LinearAlgebra::\allowbreak distributed::\allowbreak Vector} have been extended with
-MPI-3.0 shared-memory features. If \texttt{MatrixFree} has been configured by setting
-\texttt{MatrixFree::AdditionalData::communicator\_sm} by an appropriate user-provided subcommunicator,
-vectors are created by \texttt{MatrixFree::create\_dof\_vector()} in such a way that the
-memory of processes in this subcommunicator can be accessed. In particular, this means
-that the \texttt{FEEvaluation} classes can access the degrees of freedom owned by
+
+
+\subsection{MPI-3.0 shared-memory support}
+In many large computations, certain pieces of data are computed once
+and then threated as read-only. If this information is needed by more
+than one MPI process, it is more efficient to store this information only
+once in shared memory among all processes located on a multicore
+node. MPI supports the creation of such shared memory windows since
+version 3.0, and deal.II can now use this in the
+\texttt{AlignedVector} and \texttt{Table} classes that are often used
+for large lookup tables.
+
+The feature is also used in the \texttt{MatrixFree} and
+\texttt{LinearAlgebra::\allowbreak distributed::\allowbreak Vector} classes. If \texttt{MatrixFree} has been configured by setting
+\texttt{MatrixFree::AdditionalData::communicator\_sm} appropriately, then
+\texttt{MatrixFree::create\_dof\_vector()} creates vectors that share
+information among all processes on one node. As a consequence, the
+\texttt{FEEvaluation} classes can access vector elements owned by
 other processes and in certain cases local
 communication can be skipped. To prevent race conditions, \texttt{MatrixFree} uses local
 barriers at the beginning and the end of loops (\texttt{loop()}, \texttt{cell\_loop()}, \texttt{loop\_cell\_centric()}).
 
-The novel tutorial \texttt{step-76} shows the usage of the new MPI-3.0 feature
- in the context of the solution
-of the Euler equations. Here, a speed-up of 27\% could be reached compared to the
+The new \texttt{step-76} tutorial program illustrates this latter case
+in the context of the solution of the Euler equations. \texttt{step-76} reaches a
+speed-up of 27\% compared to the 
 original version, \texttt{step-67}, by using the new feature.
-For more details and a successful application in the library \texttt{hyper.deal}, see \citep{munch2020hyperdeal}.
-
-\subsubsection{Miscellaneous}
-
-The namespace \texttt{MatrixFreeTools} has been introduced. It collects various utility
-functions useful in the context of application of \texttt{MatrixFree}. In particular,
-it contains different functions to extract quantities related to a matrix, e.g., the
-computation of the diagonal or a matrix with a matrix-free approach.
-
-With version 9.2, we have introduced cell-centric loops. They have been extended to unstructured
-meshes. The tutorial \texttt{step-67b} shows their usage in the context of the solution
-of the Euler equations.
+For more details and use of the feature in the library \texttt{hyper.deal}, see \citep{munch2020hyperdeal}.
 
 
 
@@ -853,9 +866,34 @@ all cells in this way.
 
 In addition, there are a number of new tutorial programs:
 \begin{itemize}
-\item \texttt{step-19} TODO
+\item \texttt{step-19} is an introductory demonstration of \dealii{}'s
+  particle functionality. It solves the coupled problem of
+  charged particles and an electric field, using a cathode tube as an
+  example. 
 
 \item \texttt{step-68} TODO
+
+\item \texttt{step-71} focused on automatic and symbolic
+  differentiation (AD and SD, in short) as a tool to make solvers for complex, nonlinear
+  problems possible. To this end, \dealii{} can interface to a number
+  of AD and SD libraries, including Trilinos' Sacado package
+  \cite{...}, ...\todo{which others??}, and SymEngine \cite{symengine-web-page}. The tutorial
+  illustrates how these techniques can be used to compute derivatives
+  of first a rather simple function, and then of the much more complex
+  energy functions of two magneto-elastic and magneto-visco-elastic
+  material formulations in which just the scalar energy functional
+  takes up the better part of a page, and even first derivatives can
+  only be computed with heroic effort.
+
+\item \texttt{step-72} illustrates the use of automatic
+  differentiation to simplify the computation of derivatives in the
+  context of nonlinear partial differential equations where one needs
+  to compute the Jacobian from the residual operator for efficient
+  Newton iterations. \texttt{step-72} builds on the minimal surface
+  solver \texttt{step-15} and replaces the hand-construction of the
+  Jacobian by either computing it as the derivative of the residual,
+  or alternatively as the second derivative of an energy functional
+  that then also yields the residual itself.
 
 \item \texttt{step-75} demonstrates a state-of-the-art way of solving a simple
       Laplace problem using $hp$-adaptation and hybrid multigrid methods on machines
@@ -872,7 +910,20 @@ In addition, there are a number of new tutorial programs:
       \texttt{VectorizedArrayType} and the application of lambdas to capture cell and face
       integrals are discussed.
 
-\item \texttt{step-77} TODO
+\item \texttt{step-77} is a program that illustrate \texttt{dealii}'s
+  interfaces to the SUNDIALS library \cite{sundials}, and specifically
+  the KINSOL nonlinear solver. Like the \texttt{step-72} program
+  mentioned above, it is a variation of the minimal surface solver
+  \texttt{step-15}: Instead of implementing the nonlinear Newton and
+  line search loop ourselves, \texttt{step-77} relies on KINSOL for
+  decisions such as when to rebuild the Jacobian matrix, when to
+  actually solve linear systems with it, and how to form updates that
+  drive the residual to convergence. The program illustrates the
+  substantial savings that can be obtained by not re-inventing the
+  wheel but instead building on an existing and well-tuned software
+  such as KINSOL.
+
+  \dealii{}'s interfaces were also updated to the latest SUNDIALS release, 5.7.
 
 \item \texttt{step-78} TODO
 
