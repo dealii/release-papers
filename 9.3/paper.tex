@@ -857,16 +857,29 @@ all cells in this way.
 In addition, there are a number of new tutorial programs:
 \begin{itemize}
 \item \texttt{step-19} TODO
+
 \item \texttt{step-68} TODO
-\item \texttt{step-75} TODO
+
+\item \texttt{step-75} demonstrates a state-of-the-art way of solving a simple
+      Laplace problem using $hp$-adaptation and hybrid multigrid methods on machines
+      with distributed memory. This tutorial points out particularities in porting
+      serial $hp$-adaptive code for parallelization. Furthermore, it guides through
+      the process of writing an efficient preconditioner for $hp$-adaptive applications.
+
 \item \texttt{step-76} is an explicit time integrator for the
-        compressible Euler equations discretized with a high-order discontinuous
-        Galerkin (DG) scheme, using the matrix-free infrastructure just as \texttt{step67} does.
-        The tutorial presents advanced topics, like the usage of cell-centric loops and
-        the new MPI-3.0 shared-memory capabilities of \texttt{MatrixFree} tor each high
-        throughput. Furthermore, the utilization of the template parameter
-        \texttt{VectorizedArrayType} and the application of lambdas to capture cell and face
-        integrals are discussed.
+      compressible Euler equations discretized with a high-order discontinuous
+      Galerkin (DG) scheme, using the matrix-free infrastructure just as \texttt{step-67} does.
+      The tutorial presents advanced topics, like the usage of cell-centric loops and
+      the new MPI-3.0 shared-memory capabilities of \texttt{MatrixFree} tor each high
+      throughput. Furthermore, the utilization of the template parameter
+      \texttt{VectorizedArrayType} and the application of lambdas to capture cell and face
+      integrals are discussed.
+
+\item \texttt{step-77} TODO
+
+\item \texttt{step-78} TODO
+
+\item \texttt{step-79} TODO
 \end{itemize}
 
 There are also new programs in the code gallery (a collection of
