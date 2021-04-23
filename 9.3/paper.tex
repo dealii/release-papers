@@ -891,7 +891,13 @@ interfaces that are not usually used in external
 applications. That said, the following are worth mentioning since they
 may have been more widely used:
 \begin{itemize}
-  \item
+  \item The \texttt{hp::DoFHandler} class has been deprecated. The standard
+        \texttt{DoFHandler} class is now capable of all $hp$-functionalities.
+  \item Consequently, all template arguments \texttt{DoFHandlerType} are obsolete,
+        and classes like \texttt{DataOut} or \texttt{SolutionTransfer} for example
+        no longer require them. If you rely on these template arguments, an interim
+        namespace \texttt{Legacy} has been introduced that provides all affected
+        classes with the old interface for the transition phase.
 \end{itemize}
 
 
