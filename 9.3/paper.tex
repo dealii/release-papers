@@ -559,7 +559,7 @@ only linear iso-parametric mapping (\texttt{MappingFE} and \texttt{MappingFEFiel
 available.
 
 \subsubsection{Mixed mesh}
-For mixed meshes, concepts known from the hp context have been applied: 
+For mixed meshes, concepts known from the $hp$-context have been applied: 
  different finite-element classes are assigned to different cell types. In the 
 case of a 2D mixed mesh, which can only consists of triangles and
 quadrilaterals, the finite element defined on a triangle (e.g., \texttt{FE\_SimplexP})
@@ -614,7 +614,7 @@ for(const auto & cell : tria.active_cell_iterators())
 \end{c++}
 Furthermore, the number of degrees of freedom might differ between cells so that
 local data storage units needed for assembly might need to be resized for each 
-cell as it is already good practice in the hp context:
+cell as it is already good practice in the $hp$-context:
 \begin{c++}
 std::vector<double> local_rhs;
 for(const auto & cell : tria.active_cell_iterators())
@@ -719,7 +719,7 @@ the functions \texttt{create\_diagonal()} and \texttt{create\_matrix()} from
 the \texttt{MatrixFreeTools} namespace can be used (see also Subsection~\ref{subsec:mf}).
 
 
-The usage of the new transfer operators (and of some of the utility functions) in the context of a hybrid multigrid algorithm (hp-MG with AMG as coarse-grid solver) for hp problems is demonstrated in the new tutorial \texttt{step-75} (see also Subsection~\ref{subsec:steps}).
+The usage of the new transfer operators (and of some of the utility functions) in the context of a hybrid multigrid algorithm ($hp$-MG with AMG as coarse-grid solver) for $hp$-problems is demonstrated in the new tutorial \texttt{step-75} (see also Subsection~\ref{subsec:steps}).
 
 
 
@@ -733,7 +733,7 @@ The classes \texttt{FEEvaluation} and \texttt{FEFaceEvaluation} are highly
 templated to reach high performance. In particular, the template parameters include
 the polynomial degree of the finite element $k$ and the number of the 1D quadrature points $q$.
 For application codes that rely on operators of many different degrees (e.g., because
-they use p-multigrid or hp algorithms), the instantiation
+they use $p$-multigrid or $hp$-algorithms), the instantiation
 means a long compilation time. 
 
 In the current release, we have improved the \texttt{FEEvaluation} and the \texttt{FEFaceEvaluation} class implementations that do
@@ -764,26 +764,26 @@ template struct dealii::internal::FEEvaluationFactory
 DEAL_II_NAMESPACE_CLOSE
 \end{c++}
 
-\subsubsection{Parallel matrix-free hp implementation}\label{subsubsection:mf:hp}
+\subsubsection{Parallel matrix-free $hp$-implementation}\label{subsubsection:mf:hp}
 
-With release 9.1, large parts of the hp algorithms in \dealii were parallelized so that
-parallel matrix-based simulations can be performed with the hp infrastructure. In the present
+With release 9.1, large parts of the $hp$-algorithms in \dealii were parallelized so that
+parallel matrix-based simulations can be performed with the $hp$-infrastructure. In the present
 release, we have extended the setup routines of \texttt{MatrixFree} so that it now also
-provides parallel hp support.
+provides parallel $hp$-support.
 
-Until now, the \texttt{FEEvaluation} classes used the template parameters $k$ and $q$ to select the correct active hp FE and quadrature index and users had 
+Until now, the \texttt{FEEvaluation} classes used the template parameters $k$ and $q$ to select the correct active FE and quadrature index and users had 
 to use the function \texttt{MatrixFree::create\_cell\_\allowbreak subrange\_\allowbreak hp()} or
 \texttt{::create\_cell\_\allowbreak subrange\_\allowbreak hp\_\allowbreak by\_index()} to create subranges of cells with 
 the same polynomial degree. This led to user codes that were hard to read due to complicated jump tables. 
 
 The creation of subranges is now performed internally, and the non-templated versions
-of the \texttt{FEEvaluation} classes are extended for the hp case. To nevertheless determine
-the active hp FE and quadrature index, the current cell/face range has to be provided
+of the \texttt{FEEvaluation} classes are extended for the $hp$-case. To nevertheless determine
+the active FE and quadrature index, the current cell/face range has to be provided
 the constructors of the \texttt{FEEvaluation} classes, from which the relevant information
 can be deduced (in the simplex case also the face type). These changes enable
-users to write matrix-free code independently of whether hp is used or not.
+users to write matrix-free code independently of whether $hp$-capabilities are used or not.
 
-The new tutorial \texttt{step-75} presents how to use the new hp-related features in \texttt{MatrixFree} 
+The new tutorial \texttt{step-75} presents how to use the new $hp$-related features in \texttt{MatrixFree} 
 in the context of a hybrid-multigrid solver.
 
 \subsubsection{MPI-3.0 shared-memory support} 
@@ -922,7 +922,7 @@ following:
   \begin{itemize}
     \item For geometric multigrid: \cite{Kanschat2004,JanssenKanschat2011,ClevengerHeisterKanschatKronbichler2019};
     \item For distributed parallel computing: \cite{BangerthBursteddeHeisterKronbichler11};
-    \item For $hp$~adaptivity: \cite{BangerthKayserHerold2007};
+    \item For $hp$-adaptivity: \cite{BangerthKayserHerold2007};
     \item For partition-of-unity (PUM) and enrichment methods of the
           finite element space: \cite{Davydov2016};
     \item For matrix-free and fast assembly techniques:
