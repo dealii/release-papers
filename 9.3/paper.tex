@@ -874,13 +874,14 @@ In addition, there are a number of new tutorial programs:
 \item \texttt{step-68} TODO
 
 \item \texttt{step-71} focuses on automatic and symbolic
-  differentiation (AD and SD, in short) as a tool to make solvers for complex, nonlinear
-  problems possible. To this end, \dealii{} can interface to a number
-  of AD and SD libraries, including Trilinos' Sacado package
-  \cite{...}, ...\todo{which others??}, and SymEngine \cite{symengine-web-page}. The tutorial
+  differentiation (AD and SD, in short) as a tool to make solvers for complex,
+  nonlinear problems possible. To this end, \dealii{} can interface to a number
+  of AD and SD libraries, specifically Trilinos' Sacado package
+  \cite{Bartlett2006a}, ADOL-C \cite{Griewank1996a}, and 
+  SymEngine \cite{symengine-web-page}. The tutorial
   illustrates how these techniques can be used to compute derivatives
   of first a rather simple function, and then of the much more complex
-  energy functions of two magneto-elastic and magneto-visco-elastic
+  energy functions of two magnetoelastic and magneto-viscoelastic
   material formulations in which just the scalar energy functional
   takes up the better part of a page, and even first derivatives can
   only be computed with heroic effort.
