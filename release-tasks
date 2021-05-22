@@ -324,7 +324,7 @@ Best
 6a/ On mainline, do something like this to require the current dev version
     for the tutorials and in the documentation:
 
-    perl -pi -e 's/8.5.0 QUIET/9.0.0 QUIET/g;' examples/*/CMakeLists.txt
+    perl -pi -e 's/deal.II 9.3.0/deal.II 10.0.0/g;' examples/*/CMakeLists.txt
 
     also check doc/users/* and tests/*:
 
