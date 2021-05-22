@@ -304,6 +304,10 @@ Best
 
   Note: Without a pull request!
 
+4a/  Check branch properties on github! Should be set automatically but
+     nevertheless: push protection + mandatory test + mandatory number of
+     reviews, best between 2 and 3
+
 5/ Update the VERSION from 9.0.0-pre to 9.1.0-pre on master
 
   git checkout master
