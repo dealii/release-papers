@@ -334,19 +334,19 @@ Best
     [ pull request ]
 
 
-7/ Create an AUTHORS file in the top-level directory of the branch that
+7/ Create an AUTHORS.md file in the top-level directory of the branch that
    contains a text-only copy of the authors.html file from the website.
    You can start from
    lynx -dump -nolist https://www.dealii.org/authors.html >AUTHORS
    and format it like this:
    https://github.com/dealii/dealii/blob/dealii-9.0/AUTHORS
 
-   Update LICENSE to point to the AUTHORS file:
+   Update LICENSE.md to point to the AUTHORS.md file:
 
-   "[...] refers to the people listed in the file AUTHORS."
+   "[...] refers to the people listed in the file AUTHORS.md."
 
-   git add AUTHORS
-   git commit -a -m "update AUTHORS"
+   git add AUTHORS.md
+   git commit -a -m "update AUTHORS.md"
 
    git push origin dealii-9.0
 
