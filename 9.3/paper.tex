@@ -132,35 +132,39 @@ cross/.default={2pt}}
    Clemson, SC, 29634, USA
    {\texttt{tcleven/heister@clemson.edu}}}
 
-\author[7]{Luca~Heltai}
-\affil[7]{SISSA,
+\author[5]{Luca~Heltai}
+\affil[5]{SISSA,
    International School for Advanced Studies,
    Via Bonomea 265,
    34136, Trieste, Italy.
    {\texttt{luca.heltai@sissa.it}}}
 
- \author[8]{Martin~Kronbichler}
- \affil[8]{Institute for Computational Mechanics,
+ \author[6,7]{Martin~Kronbichler}
+ \affil[6]{Institute for Computational Mechanics,
    Technical University of Munich,
    Boltzmannstr.~15, 85748 Garching, Germany.
    {\texttt{kronbichler/munch@lnm.mw.tum.de}}}
+ \affil[7]{Department of Information Technology,
+   Uppsala University,
+   Box 337, 751\,05 Uppsala, Sweden.
+   {\texttt{martin.kronbichler@it.uu.se}}}
 
-\author[9]{Matthias~Maier}
-\affil[9]{Department of Mathematics,
+\author[8]{Matthias~Maier}
+\affil[8]{Department of Mathematics,
   Texas A\&M University,
   3368 TAMU,
   College Station, TX 77845, USA.
   {\texttt{maier@math.tamu.edu}}}
 
-\author[8,10]{Peter Munch}
+\author[6,9]{Peter Munch}
  \affil[10]{Institute of Materials Research, Materials Mechanics,
  Helmholtz-Zentrum Geesthacht,
  Max-Planck-Str. 1, 21502 Geesthacht, Germany.
    {\texttt{peter.muench@hzg.de}}}
 
 
-\author[11]{Jean-Paul~Pelteret}
-\affil[11]{Independent researcher.
+\author[10]{Jean-Paul~Pelteret}
+\affil[10]{Independent researcher.
 {\texttt{jppelteret@gmail.com}}}
 
 % \author[12]{Reza Rastak}
@@ -650,21 +654,16 @@ in the form of ``scratch data''.
 \subsubsection{Matrix-free support}
 
 We provide matrix-free support for simplex and mixed meshes as well as for
-continuous and discontinuous elements. From the user perspective, the setup has
-hardly changed:
-%\begin{c++}
-%Simplex::QGauss<dim> quad(degree + 1)
-%
-%MatrixFree matrix_free;
-%matrix_free.reinit(mapping, dof_handler, constraints, quad);
-%\end{c++}
-Instead of providing a 1D quadrature rule, which is extended to higher dimensional
-spaces via a tensor product, one provides d-dimensional quadrature rules.
-The templated versions of \texttt{FEEvaluation} and \texttt{FEFaceEvaluation} cannot be used: the number of degrees of freedom and the number of quadrature points are determined at runtime. More details can be found in Subsection~\ref{subsec:mf}.
+continuous and discontinuous elements. From a user perspective, the main
+changes are to pass a d-dimensional quadrature rules rather than a 1D formula,
+and the fact that \texttt{FEEvaluation} and \texttt{FEFaceEvaluation} must not
+specify the polynomial degree via template arguments, determining all
+information at runtime. More details can be found in
+Subsection~\ref{subsec:mf}.
 
-By the time of writing, we do not use internally any advance techniques for evaluating values and
-gradients at the quadrature points as we do for tensor-product elements and
-instead rely on full interpolation matrices. This is for now acceptable since only low-order elements are
+By the time of writing, no advanced algorithms for evaluating values and
+gradients at the quadrature points such as sum factorization are used.
+The use of full interpolation matrices is for now acceptable since only low-order elements are
 supported.
 
 \subsubsection{Miscellanea}
@@ -691,9 +690,8 @@ TODO
 
 Until now, \dealii has only supported local smoothing multigrid
 algorithms~\citep{ClevengerHeisterKanschatKronbichler2019}; in local
-smoothing algorithms, one only applies the smoother to that part of an
-adaptively refined mesh that has cells on a given refinement level,
-but not to parts of the mesh that are coarser than that level.
+smoothing algorithms, smoothers only act on the cells of a given refinement level,
+skipping those parts of the mesh that are not adaptively refined to that level.
 The current release now also has support for global coarsening~\citep{becker00} when
 using continuous (\texttt{FE\_Q}, \texttt{FE\_SimplexP}) and
 discontinuous (\texttt{FE\_DGQ}, \texttt{FE\_SimplexDGP})
@@ -701,15 +699,19 @@ elements. Global coarsening builds multigrid levels for the entire
 domain, coarsening \textit{all} cells of a triangulation regardless of
 how many times they have been refined. In addition, the framework now available in
 \dealii{} in not only applicable to geometric coarsening, but can also
-perform coarsening by reducing the polynomial degree used, for example
-to support $hp$-adaptive meshes where it has been shown that one can
-efficiently precondition high-order spaces with lower-order finite
-element operators.
+perform coarsening by reducing the polynomial degree ($p$-multigrid,
+see~\cite{Fehn2020}), for example
+to support $hp$-adaptive meshes.
+%where it has been shown that one can
+%efficiently precondition high-order spaces with lower-order finite
+%element operators.
+% MK: I do not think "precondition" is a precise enough description of p-multigrid
+% because one still needs smoothing on the fine levels in addition to the
+% "solve" at the coarser degree, a fact not transported by the mere
+% 'precondition' term; rather than trying to discuss this in a more precise way,
+% let us simply skip it as that is not central to the presentation here.
 Finally, the implementation also supports transfer between continuous
-and discontinuous elements by providing \texttt{DoFHandler}s set up
-with these kinds of elements; the scheme therefore allows
-preconditioning of discontinuous schemes with a continuous
-discretization with fewer unknowns, for example.
+and discontinuous elements as a further way to create multigrid levels.
 
 These new multigrid variants promise fewer solver
 iterations and better parallel scalability than the existing local
@@ -720,15 +722,13 @@ work per iteration overall.
 The transfer operators between two levels has been implemented in the new class \texttt{MGTwoLevelTransfer}, which can be set up via the functions \texttt{MGTwoLevelTransfer::\allowbreak reinit\_\allowbreak geometric\_\allowbreak transfer()} or \texttt{MGTwo\allowbreak LevelTransfer::\allowbreak reinit\_\allowbreak polynomial\_\allowbreak transfer()} for given
 \texttt{DoFHandler} and \texttt{AffineConstraint} classes of two levels. The resulting transfer operators
 can then be collected in a single
-\texttt{MGTransferGlobalCoarsening} object that can be used just as \texttt{MGTransferMatrixFree} and can be passed to the actual \texttt{Multigrid}
+\texttt{MGTransferGlobalCoarsening} object that can be used just as the previous workhorse \texttt{MGTransferMatrixFree} within the \texttt{Multigrid}
 algorithm.
-Several common operations are encoded in utility
-functions in the \texttt{MGTransferGlobalCoarseningTools}
-namespace. In practice, matrix-free methods typically require
-constructing the diagonal of the system matrix for smoothing
-operations, and the full matrix on the coarse level for the coarse-grid solver;
-the functions \texttt{create\_diagonal()} and \texttt{create\_matrix()} from
-the \texttt{MatrixFreeTools} namespace can be used to this end (see also Subsection~\ref{subsec:mf}).
+%Several common operations are encoded in utility
+%functions in the \texttt{MGTransferGlobalCoarseningTools}
+%namespace.
+To facilitate the construction of matrix diagonals with matrix-free methods as well as a matrix representation of the coarse level matrix, new utility functions \texttt{create\_diagonal()} and \texttt{create\_matrix()} from
+the \texttt{MatrixFreeTools} namespace have been added. (see also Subsection~\ref{subsec:mf}).
 
 The usage of the new transfer operators (and of some of the utility
 functions) in the context of a hybrid multigrid algorithm
@@ -742,17 +742,16 @@ functions) in the context of a hybrid multigrid algorithm
 
 \subsubsection{Precompilation of evaluation kernels}
 
-The classes \texttt{FEEvaluation} and \texttt{FEFaceEvaluation} are highly
-templated to reach high performance. In particular, the template parameters include
-the polynomial degree of the finite element $k$ and the number of the 1D quadrature points $q$.
+The classes \texttt{FEEvaluation} and \texttt{FEFaceEvaluation} use template parameters for
+the polynomial degree of the finite element $k$ and the number of the 1D quadrature points $q$
+to generate near-optimal code for these operations.
 For application codes that rely on operators of many different degrees (e.g., because
-they use $p$-multigrid or $hp$-algorithms), the many instantiations
-necessary and their complexity
-imply long compile times.
+they use $p$-multigrid or $hp$-algorithms), creating all instantiations
+can be overly complex and incur long compile times.
 
-In the current release, we have improved specializations of these classes that do
+In the current release, specializations of these classes that do
 not rely on the template parameters $k$ and $q$ (expressed in the code
-with ``-1'' and ``0'') -- for example:
+with ``-1'' and ``0'') have been added. For example:
 \begin{c++}
 FEEvaluation<dim, -1, 0, n_components, Number, VectorizedArrayType>
   phi(range, dofhandler_index, quadrature_index, first_selected_component);
@@ -780,21 +779,15 @@ DEAL_II_NAMESPACE_CLOSE
 
 \subsubsection{Parallel matrix-free $hp$-implementation}\label{subsubsection:mf:hp}
 
-With release 9.1 \cite{dealII91}, large parts of the $hp$-algorithms in \dealii were parallelized so that
-parallel matrix-based simulations can be performed with the $hp$-infrastructure. In the present
-release, we have extended the setup routines of \texttt{MatrixFree} so that they now also
-provide parallel $hp$-support.
+With release 9.1 \cite{dealII91}, large parts of the $hp$-algorithms in \dealii were parallelized, enabling
+parallel matrix-based simulations with the $hp$-infrastructure. In the present
+release, the parallel $hp$ support was extended to \texttt{MatrixFree}.
 
-Until now, the \texttt{FEEvaluation} classes used the template parameters $k$ and $q$ to select the correct active FE and quadrature index and users had
-to use the function \texttt{MatrixFree::create\_cell\_\allowbreak subrange\_\allowbreak hp()} or
-\texttt{::create\_cell\_\allowbreak subrange\_\allowbreak hp\_\allowbreak by\_index()} to create subranges of cells with
-the same polynomial degree. This led to user codes that were hard to read due to complicated jump tables.
-
+Until now, the \texttt{FEEvaluation} classes used the template parameters $k$ and $q$ to select the correct active FE and quadrature index and cumbersome detection of subranges of the same degree.
 The creation of subranges is now performed internally, and the non-templated versions
-of the \texttt{FEEvaluation} classes are extended for the $hp$-case. To nevertheless determine
-the active FE and quadrature index, the current cell/face range has to be provided
-to the constructors of the \texttt{FEEvaluation} classes, from which the relevant information
-can be deduced (in the simplex case also the face type). These changes enable
+of the \texttt{FEEvaluation} classes have been extended for the $hp$-case. To determine
+the desired FE and quadrature index of a subrange, the current cell/face range has to be provided
+to the constructors of the \texttt{FEEvaluation} classes. These changes enable
 users to write matrix-free code independently of whether $hp$-capabilities are used or not.
 
 The new tutorial \texttt{step-75} presents how to use the new $hp$-related features in \texttt{MatrixFree}
@@ -824,7 +817,7 @@ barriers at the beginning and the end of loops (\texttt{loop()}, \texttt{cell\_l
 
 The new \texttt{step-76} tutorial program illustrates this latter case
 in the context of the solution of the Euler equations. \texttt{step-76} reaches a
-speed-up of 27\% compared to the 
+speed-up of 27\% compared to the
 original version, \texttt{step-67}, by using the new feature.
 For more details and use of the feature in the library \texttt{hyper.deal}, see \citep{munch2020hyperdeal}.
 
@@ -834,24 +827,45 @@ For more details and use of the feature in the library \texttt{hyper.deal}, see 
 \subsection{Evaluation and integration at arbitrary points}
 \label{subsec:fepointvalues}
 
-Example: testing of surface tension in the context of sharp-interface methods:
+In a number of circumstances, finite element solutions need to be evaluated on
+arbitrary reference points that change from one element to next. Two important
+examples are particle simulations coupled to a finite element solution, or
+algorithms on non-matching grids. The existing \texttt{FEValues} class a poor
+fit for this task, as it relies on tabulating all information before use,
+necessitating a separate setup for every cell. The new class
+\texttt{FEPointEvaluation} provides a more convenient interface for this
+task. For tensor product finite elements (\texttt{FE\_Q}, \texttt{FE\_DGQ})
+and tensor product mappings (\texttt{MappingQGeneric} and derived classes),
+the new approach is also very fast, as it can use some of the matrix-free
+infrastructure and vectorization facilities.
+
+To give an example of the new features, let us consider the evaluation of a
+surface tension force in the context of sharp-interface methods, whose
+contribution is added to a fluid solver by multiplication with test function
+and addition over quadrature points:
 \begin{align*}
 \left(\vec{v}, \kappa \, \vec{n}\right)_\Gamma
 \approx
-\sum\left(\vec{v}, \kappa(\vec{p}_q) \, \vec{n}(\vec{p}_q) (JxW)_q\right)
+\sum_q\left(\vec{v}, \kappa(\vec{p}_q) \, \vec{n}(\vec{p}_q) (JxW)_q\right).
 \end{align*}
-in code:
+In \dealii{}, this can now be conveniently written as
 \begin{c++}
-phi_normal.evaluate(cell, points, normal_values, EvaluationFlags::values);
+phi_normal.reinit(cell, reference_points);
+phi_force.reinit(cell, reference_points);
+phi_normal.evaluate(normal_values, EvaluationFlags::values);
 for (unsigned int q = 0; q < n_points; ++q)
    phi_force.submit_value(phi_normal.get_value(q) *
                           phi_curvature.get_value(q) * JxW[q], q);
-phi_force.integrate(cell, points, force_values, EvaluationFlags::values);
+phi_force.integrate(force_values, EvaluationFlags::values);
 \end{c++}
-The quadrature points and the connected \texttt{JxW} can, e.g., come from a
-codim-1 mesh. Determining to which \texttt{cell} a quadrature point belongs
-to on the background mesh, incl. the reference-cell coordinates \texttt{points},
-can be determined with know functions like \texttt{GridTools::find\_all\_active\_cells\_around\_point()}.
+The quadrature points and the related \texttt{JxW} value can, e.g., come from
+a mesh of codimension one. Determining to which \texttt{cell} a quadrature
+point belongs to on the background mesh, including the reference-cell
+coordinates \texttt{reference\_points}, can be determined with functions like
+\texttt{GridTools::find\_all\_active\_cells\_around\_point()}. While these
+functions have been available in \dealii{} previously, their performance has
+been considerably enhanced with the aforementioned more optimized code paths
+for selected mappings.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -873,7 +887,7 @@ In addition, there are a number of new tutorial programs:
 \item \texttt{step-19} is an introductory demonstration of \dealii{}'s
   particle functionality. It solves the coupled problem of
   charged particles and an electric field, using a cathode tube as an
-  example. 
+  example.
 
 \item \texttt{step-68} TODO
 
@@ -881,7 +895,7 @@ In addition, there are a number of new tutorial programs:
   differentiation (AD and SD, in short) as a tool to make solvers for complex,
   nonlinear problems possible. To this end, \dealii{} can interface to a number
   of AD and SD libraries, specifically Trilinos' Sacado package
-  \cite{Bartlett2006a}, ADOL-C \cite{Griewank1996a}, and 
+  \cite{Bartlett2006a}, ADOL-C \cite{Griewank1996a}, and
   SymEngine \cite{symengine-web-page}. The tutorial
   illustrates how these techniques can be used to compute derivatives
   of first a rather simple function, and then of the much more complex
