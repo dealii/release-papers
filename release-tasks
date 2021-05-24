@@ -353,23 +353,32 @@ Best
    Note: Without a pull request!
 
 
-7a/ Send prerelease announcement to dealii-developers@googlegroups.com
+7a/ Send prerelease announcement to dealii@googlegroups.com
 
-Subject: Release testing, part1 (step 7a)
+Subject: dealii-9.3.0 release candidate 1
 
-Dear developers,
+Dear all,
 
-we are in the process of releasing a new version of deal.II.
+We have tagged a first release candidate for the upcoming deal.II 9.3.0 release. 
+You can find the sources and a generated offline documentation here:
 
-It would be great if you could test it on your machine with your typical
-configuration. For this update your git repository and switch to the
-release branch:
+  https://github.com/dealii/dealii/releases/tag/v9.3.0-rc1
+
+Alternatively, you can switch to the dealii-9.3 branch in your local git repository
+
   git remote update
-  git checkout dealii-9.0
+  git checkout v9.3.0-rc1
 
-If no further regressions show up we will release [planned date]
+It would be great if you could test it on your machine with your typical configuration! 
+If no further regressions show up, we will release Saturday May 29. The release 
+progress is tracked in the following GitHub issue:
+
+  https://github.com/dealii/dealii/issues/12117
 
 Thanks!
+
+David, Matthias, Peter
+on behalf of the deal.II developer team
 
 
 
