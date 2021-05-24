@@ -253,6 +253,14 @@ that we briefly outline in the remainder of this section:
 %
 \begin{itemize}
   \item globally unique cell IDs: TODO
+  \item In addition to the macro \texttt{DEAL\_II\_DEPRECATED}, we have introduced
+  the \texttt{DEAL\_II\_DEPRECATED\_EARLY} macro, which indicates that a feature will be
+  deprecated in the next release. In contrast to the first macro, it will only give
+  warnings if \dealii{} has been configured with \texttt{-D DEAL\_II\_EARLY\_DEPRECATIONS=ON}.
+  \item After each update of the master branch of \dealii{}, we build a new Docker image
+  with all features enabled. It is
+  accessible on \texttt{Docker Hub} via \texttt{dealii/dealii:master-focal}. This image is
+  particular useful when used in the contiguous-integration processes of user codes.
 \end{itemize}
 %
 The changelog lists more than 240 other
