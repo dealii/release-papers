@@ -244,7 +244,13 @@ GNU Lesser General Public License (LGPL). Downloads are available at
 The major changes of this release are:
 %
 \begin{itemize}
-  \item TODO.
+  \item An experimental support for simplex and mixed meshes (see Section~\ref{subsec:simplex});
+  \item Improved flexibility of the particle infrastructure (see Section~\ref{subsec:particles});
+  \item Support for global-coarsening multigrid algorithms (see Section~\ref{subsec:mg});
+  \item Advances in the matrix-free infrastructure  (see Section~\ref{subsec:mf});
+  \item Usage of MPI-3.0 shared-memory features to reduce memory footprint  (see Section~\ref{subsec:sm});
+  \item Improved support for evaluation and integration at arbitrary points (see Section~\ref{subsec:fepointvalues});
+  \item Nine new tutorial programs and a new code gallery program (see Section~\ref{subsec:steps}).
 \end{itemize}
 %
 These major changes are discussed in detail in Section~\ref{sec:major}. There
@@ -252,9 +258,13 @@ are a number of other noteworthy changes in the current \dealii{} release
 that we briefly outline in the remainder of this section:
 %
 \begin{itemize}
-  \item globally unique cell IDs: TODO
+  \item Each non-artificial cell posses now an globally unique index, which can be queried
+  for active cells via \texttt{CellAccessor::global\_active\_cell\_index()} and for level cells 
+  via \texttt{::global\_\allowbreak level\_\allowbreak cell\_\allowbreak index()}. The information
+  can be used to efficiently access global cell vectors. Users have been able to construct the 
+  same information by distributing \texttt{FE\_DGQ(0)} in a \texttt{DoFHandler}.
   \item In addition to the macro \texttt{DEAL\_II\_DEPRECATED}, we have introduced
-  the \texttt{DEAL\_II\_DEPRECATED\_EARLY} macro, which indicates that a feature will be
+  the \texttt{DEAL\_II\_DEPRECATED\_\allowbreak EARLY} macro, which indicates that a feature will be
   deprecated in the next release. In contrast to the first macro, it will only give
   warnings if \dealii{} has been configured with \texttt{-D DEAL\_II\_EARLY\_DEPRECATIONS=ON}.
   \item After each update of the master branch of \dealii{}, we build a new Docker image
@@ -263,7 +273,7 @@ that we briefly outline in the remainder of this section:
   particular useful when used in the contiguous-integration processes of user codes.
 \end{itemize}
 %
-The changelog lists more than 240 other
+The changelog lists more than ?? other
 features and bugfixes.
 
 
@@ -286,10 +296,10 @@ can be found
 %\newpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Simplex and mixed mesh support}
+\subsection{Experimental simplex and mixed mesh support}
 \label{subsec:simplex}
 
-\begin{figure}[!h]
+\begin{figure}[!t]
 
 \centering
 
@@ -514,7 +524,7 @@ can be found
   \end{tabular}
 \end{table}
 
-The current release of \dealii adds support for simplex meshes (consisting of triangles in 2D; tetrahedra in 3D) and mixed meshes (consisting of triangles and/or
+The current release of \dealii adds an experimental support for simplex meshes (consisting of triangles in 2D; tetrahedra in 3D) and mixed meshes (consisting of triangles and/or
 quadrilaterals in 2D; tetrahedra, pyramids, wedges, and/or hexahedra in 3D).
 Many freely available mesh-generation tools produce such kind of meshes; while users of \dealii used to have to pre-process such meshes and convert them to pure hex meshes, they
 can now directly work with them.
@@ -528,7 +538,7 @@ The template parameters of the internal data structures of \texttt{Triangulation
 have been removed and the type of each cell and of each face (only in 3D) is stored. The function
 \texttt{Triangulation::create\_\allowbreak triangulation()}, which converts a given list of
 cells and vertices to the internal data structures, has been rewritten
-inspired by \citep{logg09} and a speed-up of up to 5 has been reached. Minor adjustments
+inspired by \citep{logg2012} and a speed-up of up to 5 has been reached. Minor adjustments
 have been made to \texttt{parallel::shared::Triangulation} and \texttt{parallel::\allowbreak fullydistributed::\allowbreak Triangulation} such that
 the new mesh types can be processed also in parallel.
 
@@ -536,14 +546,14 @@ The internal data structures of \texttt{DoFHandler} used to be hard-coded for pu
 hypercube meshes, while the \texttt{hp::DoFHandler} used to be built around
 CRS-like data structures. Due to the need of CRS data structures in the
 \texttt{DoFHandler} in the context of more general meshes, we have merged
-\texttt{hp::DoFHandler} into the \texttt{DoFHandler}. The class \texttt{hp::DoFHandler}, which is now a dummy derivation of \texttt{DoFHandler}, currently only exists for compatibility reasons. For
-more details see Subsection~\ref{TODO}.
+\texttt{hp::DoFHandler} into the \texttt{DoFHandler}. The class \texttt{hp::DoFHandler}, which is now a dummy derivation of \texttt{DoFHandler}, currently only exists for compatibility reasons and has
+been deprecated, see Section~\ref{subsec:deprecated}.
 
 \subsubsection{Generating meshes}
 
 The most obvious way to generate a simplex or a mixed mesh is to read the mesh from a file
 generated by an external mesh generator. Currently, we support the
-file formats \texttt{VTK}, \texttt{MSH}, \texttt{EXODUS II}.
+file formats \texttt{VTK}, \texttt{MSH}, and \texttt{EXODUS II}.
 
 Alternatively, one can create a pure hypercube mesh with the known functions
 in the \texttt{GridGenerator} namespace and convert the obtained mesh to a
@@ -567,7 +577,7 @@ dof_handler.distribute_dofs(fe);
 FEValues<dim, spacedim> fe_values(mapping, fe, quad, flags);
 \end{c++}
 The  list of currently supported finite-element classes is provided in Table~\ref{tab:simplex:fe}. Currently,
-only linear iso-parametric mapping (\texttt{MappingFE} and \texttt{MappingFEFields}) is available. For quadrature, the classes \texttt{QGaussSimplex}, \texttt{QWitherdenVincentSimplex},
+only linear iso-parametric mapping (\texttt{MappingFE} and \texttt{MappingFEFields}) is available. For quadrature, the classes \texttt{QDuffy}, \texttt{QGaussSimplex}, \texttt{QWitherdenVincentSimplex},
 \texttt{QGaussPyamid}, and \texttt{QGaussWedge} are
 available.
 
@@ -676,11 +686,14 @@ supported.
 
 \subsubsection{Miscellanea}
 
-We have created two new tutorials presenting the new simplex (\texttt{step-3b}) and mixed mesh features
-(\texttt{step-3c}). Similarly as \texttt{step-3}, they solve a Poisson problem, however, focus
-on the changed workflow.
+Further information can be found on the new module page ``Simplex support (experimental)'', see
+\begin{center}
+  \url{https://www.dealii.org/current/doxygen/deal.II/group__simplex.html}
+\end{center}
+As an example, it shows how to solve a simple Poisson problem like in \texttt{step-3}
+on simplex and mixed meshes, with the focus on on the changed workflow.
 
-By the time of writing, there have been 74 tests (in the folder \texttt{tests/simplex})
+By the time of writing, there have been 92 tests (in the folder \texttt{tests/simplex})
 targeting the new simplex and mixed mesh support. In particular, the folder also
 contains ported variants of the following tutorials: 1, 2, 3, 4, 6, 7, 8, 12, 17, 18, 20, 23, 31, 38,
 40, 55, 67, 68, and 74. These might be also good starting points.
@@ -700,7 +713,7 @@ Until now, \dealii has only supported local smoothing multigrid
 algorithms~\citep{ClevengerHeisterKanschatKronbichler2019}; in local
 smoothing algorithms, smoothers only act on the cells of a given refinement level,
 skipping those parts of the mesh that are not adaptively refined to that level.
-The current release now also has support for global coarsening~\citep{becker00} when
+The current release now also has support for global coarsening~\citep{becker2000multigrid, sundar2012parallel} when
 using continuous (\texttt{FE\_Q}, \texttt{FE\_SimplexP}) and
 discontinuous (\texttt{FE\_DGQ}, \texttt{FE\_SimplexDGP})
 elements. Global coarsening builds multigrid levels for the entire
@@ -727,16 +740,16 @@ smoothing algorithms, but have to deal with
 hanging nodes within each level and general require more computational
 work per iteration overall.
 
-The transfer operators between two levels has been implemented in the new class \texttt{MGTwoLevelTransfer}, which can be set up via the functions \texttt{MGTwoLevelTransfer::\allowbreak reinit\_\allowbreak geometric\_\allowbreak transfer()} or \texttt{MGTwo\allowbreak LevelTransfer::\allowbreak reinit\_\allowbreak polynomial\_\allowbreak transfer()} for given
+The transfer operators between two levels have been implemented in the new class \texttt{MGTwoLevel\allowbreak Transfer}, which can be set up via the functions \texttt{MGTwoLevel\allowbreak Transfer::\allowbreak reinit\_\allowbreak geometric\_\allowbreak transfer()} or \texttt{MGTwo\allowbreak LevelTransfer::\allowbreak reinit\_\allowbreak polynomial\_\allowbreak transfer()} for given
 \texttt{DoFHandler} and \texttt{AffineConstraint} classes of two levels. The resulting transfer operators
 can then be collected in a single
-\texttt{MGTransferGlobalCoarsening} object that can be used just as the previous workhorse \texttt{MGTransferMatrixFree} within the \texttt{Multigrid}
+\texttt{MGTransfer\allowbreak GlobalCoarsening} object that can be used just as the previous workhorse \texttt{MGTransferMatrixFree} within the \texttt{Multigrid}
 algorithm.
 %Several common operations are encoded in utility
 %functions in the \texttt{MGTransferGlobalCoarseningTools}
 %namespace.
 To facilitate the construction of matrix diagonals with matrix-free methods as well as a matrix representation of the coarse level matrix, new utility functions \texttt{create\_diagonal()} and \texttt{create\_matrix()} from
-the \texttt{MatrixFreeTools} namespace have been added. (see also Subsection~\ref{subsec:mf}).
+the \texttt{MatrixFreeTools} namespace have been added (see also Subsection~\ref{subsec:mf}).
 
 The usage of the new transfer operators (and of some of the utility
 functions) in the context of a hybrid multigrid algorithm
@@ -803,7 +816,7 @@ in the context of a hybrid-multigrid solver.
 
 
 
-\subsection{MPI-3.0 shared-memory support}
+\subsection{MPI-3.0 shared-memory support}\label{subsec:sm}
 In many large computations, certain pieces of data are computed once
 and then treated as read-only. If this information is needed by more
 than one MPI process, it is more efficient to store this information only
@@ -819,7 +832,7 @@ The feature is also used in the \texttt{MatrixFree} and
 \texttt{MatrixFree::create\_dof\_vector()} creates vectors that share
 information among all processes on one node. As a consequence, the
 \texttt{FEEvaluation} classes can access vector elements owned by
-other processes and in certain cases local
+other processes and in certain cases node-local
 communication can be skipped. To prevent race conditions, \texttt{MatrixFree} uses local
 barriers at the beginning and the end of loops (\texttt{loop()}, \texttt{cell\_loop()}, \texttt{loop\_cell\_centric()}).
 
@@ -827,7 +840,7 @@ The new \texttt{step-76} tutorial program illustrates this latter case
 in the context of the solution of the Euler equations. \texttt{step-76} reaches a
 speed-up of 27\% compared to the
 original version, \texttt{step-67}, by using the new feature.
-For more details and use of the feature in the library \texttt{hyper.deal}, see \citep{munch2020hyperdeal}.
+For more details and the usage of the feature in the library \texttt{hyper.deal}, see \citep{munch2020hyperdeal}.
 
 
 
@@ -838,8 +851,8 @@ For more details and use of the feature in the library \texttt{hyper.deal}, see 
 In a number of circumstances, finite element solutions need to be evaluated on
 arbitrary reference points that change from one element to next. Two important
 examples are particle simulations coupled to a finite element solution, or
-algorithms on non-matching grids. The existing \texttt{FEValues} class a poor
-fit for this task, as it relies on tabulating all information before use,
+algorithms on non-matching grids. The existing \texttt{FEValues} class is a poor
+fit for this task, as it relies on tabulating all information before its usage,
 necessitating a separate setup for every cell. The new class
 \texttt{FEPointEvaluation} provides a more convenient interface for this
 task. For tensor product finite elements (\texttt{FE\_Q}, \texttt{FE\_DGQ})
@@ -862,11 +875,11 @@ phi_normal.reinit(cell, reference_points);
 phi_force.reinit(cell, reference_points);
 phi_normal.evaluate(normal_values, EvaluationFlags::values);
 for (unsigned int q = 0; q < n_points; ++q)
-   phi_force.submit_value(phi_normal.get_value(q) *
-                          phi_curvature.get_value(q) * JxW[q], q);
+   phi_force.submit_value(phi_curvature.get_value(q) *
+                          phi_normal.get_value(q) * JxW[q], q);
 phi_force.integrate(force_values, EvaluationFlags::values);
 \end{c++}
-The quadrature points and the related \texttt{JxW} value can, e.g., come from
+The quadrature points (at reference positions - \texttt{reference\_points}) and the related \texttt{JxW} value can, e.g., come from
 a mesh of codimension one. Determining to which \texttt{cell} a quadrature
 point belongs to on the background mesh, including the reference-cell
 coordinates \texttt{reference\_points}, can be determined with functions like
@@ -875,20 +888,20 @@ functions have been available in \dealii{} previously, their performance has
 been considerably enhanced with the aforementioned more optimized code paths
 for selected mappings.
 
+While \texttt{FEPointEvaluation} assumes that evaluation points are already sorted according to 
+the owning cells and such can concentrate on cell-local operations, the new class
+\texttt{RemovePointEvaluation} is responsible to determine the owning cells in a distributed
+context and for providing efficient communication patterns for the data exchange. In \texttt{deal.II},
+the class has been successfully applied together with \texttt{FEPointEvaluation} to evaluate a distributed
+solution vector at arbitrary points (see \texttt{VectorTools::evaluate\_at\_points()}).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and improved tutorials and code gallery programs}
 \label{subsec:steps}
 
 Many of the \dealii{} tutorial programs were revised in a variety of
-ways as part of this release. A particular example is that we have
-converted a number of programs to use range-based for loops (a C++11
-feature) for loops over a range of integer indices such as loops over
-all quadrature points or all indices of degrees of freedom during
-assembly. This makes sense given that the
-range-based way of writing loops seems to be the idiomatic approach
-these days, and that we had previously already converted loops over
-all cells in this way.
+ways as part of this release. TODO
 
 In addition, there are a number of new tutorial programs:
 \begin{itemize}
@@ -957,7 +970,7 @@ In addition, there are a number of new tutorial programs:
 \item \texttt{step-79} TODO
 \end{itemize}
 
-There are also new programs in the code gallery (a collection of
+There is also a new program in the code gallery (a collection of
 user-contributed programs that often solve more complicated problems
 than tutorial programs, and intended as starting points for further
 research rather than as teaching tools):
@@ -968,7 +981,7 @@ research rather than as teaching tools):
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Incompatible changes}
+\subsection{Incompatible changes}\label{subsec:deprecated}
 
 The 9.3 release includes
 \href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_2_0_and_9_3_0.html}
