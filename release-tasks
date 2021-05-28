@@ -315,11 +315,17 @@ Best
 
   [ pull request for master branch ]
 
-6/ update the official tester to test on the release branch dealii-9.0
+5a/ On master, replace all occurrences of DEAL_II_DEPRECATE_EARLY by
+  DEAL_II_DEPRECATE in the library. (This needs to happen here because
+  if we forget it, we merge patches that add more
+  DEAL_II_DEPRECATE_EARLY notes and we don't know any more which of
+  these were meant to be converted for the following release.)
 
-   An empty checkout in a folder 'dealii-9.0' can be obtained via
+6/ Update the official tester to test on the release branch dealii-9.3
 
-   git clone --branch dealii-9.0 git://github.com/dealii/dealii.git deal-9.0
+   An empty checkout in a folder 'dealii-9.3' can be obtained via
+
+   git clone --branch dealii-9.3 git://github.com/dealii/dealii.git deal-9.3
 
 6a/ On mainline, do something like this to require the current dev version
     for the tutorials and in the documentation:
