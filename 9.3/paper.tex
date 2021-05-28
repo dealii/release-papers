@@ -56,20 +56,14 @@ cross/.default={2pt}}
   pdfauthor={
      Daniel Arndt,
      Wolfgang Bangerth,
-     %Bruno Blais,
-     %Thomas C. Clevenger,
     Marc Fehling,
-    %Alexander V. Grayver,
     Timo Heister,
     Luca Heltai,
     Martin Kronbichler,
     Matthias Maier,
     Peter Munch,
     Jean-Paul Pelteret,
-    %Reza Rastak,
-    %Ignacio Thomas,
     Bruno Turcksin,
-    %Zhuoran Wang,
     David Wells
   },
   pdftitle={The deal.II Library, Version 9.3, 2021},
@@ -77,54 +71,22 @@ cross/.default={2pt}}
 
 \title{The \dealii{} Library, Version 9.3}
 
- \author[*1]{Daniel Arndt}
+ \author[1*]{Daniel Arndt}
  \affil[1]{Computational Engineering and Energy Sciences Group,
    Computational Sciences and Engineering Division,
    Oak Ridge National Laboratory, 1 Bethel Valley Rd.,
    TN 37831, USA.
    \texttt{arndtd/turcksinbr@ornl.gov}}
 
- \author[2]{Wolfgang~Bangerth}
- \affil[2]{Department of Mathematics and Department of Geosciences, Colorado State University, Fort
+ \author[2,3]{Wolfgang~Bangerth}
+ \affil[2]{Department of Mathematics, Colorado State University, Fort
    Collins, CO 80523-1874, USA.
    \texttt{bangerth/marc.fehling@colostate.edu}}
+ \affil[3]{Department of Geosciences, Colorado State University, Fort
+   Collins, CO 80523, USA.}
 
 
-%\author[3]{Bruno Blais}
-%\affil[3]{Research Unit for Industrial Flows Processes (URPEI), Department of Chemical Engineering,
-%          Polytechnique Montréal,
-%          PO Box 6079, Stn Centre-Ville, Montréal, Québec, Canada, H3C 3A7.
-%          {\texttt{bruno.blais@polymtl.ca}}}
-
-% \author[4]{Thomas~C.~Clevenger}
-% \affil[4]{School of Mathematical and Statistical Sciences,
-%   Clemson University,
-%   Clemson, SC, 29634, USA
-%   {\texttt{tcleven/heister@clemson.edu}}}
-%
-% \author[4]{Denis~Davydov}
-% \affil[4]{Chair of Applied Mechanics,
-%   Friedrich-Alexander-Universit\"{a}t Erlangen-N\"{u}rnberg,
-%   Egerlandstr.\ 5,
-%   91058 Erlangen, Germany.
-%   {\texttt{\{denis.davydov,jean-paul.pelteret\}@fau.de}}}
-%
 \author[2]{Marc~Fehling}
-
-%
-% \author[6]{Daniel Garcia-Sanchez}
-% \affil[6]{Sorbonne Universit\'es, UPMC Univ.\ Paris 06, CNRS-UMR 7588,
-%   Institut des NanoSciences de Paris, F-75005, Paris, France
-%   {\texttt{daniel.garcia-sanchez@insp.upmc.fr}}}
-%
-% \author[2]{Graham Harper}
-%
-
-%\author[6]{Alexander~V.~Grayver}
-%\affil[6]{Institute of Geophysics,
-%  ETH Zurich,
-%  Sonneggstrasse 5, 8092 Z\"{u}rich, Switzerland.
-%  {\texttt{agrayver@ethz.ch}}}
 
 \author[4]{Timo~Heister}
  \affil[4]{School of Mathematical and Statistical Sciences,
@@ -178,7 +140,7 @@ cross/.default={2pt}}
 % P.O. Box 5800, MS 1320, Albuquerque, NM, 87185-1320,
 %   \texttt{itomas@sandia.gov}}
 
-\author[*1]{Bruno~Turcksin}
+\author[1*]{Bruno~Turcksin}
 %
 
 %\author[14]{Zhuoran Wang}
@@ -210,15 +172,6 @@ cross/.default={2pt}}
   %DOE Public Access Plan (http://energy.gov/downloads/doe-public-access-plan).
 }
 
-\footnotetext{%
-  $^{**}$ Sandia National Laboratories is a multimission laboratory managed and
-  operated by National Technology \& Engineering Solutions of Sandia, LLC, a
-  wholly owned subsidiary of Honeywell International Inc., for the U.S.
-  Department of Energy's National Nuclear Security Administration under contract
-  DE-NA0003525. This document describes objective technical results and analysis.
-  Any subjective views or opinions that might be expressed in the paper do not
-  necessarily represent the views of the U.S. Department of Energy or the United
-  States Government.}
 
 \begin{abstract}
   This paper provides an overview of the new features of the finite element
@@ -233,6 +186,7 @@ cross/.default={2pt}}
 \section{Overview}
 
 \dealii{} version 9.3.0 was released May ??, 2021.
+\todo{Update date}
 This paper provides an
 overview of the new features of this release and serves as a citable
 reference for the \dealii{} software library version 9.3. \dealii{} is an
@@ -244,7 +198,7 @@ GNU Lesser General Public License (LGPL). Downloads are available at
 The major changes of this release are:
 %
 \begin{itemize}
-  \item An experimental support for simplex and mixed meshes (see Section~\ref{subsec:simplex});
+  \item Experimental support for simplex and mixed meshes (see Section~\ref{subsec:simplex});
   \item Improved flexibility of the particle infrastructure (see Section~\ref{subsec:particles});
   \item Support for global-coarsening multigrid algorithms (see Section~\ref{subsec:mg});
   \item Advances in the matrix-free infrastructure  (see Section~\ref{subsec:mf});
@@ -258,13 +212,18 @@ are a number of other noteworthy changes in the current \dealii{} release
 that we briefly outline in the remainder of this section:
 %
 \begin{itemize}
-  \item Each non-artificial cell posses now an globally unique index, which can be queried
+  \item Each non-artificial cell now has a globally unique index that can be queried
   for active cells via \texttt{CellAccessor::global\_active\_cell\_index()} and for level cells 
   via \texttt{::global\_\allowbreak level\_\allowbreak cell\_\allowbreak index()}. The information
-  can be used to efficiently access global cell vectors. Users have been able to construct the 
-  same information by distributing \texttt{FE\_DGQ(0)} in a \texttt{DoFHandler}.
-  \item In addition to the macro \texttt{DEAL\_II\_DEPRECATED}, we have introduced
-  the \texttt{DEAL\_II\_DEPRECATED\_\allowbreak EARLY} macro, which indicates that a feature will be
+  can be used to efficiently index into global vectors storing data
+  for each cell, rather than for each degree of freedom corresponding to a finite
+  element field.
+  
+  \item Previously, functions and classes were marked using the 
+  macro \texttt{DEAL\_II\_DEPRECATED} and then typically removed in
+  the release after the one in which these deprecation notices were
+  available to users. We have now extended this policy by introducing
+  the \texttt{DEAL\_II\_\allowbreak DEPRECATED\_EARLY} macro, which indicates that a feature will be
   deprecated in the next release. In contrast to the first macro, it will only give
   warnings if \dealii{} has been configured with \texttt{-D DEAL\_II\_EARLY\_DEPRECATIONS=ON}.
   \item After each update of the master branch of \dealii{}, we build a new Docker image
@@ -273,8 +232,7 @@ that we briefly outline in the remainder of this section:
   particular useful when used in the contiguous-integration processes of user codes.
 \end{itemize}
 %
-The changelog lists more than ?? other
-features and bugfixes.
+The changelog lists more than 200 other features and bugfixes.
 
 
 
@@ -299,215 +257,251 @@ can be found
 \subsection{Experimental simplex and mixed mesh support}
 \label{subsec:simplex}
 
-\begin{figure}[!t]
+The current release of \dealii adds experimental support for simplex
+meshes (consisting of triangles in 2D; tetrahedra in 3D) and mixed meshes (consisting of triangles and/or
+quadrilaterals in 2D; tetrahedra, pyramids, wedges, and/or hexahedra in 3D).
+Many freely available mesh-generation tools produce such kind of
+meshes and they are widely used in industry and applications, but were
+previously unsupported by \dealii. As a consequence, users of \dealii
+had to pre-process such meshes and convert them to pure quadrilateral
+or hexahedral meshes.
 
-\centering
+Support for simplex and mixed meshes is not universal in \dealii{} at
+this point. While \dealii{} can read such meshes, write output for
+them, and solve partial differential equations with certain finite
+elements, there are also many areas that have not been fully converted
+to the new functionality. In particular, \dealii{} currently only
+offers low-order finite elements on such meshes, and many tool
+functions might throw exceptions when used with such meshes.
 
 
-\begin{tikzpicture}[scale=1.7]
+A user-focused summary of information around simplex and mixed mesh
+support is also available on the new module page at
+  \url{https://www.dealii.org/current/doxygen/deal.II/group__simplex.html}
+In particular, it shows how to solve a simple Poisson problem like in
+the \texttt{step-3} tutorial program
+on simplex and mixed meshes, with a focus on the necessary changes to
+the workflow.
+At the time of this release, there are also 92 tests (in the folder \texttt{tests/simplex})
+targeting the new simplex and mixed mesh support. In particular, the folder also
+contains ported variants of a number of existing tutorials: 1, 2, 3, 4, 6, 7, 8, 12, 17, 18, 20, 23, 31, 38,
+40, 55, 67, 68, and 74.
 
-\coordinate (0) at (0,0);
-\coordinate (1) at (1,0);
-\coordinate (2) at (0,1);
 
-\coordinate (3) at (0,0.5);
-\coordinate (4) at (0.5,0.5);
-\coordinate (5) at (0.5,0);
+\begin{figure}
 
-\foreach \i in {0,1, 2}
-    \fill (\i) circle (1.1pt) node [below] {};
+  \centering
 
-\foreach \i in {3,4,5}
+
+  \begin{tikzpicture}[scale=1.7]
+
+    \coordinate (0) at (0,0);
+    \coordinate (1) at (1,0);
+    \coordinate (2) at (0,1);
+
+    \coordinate (3) at (0,0.5);
+    \coordinate (4) at (0.5,0.5);
+    \coordinate (5) at (0.5,0);
+
+    \foreach \i in {0,1, 2}
+    \draw[blue,fill=blue] (\i) circle (1.1pt) node [below] {};
+
+    \foreach \i in {3,4,5}
     \draw (\i) node[cross, draw=red, rotate=-20] {};
 
 
-\draw (0) --(1) -- (2) -- (0);
+    \draw (0) --(1) -- (2) -- (0);
 
-\end{tikzpicture}
-\begin{tikzpicture}[scale=1.7]
+  \end{tikzpicture}
+  \begin{tikzpicture}[scale=1.7]
 
-\coordinate (0) at (0,0);
-\coordinate (1) at (1,0);
-\coordinate (2) at (1,1);
-\coordinate (3) at (0,1);
-
-
-\coordinate (4) at (0.5,0,0);
-\coordinate (5) at (1.0,0.5);
-\coordinate (6) at (0.0,0.5);
-\coordinate (7) at (0.5,1.0);
-\coordinate (8) at (0.5,0.5);
-
-\foreach \i in {0,1, 2, 3}
-    \fill (\i) circle (1.1pt) node [below] {};
+    \coordinate (0) at (0,0);
+    \coordinate (1) at (1,0);
+    \coordinate (2) at (1,1);
+    \coordinate (3) at (0,1);
 
 
-\foreach \i in {4,5,6,7,8}
+    \coordinate (4) at (0.5,0,0);
+    \coordinate (5) at (1.0,0.5);
+    \coordinate (6) at (0.0,0.5);
+    \coordinate (7) at (0.5,1.0);
+    \coordinate (8) at (0.5,0.5);
+
+    \foreach \i in {0,1, 2, 3}
+    \draw[blue,fill=blue] (\i) circle (1.1pt) node [below] {};
+
+
+    \foreach \i in {4,5,6,7,8}
     \draw (\i) node[cross, draw=red, rotate=-20] {};
 
 
-\draw (0) --(1) -- (2) -- (3) -- (0);
+    \draw (0) --(1) -- (2) -- (3) -- (0);
 
-\end{tikzpicture}
-\qquad\qquad
-\begin{tikzpicture}[scale=1.3]
+  \end{tikzpicture}
+  \qquad\qquad
+  \begin{tikzpicture}[scale=1.3]
 
-\coordinate (0) at (0,0,0);
-\coordinate (1) at (1,0,0);
-\coordinate (2) at (0,1,0);
-\coordinate (3) at (0,0,1);
+    \coordinate (0) at (0,0,0);
+    \coordinate (1) at (1,0,0);
+    \coordinate (2) at (0,1,0);
+    \coordinate (3) at (0,0,1);
 
-\coordinate (4) at (0.5,0,0);
-\coordinate (5) at (0,0.5,0);
-\coordinate (6) at (0,0,0.5);
-\coordinate (7) at (0.5,0.5,0.0);
-\coordinate (8) at (0.5,0.0,0.5);
-\coordinate (9) at (0.0,0.5,0.5);
-
-
-\foreach \i in {0,1,2,3}
-    \fill (\i) circle (1.5pt) node [below] {};
+    \coordinate (4) at (0.5,0,0);
+    \coordinate (5) at (0,0.5,0);
+    \coordinate (6) at (0,0,0.5);
+    \coordinate (7) at (0.5,0.5,0.0);
+    \coordinate (8) at (0.5,0.0,0.5);
+    \coordinate (9) at (0.0,0.5,0.5);
 
 
-\foreach \i in {4,5,6,7,8,9}
+    \foreach \i in {0,1,2,3}
+    \draw[blue,fill=blue] (\i) circle (1.5pt) node [below] {};
+
+
+    \foreach \i in {4,5,6,7,8,9}
     \draw (\i) node[cross, draw=red, rotate=-20] {};
 
 
-\draw (0) -- (1) -- (2) -- (0);
-\draw (0) -- (1) -- (3) -- (0);
-\draw (1) -- (2) -- (3) -- (1);
+    \draw (0) -- (1) -- (2) -- (0);
+    \draw (0) -- (1) -- (3) -- (0);
+    \draw (1) -- (2) -- (3) -- (1);
 
-\end{tikzpicture}
-\begin{tikzpicture}[scale=1.5]
+  \end{tikzpicture}
+  \begin{tikzpicture}[scale=1.5]
 
-\coordinate (0) at (0.0, 0.0, 0.0);
-\coordinate (1) at (0.0, 0.0, 1.0);
-\coordinate (2) at (1.0, 0.0, 0.0);
-\coordinate (3) at (1.0, 0.0, 1.0);
-\coordinate (4) at (0.5, 1.0, 0.5);
+    \coordinate (0) at (0.0, 0.0, 0.0);
+    \coordinate (1) at (0.0, 0.0, 1.0);
+    \coordinate (2) at (1.0, 0.0, 0.0);
+    \coordinate (3) at (1.0, 0.0, 1.0);
+    \coordinate (4) at (0.5, 1.0, 0.5);
 
-\coordinate  (5) at (0.5, 0.0, 0.0);
-\coordinate  (6) at (0.0, 0.0, 0.5);
-\coordinate  (7) at (0.5, 0.0, 1.0);
-\coordinate  (8) at (1.0, 0.0, 0.5);
+    \coordinate  (5) at (0.5, 0.0, 0.0);
+    \coordinate  (6) at (0.0, 0.0, 0.5);
+    \coordinate  (7) at (0.5, 0.0, 1.0);
+    \coordinate  (8) at (1.0, 0.0, 0.5);
 
-\coordinate  (9) at (0.25,0.5,0.25);
-\coordinate (10) at (0.25,0.5,0.75);
-\coordinate (11) at (0.75,0.5,0.25);
-\coordinate (12) at (0.75,0.5,0.75);
-
-
-\coordinate (13) at (0.5, 0.0, 0.5);
-
-\foreach \i in {0,1,2,3,4}
-    \fill (\i) circle (1.3pt) node [below] {};
+    \coordinate  (9) at (0.25,0.5,0.25);
+    \coordinate (10) at (0.25,0.5,0.75);
+    \coordinate (11) at (0.75,0.5,0.25);
+    \coordinate (12) at (0.75,0.5,0.75);
 
 
-%\foreach \i in {5, 6, 7, 8, 9, 10, 11, 12, 13}
-%    \draw (\i) node[cross] {};
+    \coordinate (13) at (0.5, 0.0, 0.5);
+
+    \foreach \i in {0,1,2,3,4}
+    \draw[blue,fill=blue] (\i) circle (1.3pt) node [below] {};
 
 
-\draw (0) -- (1) -- (3) -- (2) -- (0);
-\draw (1) -- (4) -- (3);
-\draw (0) -- (4) -- (2);
-
-\end{tikzpicture}
-\begin{tikzpicture}[scale=1.3]
-
-\coordinate (0) at (0,0,1.5);
-\coordinate (1) at (1,0,1.5);
-\coordinate (2) at (0.0,1.0,1.5);
-
-\coordinate (3) at (0,0,0);
-\coordinate (4) at (1,0,0);
-\coordinate (5) at (0.0,1.0,0);
+    %\foreach \i in {5, 6, 7, 8, 9, 10, 11, 12, 13}
+    %    \draw (\i) node[cross] {};
 
 
+    \draw (0) -- (1) -- (3) -- (2) -- (0);
+    \draw (1) -- (4) -- (3);
+    \draw (0) -- (4) -- (2);
 
-\coordinate  (6) at (0.5, 0.0, 0.0);
-\coordinate  (7) at (0.0, 0.5, 0.0);
-\coordinate  (8) at (0.5, 0.5, 0.0);
+  \end{tikzpicture}
+  \begin{tikzpicture}[scale=1.3]
 
-\coordinate   (9) at (0.5, 0.0, 0.75);
-\coordinate  (10) at (0.0, 0.5, 0.75);
-\coordinate  (11) at (0.5, 0.5, 0.75);
+    \coordinate (0) at (0,0,1.5);
+    \coordinate (1) at (1,0,1.5);
+    \coordinate (2) at (0.0,1.0,1.5);
 
-\coordinate  (12) at (0.5, 0.0, 1.5);
-\coordinate  (13) at (0.0, 0.5, 1.5);
-\coordinate  (14) at (0.5, 0.5, 1.5);
+    \coordinate (3) at (0,0,0);
+    \coordinate (4) at (1,0,0);
+    \coordinate (5) at (0.0,1.0,0);
 
-\foreach \i in {0,1,2,3,4,5}
-    \fill (\i) circle (1.5pt) node [below] {};
 
-\foreach \i in {6,7,8,9,10,11,12,13,14}
+
+    \coordinate  (6) at (0.5, 0.0, 0.0);
+    \coordinate  (7) at (0.0, 0.5, 0.0);
+    \coordinate  (8) at (0.5, 0.5, 0.0);
+
+    \coordinate   (9) at (0.5, 0.0, 0.75);
+    \coordinate  (10) at (0.0, 0.5, 0.75);
+    \coordinate  (11) at (0.5, 0.5, 0.75);
+
+    \coordinate  (12) at (0.5, 0.0, 1.5);
+    \coordinate  (13) at (0.0, 0.5, 1.5);
+    \coordinate  (14) at (0.5, 0.5, 1.5);
+
+    \foreach \i in {0,1,2,3,4,5}
+    \draw[blue,fill=blue] (\i) circle (1.5pt) node [below] {};
+
+    \foreach \i in {6,7,8,9,10,11,12,13,14}
     \draw (\i) node[cross, draw=red, rotate=-20] {};
 
 
-\draw (0) -- (1) -- (2) -- (0);
-\draw (3) -- (4) -- (5) -- (3);
-\draw (0) -- (3);
-\draw (1) -- (4);
-\draw (2) -- (5);
+    \draw (0) -- (1) -- (2) -- (0);
+    \draw (3) -- (4) -- (5) -- (3);
+    \draw (0) -- (3);
+    \draw (1) -- (4);
+    \draw (2) -- (5);
 
-\end{tikzpicture}
-\begin{tikzpicture}[scale=1.5]
+  \end{tikzpicture}
+  \begin{tikzpicture}[scale=1.5]
 
-\coordinate (0) at (0,0,1);
-\coordinate (1) at (1,0,1);
-\coordinate (2) at (0,0,0);
-\coordinate (3) at (1,0,0);
+    \coordinate (0) at (0,0,1);
+    \coordinate (1) at (1,0,1);
+    \coordinate (2) at (0,0,0);
+    \coordinate (3) at (1,0,0);
 
-\coordinate (4) at (0,1,1);
-\coordinate (5) at (1,1,1);
-\coordinate (6) at (0,1,0);
-\coordinate (7) at (1,1,0);
+    \coordinate (4) at (0,1,1);
+    \coordinate (5) at (1,1,1);
+    \coordinate (6) at (0,1,0);
+    \coordinate (7) at (1,1,0);
 
-\coordinate  (8) at (0,0,0.5);
-\coordinate  (9) at (1,0,0.5);
-\coordinate (10) at (0.5,0,1);
-\coordinate (11) at (0.5,0,0);
-\coordinate (12) at (0.5,0,0.5);
+    \coordinate  (8) at (0,0,0.5);
+    \coordinate  (9) at (1,0,0.5);
+    \coordinate (10) at (0.5,0,1);
+    \coordinate (11) at (0.5,0,0);
+    \coordinate (12) at (0.5,0,0.5);
 
-\coordinate (13) at (0,1,0.5);
-\coordinate (14) at (1,1,0.5);
-\coordinate (15) at (0.5,1,1);
-\coordinate (16) at (0.5,1,0);
-\coordinate (17) at (0.5,1,0.5);
-
-
-\coordinate (18) at (0,0.5,1);
-\coordinate (19) at (1,0.5,1);
-\coordinate (20) at (0,0.5,0);
-\coordinate (21) at (1,0.5,0);
-\coordinate (22) at (0,0.5,0.5);
-\coordinate (23) at (1,0.5,0.5);
-\coordinate (24) at (0.5,0.5,1);
-\coordinate (25) at (0.5,0.5,0);
-\coordinate (26) at (0.5,0.5,0.5);
+    \coordinate (13) at (0,1,0.5);
+    \coordinate (14) at (1,1,0.5);
+    \coordinate (15) at (0.5,1,1);
+    \coordinate (16) at (0.5,1,0);
+    \coordinate (17) at (0.5,1,0.5);
 
 
+    \coordinate (18) at (0,0.5,1);
+    \coordinate (19) at (1,0.5,1);
+    \coordinate (20) at (0,0.5,0);
+    \coordinate (21) at (1,0.5,0);
+    \coordinate (22) at (0,0.5,0.5);
+    \coordinate (23) at (1,0.5,0.5);
+    \coordinate (24) at (0.5,0.5,1);
+    \coordinate (25) at (0.5,0.5,0);
+    \coordinate (26) at (0.5,0.5,0.5);
 
-\foreach \i in {0,1,2,3,4,5,6,7}
-    \fill (\i) circle (1.3pt) node [below] {};
 
-\foreach \i in {8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26}
+
+    \foreach \i in {0,1,2,3,4,5,6,7}
+    \draw[blue,fill=blue] (\i) circle (1.3pt) node [below] {};
+
+    \foreach \i in {8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26}
     \draw (\i) node[cross, draw=red, rotate=-20] {};
 
 
-\draw (0) -- (1) -- (3) -- (2) -- (0);
-\draw (4) -- (5) -- (7) -- (6) -- (4);
-\draw (0) -- (4);
-\draw (1) -- (5);
-\draw (2) -- (6);
-\draw (3) -- (7);
+    \draw (0) -- (1) -- (3) -- (2) -- (0);
+    \draw (4) -- (5) -- (7) -- (6) -- (4);
+    \draw (0) -- (4);
+    \draw (1) -- (5);
+    \draw (2) -- (6);
+    \draw (3) -- (7);
 
-\end{tikzpicture}
+  \end{tikzpicture}
 
-\caption{All reference cells in 2D (triangle, quadrilateral) and 3D (tetrahedron, pyramid, wedge, hexahedron) with the support points indicated both for linear ($\bullet$) and quadratic ($\times$) shape functions.}
-
+  \caption{\it Reference cells in 2D (triangle, quadrilateral) and 3D
+    (tetrahedron, pyramid, wedge, hexahedron) with the support points
+    indicated both for linear ({\color{blue}$\bullet$}) and quadratic
+    ({\color{red}$\times$}) shape functions.
+  \todo[inline]{The pyramid is missing red crosses. The wedge is
+    missing them on three edges.}}
+  \label{fig:simplex}
 \end{figure}
 
-\begin{table}[!h]
+\begin{table}
   \caption{\it List of new scalar \texttt{FiniteElement} classes for the new
   reference-cell types. Vectorial elements can be constructed based on these classes
   via \texttt{FE\_Systems}.}\label{tab:simplex:fe}
@@ -524,47 +518,47 @@ can be found
   \end{tabular}
 \end{table}
 
-The current release of \dealii adds an experimental support for simplex meshes (consisting of triangles in 2D; tetrahedra in 3D) and mixed meshes (consisting of triangles and/or
-quadrilaterals in 2D; tetrahedra, pyramids, wedges, and/or hexahedra in 3D).
-Many freely available mesh-generation tools produce such kind of meshes; while users of \dealii used to have to pre-process such meshes and convert them to pure hex meshes, they
-can now directly work with them.
 
 \subsubsection{Refactoring of internal data structures}
 
 To enable simplex and mixed mesh support, we performed a major refactoring of the internal data structures of \dealii. In particular, the \texttt{Triangulation} class and
-the \texttt{DoFHandler} class have undergone large changes.
+the \texttt{DoFHandler} class have undergone large changes and now
+support meshes composed of all of the cells shown in Fig.~\ref{fig:simplex}.
 
 The template parameters of the internal data structures of \texttt{Triangulation}
 have been removed and the type of each cell and of each face (only in 3D) is stored. The function
 \texttt{Triangulation::create\_\allowbreak triangulation()}, which converts a given list of
 cells and vertices to the internal data structures, has been rewritten
-inspired by \citep{logg2012} and a speed-up of up to 5 has been reached. Minor adjustments
-have been made to \texttt{parallel::shared::Triangulation} and \texttt{parallel::\allowbreak fullydistributed::\allowbreak Triangulation} such that
-the new mesh types can be processed also in parallel.
+inspired by \citep{logg2012} and this has had the side effect of a speed-up of up to 5. Minor adjustments
+have also been made to the \texttt{parallel::shared::Triangulation}
+and \texttt{parallel::\allowbreak fullydistributed::\allowbreak
+  Triangulation} classes such that
+the new mesh types can also be used in parallel.
 
 The internal data structures of \texttt{DoFHandler} used to be hard-coded for pure
 hypercube meshes, while the \texttt{hp::DoFHandler} used to be built around
 CRS-like data structures. Due to the need of CRS data structures in the
 \texttt{DoFHandler} in the context of more general meshes, we have merged
 \texttt{hp::DoFHandler} into the \texttt{DoFHandler}. The class \texttt{hp::DoFHandler}, which is now a dummy derivation of \texttt{DoFHandler}, currently only exists for compatibility reasons and has
-been deprecated, see Section~\ref{subsec:deprecated}.
+been deprecated, see Section~\ref{subsec:deprecated}. It will be
+removed in the next release.
 
 \subsubsection{Generating meshes}
 
 The most obvious way to generate a simplex or a mixed mesh is to read the mesh from a file
 generated by an external mesh generator. Currently, we support the
-file formats \texttt{VTK}, \texttt{MSH}, and \texttt{EXODUS II}.
+\texttt{VTK}, \texttt{MSH} (generated by the \textsc{gmsh} program \cite{geuzaine2009gmsh}), and \texttt{EXODUS II} file formats.
 
-Alternatively, one can create a pure hypercube mesh with the known functions
-in the \texttt{GridGenerator} namespace and convert the obtained mesh to a
+Alternatively, one can create a pure hypercube mesh with the existing functions
+in the \texttt{GridGenerator} namespace and convert it to a
 pure simplex mesh with the function
-\texttt{convert\_\allowbreak hypercube\_\allowbreak to\_\allowbreak simplex\_\allowbreak mesh()} from the \texttt{GridGenerator} namespace.
+\texttt{GridGenerator::convert\_\allowbreak hypercube\_\allowbreak to\_\allowbreak simplex\_\allowbreak mesh()}.
 
-\subsubsection{Simplex mesh}
+\subsubsection{Using simplex meshes}
 
-After having created a triangulation, one can proceed as usual in the case of
-a pure simplex mesh by selecting an appropriate finite element, mapping, and
-quadrature class:
+After having created a triangulation, one can proceed in the same way
+as for hypercube meshes. In particular, one selects an appropriate finite element, mapping, and
+quadrature class as follows:
 
 \begin{c++}
 FE_SimplexP<dim, spacedim> fe(degree);
@@ -577,14 +571,20 @@ dof_handler.distribute_dofs(fe);
 FEValues<dim, spacedim> fe_values(mapping, fe, quad, flags);
 \end{c++}
 The  list of currently supported finite-element classes is provided in Table~\ref{tab:simplex:fe}. Currently,
-only linear iso-parametric mapping (\texttt{MappingFE} and \texttt{MappingFEFields}) is available. For quadrature, the classes \texttt{QDuffy}, \texttt{QGaussSimplex}, \texttt{QWitherdenVincentSimplex},
+only linear iso-parametric mappings (via the \texttt{MappingFE} and
+\texttt{MappingFEField} classes) are available.
+\todo[inline]{I don't understand the previous sentence. "linear" means
+  p=1, but isoparametric means that it has the same p as the finite
+  element. It can't be both.}
+For quadrature, the classes \texttt{QDuffy}, \texttt{QGaussSimplex}, \texttt{QWitherdenVincentSimplex},
 \texttt{QGaussPyamid}, and \texttt{QGaussWedge} are
 available.
 
-\subsubsection{Mixed mesh}
+\subsubsection{Using mixed meshes}
 For mixed meshes, concepts known from the $hp$-context have been applied:
- different finite-element classes are assigned to different cell types. In the
-case of a 2D mixed mesh, which can only consists of triangles and
+ different finite-element classes are assigned to different cells
+ based on their respective kind of reference cell. In the
+case of a 2D mixed mesh, which can only consist of triangles and
 quadrilaterals, the finite element defined on a triangle (e.g., \texttt{FE\_SimplexP})
 and on a quadrilateral (e.g., \texttt{FE\_Q}) can be collected in a \texttt{hp::FECollection}:
 
@@ -594,8 +594,11 @@ hp::FECollection<dim, spacedim> fe
 \end{c++}
 
 Similarly, \texttt{hp::QCollection} and \texttt{hp::MappingCollection} can be used
-to construct appropriate collections. Furthermore, the right active finite-element index, which points to the right
-finite element of that cell, has to be assigned to each cell:
+to construct appropriate collections. Furthermore, the correct active
+finite element index, which points to the correct
+finite element of that cell, has to be assigned to each cell. The
+following piece of code will then correctly enumerate all degrees of
+freedom on the mesh:
 
 \begin{c++}
 DoFHandler<dim> dof_handler(tria);
@@ -615,7 +618,7 @@ dof_handler.distribute_dofs(fe);
 \subsubsection{Practical implications}
 
 The introduction of simplex and mixed meshes leads to some implications
-for the user if these features should be used. For instance, each cell might have a different type with
+for the user if these features are to be used. For instance, each cell might have a different type with
 different number of vertices, lines, and faces so that these quantities can not be
 compile-time constants anymore. This information used to be queried from
 the \texttt{GeometryInfo} class. To avoid using this class, we have extended
@@ -625,78 +628,66 @@ with useful new functions like \texttt{n\_vertices()}, \texttt{n\_lines()}, or
 \begin{c++}
 for(const auto & cell : tria.active_cell_iterators())
   for(unsigned int f = 0; f < cell->n_faces(); ++f)
-    (void) cell->face(f);
+    // do something with cell->face(f);
 \end{c++}
 Alternatively, one can use an iterator-based approach to loop over all faces
-of a cell, introduced in the last release. The relevant functions have been adjusted to be able to deal with
-various number of faces.
+of a cell, introduced in the previous release. The relevant functions have been adjusted to be able to deal with
+the now variable number of faces per cell:
 \begin{c++}
 for(const auto & cell : tria.active_cell_iterators())
   for(const auto & face : cell->face_iterators())
-    (void) face;
+    // do something with face
 \end{c++}
-Furthermore, the number of degrees of freedom might differ between cells so that
-local data storage units needed for assembly might need to be resized for each
-cell as it is already good practice in the $hp$-context:
+Furthermore, for mixed meshes, the number of degrees of freedom will differ between cells so that
+cell-local arrays need to be resized for each
+cell (as has previously already been the case in the $hp$-context):
 \begin{c++}
 std::vector<double> local_rhs;
 for(const auto & cell : tria.active_cell_iterators())
  {
    hp_fe_values.reinit(cell);
-   local_rhs.resize(hp_fe_values.get_present_fe_values().n_dofs_per_cell());
+   local_rhs.resize(cell->get_fe().dofs_per_cell);
  }
 \end{c++}
 
 
 What is true for cells is also true for faces in 3D: faces can be either triangles
-or quadrilaterals. This is the case even if no mixed mesh is used. As a consequence, some functions, e.g. \texttt{FiniteElementData::n\_dofs\_per\_face()}, have been extended with a new optional argument for the face number.
+or quadrilaterals. This is the case even if no mixed mesh is used if
+the mesh consists exclusively of pyramids or wedges. As a consequence, some functions, e.g. \texttt{FiniteElementData::n\_dofs\_per\_face()}, have been extended with a new optional argument for the face number.
 
-We tried---where possible---to provide utility functions so that users do not need to access a \texttt{GeometryInfo}-like data structure. However, these functions internally rely on the \texttt{ReferenceCell} class, which is similarly structured as \texttt{GeometryInfo} and even use it for hypercube cells. Users can query the right \texttt{ReferenceCell} of a geometric entity via:
-\begin{c++}
-const auto reference_cell = cell->reference_cell();
-\end{c++}
-and of its i-th face via:
-\begin{c++}
-const auto face_reference_cell = reference_cell.face_reference_cell(i);
-\end{c++}
+Geometric information about cells and faces -- previously provided by
+the \texttt{GeometryInfo} class for hypercube-type cells -- is now
+available via the  \texttt{ReferenceCell} class that can be
+instantiated for each of the seven possible reference cell. The
+correct reference cell object for a cell or face can be obtained, respectively, using
+\texttt{cell->reference\_cell()}, and either the call
+\texttt{cell->reference\_cell().face\_reference\_cell(f)}
+or
+\texttt{cell->face(f)->reference\_cell()}.
 
+Furthermore, many functions in \dealii{} used mappings that, when not
+given explicitly, defaulted to (bi-/tri-)linear ones. These no longer
+work for simplex or mixed meshes, and in these cases users will need
+to explicitly provide the correct mapping for the mesh to be used.
 
-Furthermore, it is crucial to use the right FE--mapping--quadrature family
-for the right cell type. In particular, this means that users cannot
-rely on default parameters regarding mapping and/or quadrature in the
-context of simplex meshes since these are defined for hypercube cells.
-We recommend to choose the needed mapping,
-FE, and quadrature rules at a single central place and pass these throughout the program
-in the form of ``scratch data''.
 
 \subsubsection{Matrix-free support}
 
-We provide matrix-free support for simplex and mixed meshes as well as for
+\dealii{}'s matrix-free support has also been extended to simplex and
+mixed meshes, for both
 continuous and discontinuous elements. From a user perspective, the main
-changes are to pass a d-dimensional quadrature rules rather than a 1D formula,
+changes are to pass a $d$-dimensional quadrature object (rather than
+one for 1D),
 and the fact that \texttt{FEEvaluation} and \texttt{FEFaceEvaluation} must not
 specify the polynomial degree via template arguments, determining all
 information at runtime. More details can be found in
-Subsection~\ref{subsec:mf}.
+Section~\ref{subsec:mf}.
 
-By the time of writing, no advanced algorithms for evaluating values and
-gradients at the quadrature points such as sum factorization are used.
+For the current release, no advanced algorithms for evaluating values and
+gradients at quadrature points, such as sum factorization, are used.
 The use of full interpolation matrices is for now acceptable since only low-order elements are
 supported.
 
-\subsubsection{Miscellanea}
-
-Further information can be found on the new module page ``Simplex support (experimental)'', see
-\begin{center}
-  \url{https://www.dealii.org/current/doxygen/deal.II/group__simplex.html}
-\end{center}
-As an example, it shows how to solve a simple Poisson problem like in \texttt{step-3}
-on simplex and mixed meshes, with the focus on on the changed workflow.
-
-By the time of writing, there have been 92 tests (in the folder \texttt{tests/simplex})
-targeting the new simplex and mixed mesh support. In particular, the folder also
-contains ported variants of the following tutorials: 1, 2, 3, 4, 6, 7, 8, 12, 17, 18, 20, 23, 31, 38,
-40, 55, 67, 68, and 74. These might be also good starting points.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
