@@ -315,6 +315,8 @@ Best
 
   [ pull request for master branch ]
 
+5a/ Convert all instances of DEAL_II_DEPRECATED_EARLY to DEAL_II_DEPRECATED.
+
 6/ update the official tester to test on the release branch dealii-9.0
 
    An empty checkout in a folder 'dealii-9.0' can be obtained via

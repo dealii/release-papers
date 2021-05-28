@@ -26,6 +26,7 @@ Release steps:
 - [ ] <b>1a</b>  Adjust doc/users/doxygen.html to link to the to-be-created TAG file.
 - [ ] <b>4</b>   Create a release branch
 - [ ] <b>5</b>   Update the VERSION from 9.0.0-pre to 9.1.0-pre on master
+- [ ] <b>5a</b>  Convert `DEAL_II_DEPRECATED_EARLY` to `DEAL_II_DEPRECATED` on master
 - [ ] <b>6</b>   Update the official tester to test on the release branch dealii-9.0
 - [ ] <b>6a</b>  On mainline, update deal.II dependencies of examples
 - [ ] <b>7</b>   Create an AUTHORS file
