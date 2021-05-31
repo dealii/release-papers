@@ -277,7 +277,7 @@ functions might throw exceptions when used with such meshes.
 
 A user-focused summary of information around simplex and mixed mesh
 support is also available on the new module page at
-  \url{https://www.dealii.org/current/doxygen/deal.II/group__simplex.html}
+  \url{https://www.dealii.org/current/doxygen/deal.II/group__simplex.html}.
 In particular, it shows how to solve a simple Poisson problem like in
 the \texttt{step-3} tutorial program
 on simplex and mixed meshes, with a focus on the necessary changes to
@@ -424,11 +424,15 @@ contains ported variants of a number of existing tutorials: 1, 2, 3, 4, 6, 7, 8,
     \coordinate  (12) at (0.5, 0.0, 1.5);
     \coordinate  (13) at (0.0, 0.5, 1.5);
     \coordinate  (14) at (0.5, 0.5, 1.5);
+  
+    \coordinate (15) at (0,0,0.75);
+    \coordinate (16) at (1,0,0.75);
+    \coordinate (17) at (0.0,1.0,0.75);
 
     \foreach \i in {0,1,2,3,4,5}
     \draw[blue,fill=blue] (\i) circle (1.5pt) node [below] {};
 
-    \foreach \i in {6,7,8,9,10,11,12,13,14}
+    \foreach \i in {6,7,8,9,10,11,12,13,14,15,16,17}
     \draw (\i) node[cross, draw=red, rotate=-20] {};
 
 
@@ -496,8 +500,10 @@ contains ported variants of a number of existing tutorials: 1, 2, 3, 4, 6, 7, 8,
     (tetrahedron, pyramid, wedge, hexahedron) with the support points
     indicated both for linear ({\color{blue}$\bullet$}) and quadratic
     ({\color{red}$\times$}) shape functions.
-  \todo[inline]{The pyramid is missing red crosses. The wedge is
-    missing them on three edges.}}
+  %\todo[inline]{The pyramid is missing red crosses. The wedge is
+  %  missing them on three edges.}
+  % PM: we only have linear pyramids for now.
+  }
   \label{fig:simplex}
 \end{figure}
 
@@ -571,12 +577,12 @@ dof_handler.distribute_dofs(fe);
 FEValues<dim, spacedim> fe_values(mapping, fe, quad, flags);
 \end{c++}
 The  list of currently supported finite-element classes is provided in Table~\ref{tab:simplex:fe}. Currently,
-only linear iso-parametric mappings (via the \texttt{MappingFE} and
-\texttt{MappingFEField} classes) are available.
-\todo[inline]{I don't understand the previous sentence. "linear" means
-  p=1, but isoparametric means that it has the same p as the finite
-  element. It can't be both.}
-For quadrature, the classes \texttt{QDuffy}, \texttt{QGaussSimplex}, \texttt{QWitherdenVincentSimplex},
+only linear and quadratic mappings via the \texttt{MappingFE} and
+\texttt{MappingFEField} classes built around the listed nodal elements are available.
+%\todo[inline]{I don't understand the previous sentence. "linear" means
+%  p=1, but isoparametric means that it has the same p as the finite
+%  element. It can't be both.}
+For quadrature, the classes \texttt{QDuffy}, \texttt{QGaussSimplex}, \texttt{QWitherdenVincentSimplex} \cite{schloemer21, witherden2015identification},
 \texttt{QGaussPyamid}, and \texttt{QGaussWedge} are
 available.
 
@@ -646,7 +652,7 @@ std::vector<double> local_rhs;
 for(const auto & cell : tria.active_cell_iterators())
  {
    hp_fe_values.reinit(cell);
-   local_rhs.resize(cell->get_fe().dofs_per_cell);
+   local_rhs.resize(cell->get_fe().n_dofs_per_cell());
  }
 \end{c++}
 
@@ -717,7 +723,7 @@ discontinuous (\texttt{FE\_DGQ}, \texttt{FE\_SimplexDGP})
 elements. Global coarsening builds multigrid levels for the entire
 domain, coarsening \textit{all} cells of a triangulation regardless of
 how many times they have been refined. In addition, the framework now available in
-\dealii{} in not only applicable to geometric coarsening, but can also
+\dealii{} is not only applicable to geometric coarsening, but can also
 perform coarsening by reducing the polynomial degree ($p$-multigrid,
 see~\cite{Fehn2020}), for example
 to support $hp$-adaptive meshes.
@@ -785,7 +791,7 @@ FEEvaluation<dim, -1, 0, n_components, Number, VectorizedArrayType>
 These classes select at runtime -- for common low and medium
 polynomial degree/quadrature combinations ($k\le 6$ and $q\in\{ k+1,
 k+2, \left\lfloor (3k)/2 \right\rfloor \}$) -- efficient precompiled implementations and default to non-templated
-evaluation kernels else.
+evaluation kernels else (see also \texttt{FEEvaluation::fast\_evaluation\_\allowbreak supported()}).
 
 In the case that even higher polynomial degrees are needed, one can precompile the
 relevant internal classes
@@ -799,6 +805,7 @@ and \texttt{VectorizedArrayType}s in the following way:
 DEAL_II_NAMESPACE_OPEN
 template struct dealii::internal::FEEvaluationFactory
   <dim, VectorizedArrayType::value_type, VectorizedArrayType>;
+// same for FEFaceEvaluationFactory and CellwiseInverseMassFactory (skipped)
 DEAL_II_NAMESPACE_CLOSE
 \end{c++}
 
@@ -812,10 +819,12 @@ release, the parallel $hp$ support was extended to \texttt{MatrixFree}.
 
 Until now, the \texttt{FEEvaluation} classes used the template
 parameters $k$ and $q$ to select the correct active FE and quadrature
-index and cumbersome detection of subranges of the same degree.
-\todo{I don't understand what ``detection of subranges of the same
-  degree'' refers to. Please clarify. In particular, I don't know what
-``subranges'' mean in this paragraph.}
+index and users were responsible for the cumbersome detection of 
+subranges of the same $k$ and $q$ within the cell ranges returned by the 
+matrix-free loops.
+%\todo{I don't understand what ``detection of subranges of the same
+%  degree'' refers to. Please clarify. In particular, I don't know what
+%``subranges'' mean in this paragraph.}
 The creation of subranges is now performed internally, and the non-templated versions
 of the \texttt{FEEvaluation} classes have been extended for the $hp$-case. To determine
 the desired FE and quadrature index of a subrange, the current cell/face range has to be provided
@@ -901,8 +910,9 @@ The quadrature points (at reference positions
 for example, come from
 a mesh of lower dimension. Determining to which \texttt{cell} a quadrature
 point belongs to on the background mesh, including the reference cell
-coordinates \texttt{reference\_points}, is aided by functions like
-\texttt{GridTools::find\_all\_active\_cells\_around\_point()}. While these
+coordinates \texttt{reference\_\allowbreak points}, is aided by functions like
+\texttt{find\_active\_cell\_around\_point()}
+\texttt{find\_all\_active\_cells\_\allowbreak around\_\allowbreak point()} from the \texttt{GridTools} namespace. While these
 functions have been available in \dealii{} previously, their performance has
 been considerably enhanced with the aforementioned more optimized code paths
 for selected mappings.
@@ -913,7 +923,7 @@ the owning cells and thus can focus on cell-local operations, the new class
 context and for providing efficient communication patterns for the data exchange. In \texttt{deal.II},
 the class has been successfully applied together with \texttt{FEPointEvaluation} to evaluate a distributed
 solution vector at arbitrary points (see also the
-\texttt{VectorTools::evaluate\_at\_points()} function).
+\texttt{VectorTools::point\_values()} function).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -939,7 +949,7 @@ ways as part of this release. In addition, there are a number of new tutorial pr
   \cite{Bartlett2006a}, ADOL-C \cite{Griewank1996a}, and
   SymEngine \cite{symengine-web-page}. The tutorial
   illustrates how these techniques can be used to compute derivatives
-  of first a rather simple function, and then of the much more complex
+  first of a rather simple function, and then of the much more complex
   energy functions of two magnetoelastic and magneto-viscoelastic
   material formulations in which just the scalar energy functional
   takes up the better part of a page, and even first derivatives can
