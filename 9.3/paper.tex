@@ -791,7 +791,7 @@ FEEvaluation<dim, -1, 0, n_components, Number, VectorizedArrayType>
 These classes select at runtime -- for common low and medium
 polynomial degree/quadrature combinations ($k\le 6$ and $q\in\{ k+1,
 k+2, \left\lfloor (3k)/2 \right\rfloor \}$) -- efficient precompiled implementations and default to non-templated
-evaluation kernels else (see also \texttt{FEEvaluation::fast\_evaluation\_\allowbreak supported()}).
+evaluation kernels otherwise (see also \texttt{FEEvaluation::fast\_evaluation\_\allowbreak supported()}).
 
 In the case that even higher polynomial degrees are needed, one can precompile the
 relevant internal classes
