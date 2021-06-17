@@ -58,6 +58,7 @@ cross/.default={2pt}}
     Daniel Arndt,
     Wolfgang Bangerth,
     Marc Fehling,
+    Rene Gassm{\"o}ller
     Timo Heister,
     Luca Heltai,
     Martin Kronbichler,
@@ -91,52 +92,59 @@ cross/.default={2pt}}
 
 \author[2]{Marc~Fehling}
 
-\author[4]{Timo~Heister}
- \affil[4]{School of Mathematical and Statistical Sciences,
+\author[4]{Rene~Gassm{\"o}ller}
+\affil[4]{Department of Geological Sciences,
+   University of Florida,
+   1843 Stadium Road,
+   Gainesville, FL, 32611, USA.
+  {\texttt{rene.gassmoeller@ufl.edu}}}
+
+\author[5]{Timo~Heister}
+ \affil[5]{School of Mathematical and Statistical Sciences,
    Clemson University,
    Clemson, SC, 29634, USA
    {\texttt{heister/jiaqi2@clemson.edu}}}
 
-\author[5]{Luca~Heltai}
-\affil[5]{SISSA,
+\author[6]{Luca~Heltai}
+\affil[6]{SISSA,
    International School for Advanced Studies,
    Via Bonomea 265,
    34136, Trieste, Italy.
    {\texttt{luca.heltai@sissa.it}}}
 
-\author[6]{Uwe~K{\"o}cher}
-\affil[6]{Chair of Numerical Mathematics,
+\author[7]{Uwe~K{\"o}cher}
+\affil[7]{Chair of Numerical Mathematics,
   Helmut-Schmidt-University,
   University of the Federal Armed Forces Hamburg,
   Holstenhofweg~85, 22043 Hamburg, Germany.
   {\texttt{uwe.koecher@hsu-hh.de}}}
 
- \author[7,8]{Martin~Kronbichler}
- \affil[7]{Institute for Computational Mechanics,
+ \author[8,9]{Martin~Kronbichler}
+ \affil[8]{Institute for Computational Mechanics,
    Technical University of Munich,
    Boltzmannstr.~15, 85748 Garching, Germany.
    {\texttt{kronbichler/munch/proell@lnm.mw.tum.de}}}
- \affil[8]{Department of Information Technology,
+ \affil[9]{Department of Information Technology,
    Uppsala University,
    Box 337, 751\,05 Uppsala, Sweden.
    {\texttt{martin.kronbichler@it.uu.se}}}
 
-\author[9]{Matthias~Maier}
-\affil[9]{Department of Mathematics,
+\author[10]{Matthias~Maier}
+\affil[10]{Department of Mathematics,
   Texas A\&M University,
   3368 TAMU,
   College Station, TX 77845, USA.
   {\texttt{maier@math.tamu.edu}}}
 
-\author[7,10]{Peter Munch}
- \affil[10]{Institute of Materials Research, Materials Mechanics,
+\author[8,11]{Peter Munch}
+ \affil[11]{Institute of Materials Research, Materials Mechanics,
  Helmholtz-Zentrum Geesthacht,
  Max-Planck-Str. 1, 21502 Geesthacht, Germany.
    {\texttt{peter.muench@hzg.de}}}
 
 
-\author[11]{Jean-Paul~Pelteret}
-\affil[11]{Independent researcher.
+\author[12]{Jean-Paul~Pelteret}
+\affil[12]{Independent researcher.
 {\texttt{jppelteret@gmail.com}}}
 
 \author[7]{Sebastian~Proell}
@@ -697,7 +705,25 @@ supported.
 \subsection{Advances in the particle infrastructure}
 \label{subsec:particles}
 
-\todo[inline]{TODO}
+\dealii 's particle infrastructure has been modernized to store nearly all
+particle data as a set of continuous data arrays instead of a container of
+objects. This reorganization improves cache efficiency when iterating over
+particles and reduces the amount of data that needs to be moved when a particle
+moves to a different cell. Keeping track of unused data slots allows to reuse
+them for new particles, significantly reducing memory allocations when
+particles are created after other particles have left the local domain. The
+data arrays are rebuild and sorted during every mesh refinement cycle.
+
+Additionally the particle infrastructure now supports a faster search algorithm
+for particles that moved farther than one cell width between particle sorting
+operations, and support for updating ghost particles (particles that live in
+ghost cells around the local domain) by updating their properties instead of
+destroying and rebuilding their container was added, which improves the
+efficiency of ghost particle exchange significantly.
+
+Finally the \texttt{Particles::DataOut} class now supports writing particle
+properties as vectors or tensors instead of scalars if the properties are
+marked as such.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -943,8 +969,12 @@ ways as part of this release. In addition, there are a number of new tutorial pr
 
 \item \texttt{step-66} nonlinear matrix-free solver \todo[inline]{TODO}
   
-\item \texttt{step-68} parallel particles, load balancing \todo[inline]{TODO}
-  
+\item \texttt{step-68} is a demonstration of how to embed and distribute
+  particles in a parallel triangulation. It tracks the movement of
+  a set of particles in a fluid flow and illustrates how to distribute
+  a parallel domain according to the number of locally owned
+  particles instead of the number of locally owned cells.
+
 \item \texttt{step-71} focuses on automatic and symbolic
   differentiation (AD and SD, in short) as a tool to make solvers for complex,
   nonlinear problems possible. To this end, \dealii{} can interface to a number
@@ -1162,7 +1192,6 @@ Niklas Fehn,
 Menno Fraters,
 Ivan Fumagalli,
 Daniel Garcia-Sanchez,
-Rene Gassmoeller,
 Nicola Giuliani,
 Krishnakumar Gopalakrishnan,
 Alexander Grayver,
@@ -1210,9 +1239,9 @@ D.~Arndt and B.~Turcksin: Research sponsored by the Laboratory Directed Research
 Development Program of Oak Ridge National Laboratory, managed by UT-Battelle,
 LLC, for the U. S. Department of Energy.
 
-W.~Bangerth and T.~Heister were partially
+W.~Bangerth, T.~Heister, and R.~Gassm{\"o}ller were partially
 supported by the Computational Infrastructure
-in Geodynamics initiative (CIG), through the National Science
+for Geodynamics initiative (CIG), through the National Science
 Foundation under Award No.~EAR-1550901 and The
 University of California -- Davis.
 
@@ -1224,6 +1253,9 @@ and EAR-1925595.
 Timo Heister was also partially supported by the National Science Foundation (NSF)
 Award DMS-2028346, OAC-2015848, EAR-1925575, and by
 Technical Data Analysis, Inc. through US Navy STTR Contract N68335-18-C-0011.
+
+R.~Gassm{\"o}ller was also partially supported by the National Science
+Foundation (NSF) award EAR-1925595.
 
 L.~Heltai was partially supported by the Italian Ministry of Instruction,
 University and Research (MIUR), under the 2017 PRIN project NA-FROM-PDEs MIUR
