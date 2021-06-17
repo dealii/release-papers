@@ -942,7 +942,7 @@ for selected mappings.
 
 While \texttt{FEPointEvaluation} assumes that evaluation points are already sorted according to 
 the owning cells and thus can focus on cell-local operations, the new class
-\texttt{RemotePointEvaluation} is responsible for determine the owning cells in a distributed
+\texttt{RemotePointEvaluation} is responsible for determining the owning cells in a distributed
 context and for providing efficient communication patterns for the data exchange. In \texttt{deal.II},
 the class has been successfully applied together with \texttt{FEPointEvaluation} to evaluate a distributed
 solution vector at arbitrary points (see also the
