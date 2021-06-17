@@ -921,19 +921,31 @@ solution vector at arbitrary points (see also the
 \subsection{Source based toolchain installer}
 \label{subsec:candi}
 
-The source based installation of \dealii{} or
-complex toolchains of multiple libraries working together with \dealii{}
-can be done with the \candi{} script tool. \candi is a bash-script based tool,
-it is the abbreviation of ``compile and install'' and it is released under the
-GNU LGPL v3.0.
+The requirement to download, compile and install \dealii{} and its dependencies from
+source is of mayor interest for many \dealii{}-users.
+%
+This can be of importance on arbitrary Linux-based operating systems for which
+binary-install package aren't available or on compute clusters and other machines
+without root privileges for the user to install system dependencies.
+
+The source based installation of \dealii{} or complex toolchains of multiple libraries
+working together with \dealii{} can be done with the \candi{} script tool for various
+Linux operating systems, within the Windows Subsystem Linux (WSL) and on OSX (experimental).
+%
+The general assumption is that a C, C++ and Fortran compiler and suitable MPI-compilers
+for the base compilers as well as the corresponding development system packages are
+available.
+
+\candi is a bash-script based tool, it is the abbreviation of ``compile and install''
+and it is released under the GNU LGPL v3.0.
 %
 The origin of \candi{} is a fork made in 2013 from \texttt{dorsal},
 a retired source based installer for the \texttt{FEniCS} library.
 %
 The \candi{} tool can be found via the download page of \dealii{} since version 8.5
-and is under continuous and active maintenance. To install older releases of
-\dealii{} toolchains one can checkout the branch corresponding to the
-\dealii{}-version with \texttt{git}.
+and is under active maintenance.
+To install older releases of \dealii{} toolchains one can checkout the branch
+corresponding to the \dealii{}-version with \texttt{git}.
 
 The installer supports the user to download, unpack, compile and install a certain
 library, a list of libraries or a complete toolchain.
