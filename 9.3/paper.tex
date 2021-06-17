@@ -967,24 +967,31 @@ as well as configuration options.
 Moreover, one can give specific instructions for each of the steps being
 necessary for the unpacking, configuration or building of the package.
 
-An internet connection is not necessary for the run, if the source files
-are downloaded and repositories are checked out to its unpacking location.
-The download of a package can be supported via a local or remote mirror server
+An internet connection isn't necessary
+if the source files are downloaded and
+repositories are checked out to its unpacking location,
+e.g. from a previous run on a machine having an internet connection.
+%
+The download of a package can be supported via local or remote mirror servers
 similar as we are doing it already for several of the packages.
 %
-If the temporary files of \candi{} are not removed, one can use a developer
+If the temporary files of \candi{} aren't removed, one can use the developer
 mode to prepare patches or developments for any of the packages.
 %
 A new feature allows \candi{} to skip user prompts which can be used for
 a batch mode run on a compute cluster job for instance.
 
-This source based installer is implemented in a modular fashion. The main
-script is implemented without any knowledge on a package or toolchain for
-a specific operating system (platform).
+This source based installer is implemented in a modular fashion.
+The \texttt{candi.sh} script is implemented without any knowledge
+on a package or toolchain for a specific operating system.
+Therefore, a couple of checks and setting internal variables
+for known platforms are done.
 
-The installer is organised in the following way:
+The \candi{} source based installer is organised in the following way:
 \begin{itemize}
 \item \texttt{candi.sh}: the bash-script which controls the overall process.
+The command line options are given by the output of ``\texttt{candi.sh -h}''
+and explained in the \texttt{README.md} file.
 
 \item \texttt{candi.cfg} (or \texttt{local.cfg}): the default toolchain
 configuration file. Here one can easily switch on/off important features,
@@ -993,8 +1000,10 @@ define the set of packages for the toolchain.
 
 \item \texttt{deal.II-toolchain} folder: the central project folder for
 \dealii{}-based toolchains.
-It contains subfolders for individual packages, platforms (operating systems)
-and for patches to be applied after unpacking a package.
+It contains subfolders
+for packages (libraries, dependencies, general tools in a specific version),
+platforms (operating systems) and
+for patches to be applied after unpacking a package.
 
 \end{itemize}
 
