@@ -918,10 +918,78 @@ solution vector at arbitrary points (see also the
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Terminal based toolchain installer}
+\subsection{Source based toolchain installer}
 \label{subsec:candi}
 
-Half a page up to a page on \candi.
+The source based installation of \dealii{} or
+complex toolchains of multiple libraries working together with \dealii{}
+can be done with the \candi{} script tool. \candi is a bash-script based tool,
+it is the abbreviation of ``compile and install'' and it is released under the
+GNU LGPL v3.0.
+%
+The origin of \candi{} is a fork made in 2013 from \texttt{dorsal},
+a retired source based installer for the \texttt{FEniCS} library.
+%
+The \candi{} tool can be found via the download page of \dealii{} since version 8.5
+and is under continuous and active maintenance. To install older releases of
+\dealii{} toolchains one can checkout the branch corresponding to the
+\dealii{}-version with \texttt{git}.
+
+The installer supports the user to download, unpack, compile and install a certain
+library, a list of libraries or a complete toolchain.
+A library is called a package within \candi{}.
+The toolchain installation is the default behaviour and the default configuration
+ensures that most of the \dealii{} step tutorials can be used directly.
+The package installation mode can be handy to generate docker containers
+for instance.
+Especially in the toolchain mode we can check for dependencies from one library to
+another and handle them accordingly.
+
+Each package for a library is defined by variables for its name and version,
+a (remote or local) download location,
+its packaging format (e.g. tar, gz or zip),
+a checksum to prevent from incomplete downloads,
+its general build chain (e.g. using \texttt{autotools}, \texttt{cmake} and others)
+as well as configuration options.
+%
+Moreover, one can give specific instructions for each of the steps being
+necessary for the unpacking, configuration or building of the package.
+
+An internet connection is not necessary for the run, if the source files
+are downloaded and repositories are checked out to its unpacking location.
+The download of a package can be supported via a local or remote mirror server
+similar as we are doing it already for several of the packages.
+%
+If the temporary files of \candi{} are not removed, one can use a developer
+mode to prepare patches or developments for any of the packages.
+%
+A new feature allows \candi{} to skip user prompts which can be used for
+a batch mode run on a compute cluster job for instance.
+
+This source based installer is implemented in a modular fashion. The main
+script is implemented without any knowledge on a package or toolchain for
+a specific operating system (platform).
+
+The installer is organised in the following way:
+\begin{itemize}
+\item \texttt{candi.sh}: the bash-script which controls the overall process.
+
+\item \texttt{candi.cfg} (or \texttt{local.cfg}): the default toolchain
+configuration file. Here one can easily switch on/off important features,
+give additional configuration options to \dealii{} and
+define the set of packages for the toolchain.
+
+\item \texttt{deal.II-toolchain} folder: the central project folder for
+\dealii{}-based toolchains.
+It contains subfolders for individual packages, platforms (operating systems)
+and for patches to be applied after unpacking a package.
+
+\end{itemize}
+
+The \texttt{dealii/candi} \texttt{github} repository includes continuous
+integration (CI) to ensure that new features of the script or new packages
+are working as expected.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and improved tutorials and code gallery programs}
