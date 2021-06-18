@@ -213,7 +213,10 @@ The major changes of this release are:
   \item Nine new tutorial programs and a new code gallery program (see Section~\ref{subsec:steps}).
 \end{itemize}
 %
-These major changes are discussed in detail in Section~\ref{sec:major}. There
+In addition, we discuss the \texttt{candi} installation program in Section~\ref{subsec:candi}.
+
+While all of these major changes are discussed in detail in
+Section~\ref{sec:major}, there
 are a number of other noteworthy changes in the current \dealii{} release
 that we briefly outline in the remainder of this section:
 %
@@ -707,23 +710,23 @@ supported.
 \label{subsec:particles}
 
 \dealii 's particle infrastructure has been modernized to store nearly all
-particle data as a set of continuous data arrays instead of a container of
+particle data as a collection of continuous data arrays instead of a container of
 objects. This reorganization improves cache efficiency when iterating over
 particles and reduces the amount of data that needs to be moved when a particle
 moves to a different cell. Keeping track of unused data slots allows to reuse
 them for new particles, significantly reducing memory allocations when
 particles are created after other particles have left the local domain. The
-data arrays are rebuild and sorted during every mesh refinement cycle.
+data arrays are rebuilt and sorted during every mesh refinement cycle.
 
-Additionally the particle infrastructure now supports a faster search algorithm
+Additionally, the particle infrastructure now supports a faster search algorithm
 for particles that moved farther than one cell width between particle sorting
 operations, and support for updating ghost particles (particles that live in
 ghost cells around the local domain) by updating their properties instead of
-destroying and rebuilding their container was added, which improves the
+destroying and rebuilding their container. The latter step improves the
 efficiency of ghost particle exchange significantly.
 
-Finally the \texttt{Particles::DataOut} class now supports writing particle
-properties as vectors or tensors instead of scalars if the properties are
+Finally, the \texttt{Particles::DataOut} class now supports writing particle
+properties as vectors or tensors instead of a collection of scalars if the properties are
 marked as such.
 
 
