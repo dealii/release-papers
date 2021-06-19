@@ -159,8 +159,10 @@ cross/.default={2pt}}
 \author[9]{Sebastian~Proell}
 
 \author[14]{Konrad Simon}
-  \affil[14]{Department of Mathematics/Center for Earth System Research and Sustainability (CEN),
-  University of Hamburg, Grindelberg 5, 20144 Hamburg, Germany}
+  \affil[14]{Department of Mathematics/Center
+  for Earth System Research and Sustainability (CEN), University of
+  Hamburg, Grindelberg 5, 20144 Hamburg, Germany.
+  \texttt{konrad.simon@uni-hamburg.de}}}
 
 \author[1*]{Bruno~Turcksin}
 
@@ -246,10 +248,21 @@ that we briefly outline in the remainder of this section:
   the \texttt{DEAL\_II\_\allowbreak DEPRECATED\_EARLY} macro, which indicates that a feature will be
   deprecated in the next release. In contrast to the first macro, it will only give
   warnings if \dealii{} has been configured with \texttt{-D DEAL\_II\_EARLY\_DEPRECATIONS=ON}.
+
   \item After each update of the master branch of \dealii{}, we build a new Docker image
   with all features enabled. It is
   accessible on \texttt{Docker Hub} via \texttt{dealii/dealii:master-focal}. This image is
   particular useful when used in the continuous-integration processes of user codes.
+
+  \item A long standing orientation issue for the vector valued finite
+  element \texttt{FE\_RaviartThomas<3>} was resolved. This issue
+  prevented the user from using this class on meshes with cells that
+  do not have standard orientation, i.e., cells that have faces that
+  are flipped and rotated relative to their neighbors. In all eight
+  possible neighboring configurations we can now guarantee that the
+  necessary $H(\mathrm{div})$-conformity condition is met for all
+  polynomaial orders. This is verified through a new conformity test
+  on non-standard meshes.
 \end{itemize}
 %
 The changelog lists more than 200 other features and bugfixes.
