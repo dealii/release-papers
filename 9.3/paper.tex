@@ -1089,7 +1089,13 @@ framework in parallel. The PDE considered is the Gelfand problem $-\triangle u =
   or alternatively as the second derivative of an energy functional
   that then also yields the residual itself.
 
-\item \texttt{step-74} SIPG for the Poisson equation \todo[inline]{TODO}
+\item \texttt{step-74} implements the symmetric interior penalty Galerkin 
+(SIPG) method for Poisson's equation using the \texttt{FEInterfaceValues} class
+in combination with \texttt{MeshWorker::mesh\_loop()}. With \texttt{FEInterfaceValues},
+we can directly obtain the jump and the average of shape functions and of the solution 
+across cell faces, which simplifies the assembling of face terms in DG methods especially on 
+adaptive meshes. 
+
   
 \item \texttt{step-75} demonstrates a state-of-the-art way of solving a simple
       Laplace problem using $hp$-adaptation and hybrid multigrid methods on machines
