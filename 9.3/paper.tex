@@ -935,12 +935,17 @@ in general, located differently within $K$ than for any other cell:
 \end{align*}
 In \dealii{}, this can now be conveniently written as
 \begin{c++}
+phi_curvature.reinit(cell, reference_points);
 phi_normal.reinit(cell, reference_points);
 phi_force.reinit(cell, reference_points);
+
+phi_curvature.evaluate(curvature_values, EvaluationFlags::values);
 phi_normal.evaluate(normal_values, EvaluationFlags::values);
+
 for (unsigned int q = 0; q < n_points; ++q)
-   phi_force.submit_value(phi_curvature.get_value(q) *
-                          phi_normal.get_value(q) * JxW[q], q);
+  phi_force.submit_value(phi_curvature.get_value(q) *
+                         phi_normal.get_value(q) * JxW[q], q);
+                          
 phi_force.integrate(force_values, EvaluationFlags::values);
 \end{c++}
 The quadrature points (at reference positions
