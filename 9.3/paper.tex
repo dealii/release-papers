@@ -970,13 +970,13 @@ solution vector at arbitrary points (see also the
 
 The requirement to download, compile, and install \dealii{} and its dependencies from
 source is a major obstacle to many \dealii{} users.
-Compiling all dependencies from source can be difficult on operating systems for which
+Compiling all dependencies from source can be difficult but is a necessity on operating systems for which
 binary packages aren't available or on compute clusters and other machines
 without root privileges for the user to install system dependencies.
 
 The source based installation of \dealii{} and its many dependent libraries
 can be done with the \candi{} script tool for various
-Linux operating systems, within the Windows Subsystem Linux (WSL) and
+Linux operating systems, within the Windows Subsystem Linux (WSL), and
 on OS X (experimental).
 %
 The general assumption is that a C, C++ and Fortran compiler and suitable MPI-compilers
@@ -1000,8 +1000,8 @@ library (called a ``package'' in \candi{}), a list of libraries, or a complete t
 The toolchain installation is the default behavior and the default configuration
 ensures that most of the \dealii{} step tutorials can be used directly.
 The package installation mode is also useful to generate docker containers.
-In toolchain mode, \candi{} checks for and deals appropriately with
-dependencies between libraries.
+In toolchain mode, \candi{} checks for and deals with
+dependencies between libraries appropriately.
 
 Each package for a library is defined by variables for its name and version,
 a (remote or local) download location,
