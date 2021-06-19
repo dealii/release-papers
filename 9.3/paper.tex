@@ -1140,7 +1140,17 @@ user-contributed programs that often solve more complicated problems
 than tutorial programs, and intended as starting points for further
 research rather than as teaching tools):
 \begin{itemize}
-  \item preCICE: \todo[inline]{TODO}
+\item ``\texttt{Laplace equation coupled to an external simulation program}'' was
+  contributed by David Schneider and Benjamin Uekermann at Technical University
+  of Munich. It shows by extending \texttt{step-4}---a time-dependent Poisson
+  problem~---how to surface-couple a \dealii application with a simple external 
+  application, using the \texttt{preCICE} 
+  library~\cite{bungartz2016precice, lindner2020exafsa}. \texttt{preCICE},
+  however, also allows to couple \dealii to actual external simulation softwares, 
+  such as OpenFOAM, SU2, CalculiX, or FEniCS, using provided adapter classes. 
+  For more details visit their webpage
+  \url{https://precice.org/} and check out the numerous \dealii tutorials there,
+  showing, i.a., interesting fluid-structure interaction application cases.
 \end{itemize}
 
 
