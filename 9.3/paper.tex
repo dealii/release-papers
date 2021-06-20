@@ -258,8 +258,8 @@ that we briefly outline in the remainder of this section:
   element \texttt{FE\_RaviartThomas<3>} was resolved. This issue
   prevented the user from using this class on meshes with cells that
   do not have standard orientation, i.e., cells that have faces that
-  are flipped and rotated relative to their neighbors. In all eight
-  possible neighboring configurations we can now guarantee that the
+  are reflected and/or rotated relative to their neighbors. In all eight
+  possible neighboring configurations, we can now guarantee that the
   necessary $H(\mathrm{div})$-conformity condition is met for all
   polynomaial orders. This is verified through a new conformity test
   on non-standard meshes.
