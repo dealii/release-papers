@@ -734,7 +734,10 @@ for particles that moved farther than one cell width between particle sorting
 operations, and support for updating ghost particles (particles that live in
 ghost cells around the local domain) by updating their properties instead of
 destroying and rebuilding their container. The latter step improves the
-efficiency of ghost particle exchange significantly.
+efficiency of ghost particle exchange significantly. With this feature,
+\dealii can be used to generate scalable parallel code for Lagrangian
+models such as the Discrete Element Method (DEM) \cite{golshan2021lethedem}
+or Molecular Dynamics.
 
 Finally, the \texttt{Particles::DataOut} class now supports writing particle
 properties as vectors or tensors instead of a collection of scalars if the properties are
@@ -1347,6 +1350,8 @@ University of California -- Davis.
 W.~Bangerth was also partially supported by award OAC-1835673 as part of the Cyberinfrastructure for Sustained Scientific Innovation (CSSI)
 program, DMS-1821210,
 and EAR-1925595.
+
+B.~Blais was partially supported by the National Science and Engineering Research Council of Canada (NSERC)  through the RGPIN-2020-04510 Discovery Grant
 
 T.~Heister and J.~Zhang were also partially supported by NSF OAC-2015848.
 
