@@ -697,13 +697,14 @@ the mesh consists exclusively of pyramids or wedges. As a consequence, some func
 
 Geometric information about cells and faces -- previously provided by
 the \texttt{GeometryInfo} class for hypercube-type cells -- is now
-available via the  \texttt{ReferenceCell} class that can be
-instantiated for each of the seven possible reference cell. The
-correct reference cell object for a cell or face can be obtained, respectively, using
-\texttt{cell->reference\_cell()}, and either the call
-\texttt{cell->reference\_cell().face\_reference\_cell(f)}
+available via the \texttt{ReferenceCell} class that is defined
+for each of the seven possible reference cells. The correct
+\texttt{ReferenceCell} for a cell or face can be obtained,
+respectively, using
+\texttt{cell->reference\_cell()}, and either
+\texttt{cell->face(f)->reference\_cell()}
 or
-\texttt{cell->face(f)->reference\_cell()}.
+\texttt{cell->reference\_cell().face\_reference\_cell(f)}.
 
 Furthermore, many functions in \dealii{} used mappings that, when not
 given explicitly, defaulted to (bi-/tri-)linear ones. These no longer
