@@ -911,8 +911,8 @@ other processes and in certain cases node-local
 communication can be skipped. To prevent race conditions, \texttt{MatrixFree} uses local
 barriers at the beginning and the end of loops (\texttt{loop()}, \texttt{cell\_loop()}, \texttt{loop\_cell\_centric()}).
 
-The new \texttt{step-76} tutorial program illustrates this latter case
-in the context of the solution of the Euler equations. \texttt{step-76} reaches a
+The new \texttt{step-76} tutorial program illustrates this case
+in the context of the solution of the Euler equations. It reaches a
 speed-up of 27\% compared to the
 original version, \texttt{step-67}, by using the new feature.
 For more details and the usage of the feature in the library \texttt{hyper.deal}, see \citep{munch2020hyperdeal}.
@@ -939,12 +939,12 @@ and tensor product mappings (\texttt{MappingQGeneric} and derived classes),
 the new approach is also very fast, as it can use some of the matrix-free
 infrastructure and vectorization facilities.
 
-To give an example of the new features, let us consider the evaluation of a
+As an example, let us consider the evaluation of a
 surface tension force in the context of sharp-interface methods, whose
 contribution is added to a fluid solver by multiplication with test function
 and addition over quadrature points located at the interface section
-$\Gamma_K=\Gamma \cup K$ located on the current cell $K$ and that is,
-in general, located differently within $K$ than for any other cell:
+$\Gamma_K=\Gamma \cup K$ of the current cell $K$ and that is,
+in general, positioned differently within $K$ than for any other cell:
 \begin{align*}
 \left(\mathbf{v}, \kappa \, \mathbf{n}\right)_\Gamma
 \approx
@@ -1189,15 +1189,15 @@ research rather than as teaching tools):
 \begin{itemize}
 \item ``\texttt{Laplace equation coupled to an external simulation program}'' was
   contributed by David Schneider and Benjamin Uekermann at Technical University
-  of Munich. It shows by extending \texttt{step-4}---a time-dependent Poisson
-  problem~---how to surface-couple a \dealii application with a simple external 
+  of Munich. It extends \texttt{step-4} to a time-dependent Poisson
+  problem and couples it with a simple external surface-based
   application, using the \texttt{preCICE} 
   library~\cite{bungartz2016precice, lindner2020exafsa}. \texttt{preCICE},
-  however, also allows to couple \dealii to actual external simulation softwares, 
-  such as OpenFOAM, SU2, CalculiX, or FEniCS, using provided adapter classes. 
-  For more details visit their webpage
-  \url{https://precice.org/} and check out the numerous \dealii tutorials there,
-  showing, i.a., interesting fluid-structure interaction application cases.
+  also allows to couple \dealii to external simulation packages, 
+  such as OpenFOAM, SU2, CalculiX, or FEniCS, using adapter classes. 
+  The webpage
+  \url{https://precice.org/} provides several more \dealii{}-based tutorials,
+  including interesting fluid-structure interaction applications.
 \end{itemize}
 
 
