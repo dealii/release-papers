@@ -146,10 +146,10 @@ cross/.default={2pt}}
   {\texttt{maier@math.tamu.edu}}}
 
 \author[9,12]{Peter Munch}
- \affil[12]{Institute of Materials Research, Materials Mechanics,
- Helmholtz-Zentrum Geesthacht,
+ \affil[12]{Institute of Material Systems Modeling,
+ Helmholtz-Zentrum Hereon,
  Max-Planck-Str. 1, 21502 Geesthacht, Germany.
-   {\texttt{peter.muench@hzg.de}}}
+   {\texttt{peter.muench@hereon.de}}}
 
 
 \author[13]{Jean-Paul~Pelteret}
@@ -159,8 +159,10 @@ cross/.default={2pt}}
 \author[9]{Sebastian~Proell}
 
 \author[14]{Konrad Simon}
-  \affil[14]{Department of Mathematics/Center for Earth System Research and Sustainability (CEN),
-  University of Hamburg, Grindelberg 5, 20144 Hamburg, Germany}
+  \affil[14]{Department of Mathematics/Center
+  for Earth System Research and Sustainability (CEN), University of
+  Hamburg, Grindelberg 5, 20144 Hamburg, Germany.
+  \texttt{konrad.simon@uni-hamburg.de}}
 
 \author[1*]{Bruno~Turcksin}
 
@@ -246,10 +248,21 @@ that we briefly outline in the remainder of this section:
   the \texttt{DEAL\_II\_\allowbreak DEPRECATED\_EARLY} macro, which indicates that a feature will be
   deprecated in the next release. In contrast to the first macro, it will only give
   warnings if \dealii{} has been configured with \texttt{-D DEAL\_II\_EARLY\_DEPRECATIONS=ON}.
+
   \item After each update of the master branch of \dealii{}, we build a new Docker image
   with all features enabled. It is
   accessible on \texttt{Docker Hub} via \texttt{dealii/dealii:master-focal}. This image is
   particular useful when used in the continuous-integration processes of user codes.
+
+  \item A long standing orientation issue for the vector valued finite
+  element \texttt{FE\_RaviartThomas<3>} was resolved. This issue
+  prevented the user from using this class on meshes with cells that
+  do not have standard orientation, i.e., cells that have faces that
+  are reflected and/or rotated relative to their neighbors. In all eight
+  possible neighboring configurations, we can now guarantee that the
+  necessary $H(\mathrm{div})$-conformity condition is met for all
+  polynomaial orders. This is verified through a new conformity test
+  on non-standard meshes.
 \end{itemize}
 %
 The changelog lists more than 200 other features and bugfixes.
@@ -734,7 +747,10 @@ for particles that moved farther than one cell width between particle sorting
 operations, and support for updating ghost particles (particles that live in
 ghost cells around the local domain) by updating their properties instead of
 destroying and rebuilding their container. The latter step improves the
-efficiency of ghost particle exchange significantly.
+efficiency of ghost particle exchange significantly. With this feature,
+\dealii can be used to generate scalable parallel code for Lagrangian
+models such as the Discrete Element Method (DEM) \cite{golshan2021lethedem}
+or Molecular Dynamics.
 
 Finally, the \texttt{Particles::DataOut} class now supports writing particle
 properties as vectors or tensors instead of a collection of scalars if the properties are
@@ -935,12 +951,17 @@ in general, located differently within $K$ than for any other cell:
 \end{align*}
 In \dealii{}, this can now be conveniently written as
 \begin{c++}
+phi_curvature.reinit(cell, reference_points);
 phi_normal.reinit(cell, reference_points);
 phi_force.reinit(cell, reference_points);
+
+phi_curvature.evaluate(curvature_values, EvaluationFlags::values);
 phi_normal.evaluate(normal_values, EvaluationFlags::values);
+
 for (unsigned int q = 0; q < n_points; ++q)
-   phi_force.submit_value(phi_curvature.get_value(q) *
-                          phi_normal.get_value(q) * JxW[q], q);
+  phi_force.submit_value(phi_curvature.get_value(q) *
+                         phi_normal.get_value(q) * JxW[q], q);
+                          
 phi_force.integrate(force_values, EvaluationFlags::values);
 \end{c++}
 The quadrature points (at reference positions
@@ -1352,6 +1373,8 @@ University of California -- Davis.
 W.~Bangerth was also partially supported by award OAC-1835673 as part of the Cyberinfrastructure for Sustained Scientific Innovation (CSSI)
 program, DMS-1821210,
 and EAR-1925595.
+
+B.~Blais was partially supported by the National Science and Engineering Research Council of Canada (NSERC)  through the RGPIN-2020-04510 Discovery Grant
 
 T.~Heister and J.~Zhang were also partially supported by NSF OAC-2015848.
 
