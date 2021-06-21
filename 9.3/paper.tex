@@ -644,7 +644,7 @@ freedom on the mesh:
 DoFHandler<dim> dof_handler(tria);
 
 for (const auto &cell : dof_handler.active_cell_iterators())
-  switch(cell->reference_cell_type())
+  switch (cell->reference_cell_type())
     {
       case ReferenceCell::Type::Tri:  cell->set_active_fe_index(0); break;
       case ReferenceCell::Type::Quad: cell->set_active_fe_index(1); break;
@@ -666,16 +666,16 @@ relevant classes, e.g., \texttt{TriaAccessor} or \texttt{TriaCellAccessor},
 with useful new functions like \texttt{n\_vertices()}, \texttt{n\_lines()}, or
 \texttt{n\_faces()} so that users can simply write:
 \begin{c++}
-for(const auto & cell : tria.active_cell_iterators())
-  for(unsigned int f = 0; f < cell->n_faces(); ++f)
+for (const auto &cell : tria.active_cell_iterators())
+  for (unsigned int f = 0; f < cell->n_faces(); ++f)
     // do something with cell->face(f);
 \end{c++}
 Alternatively, one can use an iterator-based approach to loop over all faces
 of a cell, introduced in the previous release. The relevant functions have been adjusted to be able to deal with
 the now variable number of faces per cell:
 \begin{c++}
-for(const auto & cell : tria.active_cell_iterators())
-  for(const auto & face : cell->face_iterators())
+for (const auto &cell : tria.active_cell_iterators())
+  for (const auto &face : cell->face_iterators())
     // do something with face
 \end{c++}
 Furthermore, for mixed meshes, the number of degrees of freedom will differ between cells so that
@@ -683,7 +683,7 @@ cell-local arrays need to be resized for each
 cell (as has previously already been the case in the $hp$-context):
 \begin{c++}
 std::vector<double> local_rhs;
-for(const auto & cell : tria.active_cell_iterators())
+for (const auto &cell : tria.active_cell_iterators())
  {
    hp_fe_values.reinit(cell);
    local_rhs.resize(cell->get_fe().n_dofs_per_cell());
