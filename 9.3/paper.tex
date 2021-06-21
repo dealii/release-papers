@@ -683,7 +683,7 @@ cell-local arrays need to be resized for each
 cell (as has previously already been the case in the $hp$-context):
 \begin{c++}
 std::vector<double> local_rhs;
-for (const auto &cell : tria.active_cell_iterators())
+for (const auto &cell : dof_handler.active_cell_iterators())
  {
    hp_fe_values.reinit(cell);
    local_rhs.resize(cell->get_fe().n_dofs_per_cell());
