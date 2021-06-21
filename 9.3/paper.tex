@@ -987,13 +987,24 @@ solution vector at arbitrary points (see also the
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Simplied implementation for face integrals}
+\subsection{Simplified implementation for face integrals}
 \label{subsec:feinterfacevalues}
-Discontinuous Galerkin (DG) methods require evaluations of averages and jumps accross cell faces, therefore we need to compute values of the shape functions and solutions from two adjacent cells. The \texttt{FEInterfaceValues} class is designed to provide an interface to directly obtain jumps and averages. When used with \texttt{MeshWorker::mesh\_loop()}, we can assemble face integrals in a uniform way independent of mesh types, which significantly simplifies the implementation. 
+Discontinuous Galerkin (DG) methods -- and other methods with penalty
+terms defined on faces -- require the evaluation of averages and jumps
+accross cell faces, involving values and derivatives of the shape
+functions and solutions from two adjacent cells. The
+\texttt{FEInterfaceValues} class, first introduced in \dealii{} 9.2,
+is designed to provide the necessary interface.
 
-Internally, this class provides an abstraction for two \texttt{FEFaceValues} objects (or \texttt{FESubfaceValues} when using adaptive refinement). The class introduces new interface degrees of freedom indices that are the union of the degrees of freedom indices of the two \texttt{FEFaceValues} objects. The interface degrees of freedom indices can be converted to the corresponding local degrees of freedom indices of the two cells using a helper function. Furthermore, this class supports vector-valued problems in a similar way as \texttt{FEFaceValues} does. We can easily obtain the corresponding scalar or vector values by providing an \texttt{FEValuesExtractors} object. Overall, this class is intended to be a low level replacement for \texttt{MeshWorker} and \texttt{LocalIntegrators}, and a higher level abstraction compared to assembling face terms manually. 
-
-Examples of \texttt{FEInterfaceValues} for scalar problems can be found in \texttt{step-12}, \texttt{step-47}, \texttt{step-50}, and the new tutorial \texttt{step-74}. Examples of vector-valued problems will be added in the future. 
+Internally, this class provides an abstraction for two
+\texttt{FEFaceValues} objects (or \texttt{FESubfaceValues} when using
+adaptive refinement). The class introduces new interface degrees of
+freedom indices that are the union of the degrees of freedom indices
+of the two \texttt{FEFaceValues} objects. The interface degrees of
+freedom indices can be converted to the corresponding local degrees of
+freedom indices of the two cells using a helper function. New in the
+current release is better support for vector-valued problems: scalar
+or vector components of shape functions can now be extracted by providing an \texttt{FEValuesExtractors} object.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1123,8 +1134,8 @@ framework in parallel. The PDE considered is the Gelfand problem $-\triangle u =
 
 \item \texttt{step-74} implements the symmetric interior penalty Galerkin 
 (SIPG) method for Poisson's equation using the \texttt{FEInterfaceValues} class
-in combination with \texttt{MeshWorker::mesh\_loop()}. This tutorial demonstrates a
-simple and mesh-independent way to assemble face integrals.
+within the \texttt{MeshWorker::mesh\_loop()} framework. This tutorial demonstrates a
+simple to assemble face integrals.
 
   
 \item \texttt{step-75} demonstrates a state-of-the-art way of solving a simple
