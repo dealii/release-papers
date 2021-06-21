@@ -800,7 +800,7 @@ hanging nodes within each level and general require more computational
 work per iteration overall.
 
 The transfer operators between two levels have been implemented in the new class \texttt{MGTwoLevel\allowbreak Transfer}, which can be set up via the functions \texttt{MGTwoLevel\allowbreak Transfer::\allowbreak reinit\_\allowbreak geometric\_\allowbreak transfer()} or \texttt{MGTwo\allowbreak LevelTransfer::\allowbreak reinit\_\allowbreak polynomial\_\allowbreak transfer()} for given
-\texttt{DoFHandler} and \texttt{AffineConstraint} objects
+\texttt{DoFHandler} and \texttt{AffineConstraints} objects
 corresponding to the two levels. The resulting transfer operators
 can then be collected in a single
 \texttt{MGTransfer\allowbreak GlobalCoarsening} object that can be used just as the previous workhorse \texttt{MGTransferMatrixFree} within the \texttt{Multigrid}
@@ -991,7 +991,7 @@ solution vector at arbitrary points (see also the
 \label{subsec:feinterfacevalues}
 Discontinuous Galerkin (DG) methods -- and other methods with penalty
 terms defined on faces -- require the evaluation of averages and jumps
-accross cell faces, involving values and derivatives of the shape
+across cell faces, involving values and derivatives of the shape
 functions and solutions from two adjacent cells. The
 \texttt{FEInterfaceValues} class, first introduced in \dealii{} 9.2,
 is designed to provide the necessary interface.
