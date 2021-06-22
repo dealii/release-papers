@@ -748,7 +748,7 @@ Additionally, the particle infrastructure now supports a faster search algorithm
 for particles that moved farther than one cell width between particle sorting
 operations, and support for updating ghost particles (particles that live in
 ghost cells around the local domain) by updating their properties instead of
-destroying and rebuilding their container. The latter step improves the
+destroying and rebuilding their container has been added. The latter step improves the
 efficiency of ghost particle exchange significantly. With this feature,
 \dealii can be used for scalable parallel Lagrangian
 models such as the Discrete Element Method (DEM) \cite{golshan2021lethedem}
@@ -797,7 +797,7 @@ and discontinuous elements as a further way to create multigrid levels.
 These new multigrid variants promise fewer solver
 iterations and better parallel scalability than the existing local
 smoothing algorithms, but have to deal with
-hanging nodes within each level and general require more computational
+hanging nodes within each level and generally require more computational
 work per iteration overall.
 
 The transfer operators between two levels have been implemented in the new class \texttt{MGTwoLevel\allowbreak Transfer}, which can be set up via the functions \texttt{MGTwoLevel\allowbreak Transfer::\allowbreak reinit\_\allowbreak geometric\_\allowbreak transfer()} or \texttt{MGTwo\allowbreak LevelTransfer::\allowbreak reinit\_\allowbreak polynomial\_\allowbreak transfer()} for given
@@ -809,8 +809,8 @@ algorithm.
 %Several common operations are encoded in utility
 %functions in the \texttt{MGTransferGlobalCoarseningTools}
 %namespace.
-To facilitate the construction of matrix diagonals with matrix-free methods as well as a matrix representation of the coarse level matrix, new utility functions \texttt{create\_diagonal()} and \texttt{create\_matrix()} from
-the \texttt{MatrixFreeTools} namespace have been added (see also Subsection~\ref{subsec:mf}).
+To facilitate the construction of matrix diagonals with matrix-free methods as well as a matrix representation of the coarse level matrix, new utility functions \texttt{create\_diagonal()} and \texttt{create\_matrix()} have been added to
+the \texttt{MatrixFreeTools} namespace (see also Subsection~\ref{subsec:mf}).
 
 The usage of the new transfer operators (and of some of the utility
 functions) in the context of a hybrid multigrid algorithm
@@ -849,9 +849,9 @@ polynomial degree/quadrature combinations ($k\le 6$ and $q\in\{ k+1,
 k+2, \left\lfloor (3k)/2 \right\rfloor \}$) -- efficient precompiled implementations and default to non-templated
 evaluation kernels otherwise (see also \texttt{FEEvaluation::fast\_evaluation\_\allowbreak supported()}).
 
-In the case that even higher polynomial degrees are needed, one can precompile the
+In the case that even higher polynomial degrees are needed (e.g., $k\le 12$), one can precompile the
 relevant internal classes
-(\texttt{FEEvaluationFactory}, \texttt{FEFaceEvaluationFactory}, \texttt{CellwiseInverseMassFactory}) in the user code for needed \texttt{degree}s
+(\texttt{FEEvaluationFactory}, \texttt{FEFaceEvaluationFactory}, \texttt{CellwiseInverse\allowbreak MassFactory}) in the user code for needed \texttt{degree}s
 and \texttt{VectorizedArrayType}s in the following way:
 \begin{c++}
 #define FE_EVAL_FACTORY_DEGREE_MAX 12
@@ -1101,7 +1101,7 @@ ways as part of this release. In addition, there are a number of new tutorial pr
   charged particles and an electric field, using a cathode tube as an
   example.
 
-\item \texttt{step-66} shows how to solve a nonlinear problem using Newton's method in the matrix-free
+\item \texttt{step-66}, a program written by Fabian Castelli at Karlsruhe Institute of Technology, shows how to solve a nonlinear problem using Newton's method in the matrix-free
 framework in parallel. The PDE considered is the Gelfand problem $-\triangle u = \exp(u)$.
   
 \item \texttt{step-68} is a demonstration of how to embed and distribute
@@ -1136,14 +1136,14 @@ framework in parallel. The PDE considered is the Gelfand problem $-\triangle u =
 \item \texttt{step-74} implements the symmetric interior penalty Galerkin 
 (SIPG) method for Poisson's equation using the \texttt{FEInterfaceValues} class
 within the \texttt{MeshWorker::mesh\_loop()} framework. This tutorial demonstrates a
-simple to assemble face integrals.
+simple way to assemble face integrals.
 
   
 \item \texttt{step-75} demonstrates a state-of-the-art way of solving a simple
       Laplace problem using $hp$-adaptation and hybrid multigrid methods on machines
       with distributed memory. This tutorial points out particularities in porting
       serial $hp$-adaptive code for parallelization. Furthermore, it guides through
-      the process of writing an efficient preconditioner for $hp$-adaptive applications.
+      the process of writing an efficient matrix-free preconditioner for $hp$-adaptive applications.
 
 \item \texttt{step-76} is an explicit time integrator for the
       compressible Euler equations discretized with a high-order discontinuous
@@ -1340,6 +1340,7 @@ Marcus Calhoun-Lopez,
 Fabian Castelli, %He provided major contributions to candi for v9.3
 Praveen Chandrashekar,
 Conrad Clevenger,
+Fabian Castelli,
 David F. Castellanos,
 Andrew Davis,
 Elias Dejene,
@@ -1376,6 +1377,7 @@ Dominic Soldner,
 Simon Sticko,
 Malhar Tidke,
 Ignacio Tomas,
+Benjamin Uekermann,
 Peter Westerbaan.
 
 Their contributions are much appreciated!
