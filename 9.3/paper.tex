@@ -596,8 +596,8 @@ pure simplex mesh with the function
 
 \subsubsection{Using simplex meshes}
 
-After having created a triangulation, one can proceed in the same way
-as for hypercube meshes. In particular, one selects an appropriate finite element, mapping, and
+After creating a triangulation, one can proceed in the same way as for hypercube
+meshes. In particular, one selects an appropriate finite element, mapping, and
 quadrature class as follows:
 
 \begin{c++}
@@ -610,7 +610,7 @@ dof_handler.distribute_dofs(fe);
 
 FEValues<dim, spacedim> fe_values(mapping, fe, quad, flags);
 \end{c++}
-The  list of currently supported finite-element classes is provided in Table~\ref{tab:simplex:fe}. Currently,
+The list of currently supported finite element classes is provided in Table~\ref{tab:simplex:fe}. Currently,
 only linear and quadratic mappings via the \texttt{MappingFE} and
 \texttt{MappingFEField} classes built around the listed nodal elements are available.
 %\todo[inline]{I don't understand the previous sentence. "linear" means
@@ -622,7 +622,7 @@ available.
 
 \subsubsection{Using mixed meshes}
 For mixed meshes, concepts known from the $hp$-context have been applied:
- different finite-element classes are assigned to different cells
+ different finite element classes are assigned to different cells
  based on their respective kind of reference cell. In the
 case of a 2D mixed mesh, which can only consist of triangles and
 quadrilaterals, the finite element defined on a triangle (e.g., \texttt{FE\_SimplexP})
@@ -972,8 +972,8 @@ for example, come from
 a mesh of lower dimension. Determining to which \texttt{cell} a quadrature
 point belongs to on the background mesh, including the reference cell
 coordinates \texttt{reference\_\allowbreak points}, is aided by functions like
-\texttt{find\_active\_cell\_around\_point()}
-\texttt{find\_all\_active\_cells\_\allowbreak around\_\allowbreak point()} from the \texttt{GridTools} namespace. While these
+\texttt{find\_active\_cell\_around\_point()} and
+\texttt{find\_all\_active\_\allowbreak cells\_\allowbreak around\_\allowbreak point()} from the \texttt{GridTools} namespace. While these
 functions have been available in \dealii{} previously, their performance has
 been considerably enhanced with the aforementioned more optimized code paths
 for selected mappings.
