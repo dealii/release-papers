@@ -255,7 +255,7 @@ that we briefly outline in the remainder of this section:
   accessible on \texttt{Docker Hub} via \texttt{dealii/dealii:master-focal}. This image is
   particular useful when used in the continuous-integration processes of user codes.
 
-  \item A long standing orientation issue for the vector valued finite
+  \item A long-standing orientation issue for the vector valued finite
   element \texttt{FE\_RaviartThomas<3>} was resolved. This issue
   prevented the user from using this class on meshes with cells that
   do not have standard orientation, i.e., cells that have faces that
@@ -264,6 +264,9 @@ that we briefly outline in the remainder of this section:
   necessary $H(\mathrm{div})$-conformity condition is met for all
   polynomial orders. This is verified through a new conformity test
   on non-standard meshes.
+
+  \item \dealii{} now requires compilers to support the C++14 standard
+    \cite{cpp14}.
 \end{itemize}
 %
 The changelog lists more than 200 other features and bugfixes.
