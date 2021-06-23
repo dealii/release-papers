@@ -606,12 +606,12 @@ quadrature class as follows:
 \begin{c++}
 FE_SimplexP<dim, spacedim> fe(degree);
 MappingFE<dim, spacedim> mapping(FE_SimplexP<dim, spacedim>(1));
-QGaussSimplex<dim> quad(degree + 1);
+QGaussSimplex<dim> quadrature(degree + 1);
 
-DoFHandler<dim> dof_handler(tria);
+DoFHandler<dim, spacedim> dof_handler(tria);
 dof_handler.distribute_dofs(fe);
 
-FEValues<dim, spacedim> fe_values(mapping, fe, quad, flags);
+FEValues<dim, spacedim> fe_values(mapping, fe, quadrature, flags);
 \end{c++}
 The list of currently supported finite element classes is provided in Table~\ref{tab:simplex:fe}. Currently,
 only linear and quadratic mappings via the \texttt{MappingFE} and
@@ -685,11 +685,12 @@ Furthermore, for mixed meshes, the number of degrees of freedom will differ betw
 cell-local arrays need to be resized for each
 cell (as has previously already been the case in the $hp$-context):
 \begin{c++}
-std::vector<double> local_rhs;
+Vector<double> local_rhs;
 for (const auto &cell : dof_handler.active_cell_iterators())
  {
    hp_fe_values.reinit(cell);
    local_rhs.resize(cell->get_fe().n_dofs_per_cell());
+   // ...
  }
 \end{c++}
 
