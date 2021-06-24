@@ -306,9 +306,9 @@ or hexahedral meshes.
 Support for simplex and mixed meshes is not universal in \dealii{} at
 this point. While \dealii{} can read such meshes, write output for
 them, and solve partial differential equations with certain finite
-elements, there are also many areas that have not been fully converted
+elements, there are also many areas that have not been fully adapted
 to the new functionality. In particular, \dealii{} currently only
-offers low-order finite elements on such meshes, and many tool
+offers low-order finite elements on such meshes, and many utility
 functions might throw exceptions when used with such meshes.
 
 
@@ -569,10 +569,10 @@ the \texttt{DoFHandler} class have undergone large changes and now
 support meshes composed of all of the cells shown in Fig.~\ref{fig:simplex}.
 
 The template parameters of the internal data structures of \texttt{Triangulation}
-have been removed and the type of each cell and of each face (only in 3D) is stored. The function
+have been removed and the type of each cell and of each face (in 3D) is stored. The function
 \texttt{Triangulation::create\_\allowbreak triangulation()}, which converts a given list of
 cells and vertices to the internal data structures, has been rewritten
-inspired by \citep{logg2012} and this has had the side effect of a speed-up of up to 5. Minor adjustments
+inspired by \citep{logg2012} and this has had the side effect of a speed-up of up to a factor of 5. Minor adjustments
 have also been made to the \texttt{parallel::shared::Triangulation}
 and \texttt{parallel::\allowbreak fullydistributed::\allowbreak
   Triangulation} classes such that
@@ -629,7 +629,7 @@ For mixed meshes, concepts known from the $hp$-context have been applied:
  based on their respective kind of reference cell. In the
 case of a 2D mixed mesh, which can only consist of triangles and
 quadrilaterals, the finite element defined on a triangle (e.g., \texttt{FE\_SimplexP})
-and on a quadrilateral (e.g., \texttt{FE\_Q}) can be collected in a \texttt{hp::FECollection}:
+and on a quadrilateral (e.g., \texttt{FE\_Q}) can be collected in a \texttt{hp::FECollection} as follows:
 
 \begin{c++}
 hp::FECollection<dim, spacedim> fe
@@ -662,9 +662,9 @@ dof_handler.distribute_dofs(fe);
 
 The introduction of simplex and mixed meshes leads to some implications
 for the user if these features are to be used. For instance, each cell might have a different type with
-different number of vertices, lines, and faces so that these quantities can not be
-compile-time constants anymore. This information used to be queried from
-the \texttt{GeometryInfo} class. To avoid using this class, we have extended
+different number of vertices, lines, and faces so that these quantities can no longer be 
+compile-time constants. This information used to be queried from
+the \texttt{GeometryInfo} class. Instead, we have extended
 relevant classes, e.g., \texttt{TriaAccessor} or \texttt{TriaCellAccessor},
 with useful new functions like \texttt{n\_vertices()}, \texttt{n\_lines()}, or
 \texttt{n\_faces()} so that users can simply write:
@@ -712,7 +712,7 @@ or
 
 Furthermore, many functions in \dealii{} used mappings that, when not
 given explicitly, defaulted to (bi-/tri-)linear ones. These no longer
-work for simplex or mixed meshes, and in these cases users will need
+work for simplex or mixed meshes, so users will need
 to explicitly provide the correct mapping for the mesh to be used.
 
 
@@ -912,8 +912,8 @@ Shared memory storage is also used in the \texttt{MatrixFree} and
 \texttt{MatrixFree::create\_dof\_vector()} creates vectors that share
 information among all processes on one node. As a consequence, the
 \texttt{FEEvaluation} classes can access vector elements owned by
-other processes and in certain cases node-local
-communication can be skipped. To prevent race conditions, \texttt{MatrixFree} uses local
+other processes and node-local
+communication can be skipped in certain cases. To prevent race conditions, \texttt{MatrixFree} uses local
 barriers at the beginning and the end of loops (\texttt{loop()}, \texttt{cell\_loop()}, \texttt{loop\_cell\_centric()}).
 
 The new \texttt{step-76} tutorial program illustrates this case
@@ -929,7 +929,7 @@ For more details and the usage of the feature in the library \texttt{hyper.deal}
 \label{subsec:fepointvalues}
 
 In a number of circumstances, finite element solutions need to be evaluated at
-arbitrary reference points that change from one element to next. Two important
+arbitrary reference points that change from one element to the next. Two important
 examples are particle simulations coupled to a finite element solution, or
 algorithms on non-matching grids. The existing \texttt{FEValues} class is a poor
 fit for this task, as it is based on the assumption that evaluation of
@@ -1011,6 +1011,7 @@ freedom indices of the two cells using a helper function. New in the
 current release is better support for vector-valued problems: scalar
 or vector components of shape functions can now be extracted by providing an \texttt{FEValuesExtractors} object.
 
+See \texttt{step-12}, \texttt{step-47}, \texttt{step-50}, and \texttt{step-74} for more details.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The source-based toolchain installer \candi{}}
@@ -1226,6 +1227,9 @@ may have been more widely used:
         no longer require them. If you rely on these template arguments, an interim
         namespace \texttt{Legacy} has been introduced that provides all affected
         classes with the old interface for a transition period.
+  \item \texttt{GridTools::find\_active\_cell\_around\_point()} no longer throws an exception when no cell if found, but returns an invalid iterator.
+  User codes previously catching an exception will need to be changed.
+
 \end{itemize}
 
 
