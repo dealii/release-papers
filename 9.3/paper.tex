@@ -1001,6 +1001,26 @@ functions and solutions from two adjacent cells. The
 \texttt{FEInterfaceValues} class, first introduced in \dealii{} 9.2,
 is designed to provide the necessary interface.
 
+\newcommand{\jump}[1]{\left[\!\left[ #1 \right]\!\right]}
+\newcommand{\average}[1]{\left\{\!\left\{ #1 \right\}\!\right\}}
+For example, the interface terms of the SIPG formulation for a Laplace problem 
+\[
+\sum_{F} -
+    \left< \jump{v_h}, \average{ \nabla u_h} \cdot  \mathbf n \right>_F
+   -\left<\average{ \nabla v_h }\cdot \mathbf n,\jump{u_h}\right>_F
+   +\left<\jump{v_h}, \sigma \jump{u_h} \right>_F
+\]
+with face jump $\jump{\cdot}$ and average $\average{\cdot}$
+can be implemented as (also see \texttt{step-74}):
+\begin{c++}
+  cell_matrix(i, j) +=
+  (- fe_iv.jump(i, q) * (fe_iv.average_gradient(j, q) * n)
+   - (fe_iv.average_gradient(i, q) * n) * fe_iv.jump(j, q)
+   + penalty * fe_iv.jump(i, q) * fe_iv.jump(j, q)  
+  ) * JxW[q];
+\end{c++}
+
+
 Internally, this class provides an abstraction for two
 \texttt{FEFaceValues} objects (or \texttt{FESubfaceValues} when using
 adaptive refinement). The class introduces new interface degrees of
