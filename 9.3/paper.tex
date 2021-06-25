@@ -1014,10 +1014,10 @@ with face jump $\jump{\cdot}$ and average $\average{\cdot}$
 can be implemented as (also see \texttt{step-74}):
 \begin{c++}
   cell_matrix(i, j) +=
-  (- fe_iv.jump(i, q) * (fe_iv.average_gradient(j, q) * n)
-   - (fe_iv.average_gradient(i, q) * n) * fe_iv.jump(j, q)
-   + penalty * fe_iv.jump(i, q) * fe_iv.jump(j, q)  
-  ) * JxW[q];
+    ( - fe_iv.jump(i, q) * (fe_iv.average_gradient(j, q) * n)
+      - (fe_iv.average_gradient(i, q) * n) * fe_iv.jump(j, q)
+      + penalty * fe_iv.jump(i, q) * fe_iv.jump(j, q)  
+    ) * JxW[q];
 \end{c++}
 
 
