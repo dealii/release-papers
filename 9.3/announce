@@ -26,7 +26,7 @@ The major changes of this release are:
   - Advances in the matrix-free infrastructure.
 
   - Usage of MPI-3.0 shared-memory features to reduce memory footprint.
-  
+
   - Improved support for evaluation and integration at arbitrary points.
 
   - More than 210 other new features, improvements, and bugfixes.
