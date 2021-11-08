@@ -529,7 +529,7 @@ on behalf of the deal.II developer team
       * (in the same directory) copy mathjax and fix includes:
 
       cp -r "$MATHJAX_ROOT" mathjax
-      sed -i -e "s#$MATHJAX_ROOT#mathjax# **/*.html
+      sed -i -e "s#$MATHJAX_ROOT#mathjax#" **/*.html
 
       * Grep the documentation for "full path leaks", for example grep for your
         user name and the git repository location and fix up all remaining
