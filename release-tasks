@@ -308,10 +308,13 @@ Best
      nevertheless: push protection + mandatory test + mandatory number of
      reviews, best between 2 and 3
 
-5/ Update the VERSION from 9.0.0-pre to 9.1.0-pre on master
+5/ Update the VERSION from 9.0.0-pre to 9.1.0-pre on
+  master. (Conservatively only increment the minor version even if the
+  plan is to later release a major update -- it is always possible to
+  convert 9.4 into 10.0 later, but one can't easily back down any more.)
 
   git checkout master
-  git commit -a -m "update VERSION"
+  git commit -a -m "Update VERSION."
 
   [ pull request for master branch ]
 
