@@ -38,7 +38,7 @@
   \newcommand*\fsize{\dimexpr\f@size pt\relax}%
   \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{684.71485517bp}%
+    \setlength{\unitlength}{685.42349496bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -50,23 +50,25 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,0.45602588)%
+  \begin{picture}(1,0.45555441)%
     \lineheight{1}%
     \setlength\tabcolsep{0pt}%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{repartitioning.pdf}}%
-    \put(0.88363077,0.05285442){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\tiny 0\end{tabular}}}}%
-    \put(0.91134681,0.05285442){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\tiny 1\end{tabular}}}}%
-    \put(0.9388259,0.05285442){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\tiny 2\end{tabular}}}}%
-    \put(0.96654194,0.05285442){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\tiny 3\end{tabular}}}}%
-    \put(0.86106546,0.05285442){\color[rgb]{0,0,0}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}\tiny{ranks:}\end{tabular}}}}%
+    \put(0.88271721,0.05279977){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\tiny 0\end{tabular}}}}%
+    \put(0.9104046,0.05279977){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\tiny 1\end{tabular}}}}%
+    \put(0.93785528,0.05279977){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\tiny 2\end{tabular}}}}%
+    \put(0.96554266,0.05279977){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\tiny 3\end{tabular}}}}%
+    \put(0.86017523,0.05279977){\color[rgb]{0,0,0}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}\tiny{ranks:}\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=2]{repartitioning.pdf}}%
-    \put(0.0907548,0.44492978){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\textit{old partitioning}\end{tabular}}}}%
-    \put(0.09075479,0.00303788){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\textit{new partitioning}\end{tabular}}}}%
+    \put(0.09066097,0.44446978){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\textit{old partitioning}\end{tabular}}}}%
+    \put(0.09066096,0.00303474){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\textit{new partitioning}\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=3]{repartitioning.pdf}}%
-    \put(0.36459141,0.44492978){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\textit{old rank "0"}\end{tabular}}}}%
-    \put(0.36459141,0.00303788){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\textit{old rank "1"}\end{tabular}}}}%
+    \put(0.36421447,0.44446978){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\textit{old rank "0"}\end{tabular}}}}%
+    \put(0.36421447,0.00303474){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\textit{old rank "1"}\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=4]{repartitioning.pdf}}%
-    \put(0.9133016,0.22778746){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\textit{new rank "0"}\end{tabular}}}}%
+    \put(0.91235736,0.22755196){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\textit{new rank "0"}\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=5]{repartitioning.pdf}}%
+    \put(0.40658635,0.2244243){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\textit{ghost cells}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=6]{repartitioning.pdf}}%
   \end{picture}%
 \endgroup%
