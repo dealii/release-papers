@@ -213,6 +213,11 @@ which we briefly outline in the remainder of this section:
   communication pattern in \texttt{Utilties::MPI::RemotePointEvaluation} can be set up efficiently. Furthermore, this function could be used in the future to allow
   particle simulations where particle movement is not
   limited by CFL conditions, as done in \cite{mirzadeh2016parallel}.
+  \item The new function
+  \texttt{GridGenerator::pipe\_junction}
+  generates a triangulation of three cone-shaped pipes that cross at a bifurcation point in any possible configuration.
+  A manifold description will be applied to the boundary, which can be extended into the volume via transfinite interpolation \cite{Gordon82} using the \texttt{TransfiniteInterpolationManifold} class \cite{dealII90}.
+  \todo[inline]{[MF] If desired, I can extend this part into its own section of the main chapter. With figures, this would probably occupy about 3/4 of a page.}
 \end{itemize}
 %
 The changelog lists more than 150 other features and bugfixes.
