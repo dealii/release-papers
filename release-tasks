@@ -111,7 +111,7 @@ Best
            sort |uniq
 
      Compare with the commit list:
-       git log --date=short --format="%an %aE" v8.5.0..HEAD | sort | uniq
+       git log --date=short --format="%an %aE" v8.5.0..HEAD | grep -v 'dependabot\[bot\]' | sort | uniq
 
 
 
