@@ -462,7 +462,8 @@ sent to the new owner. On the
 receiving side, the sets of all cells are combined and possible duplicates
 are removed. This information is enough to construct a new triangulation.
 For sending/receiving, we apply consensus-based algorithms~\cite{hoefler2010scalable}, which
-we introduced into the library in release 9.2~\cite{dealII92}. Consensus-based 
+we introduced into the library in release 9.2~\cite{dealII92} -- see
+also Section~\ref{sec:CA}. Consensus-based
 algorithms are used also in \cite{ibanez2016pumi} for repartitioning.
 
 In future releases, we plan to add support for repartitioning based on distributed graph
@@ -587,9 +588,12 @@ to \dealii in the future.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Improvements to unstructured communication}
+\label{sec:CA}
 
 \todo[inline]{Wolfgang to write something about the CA algorithms (and to give
 credit to the previous implementation by Peter).}
+
+Also reference Section~\ref{sec:repartitioning}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
