@@ -184,6 +184,7 @@ GNU Lesser General Public License (LGPL). Downloads are available at
 
 The major changes of this release are:
 %
+\todo[inline]{Update}
 \begin{itemize}
   \item Advances in simplex- and mixed-mesh support (see Section~\ref{sec:simplex});
   \item Repartitioning of distributed meshes (see Section~\ref{sec:repartitioning});
@@ -220,7 +221,10 @@ which we briefly outline in the remainder of this section:
   \texttt{GridGenerator::pipe\_junction}
   generates a triangulation of three cone-shaped pipes that cross at a bifurcation point in any possible configuration.
   A manifold description will be applied to the boundary, which can be extended into the volume via transfinite interpolation \cite{Gordon82} using the \texttt{TransfiniteInterpolationManifold} class \cite{dealII90}.
-  \todo[inline]{[MF] If desired, I can extend this part into its own section of the main chapter. With figures, this would probably occupy about 3/4 of a page.}
+  \todo[inline]{[MF] If desired, I can extend this part into its own
+    section of the main chapter. With figures, this would probably
+    occupy about 3/4 of a page.}
+  \item \todo[inline]{Add something about the FEInterfaceValues improvements.}
 \end{itemize}
 %
 The changelog lists more than 150 other features and bugfixes.
@@ -580,6 +584,14 @@ to \dealii in the future.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Integration with the Computational Geometry Algorithms
+  Library (CGAL)}\label{sec:cgal}
+
+\begin{itemize}
+\item new classes
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Performance improvement of particle infrastructure}\label{sec:particles}
 
 \begin{itemize}
@@ -594,7 +606,8 @@ to \dealii in the future.
 \label{sec:CA}
 
 \todo[inline]{Wolfgang to write something about the CA algorithms (and to give
-credit to the previous implementation by Peter).}
+credit to the previous implementation by Peter). Mention improvements
+to pack(), unpack(), broadcast() too.}
 
 Also reference Section~\ref{sec:repartitioning}.
 
