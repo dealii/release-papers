@@ -26,6 +26,9 @@
 
 \usepackage[normalem]{ulem}
 
+\usepackage{caption}
+\usepackage{subcaption}
+
 \usepackage{todonotes}
 
 \pgfplotsset{compat=1.9}
@@ -67,6 +70,7 @@ cross/.default={2pt}}
     Matthias Maier,
     Peter Munch,
     Jean-Paul Pelteret,
+    Simon Sticko,
     Bruno Turcksin,
     David Wells
   },
@@ -114,7 +118,7 @@ cross/.default={2pt}}
  \affil[7]{Department of Information Technology,
    Uppsala University,
    Box 337, 751\,05 Uppsala, Sweden.
-   {\texttt{martin.kronbichler@it.uu.se}}}
+   {\texttt{martin.kronbichler/simon.sticko@it.uu.se}}}
 
 \author[8]{Matthias~Maier}
 \affil[8]{Department of Mathematics,
@@ -133,6 +137,8 @@ cross/.default={2pt}}
 \author[10]{Jean-Paul~Pelteret}
 \affil[10]{Independent researcher.
 {\texttt{jppelteret@gmail.com}}}
+
+\author[7]{Simon~Sticko}
 
 \author[1*]{Bruno~Turcksin}
 
@@ -580,9 +586,67 @@ to \dealii in the future.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{CutFEM support}\label{sec:cut}
 
+Several classes have been added to the \texttt{NonMatching} namespace to enable the use of cut finite element methods, where the domain is immersed in the background mesh, as illustrated in Figure~\ref{fig:immersed-domain}.
+Many of the new classes assume that the domain, $\Omega$, is described by a level set function,
+$\psi : \mathbb{R}^d \to \mathbb{R}$, such that
+\begin{align}
+  \Omega = \{x \in \mathbb{R}^d : \psi(x)<0\},
+  \qquad
+  \Gamma = \partial \Omega = \{x \in \mathbb{R}^d : \psi(x) = 0\}.
+\end{align}
 \begin{itemize}
-\item new classes
+  \item The \texttt{MeshClassifier} class identifies how the active cells and faces are located relative to the zero contour of the level set function, as illustrated in Figure~\ref{fig:location-to-level-set}. Its \texttt{location\_to\_level\_set} function takes a cell/face and
+        returns an enum, \texttt{ LocationToLevelSet}, which takes values \{\texttt{inside}, \texttt{outside}, \texttt{intersected}\}.
+        These represent that $\psi$ is negative, positive, or varies in sign over the cell/face.
+        That is, the cell/face is located inside/outside $\Omega$, or is intersected by $\Gamma$.
+        This information is typically needed when choosing what element a cell of the \texttt{DoFHandler} should use.
+
+  \item The \texttt{QuadratureGenerator} class, which implements the algorithm in \cite{saye2015}, generates high-order quadrature rules for the 3 different regions of a \texttt{BoundingBox}, $B$, defined by the sign of the level set function:
+        \begin{align}
+          B \cap \Omega = \{ x\in B:  \psi(x) < 0 \},  \quad
+          B \cap \Gamma = \{ x\in B:  \psi(x) = 0 \},  \quad
+          \{ x\in B:  \psi(x) > 0 \}.
+        \end{align}
+        An example of these quadratures is shown in Figure~\ref{fig:immersed_quadratures}.
+        Correspondingly, the \newline \texttt{FaceQuadratureGenerator} class generates the same type of quadratures but over a face of $B$.
+        Furthermore, the new classes \texttt{DiscreteQuadratureGenerator} and \newline \texttt{DiscreteFaceQuadratureGenerator} can be used to generate these quadrature rules over a cell/face when the level set function lies in a finite element space: $\psi_h \in V_h$, and when the reference cell of the cell/face is a hypercube.
+
+  \item \texttt{ImmersedSurfaceQuadrature} is a class representing a quadrature rule over a $(d-1)$-dimensional surface embedded in $\mathbb{R}^d$ ($\psi = 0$ in Figure~\ref{fig:immersed_quadratures}). In addition to the weight, it stores the unit normal to the surface, for each quadrature point. This is needed to be able to transform the quadrature rule from reference space to real space.
+
+  \item \texttt{FEImmersedSurfaceValues} is a \texttt{FEValues}-like class for evaluating real space values based on an \texttt{ImmersedSurfaceQuadrature}.
+
+  \item \texttt{NonMatching::FEValues} combines the functionality of several of the above classes to simplify assembling. It works similarly to \texttt{hp::FEValues}.
+  When calling the \texttt{reinit} function, the immersed quadrature rules are generated in the background and 
+  \texttt{dealii::FEValues} objects for the inside/outside region and a \texttt{FEImmersedSurfaceValues} object for the surface regions are set up internally. These can then be obtained using getter-functions and used for the assembly.
+  Since the generation of immersed quadrature rules is not for free,
+  \texttt{NonMatching::FEValues} calls  \texttt{QuadratureGenerator} only if it is needed, i.e. if the cell is intersected. If the cell passed to \texttt{reinit} is not intersected, already cached \texttt{dealii::FEValues} objects will be returned by the getter functions.
+  Correspondingly, the class \texttt{NonMatching::FEInterfaceValues} generates
+  \texttt{dealii::FEInterfaceValues} objects for assembling face terms of the type $F \cap \{x : \psi(x) < 0 \}$ or $F \cap \{x : \psi(x) > 0 \}$.
 \end{itemize}
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[b]{0.3\textwidth}
+    \centering
+    \includegraphics[height=.12\paperheight]{svg/immersed-domain.pdf}
+    \caption{\label{fig:immersed-domain}}
+  \end{subfigure}
+  \qquad
+  \begin{subfigure}[b]{0.3\textwidth}
+    \centering
+    \includegraphics[height=.12\paperheight]{svg/location-to-level-set.pdf}
+    \caption{ \label{fig:location-to-level-set}}
+  \end{subfigure}
+  \caption{a) Domain immersed in a background mesh. b) Value of \texttt{LocationToLevelSet} for each cell}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.4\paperwidth]{svg/immersed_quadratures.pdf}
+  \caption{Quadrature points for integrating over the three different regions of a cell cut by the zero contour of the level set function, $\psi$. \label{fig:immersed_quadratures}}
+\end{figure}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Integration with the Computational Geometry Algorithms
@@ -878,6 +942,8 @@ SuperMUC-NG'' and ``High-order matrix-free finite element implementations with
 hybrid parallelization and improved data locality''.
 
 M.~Maier was partially supported by NSF Awards DMS-1912847 and DMS-2045636.
+
+S.~Sticko was partially supported by eSSENCE of e-Science.
 
 D.~Wells was supported by NSF through Grant DMS-1344962.
 
