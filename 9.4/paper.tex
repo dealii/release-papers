@@ -586,13 +586,23 @@ to \dealii in the future.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{CutFEM support}\label{sec:cut}
 
-Several classes have been added to the \texttt{NonMatching} namespace to enable the use of cut finite element methods, where the domain is immersed in the background mesh, as illustrated in Figure~\ref{fig:immersed-domain}.
-Many of the new classes assume that the domain, $\Omega$, is described by a level set function,
+Several classes have been added to the \texttt{NonMatching} namespace to enable the use of cut finite element methods\cite{burman_cutfem_2015}.
+In the literature, these types of methods are also referred to as immersed, extended, or fictitious finite element methods.
+Here, the domain, $\Omega$, is immersed in the background mesh, as illustrated in Figure~\ref{fig:immersed-domain}.
+Often, one solves for the degrees of freedom of the smallest submesh which completely covers the domain.
+The bilinear form in the weak form can, for example, look like
+\begin{equation}
+  a(u,v) = (\nabla u, \nabla v)_\Omega - (\partial_n u, v)_\Gamma + \ldots
+\end{equation}
+Thus, when assembling, we are on each cell
+required to integrate over the part of the domain and the part of the boundary, $\Gamma = \partial \Omega$, that falls inside the cell:
+$K\cap \Omega$ and $K \cap \Gamma$.
+Many of the new classes assume that the domain is described by a level set function,
 $\psi : \mathbb{R}^d \to \mathbb{R}$, such that
 \begin{align}
   \Omega = \{x \in \mathbb{R}^d : \psi(x)<0\},
   \qquad
-  \Gamma = \partial \Omega = \{x \in \mathbb{R}^d : \psi(x) = 0\}.
+  \Gamma = \{x \in \mathbb{R}^d : \psi(x) = 0\}.
 \end{align}
 \begin{itemize}
   \item The \texttt{MeshClassifier} class identifies how the active cells and faces are located relative to the zero contour of the level set function, as illustrated in Figure~\ref{fig:location-to-level-set}. Its \texttt{location\_to\_level\_set} function takes a cell/face and
@@ -623,6 +633,7 @@ $\psi : \mathbb{R}^d \to \mathbb{R}$, such that
   Correspondingly, the class \texttt{NonMatching::FEInterfaceValues} generates
   \texttt{dealii::FEInterfaceValues} objects for assembling face terms of the type $F \cap \{x : \psi(x) < 0 \}$ or $F \cap \{x : \psi(x) > 0 \}$.
 \end{itemize}
+The new \texttt{step-85} tutorial shows how many of these classes go together.
 
 \begin{figure}[h]
   \centering
