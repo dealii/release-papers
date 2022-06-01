@@ -111,14 +111,14 @@ cross/.default={2pt}}
 \author[4]{Luca~Heltai}
 
  \author[6,7]{Martin~Kronbichler}
- \affil[6]{Institute for Computational Mechanics,
-   Technical University of Munich,
-   Boltzmannstr.~15, 85748 Garching, Germany.
-   {\texttt{kronbichler/munch@lnm.mw.tum.de}}}
- \affil[7]{Department of Information Technology,
+ \affil[6]{Department of Information Technology,
    Uppsala University,
    Box 337, 751\,05 Uppsala, Sweden.
    {\texttt{martin.kronbichler/simon.sticko@it.uu.se}}}
+ \affil[7]{Institute of Mathematics,
+   University of Augsburg,
+   Universit\"atsstr.~12a, 86159 Augsburg, Germany.
+   {\texttt{martin.kronbichler@uni-a.de}}}
 
 \author[8]{Matthias~Maier}
 \affil[8]{Department of Mathematics,
@@ -127,7 +127,7 @@ cross/.default={2pt}}
   College Station, TX 77845, USA.
   {\texttt{maier@math.tamu.edu}}}
 
-\author[6,9]{Peter Munch}
+\author[7,9]{Peter Munch}
  \affil[9]{Institute of Material Systems Modeling,
  Helmholtz-Zentrum Hereon,
  Max-Planck-Str. 1, 21502 Geesthacht, Germany.
@@ -138,7 +138,7 @@ cross/.default={2pt}}
 \affil[10]{Independent researcher.
 {\texttt{jppelteret@gmail.com}}}
 
-\author[7]{Simon~Sticko}
+\author[6]{Simon~Sticko}
 
 \author[1*]{Bruno~Turcksin}
 
@@ -210,10 +210,10 @@ which we briefly outline in the remainder of this section:
 \begin{itemize}
 %  \item \texttt{AffineConstraints::make\_consistent\_in\_parallel()} allows
 %  to make constraints consistent in parallel.
-  \item The \texttt{DataOutResample} class does not output a numerical solution 
-  on the cells of the original triangulation, but interpolates the result 
-  onto a second triangulation (which can be completely unrelated). 
-  By using this class, one can output the result obtained on an 
+  \item The \texttt{DataOutResample} class does not output a numerical solution
+  on the cells of the original triangulation, but interpolates the result
+  onto a second triangulation (which can be completely unrelated).
+  By using this class, one can output the result obtained on an
   unstructured mesh on a structured one, which might be a more
   memory-efficient storage format, or one can create a slice in 3D.
   \item The new function \texttt{find\_point\_owner\_rank()} of \texttt{parallel::distributed::Triangulation} allows to find the MPI
@@ -302,26 +302,26 @@ hypercube-shaped cells. The most notable new functions are:
     \draw (0) -- (1) -- (2) -- (0);
     \draw (0) -- (1) -- (3) -- (0);
     \draw (1) -- (2) -- (3) -- (1);
-        
+
     \draw[-, fill=red!30, opacity=.5] (4)--(6)--(7)--cycle;
     \draw[-, fill=red!30, opacity=.5] (0)--(6)--(7)--cycle;
     \draw[-, fill=red!30, opacity=.5] (0)--(4)--(7)--cycle;
-    \draw[-, fill=red!30, opacity=.5] (0)--(4)--(6)--cycle;   
-        
+    \draw[-, fill=red!30, opacity=.5] (0)--(4)--(6)--cycle;
+
     \draw[-, fill=blue!30, opacity=.5] (1)--(4)--(5)--cycle;
     \draw[-, fill=blue!30, opacity=.5] (1)--(4)--(8)--cycle;
     \draw[-, fill=blue!30, opacity=.5] (4)--(5)--(8)--cycle;
-    \draw[-, fill=blue!30, opacity=.5] (1)--(5)--(8)--cycle;    
-        
+    \draw[-, fill=blue!30, opacity=.5] (1)--(5)--(8)--cycle;
+
     \draw[-, fill=green!30, opacity=.5] (2)--(5)--(6)--cycle;
     \draw[-, fill=green!30, opacity=.5] (2)--(6)--(9)--cycle;
     \draw[-, fill=green!30, opacity=.5] (2)--(5)--(9)--cycle;
-    \draw[-, fill=green!30, opacity=.5] (5)--(6)--(9)--cycle; 
-        
+    \draw[-, fill=green!30, opacity=.5] (5)--(6)--(9)--cycle;
+
     \draw[-, fill=orange!30, opacity=.5] (7)--(8)--(9)--cycle;
     \draw[-, fill=orange!30, opacity=.5] (3)--(7)--(9)--cycle;
     \draw[-, fill=orange!30, opacity=.5] (3)--(7)--(8)--cycle;
-    \draw[-, fill=orange!30, opacity=.5] (3)--(8)--(9)--cycle;    
+    \draw[-, fill=orange!30, opacity=.5] (3)--(8)--(9)--cycle;
 
     \foreach \i in {0,1,2,3,4,5,6,7,8,9}
     \draw[blue,fill=blue] (\i) circle (1.0pt) node [below] {};
@@ -343,26 +343,26 @@ hypercube-shaped cells. The most notable new functions are:
     \draw (0) -- (1) -- (2) -- (0);
     \draw (0) -- (1) -- (3) -- (0);
     \draw (1) -- (2) -- (3) -- (1);
-        
+
     \draw[-, fill=red!30, opacity=.5] (4)--(5)--(6)--cycle;
     \draw[-, fill=red!30, opacity=.5] (4)--(5)--(8)--cycle;
     \draw[-, fill=red!30, opacity=.5] (4)--(6)--(8)--cycle;
-    \draw[-, fill=red!30, opacity=.5] (5)--(6)--(8)--cycle;   
-        
+    \draw[-, fill=red!30, opacity=.5] (5)--(6)--(8)--cycle;
+
 %    \draw[-, fill=blue!30, opacity=.5] (4)--(6)--(7)--cycle;
 %    \draw[-, fill=blue!30, opacity=.5] (4)--(6)--(8)--cycle;
 %    \draw[-, fill=blue!30, opacity=.5] (4)--(7)--(8)--cycle;
-%    \draw[-, fill=blue!30, opacity=.5] (6)--(7)--(8)--cycle;    
-        
+%    \draw[-, fill=blue!30, opacity=.5] (6)--(7)--(8)--cycle;
+
 %    \draw[-, fill=green!30, opacity=.5] (6)--(7)--(8)--cycle;
 %    \draw[-, fill=green!30, opacity=.5] (6)--(7)--(9)--cycle;
 %    \draw[-, fill=green!30, opacity=.5] (6)--(8)--(9)--cycle;
-%    \draw[-, fill=green!30, opacity=.5] (7)--(8)--(9)--cycle; 
-%        
+%    \draw[-, fill=green!30, opacity=.5] (7)--(8)--(9)--cycle;
+%
     \draw[-, fill=blue!30, opacity=.5] (5)--(6)--(8)--cycle;
     \draw[-, fill=blue!30, opacity=.5] (5)--(6)--(9)--cycle;
     \draw[-, fill=blue!30, opacity=.5] (5)--(8)--(9)--cycle;
-    \draw[-, fill=blue!30, opacity=.5] (6)--(8)--(9)--cycle;    
+    \draw[-, fill=blue!30, opacity=.5] (6)--(8)--(9)--cycle;
 
     \foreach \i in {0,1,2,3,4,5,6,7,8,9}
     \draw[blue,fill=blue] (\i) circle (1.0pt) node [below] {};
@@ -384,35 +384,35 @@ hypercube-shaped cells. The most notable new functions are:
     \draw (0) -- (1) -- (2) -- (0);
     \draw (0) -- (1) -- (3) -- (0);
     \draw (1) -- (2) -- (3) -- (1);
-        
+
 %    \draw[-, fill=red!30, opacity=.5] (4)--(5)--(6)--cycle;
 %    \draw[-, fill=red!30, opacity=.5] (4)--(5)--(8)--cycle;
 %    \draw[-, fill=red!30, opacity=.5] (4)--(6)--(8)--cycle;
-%    \draw[-, fill=red!30, opacity=.5] (5)--(6)--(8)--cycle;   
-        
+%    \draw[-, fill=red!30, opacity=.5] (5)--(6)--(8)--cycle;
+
     \draw[-, fill=red!30, opacity=.5] (4)--(6)--(7)--cycle;
     \draw[-, fill=red!30, opacity=.5] (4)--(6)--(8)--cycle;
     \draw[-, fill=red!30, opacity=.5] (4)--(7)--(8)--cycle;
-    \draw[-, fill=red!30, opacity=.5] (6)--(7)--(8)--cycle;    
-        
+    \draw[-, fill=red!30, opacity=.5] (6)--(7)--(8)--cycle;
+
     \draw[-, fill=blue!30, opacity=.5] (6)--(7)--(8)--cycle;
     \draw[-, fill=blue!30, opacity=.5] (6)--(7)--(9)--cycle;
     \draw[-, fill=blue!30, opacity=.5] (6)--(8)--(9)--cycle;
-    \draw[-, fill=blue!30, opacity=.5] (7)--(8)--(9)--cycle; 
-        
+    \draw[-, fill=blue!30, opacity=.5] (7)--(8)--(9)--cycle;
+
 %    \draw[-, fill=orange!30, opacity=.5] (5)--(6)--(8)--cycle;
 %    \draw[-, fill=orange!30, opacity=.5] (5)--(6)--(9)--cycle;
 %    \draw[-, fill=orange!30, opacity=.5] (5)--(8)--(9)--cycle;
-%    \draw[-, fill=orange!30, opacity=.5] (6)--(8)--(9)--cycle;    
+%    \draw[-, fill=orange!30, opacity=.5] (6)--(8)--(9)--cycle;
 
     \foreach \i in {0,1,2,3,4,5,6,7,8,9}
     \draw[blue,fill=blue] (\i) circle (1.0pt) node [below] {};
 
   \end{tikzpicture}
-  
+
   \caption{New refinement strategies for triangles and tetrahedrons: triangles
   are subdivided in 4 children and tetrahedrons in 8 ones.}\label{fig:refinement}
-  
+
 \end{figure}
 
 \begin{itemize}
@@ -424,7 +424,7 @@ and 2) appropriate hanging-node constraints. For 3D, the implementation of the m
 
 Furthermore, we continued to remove the instance of usage of the \texttt{GeometryInfo} class from
 the library and to replace them by more general equivalent functions, which
-rely on \texttt{ReferenceCell} in many cases. Once all instances of 
+rely on \texttt{ReferenceCell} in many cases. Once all instances of
 \texttt{GeometryInfo} are removed, we will deprecate the class.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -433,7 +433,7 @@ rely on \texttt{ReferenceCell} in many cases. Once all instances of
 Until now, distributed meshes were either partitioned statically (\texttt{parallel::\allowbreak fullydistributed::\allowbreak Triangulation}; short \texttt{p::f::T}) or they used a
 fixed policy to partition the cells among processes
 (\texttt{parallel::\allowbreak distributed::\allowbreak Triangulation}; short \texttt{p::d::T}). For the latter, we
-use the Morton-order as the backend of \texttt{p::d::T}---\texttt{p4est}---does. A fixed Morton-order
+use the Morton-order as the backend \texttt{p4est} does. A fixed Morton-order
 might provide very good performance in terms in communication and
 setup costs, but might be non-optimal when interfacing with other
 libraries that have fixed partitioning, e.g., a Cartesian
@@ -464,16 +464,16 @@ active level, also the multigrid levels can be repartitioned arbitrarily.
     \centering
     \def\svgwidth{0.8\columnwidth}
     \input{svg/repartitioning.pdf_tex}
-    \caption{Visualization of the repartitioning process: after new ranks 
-    are assigned to cells, each process collects and sends the cells, incl. 
+    \caption{Visualization of the repartitioning process: after new ranks
+    are assigned to cells, each process collects and sends the cells, incl.
     ghost cells, to the new owner. There, incoming cells are processed, duplicates
     are removed, and the local part of the triangulation is built.}\label{fig:repartitioning}
 \end{figure}
 
-The setup process is visualized in Figure~\ref{fig:repartitioning}. At first, cells, incl. their
-surrounding (ghost) cells and parent cells, are collected and 
+The setup process is visualized in Figure~\ref{fig:repartitioning}. At first, cells, including their
+surrounding (ghost) cells and parent cells, are collected and
 sent to the new owner. On the
-receiving side, the sets of all cells are combined and possible duplicates
+receiving site, the sets of all cells are combined and possible duplicates
 are removed. This information is enough to construct a new triangulation.
 For sending/receiving, we apply consensus-based algorithms~\cite{hoefler2010scalable}, which
 we introduced into the library in release 9.2~\cite{dealII92} -- see
@@ -481,7 +481,7 @@ also Section~\ref{sec:CA}. Consensus-based
 algorithms are used also in \cite{ibanez2016pumi} for repartitioning.
 
 In future releases, we plan to add support for repartitioning based on distributed graph
-partitioning libraries, e.g., \texttt{ParMETIS} or \texttt{Zoltan}. Furthermore, we intend to extend 
+partitioning libraries, e.g., \texttt{ParMETIS} or \texttt{Zoltan}. Furthermore, we intend to extend
 \texttt{p::f::T} with adaptivity support.
 With this support and and the new repartitioning features, \texttt{p::f::T}
 could be self-consistent like \texttt{p::d::T}, which is an important
@@ -498,7 +498,7 @@ step towards the support of AMR also for distributed simplex and mixed meshes
 In the matrix-free infrastructure, we have added a number of new features. The most
 notable ones are:
 \begin{itemize}
-\item Improved support of Hessians: just like values and gradients, Hessians can be
+\item Improved support of computations with Hessians of shape functions: just like values and gradients, Hessians can be
 now evaluated and integrated during matrix-free loops
 both for cells and faces. This enables, e.g., to write
 a matrix-free version of step-47, which solves the biharmonic equation with DG.
@@ -517,17 +517,31 @@ the code paths do not diverge too much
 categorize cells during \texttt{MatrixFree::reinit()} in such a way that mixed cell batches do not occur. However, calling  \texttt{MatrixFree::reinit()}
 might be too expensive if a very dynamic system is given, which requires
 recategorization in each time step. Doing this on the fly might be a cheep alternative, even if not computationally optimal during matrix-free loops.
+\item Initial support for H(div)-conforming elements with Piola transform, based on Raviart--Thomas finite element spaces with the updated class \texttt{FE\_RaviartThomasNodal}, has been added. The features are currently limited to meshes in standard orientations and affine geometries. Full support will be provided in the next release.
+\item Selected matrix-free algorithms can now exploit additional data locality
+  between the matrix-vector product and vector operations happening nearby in
+  an algorithms. These have been added to both the
+  \texttt{PreconditionChebyshev} class often used as a smoother in multigrid
+  methods and the conjugate gradient implementation in \texttt{SolverCG}. To
+  use these features, an operator needs to define a \texttt{vmult} operation,
+  taking two additional \texttt{std::function} arguments. The first function
+  defines what should be scheduled on the vector entries before the
+  matrix-vector product touches them, and the second what happens
+  afterwards. The new features also include a renumbering to maximize data
+  locality. The theory is described in the
+  contribution~\cite{kronbichler2022cg}.
+\todo[inline]{We could also make this last a separate section or in the introduction, but it feels it fits well here.}
 \end{itemize}
-Besides these new features, we improved the performance of 
+Besides these new features, we improved the performance of
 hanging-node-constraint evaluation on the CPU. Instead of performing
 quasi-dense matrix-vector multiplications~\cite{KronbichlerKormann2012}, we now use an
 approach based on inplace interpolation and sumfactorization, similarly
-as we already did in the GPU code~\cite{ljungkvist2017matrix}. In \cite{munch2022hn}, the algorithm is described 
+as we already did in the GPU code~\cite{ljungkvist2017matrix}. In \cite{munch2022hn}, the algorithm is described
 and performance numbers are shown, indicating a reduction
 of overhead of cells with hanging nodes by a factor of 10$\times$.
 
 Furthermore, we have performed a major restructuring of internals
-of the \texttt{FEEvaluation} classes. This will enable us to add the support of new element types, e.g., of 
+of the \texttt{FEEvaluation} classes. This will enable us to add the support of new element types, e.g., of
 Raviart--Thomas and Nedelec elements,  more
 simply in the future.
 
@@ -544,7 +558,7 @@ simply in the future.
 %
 %for(const auto q : phi.quadrature_point_indices())
 %  phi.submit_hessian(phi.get_hessian(q), q);
-%  
+%
 %phi.integrate_scatter(... | EvaluationFlags::hessians, dst);
 %\end{c++}
 %
@@ -555,17 +569,17 @@ simply in the future.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Advances in multigrid infrastructure}\label{sec:multigrid}
 
-In release 9.3~\cite{dealII93}, we added support for global-coarsening multigrid in 
-addition to the established local-smoothing infrastructure. Global 
+In release 9.3~\cite{dealII93}, we added support for global-coarsening multigrid in
+addition to the established local-smoothing infrastructure. Global
 coarsening smoothens on the whole computational domain on each
 multigrid level, which is obtained by coarsening the finest mesh globally.
 For this purpose, we use a sequence of triangulations, and we perform
-the smoothing only on their active levels. To create the sequence of 
+the smoothing only on their active levels. To create the sequence of
 triangulations, one can use the functions \texttt{create\_geometric\_coarsening\_sequence()} from the
-\texttt{MGTransferGlobalCoarseningTools} namespace. A new version takes an 
-instance of \texttt{RepartitioningPolicyTools::Base} (see Subsection~\ref{sec:repartitioning}) as argument, which allows to specify the parallel 
+\texttt{MGTransferGlobalCoarseningTools} namespace. A new version takes an
+instance of \texttt{RepartitioningPolicyTools::Base} (see Subsection~\ref{sec:repartitioning}) as argument, which allows to specify the parallel
 distribution of each multigrid level (in contrast to the fixed first-child policy in the case of local smoothing). Furthermore, we added support for block vectors,
-fixed a number of limitations, and performed performance optimizations of 
+fixed a number of limitations, and performed performance optimizations of
 the transfer operator; particularly, the redundant copy from/to temporary vectors
 has been eliminated. Now, hanging-node constraints are applied
 efficiently in the same way as in the matrix-free loops (see Subsection~\ref{sec:mf}).
@@ -574,9 +588,9 @@ In \cite{munch2022gc}, the performance of the local-smoothing and global-coarsen
 infrastructure of \texttt{deal.II} was compared for locally refined meshes. The results indicate that
 the local definition of multigrid levels might introduce load imbalances
 in the case of local smoothing so that global coarsening is favorable despite
-potentially more expensive intergrid transfers. In order, to judge the benefits
+potentially more expensive intergrid transfers. In order to judge the benefits
 of one approach against the other, \texttt{deal.II} provides new functions
-\texttt{workload\_imbalance()} and \texttt{vertical\_communication\_efficiency()} 
+\texttt{workload\_imbalance()} and \texttt{vertical\_communication\_efficiency()}
 in the \texttt{MGTools} namespace for the  estimation of the workload imbalance and the
 vertical communication efficiency purely based on the given mesh. The publication \cite{munch2022gc} also points out that not
 all types of smoothers are applicable for global coarsening due to the
@@ -586,7 +600,7 @@ to \dealii in the future.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{CutFEM support}\label{sec:cut}
 
-Several classes have been added to the \texttt{NonMatching} namespace to enable the use of cut finite element methods\cite{burman_cutfem_2015}.
+Several classes have been added to the \texttt{NonMatching} namespace to enable the use of cut finite element methods~\cite{burman_cutfem_2015}.
 In the literature, these types of methods are also referred to as immersed, extended, or fictitious finite element methods.
 Here, the domain, $\Omega$, is immersed in the background mesh, as illustrated in Figure~\ref{fig:immersed-domain}.
 Often, one solves for the degrees of freedom of the smallest submesh which completely covers the domain.
@@ -606,8 +620,8 @@ $\psi : \mathbb{R}^d \to \mathbb{R}$, such that
 \end{align}
 \begin{itemize}
   \item The \texttt{MeshClassifier} class identifies how the active cells and faces are located relative to the zero contour of the level set function, as illustrated in Figure~\ref{fig:location-to-level-set}. Its \texttt{location\_to\_level\_set} function takes a cell/face and
-        returns an enum, \texttt{ LocationToLevelSet}, which takes values \{\texttt{inside}, \texttt{outside}, \texttt{intersected}\}.
-        These represent that $\psi$ is negative, positive, or varies in sign over the cell/face.
+        returns an enum, \texttt{LocationToLevelSet}, which takes values \{\texttt{inside}, \texttt{outside}, \texttt{intersected}\}.
+        These indicate whether $\psi$ is negative, positive, or varies in sign over the cell/face.
         That is, the cell/face is located inside/outside $\Omega$, or is intersected by $\Gamma$.
         This information is typically needed when choosing what element a cell of the \texttt{DoFHandler} should use.
 
@@ -626,7 +640,7 @@ $\psi : \mathbb{R}^d \to \mathbb{R}$, such that
   \item \texttt{FEImmersedSurfaceValues} is a \texttt{FEValues}-like class for evaluating real space values based on an \texttt{ImmersedSurfaceQuadrature}.
 
   \item \texttt{NonMatching::FEValues} combines the functionality of several of the above classes to simplify assembling. It works similarly to \texttt{hp::FEValues}.
-  When calling the \texttt{reinit} function, the immersed quadrature rules are generated in the background and 
+  When calling the \texttt{reinit} function, the immersed quadrature rules are generated in the background and
   \texttt{dealii::FEValues} objects for the inside/outside region and a \texttt{FEImmersedSurfaceValues} object for the surface regions are set up internally. These can then be obtained using getter-functions and used for the assembly.
   Since the generation of immersed quadrature rules is not for free,
   \texttt{NonMatching::FEValues} calls  \texttt{QuadratureGenerator} only if it is needed, i.e. if the cell is intersected. If the cell passed to \texttt{reinit} is not intersected, already cached \texttt{dealii::FEValues} objects will be returned by the getter functions.
@@ -703,7 +717,7 @@ ways as part of this release. In addition, there are a number of new tutorial pr
 \item \texttt{step-82} was contributed by Andrea Bonito (Texas A\&M University) and Diane Guignard (University of Ottawa). It shows how
 \dealii{} can be used to implement the
 local discontinuous Galerkin (LDG) method for approximating the solution to the bi-Laplacian problem.
-\item \texttt{step-85} was contributed by Simon Sticko (Uppsala University). It shows how to use the new CutFEM infrastructure to solve a Poisson 
+\item \texttt{step-85} was contributed by Simon Sticko (Uppsala University). It shows how to use the new CutFEM infrastructure to solve a Poisson
 problem on a circular domain that is embedded in a Cartesian background mesh.
 \end{itemize}
 
@@ -732,13 +746,14 @@ may have been more widely used:
   \item In continuation of our attempt to merge the classes \texttt{DoFHandler} and \texttt{hp::DoFHandler}, we have removed the
   template parameter \texttt{DoFHandlerType} from number of classes and
   functions and replaced it by \texttt{dim}/\texttt{spacedim}. Affected
-  classes are, e.g., \texttt{SolutionTransfer} and \texttt{DataOut}. 
+  classes are, e.g., \texttt{SolutionTransfer} and \texttt{DataOut}.
   \item \texttt{FE\_RaviartThomasNodal} now uses a different polynomial space to allow
   for a simpler use for faces in non-standard orientation. The new polynomials
   are anisotropic tensor products of Lagrange polynomials on the points of the
   Gauss--Lobatto quadrature formula. This change leads to different entries, for example, in
   the matrices and constraints, but no change in accuracy should be expected as the resulting polynomial
   space spans the same polynomials.
+  \item The class \texttt{MappingQ} now applies a high-order mapping to all cells, not just the cells near the boundary, functionality that was previously provided by the \texttt{MappingQGeneric} class. The latter has been marked as deprecated. In order to use different degrees for the mapping, users can use \texttt{hp::MappingCollection} or \texttt{MappingFEField} with appropriate definitions of function spaces.
   \item We made different changes in the repartitioning of \texttt{parallel::distributed::Triangulation}.
   Most notably, we have removed the default weight in order to ensure consistency with the rest of the
   library.
@@ -833,7 +848,7 @@ following:
   \end{itemize}
 \end{multicols}
 Please consider citing the appropriate references if you use
-interfaces to these libraries. 
+interfaces to these libraries.
 
 The two previous releases of \dealii{} can be cited as
 \cite{dealII92,dealII93}.
@@ -948,9 +963,8 @@ M.~Kronbichler and P.~Munch were partially supported by the
 Bayerisches Kompetenznetzwerk
 f\"ur Technisch-Wissen\-schaft\-li\-ches Hoch- und H\"ochstleistungsrechnen
 (KONWIHR) in the context of the projects
-``Performance tuning of high-order discontinuous Galerkin solvers for
-SuperMUC-NG'' and ``High-order matrix-free finite element implementations with
-hybrid parallelization and improved data locality''.
+``High-order matrix-free finite element implementations with
+hybrid parallelization and improved data locality'' and ``Fast and scalable finite element algorithms for coupled multiphysics problems and non-matching grids''.
 
 M.~Maier was partially supported by NSF Awards DMS-1912847 and DMS-2045636.
 
