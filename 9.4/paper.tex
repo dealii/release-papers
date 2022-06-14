@@ -200,6 +200,7 @@ The major changes of this release are:
   \item Advances in matrix-free infrastructure (see Section~\ref{sec:mf});
   \item Advances in multigrid infrastructure (see Section~\ref{sec:multigrid});
   \item CutFEM support (see Section~\ref{sec:cut});
+  \item Integration with the Computational Geometry Algorithms Library (CGAL) (see Section~\ref{sec:cgalwrappers});
   \item Performance improvement of particle infrastructure (see Section~\ref{sec:particles});
   \item Two new tutorial programs and a new code gallery program (see Section~\ref{subsec:steps}).
 \end{itemize}
@@ -678,11 +679,87 @@ The new \texttt{step-85} tutorial shows how many of these classes go together.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Integration with the Computational Geometry Algorithms
-  Library (CGAL)}\label{sec:cgal}
-
+  Library (CGAL)}\label{sec:cgalwrappers}
+  If you have CGAL (\href{https://www.cgal.org/}{{https://www.cgal.org/}}) installed \cite{cgal}, you can use wrappers around CGAL classes and functions contained in the new namespace \texttt{CGALWrappers}, allowing capabilities spanning from mesh generation to boolean operations between \dealii{} triangulations and cells. CGAL wrappers are enabled only if \dealii{} is compiled with \texttt{C++17}. We have introduced the following utilities to the \dealii's \texttt{CGALWrappers} namespace.
 \begin{itemize}
-\item new classes
+\item Refinement criteria for tetrahedra or surface facets can be stored and specified in a struct named \texttt{AdditionalData}. 
+Depending on the template parameter \texttt{dim}, different criteria can be chosen. See the documentation of this struct for a list and an explanation of the possible parameters.
+\item \texttt{GridGenerator::implicit\_function()} creates a \texttt{Triangulation<dim,3>} out of the zero level set of an implicit function $f$. 
+Apart from the final \texttt{Triangulation<dim,3>} and the implicit funcion $f$ itself, also an interior point for which $f<0$ must be supplied by the user, along with the radius of a ball that will contain the generated triangulation.
+Mesh-related entities must be specified with \texttt{AdditionalData<dim>}.
+When \texttt{dim} is \texttt{3}, the mesh is filled with tetrahedra. A prototypical use case is the following, where the surface is the zero level set of Taubin's heart function $f=\bigl ( x^2 + \frac{9y^2}{4} +z^2 -1 \bigr ) -x^2 z^3 - \frac{9y^2z^3}{80}$. The resulting \texttt{Triangulation<3>} can be appreciated in Figure~\ref{fig:heart_tria}.
+\begin{c++}
+// Empty triangulation.
+Triangulation<3, 3>  tria;
+//Taubin's heart surface
+ImplicitFunction                implicit_function;
+CGALWrappers::AdditionalData<3> data;
+data.cell_size = .05;
+GridGenerator::implicit_function(
+  tria, implicit_function, data, Point<3>(0, 0, 0), 10.0);
+\end{c++}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=.6\paperwidth]{png/heart_implicit.png}
+  \caption{\texttt{Triangulation<3>} of a heart surface starting from an implicit function $f$. \label{fig:heart_tria}}
+\end{figure}
+
+\item \texttt{GridGenerator::surface\_mesh\_to\_volumetric\_mesh()} fills a \texttt{Triangulation<3>} starting from a \texttt{Triangulation<2,3>}.  
+The surface triangulation bounds the three dimensional volume, which is meshed inside with tetrahedra.
+\item Corefinement and boolean operations between \texttt{CGAL::Surface\_mesh} types are exploited to perform boolean operations between \dealii{}
+triangulations, and are available in the utility \texttt{CGALWrappers::compute\_boolean\_operation()}. The available operations are \texttt{corefinement}, \texttt{intersection}, \texttt{union} and \texttt{difference}, and they are
+described in the enum class \texttt{BooleanOperation}. Also, several wrappers allow to go back and forth from a \dealii{} Triangulation type to a CGAL Triangulation type. In general, after a \texttt{BooleanOperation} the corefinement around the intersection gives most of the times
+badly shaped elements. To overcome this issue, one can use \texttt{CGALWrappers::remesh\_surface()}. See Figure~\ref{fig:corefinement_remeshed} for a graphical example.
+A possible workflow is the following:
+\begin{c++}
+  Triangulation<spacedim> tria0, tria1;
+  GridGenerator::hyper_cube(tria0,-1.,1.);
+  GridGenerator::hyper_ball(tria1,{1.,1.,1.},0.6);
+  tria0.refine_global(3);
+  tria1.refine_global(3);
+
+  // Move to CGAL surfaces, assume Kernel is already defined. 
+  CGAL::Surface_mesh<Kernel> surface_mesh0, surface_mesh1;
+  CGALWrappers::dealii_tria_to_cgal_surface_mesh(tria0, surface_mesh0);
+  CGALWrappers::dealii_tria_to_cgal_surface_mesh(tria1, surface_mesh1);
+  
+  // Compute the union of the two meshes
+  CGALWrappers::compute_boolean_operation(surface_mesh0,
+                            surface_mesh1,
+                            BooleanOperation::compute_union,
+                            out_mesh);
+  // Now back to deal.II
+  Triangulation<2, 3>     tria_out;
+  CGALWrappers::cgal_surface_mesh_to_dealii_triangulation(out_mesh, tria_out);
+  // tria_out is now a valid deal.II triangulation
+  \end{c++}
+  The output of the boolean operation can be appreciated in Figure~\ref{fig:corefinement}, while in Figure~\ref{fig:corefinement_remeshed}
+  the same mesh has been remeshed.
+  \begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.4\textwidth}
+      \centering
+      \includegraphics[height=.2\paperheight]{png/intersection_cube_sphere_mesh.png}
+      \caption{\label{fig:corefinement}}
+    \end{subfigure}
+    \qquad
+    \begin{subfigure}[b]{0.5\textwidth}
+      \centering
+      \includegraphics[height=.2\paperheight]{png/cube_sphere_remeshed.png}
+      \caption{ \label{fig:corefinement_remeshed}}
+    \end{subfigure}
+    \caption{a) Union of the unit cube with an hyper ball. Notice how the corefinement around the intersection gives badly shaped elements. b) The remeshed \dealii{} Triangulation.}
+  \end{figure}
+  
+\item \texttt{CGALWrappers::compute\_quadrature\_on\_boolean\_operation()} returns a \texttt{Quadrature<3>} that allows to integrate exactly on polyhedral elements coming out of a \texttt{BooleanOperation} between \dealii cells.
+The quadrature rule is built by meshing the polyhedral region with tetrahedra, computing on each tetrahedron a \texttt{QGaussSimplex<3>} quadrature rule by using \texttt{QSimplex<3>::compute\_affine\_transformation()}, and finally
+collecting all of the rules together, giving a \texttt{Quadrature<3>} formula on the \emph{physical} element.
 \end{itemize}
+
+
+These utilities will be the building blocks for adding functions to the \texttt{NonMatching} namespace that will assemble coupling terms like $(u,v)_{B}$, with $B$ a domain immersed in a fixed background mesh $\Omega$ and $u,v$ finite element functions on $V_h(\Omega)$, as usually happens using Nitsche's method to weakly impose boundary conditions at an interface. The same applies to coupling terms of the form $(u,q)_B$ in formulations using Lagrange multipliers, where now $q \in Q_h(B)$, with $Q_h(B)$ the space of the multiplier variable.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Performance improvement of particle infrastructure}\label{sec:particles}
@@ -820,7 +897,6 @@ following:
 \end{multicols}
 
 \dealii{} can interface with many other libraries:
-\todo[inline]{Need to update, in particular add CGAL.}
 \begin{multicols}{3}
   \begin{itemize}
     \item ADOL-C \cite{Griewank1996a,adol-c}
@@ -828,6 +904,7 @@ following:
     \item ARPACK \cite{arpack}
     \item Assimp \cite{assimp}
     \item BLAS and LAPACK \cite{lapack}
+    \item CGAL \cite{cgal}
     \item cuSOLVER \cite{cusolver}
     \item cuSPARSE \cite{cusparse}
     \item Gmsh \cite{geuzaine2009gmsh}
