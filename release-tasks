@@ -118,100 +118,7 @@ Best
 -1c/ The list of contributors to the current release should also be copied to
      the end of the release paper
 
-      Pasquale Africa
-      Ashna Aggarwal
-      Giovanni Alzetta
-      Mathias Anselmann
-      Daniel Arndt
-      Wolfgang Bangerth
-      Kirana Bergstrom
-      Manaswinee Bezbaruah
-      Bruno Blais
-      Benjamin Brands
-      Yong-Yong Cai
-      Fabian Castelli
-      Conrad Clevenger
-      Katherine Cosburn
-      Denis Davydov
-      Elias Dejene
-      Stefano Dominici
-      Brett Dong
-      Luel Emishaw
-      Marc Fehling
-      Niklas Fehn
-      Rebecca Fildes
-      Menno Fraters
-      Andres Galindo
-      Daniel Garcia-Sanchez
-      Rene Gassmoeller
-      Melanie Gerault
-      Nicola Giuliani
-      Brandon Gleeson
-      Anne Glerum
-      Krishnakumar Gopalakrishnan
-      Alexander Grayver
-      Graham Harper
-      Mohammed Hassan
-      Nicole Hayes
-      Bang He
-      Johannes Heinz
-      Timo Heister
-      Luca Heltai
-      Jiuhua Hu
-      Lise-Marie Imbert-Gerard
-      Mannu Jayadharan
-      Manu Jayadharan
-      Daniel Jodlbauer
-      Marie Kajan
-      Guido Kanschat
-      Alexander Knieps
-      Martin Kronbichler
-      Paras Kumar
-      Konstantin Ladutenko
-      Charu Lata
-      Adam Lee
-      Wenyu Lei
-      Matthias Maier
-      Katrin Mang
-      Mae Markowski
-      Franco Milicchio
-      Adriana Morales Miranda
-      Peter Munch
-      Bob Myhill
-      Emily Novak
-      Omotayo Omosebi
-      Alexey Ozeritskiy
-      Jean-Paul Pelteret
-      Rebecca Pereira
-      Geneva Porter
-      Laura Prieto Saavedra
-      Reza Rastak
-      Roland Richter
-      Jonathan Robey
-      Irabiel Romero
-      Matthew Russell
-      Tonatiuh Sanchez-Vizuet
-      Doug Shi-Dong
-      Konrad Simon
-      Stephanie Sparks
-      Natasha S. Sharma
-      Sebastian Stark
-      Simon Sticko
-      Jihuan Tian
-      Jan Philipp Thiele
-      Ignacio Tomas
-      Sara Tro
-      Bruno Turcksin
-      Ferdinand Vanmaele
-      Zhuoran Wang
-      David Wells
-      Michal Wichrowski
-      Julius Witte
-      Winnifried Wollner
-      Ming Yang
-      Mario Zepeda Aguilar
-      Wenjuan Zhang
-      Victor Zheng
+     TODO
 
 0/ Do some basic testing as always
 
@@ -261,8 +168,6 @@ Best
 
 
 1/  Create new changes file:
-    - Adjust the header of doc/news/changes/header* so that it reflects
-      the versions in question
     - Also adjust the copyright dates
     - Run the following commands from above the source dir:
         mkdir build-doc
