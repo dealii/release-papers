@@ -449,67 +449,73 @@ functionality based on the
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Repartitioning of distributed meshes}\label{sec:repartitioning}
 
-Until now, distributed meshes were either partitioned statically (\texttt{parallel::\allowbreak fullydistributed::\allowbreak Triangulation}; short \texttt{p::f::T}) or they used a
-fixed policy to partition the cells among processes
-(\texttt{parallel::\allowbreak distributed::\allowbreak Triangulation}; short \texttt{p::d::T}). For the latter, we
-use the Morton-order as the backend \texttt{p4est} does. A fixed Morton-order
-might provide very good performance in terms in communication and
-setup costs, but might be non-optimal when interfacing with other
-libraries that have fixed partitioning, e.g., a Cartesian
-partitioning, themselves.
+\dealii{} has two classes that support distributed storage of meshes: 
+\texttt{parallel::\allowbreak distributed::\allowbreak Triangulation}
+(which in the following we will abbreviate as \texttt{p::d::T}) and
+\texttt{parallel::\allowbreak fullydistributed::\allowbreak
+  Triangulation} (or, in short, \texttt{p::f::T}). The former is
+partitioned based on the space-filling Morton (or Z-order) curve
+implemented by the \texttt{p4est} backend. The latter, more recent
+class is currently statically partitioned at creation time.
 
-New utility functions from the \texttt{RepartitioningPolicyTools} namepace can be
-used now to create a new \texttt{p::f::T} instance,
-given a distributed triangulation (\texttt{p::f::T} or \texttt{p::d::T}) and a vector with the new owners of locally
-owned cells. The workflow is shown in the following listing:
+There are now new utility functions in the
+\texttt{RepartitioningPolicyTools} namepace that can be
+used to create a new \texttt{p::f::T} instance,
+given a distributed triangulation (\texttt{p::f::T} or
+\texttt{p::d::T}) and a vector that indicates the designated owner processes of locally
+owned cells. This approach allows for partitioning \texttt{p::f::T}
+based on arbitrary criteria. The workflow is shown in the following listing:
 \begin{c++}
-// original triangulation
-parallel::distributed::Triangulation<dim> tria(comm);
+// original triangulation:
+parallel::distributed::Triangulation<dim> tria(communicator);
 
-// select a partitioning policy and use it
+// select a partitioning policy and use it:
 const RepartitioningPolicyTools::Cartesian<dim> policy(tria);
 const auto construction_data = TriangulationDescription::Utilities::
   create_description_from_triangulation(tria, policy.partition(tria));
 
-// create the new triangulation
+// create the new triangulation:
 parallel::fullydistributed::Triangulation<dim> tria_pft(comm);
 tria_pft.create_triangulation(construction_data);
 \end{c++}
-Instead of using one of the predefined partitioning policies, users
-can write their own ones by implementing the \texttt{RepartitioningPolicyTools::Base} interface. Similarly to the
-active level, also the multigrid levels can be repartitioned arbitrarily.
 
 \begin{figure}
     \centering
     \def\svgwidth{0.8\columnwidth}
     \input{svg/repartitioning.pdf_tex}
-    \caption{\it Visualization of the repartitioning process: after new ranks
-    are assigned to cells, each process collects and sends the cells, incl.
-    ghost cells, to the new owner. There, incoming cells are processed, duplicates
-    are removed, and the local part of the triangulation is built.}\label{fig:repartitioning}
+    \caption{\it Visualization of the repartitioning process. Top
+      left: Existing ownership of the cells of the mesh, distributed
+      on four processes. Bottom left:
+      Requested new ownership. Second column: Processes 0 and 1
+      collect information about the cells they own or that are ghost
+      cells. Processes 2 and 3 would do the same. Third column: What
+      processes 0 and 1 would send to process 0. Fourth column: The
+      combined knowledge on process 0.}\label{fig:repartitioning}
 \end{figure}
 
-The setup process is visualized in Figure~\ref{fig:repartitioning}. At first, cells, including their
-surrounding (ghost) cells and parent cells, are collected and
+The setup process is visualized in Figure~\ref{fig:repartitioning}. At
+first, locally owned cells and their
+surrounding (ghost) cells are collected on each process and
 sent to the new owner. On the
 receiving site, the sets of all cells are combined and possible duplicates
 are removed. This information is enough to construct a new triangulation.
 For sending/receiving, we apply consensus-based algorithms~\cite{hoefler2010scalable}, which
 we introduced into the library in release 9.2~\cite{dealII92} -- see
-also Section~\ref{sec:CA}. Consensus-based
-algorithms are used also in \cite{ibanez2016pumi} for repartitioning.
+also Section~\ref{sec:CA}. This kind of consensus-based
+algorithm is used also in \cite{ibanez2016pumi} for repartitioning.
+
+In addition to the predefined partitioning policies, users
+can write their own by implementing the
+\texttt{RepartitioningPolicyTools::Base} interface. Like the
+``active'' level of finest cells, the scheme also allows for
+arbitrarily repartitioned multigrid levels.
 
 In future releases, we plan to add support for repartitioning based on distributed graph
 partitioning libraries, e.g., \texttt{ParMETIS} or \texttt{Zoltan}. Furthermore, we intend to extend
-\texttt{p::f::T} with adaptivity support.
-With this support and and the new repartitioning features, \texttt{p::f::T}
-could be self-consistent like \texttt{p::d::T}, which is an important
-step towards the support of AMR also for distributed simplex and mixed meshes
-(see also Subsection~\ref{sec:simplex}).
+\texttt{p::f::T} to support adaptive mesh refinement, completing \texttt{p::f::T}
+as a complement to \texttt{p::d::T}.
 
-%We would like to note that we provide a similar class also for repartitioning
-%of vectors: \texttt{Noncontiguous\allowbreak Partitioner} from the
-%\texttt{Utilities::MPI} namespace.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Advances in matrix-free infrastructure}\label{sec:mf}
