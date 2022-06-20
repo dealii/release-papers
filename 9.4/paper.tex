@@ -183,6 +183,7 @@ cross/.default={2pt}}
 \section{Overview}
 
 \dealii{} version 9.4.0 was released June 10, 2022.
+\todo{Update release date.}
 This paper provides an
 overview of the new features of this release and serves as a citable
 reference for the \dealii{} software library version 9.4. \dealii{} is an
@@ -193,7 +194,6 @@ GNU Lesser General Public License (LGPL). Downloads are available at
 
 The major changes of this release are:
 %
-\todo[inline]{Update}
 \begin{itemize}
   \item Advances in simplex- and mixed-mesh support (see Section~\ref{sec:simplex});
   \item Repartitioning of distributed meshes (see Section~\ref{sec:repartitioning});
@@ -201,8 +201,11 @@ The major changes of this release are:
   \item Advances in multigrid infrastructure (see Section~\ref{sec:multigrid});
   \item CutFEM support (see Section~\ref{sec:cut});
   \item Integration with the Computational Geometry Algorithms Library (CGAL) (see Section~\ref{sec:cgalwrappers});
-  \item Performance improvement of particle infrastructure (see Section~\ref{sec:particles});
-  \item Two new tutorial programs and a new code gallery program (see Section~\ref{subsec:steps}).
+  \item Performance improvements in the particle infrastructure (see Section~\ref{sec:particles});
+  \item Two new tutorial programs and a new code gallery program (see
+    Section~\ref{subsec:steps}).
+    \todo[inline]{Update the number of code gallery programs when
+      we're done.}
 \end{itemize}
 %
 
@@ -218,27 +221,24 @@ which we briefly outline in the remainder of this section:
   on the cells of the original triangulation, but interpolates the result
   onto a second triangulation (which can be completely unrelated).
   By using this class, one can output the result obtained on an
-  unstructured mesh on a structured one, which might be a more
-  memory-efficient storage format, or one can create a slice in 3D.
+  unstructured mesh on a structured one (which might facilitate a more
+  memory-efficient storage format, for example if this second
+  triangulation is a uniformly refined rectangle or box), or one can create a slice in 3D.
   \item The new function \texttt{find\_point\_owner\_rank()} of \texttt{parallel::distributed::Triangulation} allows to find the MPI
   rank of the subdomain of a distributed mesh that contains a given point.
   It is communication-free and leverages the functionality of p4est (>v.2.2).
   Its algorithm is described in \cite{burstedde2020parallel}. Based on the information obtained,
-  communication pattern in \texttt{Utilties::MPI::RemotePointEvaluation} can be set up efficiently. Furthermore, this function could be used in the future to allow
+  the communication pattern used in \texttt{Utilties::MPI::RemotePointEvaluation} can be set up efficiently. Furthermore, this function could be used in the future to allow
   particle simulations where particle movement is not
   limited by CFL conditions, as done in \cite{mirzadeh2016parallel}.
   \item The new function
-  \texttt{GridGenerator::pipe\_junction}
+  \texttt{GridGenerator::pipe\_junction()}
   generates a triangulation of three cone-shaped pipes that cross at a bifurcation point in any possible configuration.
-  A manifold description will be applied to the boundary, which can be extended into the volume via transfinite interpolation \cite{Gordon82} using the \texttt{TransfiniteInterpolationManifold} class \cite{dealII90}.
-  \todo[inline]{[MF] If desired, I can extend this part into its own
-    section of the main chapter. With figures, this would probably
-    occupy about 3/4 of a page.}
-  \item \todo[inline]{Add something about the FEInterfaceValues improvements.}
+  A manifold description is applied to the boundary, which can be extended into the volume via transfinite interpolation \cite{Gordon82} using the \texttt{TransfiniteInterpolationManifold} class \cite{dealII90}.
+  \item \todo[inline]{Add something about the FEInterfaceValues improvements?}
 \end{itemize}
 %
 The changelog lists more than 175 other features and bugfixes.
-\todo{This number is up to date.}
 
 
 
@@ -262,15 +262,21 @@ can be found
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Advances in simplex- and mixed-mesh support}\label{sec:simplex}
 
-We continued to work on the simplex- and mixed-mesh support. We fixed
-many bugs and generalized existing functions that only worked for
-hypercube-shaped cells. The most notable new functions are:
+\dealii{} has supported simplex and mixed meshes since the previous
+release, 9.3, on an experimental basis.
+We have continued to work on this support; the current state is
+sufficient to support several larger-scale programs, although not all
+functionality in \dealii{} works with such meshes yet. Specifically,
+we have fixed many bugs and generalized existing functions that
+previously only worked for hypercube-shaped cells. The most notable
+new functionality is:
 
-\begin{figure}[!t]
+\begin{figure}
 
   \centering
 
-
+  \phantom{.}
+  \hfill
   \begin{tikzpicture}[scale=1.7]
 
     \coordinate (0) at (0,0);
@@ -289,7 +295,7 @@ hypercube-shaped cells. The most notable new functions are:
     \draw (3) --(4) -- (5) -- (3);
 
   \end{tikzpicture}
-  \qquad\qquad
+  \hfill\hfill
   \begin{tikzpicture}[scale=1.3]
 
     \coordinate (0) at (0,0,0);
@@ -413,22 +419,31 @@ hypercube-shaped cells. The most notable new functions are:
     \draw[blue,fill=blue] (\i) circle (1.0pt) node [below] {};
 
   \end{tikzpicture}
+  \hfill
+  \phantom{.}
 
-  \caption{New refinement strategies for triangles and tetrahedrons: triangles
-  are subdivided in 4 children and tetrahedrons in 8 ones.}\label{fig:refinement}
-
+  \caption{\it New refinement strategies for triangles and tetrahedra: Triangles
+    are subdivided into four children and tetrahedra into eight.
+  \todo[inline]{Are these ``new strategies'', or is it ``New:
+    Refinement strategies'' because we did not have refinement at all before?}}
+  \label{fig:refinement}
 \end{figure}
 
 \begin{itemize}
-\item Experimental support of locally refined meshes. FEM on locally refined
-meshes requires 1) the possibility to locally refine the mesh (see Figure~\ref{fig:refinement})
-and 2) appropriate hanging-node constraints. For 3D, the implementation of the missing constraint definitions is in progress.
-\item TODO
+\item Experimental support for locally refined meshes: For finite
+  element computations on locally refined
+meshes, one needs (i) the possibility to locally refine the mesh (see
+Figure~\ref{fig:refinement}), and (ii) appropriate hanging-node
+constraints. Both are now available in 2d; for 3D, the implementation
+of the constraint definitions is still in progress.
+\item \todo[inline]{TODO}
 \end{itemize}
 
-Furthermore, we continued to remove the instance of usage of the \texttt{GeometryInfo} class from
-the library and to replace them by more general equivalent functions, which
-rely on \texttt{ReferenceCell} in many cases. Once all instances of
+Furthermore, we have continued to remove uses of the
+\texttt{GeometryInfo} class (which is specific to hypercube cells) from
+the library, and to replace them by more general equivalent
+functionality based on the
+\texttt{ReferenceCell} class. Once all instances of
 \texttt{GeometryInfo} are removed, we will deprecate the class.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -468,7 +483,7 @@ active level, also the multigrid levels can be repartitioned arbitrarily.
     \centering
     \def\svgwidth{0.8\columnwidth}
     \input{svg/repartitioning.pdf_tex}
-    \caption{Visualization of the repartitioning process: after new ranks
+    \caption{\it Visualization of the repartitioning process: after new ranks
     are assigned to cells, each process collects and sends the cells, incl.
     ghost cells, to the new owner. There, incoming cells are processed, duplicates
     are removed, and the local part of the triangulation is built.}\label{fig:repartitioning}
@@ -666,13 +681,13 @@ The new \texttt{step-85} tutorial shows how many of these classes go together.
     \includegraphics[height=.12\paperheight]{svg/location-to-level-set.pdf}
     \caption{ \label{fig:location-to-level-set}}
   \end{subfigure}
-  \caption{a) Domain immersed in a background mesh. b) Value of \texttt{LocationToLevelSet} for each cell}
+  \caption{\it (a) Domain immersed in a background mesh. (b) Value of \texttt{LocationToLevelSet} for each cell}
 \end{figure}
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=.4\paperwidth]{svg/immersed_quadratures.pdf}
-  \caption{Quadrature points for integrating over the three different regions of a cell cut by the zero contour of the level set function, $\psi$. \label{fig:immersed_quadratures}}
+  \caption{\it Quadrature points for integrating over the three different regions of a cell cut by the zero contour of the level set function, $\psi$. \label{fig:immersed_quadratures}}
 \end{figure}
 
 
@@ -702,7 +717,7 @@ GridGenerator::implicit_function(
 \begin{figure}[h!]
   \centering
   \includegraphics[width=.6\paperwidth]{png/heart_implicit.png}
-  \caption{\texttt{Triangulation<3>} of a heart surface starting from an implicit function $f$. \label{fig:heart_tria}}
+  \caption{\it \texttt{Triangulation<3>} of a heart surface starting from an implicit function $f$. \label{fig:heart_tria}}
 \end{figure}
 
 \item \texttt{GridGenerator::surface\_mesh\_to\_volumetric\_mesh()} fills a \texttt{Triangulation<3>} starting from a \texttt{Triangulation<2,3>}.  
@@ -749,7 +764,7 @@ A possible workflow is the following:
       \includegraphics[height=.2\paperheight]{png/cube_sphere_remeshed.png}
       \caption{ \label{fig:corefinement_remeshed}}
     \end{subfigure}
-    \caption{a) Union of the unit cube with an hyper ball. Notice how the corefinement around the intersection gives badly shaped elements. b) The remeshed \dealii{} Triangulation.}
+    \caption{\it (a) Union of the unit cube with an hyper ball. Notice how the corefinement around the intersection gives badly shaped elements. (b) The remeshed \dealii{} Triangulation.}
   \end{figure}
   
 \item \texttt{CGALWrappers::compute\_quadrature\_on\_boolean\_operation()} returns a \texttt{Quadrature<3>} that allows to integrate exactly on polyhedral elements coming out of a \texttt{BooleanOperation} between \dealii cells.
@@ -775,15 +790,45 @@ These utilities will be the building blocks for adding functions to the \texttt{
 \subsection{Improvements to unstructured communication}
 \label{sec:CA}
 
-\todo[inline]{Wolfgang to write something about the CA algorithms (and to give
-credit to the previous implementation by Peter). Mention improvements
-to pack(), unpack(), broadcast() too.}
+Many problems in parallel computations can be stated in the following
+way: Each process in a parallel universe has a number of queries to
+send to other processes who do not know that they will be asked, and
+who will then have to respond with replies. This problem is solved by
+``consensus algorithms''. An example of where this problem appears is
+given in Section~\ref{sec:repartitioning}.
 
-Also reference Section~\ref{sec:repartitioning}.
+\dealii{} has had an implementation of these algorithms for some time,
+but the current version substantially expands it. Specifically, the
+updated interfaces -- now based on function objects such as lambda
+functions to formulate and process queries and replies -- can now deal
+with arbitrary data types for queries and replies, rather than only
+arrays of data types natively supported by MPI. To make this possible,
+the implementation packs and unpacks these objects into character
+arrays via the \texttt{Utilities::pack()} and
+\texttt{Utilities::unpack()} functions. We have also worked on making
+these functions more efficient: if the object to be packed is an array
+(or array of arrays) of elements that satisfy the
+\texttt{std::is\_trivially\_copyable} type trait, then the data is
+copied into the character array via \texttt{std::memcpy}; only for
+other objects do the packing and unpacking functions rely on BOOST's
+serialization library.
+
+A special case of consensus algorithms is where the sender does not
+actually require and answer. This occasionally happens during ghost
+exchange where each process sends information about cells it owns to
+some of its neighboring processes where these cells are ghost
+cells. Previously, this case was implemented by sending an empty
+message. The rewritten interfaces now support this case: Code using
+these interfaces no longer have to provide functions that formulate
+and read the (empty) replies, though internally these functions still
+send around an empty reply; this case will be implemented in the
+future, using the interfaces now already in place.
+
+Finally, in the spirit of optimizing communication, the
+\texttt{Utilities::MPI::broadcast()} function has been optimized for
+objects that are arrays of data types natively supported by MPI.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Topic 7}
 
 
 
