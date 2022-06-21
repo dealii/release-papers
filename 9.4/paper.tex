@@ -520,16 +520,18 @@ as a complement to \texttt{p::d::T}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Advances in matrix-free infrastructure}\label{sec:mf}
 
-In the matrix-free infrastructure, we have added a number of new features. The most
-notable ones are:
+The matrix-free infrastructure of \dealii{} is used to solve problems
+without assembling matrices, providing only the action of the matrix
+instead. It has seen a number of new features in this release, the most
+notable ones being:
 \begin{itemize}
-\item Improved support of computations with Hessians of shape functions: just like values and gradients, Hessians can be
+\item Improved support for computations with Hessians of shape functions: just like values and gradients, Hessians can be
 now evaluated and integrated during matrix-free loops
-both for cells and faces. This enables, e.g., to write
+both for cells and faces. This could enable, for example, writing
 a matrix-free version of step-47, which solves the biharmonic equation with DG.
-\item Cell-centric loops now also allow to access gradients and Hessians
-of neighboring cells on faces. The major difficulty here was their reorientation
-in the case of arbitrary orientated cells on unstructured meshes.
+\item Cell-centric loops now also allow access to gradients and Hessians
+of neighboring cells on faces. The major difficulty here was the relative orientation
+of cells on unstructured meshes.
 \item Users can now create their own cell batches, by providing \texttt{FEEvaluation::reinit()} a list of cell IDs. \texttt{FEEvaluation}
 accesses the appropriate data and reshuffles mapping data accordingly on
 the fly in order to enable vectorization over cells. The new feature is useful in many
@@ -541,8 +543,8 @@ the code paths do not diverge too much
 (a lot of functions of \texttt{FEEvaluation} allows this). Another way is to
 categorize cells during \texttt{MatrixFree::reinit()} in such a way that mixed cell batches do not occur. However, calling  \texttt{MatrixFree::reinit()}
 might be too expensive if a very dynamic system is given, which requires
-recategorization in each time step. Doing this on the fly might be a cheep alternative, even if not computationally optimal during matrix-free loops.
-\item Initial support for H(div)-conforming elements with Piola transform, based on Raviart--Thomas finite element spaces with the updated class \texttt{FE\_RaviartThomasNodal}, has been added. The features are currently limited to meshes in standard orientations and affine geometries. Full support will be provided in the next release.
+recategorization in each time step. Doing this on the fly might be a cheap alternative, even if not computationally optimal during matrix-free loops.
+\item Initial support for H(div)-conforming elements with Piola transform, based on Raviart--Thomas finite element spaces with the updated class \texttt{FE\_RaviartThomasNodal}. This feature is currently limited to meshes in standard orientation and affine geometries. Full support will be provided in a future release.
 \item Selected matrix-free algorithms can now exploit additional data locality
   between the matrix-vector product and vector operations happening nearby in
   an algorithms. These have been added to both the
@@ -555,20 +557,18 @@ recategorization in each time step. Doing this on the fly might be a cheep alter
   afterwards. The new features also include a renumbering to maximize data
   locality. The theory is described in the
   contribution~\cite{kronbichler2022cg}.
-\todo[inline]{We could also make this last a separate section or in the introduction, but it feels it fits well here.}
 \end{itemize}
 Besides these new features, we improved the performance of
 hanging-node-constraint evaluation on the CPU. Instead of performing
 quasi-dense matrix-vector multiplications~\cite{KronbichlerKormann2012}, we now use an
-approach based on inplace interpolation and sumfactorization, similarly
-as we already did in the GPU code~\cite{ljungkvist2017matrix}. In \cite{munch2022hn}, the algorithm is described
+approach based on in-place interpolation and sum factorization, similar
+to what was already done in the GPU code~\cite{ljungkvist2017matrix}. In \cite{munch2022hn}, the algorithm is described
 and performance numbers are shown, indicating a reduction
-of overhead of cells with hanging nodes by a factor of 10$\times$.
+of overhead of cells with hanging nodes by a factor of ten.
 
-Furthermore, we have performed a major restructuring of internals
-of the \texttt{FEEvaluation} classes. This will enable us to add the support of new element types, e.g., of
-Raviart--Thomas and Nedelec elements,  more
-simply in the future.
+Finally, we have performed a major restructuring of internals
+of the \texttt{FEEvaluation} classes. This will enable us to add support for new element types, e.g., of
+Raviart-Thomas and Nedelec elements.
 
 
 %\begin{c++}
@@ -597,11 +597,11 @@ simply in the future.
 In release 9.3~\cite{dealII93}, we added support for global-coarsening multigrid in
 addition to the established local-smoothing infrastructure. Global
 coarsening smoothens on the whole computational domain on each
-multigrid level, which is obtained by coarsening the finest mesh globally.
+multigrid level, which is obtained by coarsening the finest cells of
+the next finer multigrid level.
 For this purpose, we use a sequence of triangulations, and we perform
 the smoothing only on their active levels. To create the sequence of
-triangulations, one can use the functions \texttt{create\_geometric\_coarsening\_sequence()} from the
-\texttt{MGTransferGlobalCoarseningTools} namespace. A new version takes an
+triangulations, one can use the functions \texttt{MGTransferGlobalCoarseningTools::create\_geometric\_coarsening\_sequence()}. A new version takes an
 instance of \texttt{RepartitioningPolicyTools::Base} (see Subsection~\ref{sec:repartitioning}) as argument, which allows to specify the parallel
 distribution of each multigrid level (in contrast to the fixed first-child policy in the case of local smoothing). Furthermore, we added support for block vectors,
 fixed a number of limitations, and performed performance optimizations of
@@ -625,56 +625,7 @@ to \dealii in the future.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{CutFEM support}\label{sec:cut}
 
-Several classes have been added to the \texttt{NonMatching} namespace to enable the use of cut finite element methods~\cite{burman_cutfem_2015}.
-In the literature, these types of methods are also referred to as immersed, extended, or fictitious finite element methods.
-Here, the domain, $\Omega$, is immersed in the background mesh, as illustrated in Figure~\ref{fig:immersed-domain}.
-Often, one solves for the degrees of freedom of the smallest submesh which completely covers the domain.
-The bilinear form in the weak form can, for example, look like
-\begin{equation}
-  a(u,v) = (\nabla u, \nabla v)_\Omega - (\partial_n u, v)_\Gamma + \ldots
-\end{equation}
-Thus, when assembling, we are on each cell
-required to integrate over the part of the domain and the part of the boundary, $\Gamma = \partial \Omega$, that falls inside the cell:
-$K\cap \Omega$ and $K \cap \Gamma$.
-Many of the new classes assume that the domain is described by a level set function,
-$\psi : \mathbb{R}^d \to \mathbb{R}$, such that
-\begin{align}
-  \Omega = \{x \in \mathbb{R}^d : \psi(x)<0\},
-  \qquad
-  \Gamma = \{x \in \mathbb{R}^d : \psi(x) = 0\}.
-\end{align}
-\begin{itemize}
-  \item The \texttt{MeshClassifier} class identifies how the active cells and faces are located relative to the zero contour of the level set function, as illustrated in Figure~\ref{fig:location-to-level-set}. Its \texttt{location\_to\_level\_set} function takes a cell/face and
-        returns an enum, \texttt{LocationToLevelSet}, which takes values \{\texttt{inside}, \texttt{outside}, \texttt{intersected}\}.
-        These indicate whether $\psi$ is negative, positive, or varies in sign over the cell/face.
-        That is, the cell/face is located inside/outside $\Omega$, or is intersected by $\Gamma$.
-        This information is typically needed when choosing what element a cell of the \texttt{DoFHandler} should use.
-
-  \item The \texttt{QuadratureGenerator} class, which implements the algorithm in \cite{saye2015}, generates high-order quadrature rules for the 3 different regions of a \texttt{BoundingBox}, $B$, defined by the sign of the level set function:
-        \begin{align}
-          B \cap \Omega = \{ x\in B:  \psi(x) < 0 \},  \quad
-          B \cap \Gamma = \{ x\in B:  \psi(x) = 0 \},  \quad
-          \{ x\in B:  \psi(x) > 0 \}.
-        \end{align}
-        An example of these quadratures is shown in Figure~\ref{fig:immersed_quadratures}.
-        Correspondingly, the \newline \texttt{FaceQuadratureGenerator} class generates the same type of quadratures but over a face of $B$.
-        Furthermore, the new classes \texttt{DiscreteQuadratureGenerator} and \newline \texttt{DiscreteFaceQuadratureGenerator} can be used to generate these quadrature rules over a cell/face when the level set function lies in a finite element space: $\psi_h \in V_h$, and when the reference cell of the cell/face is a hypercube.
-
-  \item \texttt{ImmersedSurfaceQuadrature} is a class representing a quadrature rule over a $(d-1)$-dimensional surface embedded in $\mathbb{R}^d$ ($\psi = 0$ in Figure~\ref{fig:immersed_quadratures}). In addition to the weight, it stores the unit normal to the surface, for each quadrature point. This is needed to be able to transform the quadrature rule from reference space to real space.
-
-  \item \texttt{FEImmersedSurfaceValues} is a \texttt{FEValues}-like class for evaluating real space values based on an \texttt{ImmersedSurfaceQuadrature}.
-
-  \item \texttt{NonMatching::FEValues} combines the functionality of several of the above classes to simplify assembling. It works similarly to \texttt{hp::FEValues}.
-  When calling the \texttt{reinit} function, the immersed quadrature rules are generated in the background and
-  \texttt{dealii::FEValues} objects for the inside/outside region and a \texttt{FEImmersedSurfaceValues} object for the surface regions are set up internally. These can then be obtained using getter-functions and used for the assembly.
-  Since the generation of immersed quadrature rules is not for free,
-  \texttt{NonMatching::FEValues} calls  \texttt{QuadratureGenerator} only if it is needed, i.e. if the cell is intersected. If the cell passed to \texttt{reinit} is not intersected, already cached \texttt{dealii::FEValues} objects will be returned by the getter functions.
-  Correspondingly, the class \texttt{NonMatching::FEInterfaceValues} generates
-  \texttt{dealii::FEInterfaceValues} objects for assembling face terms of the type $F \cap \{x : \psi(x) < 0 \}$ or $F \cap \{x : \psi(x) > 0 \}$.
-\end{itemize}
-The new \texttt{step-85} tutorial shows how many of these classes go together.
-
-\begin{figure}[h]
+\begin{figure}
   \centering
   \begin{subfigure}[b]{0.3\textwidth}
     \centering
@@ -687,10 +638,61 @@ The new \texttt{step-85} tutorial shows how many of these classes go together.
     \includegraphics[height=.12\paperheight]{svg/location-to-level-set.pdf}
     \caption{ \label{fig:location-to-level-set}}
   \end{subfigure}
-  \caption{\it (a) Domain immersed in a background mesh. (b) Value of \texttt{LocationToLevelSet} for each cell}
+  \caption{\it (a) Domain immersed in a background mesh. (b) Value of \texttt{LocationToLevelSet} for each cell.}
 \end{figure}
 
-\begin{figure}[h]
+Several classes have been added to the \texttt{NonMatching} namespace to enable the use of cut finite element methods~\cite{burman_cutfem_2015}.
+In the literature, these types of methods are also referred to as immersed, extended, or fictitious finite element methods.
+Here, the domain, $\Omega$, is immersed in the background mesh, as illustrated in Fig.~\ref{fig:immersed-domain}.
+Often, one solves for the degrees of freedom of the smallest submesh
+which completely covers the domain, i.e., the blue and yellow cells of
+Fig.~\ref{fig:location-to-level-set}.
+The bilinear form in the weak form would then, for example, look like
+\begin{equation}
+  a(u,v) = (\nabla u, \nabla v)_\Omega - (\partial_n u, v)_\Gamma + \ldots
+\end{equation}
+Thus, when assembling on a cut call, we are
+required to integrate over the part of the domain and the part of the boundary, $\Gamma = \partial \Omega$, that falls inside the cell:
+$K\cap \Omega$ and $K \cap \Gamma$.
+Many of the new classes that supports these operations assume that the domain is described by a level set function,
+$\psi : \mathbb{R}^d \to \mathbb{R}$, such that
+\begin{align}
+  \Omega = \{x \in \mathbb{R}^d : \psi(x)<0\},
+  \qquad
+  \Gamma = \{x \in \mathbb{R}^d : \psi(x) = 0\}.
+\end{align}
+Specifically, the following are the key new classes and functions:
+\begin{itemize}
+  \item The \texttt{MeshClassifier} class identifies how the active cells and faces are located relative to the zero contour of the level set function, as illustrated in Figure~\ref{fig:location-to-level-set}. Its \texttt{location\_to\_level\_set()} function takes a cell/face and
+        returns an enum, \texttt{LocationToLevelSet}, which takes values \{\texttt{inside}, \texttt{outside}, \texttt{intersected}\}.
+        This information is typically needed when choosing what element a cell of the \texttt{DoFHandler} should use.
+
+  \item The \texttt{QuadratureGenerator} class, which implements the algorithm in \cite{saye2015}, generates high-order quadrature rules for the three different regions of a \texttt{BoundingBox}, $B$, defined by the sign of the level set function:
+        \begin{align}
+          B \cap \Omega = \{ x\in B:  \psi(x) < 0 \},  \quad
+          B \cap \Gamma = \{ x\in B:  \psi(x) = 0 \},  \quad
+          \{ x\in B:  \psi(x) > 0 \}.
+        \end{align}
+        An example of these quadratures is shown in Figure~\ref{fig:immersed_quadratures}.
+        The \texttt{FaceQuadratureGenerator} class does the same for faces.
+        Furthermore, the new classes \texttt{DiscreteQuadratureGenerator} and \newline \texttt{DiscreteFaceQuadratureGenerator} can be used to generate these quadrature rules over a cell/face when the level set function lies in a finite element space: $\psi_h \in V_h$, and when the reference cell of the cell/face is a hypercube.
+
+  \item \texttt{ImmersedSurfaceQuadrature} is a class representing a quadrature rule over a $(d-1)$-dimensional surface embedded in $\mathbb{R}^d$ ($\psi = 0$ in Figure~\ref{fig:immersed_quadratures}). In addition to the weight, it stores the unit normal to the surface, for each quadrature point. This is needed to transform the quadrature rule from reference space to real space.
+
+  \item \texttt{FEImmersedSurfaceValues} is an \texttt{FEValues}-like class for evaluating real space values based on an \texttt{ImmersedSurfaceQuadrature}.
+
+  \item \texttt{NonMatching::FEValues} combines the functionality of
+    several of the above classes to simplify assembly of linear systems. It works similarly to \texttt{hp::FEValues}:
+  When calling the \texttt{reinit()} function, immersed quadrature rules are generated in the background and
+  \texttt{FEValues} objects for the inside/outside region and a \texttt{FEImmersedSurfaceValues} object for the surface regions are set up internally. These can then be obtained using getter-functions and used for the assembly.
+  Since the generation of immersed quadrature rules is not cheap,
+  \texttt{NonMatching::FEValues} calls  \texttt{QuadratureGenerator} only if needed, i.e. if the cell is intersected. If not, already cached \texttt{FEValues} objects will be returned by the getter functions.
+  Correspondingly, the class \texttt{NonMatching::FEInterfaceValues} generates
+  \texttt{FEInterfaceValues} objects for assembling face terms over $F \cap \{x : \psi(x) < 0 \}$ or $F \cap \{x : \psi(x) > 0 \}$.
+\end{itemize}
+The new \texttt{step-85} tutorial illustrates how many of these classes work together.
+
+\begin{figure}
   \centering
   \includegraphics[width=.4\paperwidth]{svg/immersed_quadratures.pdf}
   \caption{\it Quadrature points for integrating over the three different regions of a cell cut by the zero contour of the level set function, $\psi$. \label{fig:immersed_quadratures}}
@@ -698,17 +700,24 @@ The new \texttt{step-85} tutorial shows how many of these classes go together.
 
 
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Integration with the Computational Geometry Algorithms
   Library (CGAL)}\label{sec:cgalwrappers}
-  If you have CGAL (\href{https://www.cgal.org/}{{https://www.cgal.org/}}) installed \cite{cgal}, you can use wrappers around CGAL classes and functions contained in the new namespace \texttt{CGALWrappers}, allowing capabilities spanning from mesh generation to boolean operations between \dealii{} triangulations and cells. CGAL wrappers are enabled only if \dealii{} is compiled with \texttt{C++17}. We have introduced the following utilities to the \dealii's \texttt{CGALWrappers} namespace.
-\begin{itemize}
-\item Refinement criteria for tetrahedra or surface facets can be stored and specified in a struct named \texttt{AdditionalData}. 
-Depending on the template parameter \texttt{dim}, different criteria can be chosen. See the documentation of this struct for a list and an explanation of the possible parameters.
-\item \texttt{GridGenerator::implicit\_function()} creates a \texttt{Triangulation<dim,3>} out of the zero level set of an implicit function $f$. 
-Apart from the final \texttt{Triangulation<dim,3>} and the implicit funcion $f$ itself, also an interior point for which $f<0$ must be supplied by the user, along with the radius of a ball that will contain the generated triangulation.
-Mesh-related entities must be specified with \texttt{AdditionalData<dim>}.
-When \texttt{dim} is \texttt{3}, the mesh is filled with tetrahedra. A prototypical use case is the following, where the surface is the zero level set of Taubin's heart function $f=\bigl ( x^2 + \frac{9y^2}{4} +z^2 -1 \bigr ) -x^2 z^3 - \frac{9y^2z^3}{80}$. The resulting \texttt{Triangulation<3>} can be appreciated in Figure~\ref{fig:heart_tria}.
+
+The Computational Geometry Algorithms Library (CGAL, \url{https://www.cgal.org/}) is a widely used
+library to describe geometries and meshes \cite{cgal}. \dealii{} now
+has wrappers for CGAL classes and functions, provided in the new
+namespace \texttt{CGALWrappers}, and implementing functionality
+spanning from mesh generation to boolean operations between \dealii{}
+triangulations and cells. These wrappers are enabled only if \dealii{}
+is compiled with \texttt{C++17} and, for the first time in \dealii{}'s
+25-year history provides a built-in ability to generate meshes for
+arbitrary geometries.
+
+The main mesh generation function is
+\texttt{GridGenerator::implicit\_function()}, which creates a \texttt{Triangulation<dim,3>} out of the zero level set of an implicit function $f$. 
+For \texttt{dim==3}, the mesh consists of tetrahedra. A prototypical use case is the following, where the surface is the zero level set of Taubin's heart function $f=\bigl ( x^2 + \frac{9y^2}{4} +z^2 -1 \bigr ) -x^2 z^3 - \frac{9y^2z^3}{80}$. The resulting \texttt{Triangulation<3>} can be appreciated in Figure~\ref{fig:heart_tria}.
 \begin{c++}
 // Empty triangulation.
 Triangulation<3, 3>  tria;
@@ -716,22 +725,29 @@ Triangulation<3, 3>  tria;
 ImplicitFunction                implicit_function;
 CGALWrappers::AdditionalData<3> data;
 data.cell_size = .05;
-GridGenerator::implicit_function(
-  tria, implicit_function, data, Point<3>(0, 0, 0), 10.0);
+GridGenerator::implicit_function(tria, implicit_function, data,
+                                 {0, 0, 0}, 10.0);
 \end{c++}
 
-\begin{figure}[h!]
+\begin{figure}
   \centering
   \includegraphics[width=.6\paperwidth]{png/heart_implicit.png}
   \caption{\it \texttt{Triangulation<3>} of a heart surface starting from an implicit function $f$. \label{fig:heart_tria}}
 \end{figure}
 
-\item \texttt{GridGenerator::surface\_mesh\_to\_volumetric\_mesh()} fills a \texttt{Triangulation<3>} starting from a \texttt{Triangulation<2,3>}.  
-The surface triangulation bounds the three dimensional volume, which is meshed inside with tetrahedra.
-\item Corefinement and boolean operations between \texttt{CGAL::Surface\_mesh} types are exploited to perform boolean operations between \dealii{}
-triangulations, and are available in the utility \texttt{CGALWrappers::compute\_boolean\_operation()}. The available operations are \texttt{corefinement}, \texttt{intersection}, \texttt{union} and \texttt{difference}, and they are
-described in the enum class \texttt{BooleanOperation}. Also, several wrappers allow to go back and forth from a \dealii{} Triangulation type to a CGAL Triangulation type. In general, after a \texttt{BooleanOperation} the corefinement around the intersection gives most of the times
-badly shaped elements. To overcome this issue, one can use \texttt{CGALWrappers::remesh\_surface()}. See Figure~\ref{fig:corefinement_remeshed} for a graphical example.
+A related function is
+\texttt{GridGenerator::surface\_mesh\_to\_volumetric\_mesh()}, which
+computes a tetrahedral volume triangulation \texttt{Triangulation<3>}, based on a
+given surface triangulation \texttt{Triangulation<2,3>} that bounds
+the three dimensional volume.
+
+CGAL also provides us with boolean operations on meshes, as available in the
+utility function
+\texttt{CGALWrappers::\allowbreak{}compute\_boolean\_operation()}. The
+available operations are \textit{corefinement}, \textit{intersection},
+\textit{union}, and \textit{difference}. Oftentimes, boolean
+operations and corefinement around the intersection produces
+badly shaped elements. To overcome this issue, one can use \texttt{CGALWrappers::\allowbreak{}remesh\_surface()}. See Figure~\ref{fig:corefinement_remeshed} for a graphical example.
 A possible workflow is the following:
 \begin{c++}
   Triangulation<spacedim> tria0, tria1;
@@ -755,9 +771,9 @@ A possible workflow is the following:
   CGALWrappers::cgal_surface_mesh_to_dealii_triangulation(out_mesh, tria_out);
   // tria_out is now a valid deal.II triangulation
   \end{c++}
-  The output of the boolean operation can be appreciated in Figure~\ref{fig:corefinement}, while in Figure~\ref{fig:corefinement_remeshed}
+  The output of the boolean operation can be seen in Fig.~\ref{fig:corefinement}, while in Fig.~\ref{fig:corefinement_remeshed}
   the same mesh has been remeshed.
-  \begin{figure}[h]
+  \begin{figure}
     \centering
     \begin{subfigure}[b]{0.4\textwidth}
       \centering
@@ -770,13 +786,13 @@ A possible workflow is the following:
       \includegraphics[height=.2\paperheight]{png/cube_sphere_remeshed.png}
       \caption{ \label{fig:corefinement_remeshed}}
     \end{subfigure}
-    \caption{\it (a) Union of the unit cube with an hyper ball. Notice how the corefinement around the intersection gives badly shaped elements. (b) The remeshed \dealii{} Triangulation.}
+    \caption{\it (a) Union of the unit cube with an hyper ball. Notice
+      how the corefinement around the intersection results in badly shaped elements. (b) The remeshed \dealii{} Triangulation.}
   \end{figure}
   
-\item \texttt{CGALWrappers::compute\_quadrature\_on\_boolean\_operation()} returns a \texttt{Quadrature<3>} that allows to integrate exactly on polyhedral elements coming out of a \texttt{BooleanOperation} between \dealii cells.
-The quadrature rule is built by meshing the polyhedral region with tetrahedra, computing on each tetrahedron a \texttt{QGaussSimplex<3>} quadrature rule by using \texttt{QSimplex<3>::compute\_affine\_transformation()}, and finally
+\texttt{CGALWrappers::compute\_quadrature\_on\_boolean\_operation()} returns a \texttt{Quadrature<3>} that allows exact integration on polyhedral elements coming out of a \texttt{BooleanOperation} between \dealii cells.
+The quadrature rule is built by meshing the polyhedral region with tetrahedra, computing on each tetrahedron a \texttt{QGaussSimplex<3>} quadrature rule by using \texttt{QSimplex<3>::\allowbreak{}compute\_affine\_transformation()}, and finally
 collecting all of the rules together, giving a \texttt{Quadrature<3>} formula on the \emph{physical} element.
-\end{itemize}
 
 
 These utilities will be the building blocks for adding functions to the \texttt{NonMatching} namespace that will assemble coupling terms like $(u,v)_{B}$, with $B$ a domain immersed in a fixed background mesh $\Omega$ and $u,v$ finite element functions on $V_h(\Omega)$, as usually happens using Nitsche's method to weakly impose boundary conditions at an interface. The same applies to coupling terms of the form $(u,q)_B$ in formulations using Lagrange multipliers, where now $q \in Q_h(B)$, with $Q_h(B)$ the space of the multiplier variable.
@@ -785,11 +801,11 @@ These utilities will be the building blocks for adding functions to the \texttt{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Performance improvement of particle infrastructure}\label{sec:particles}
 
-\begin{itemize}
-\item describe the new data structure
-\item do we have performance numbers?
-\end{itemize}
+\todo[inline]{
+* describe the new data structure
 
+* do we have performance numbers?
+}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -804,7 +820,7 @@ who will then have to respond with replies. This problem is solved by
 given in Section~\ref{sec:repartitioning}.
 
 \dealii{} has had an implementation of these algorithms for some time,
-but the current version substantially expands it. Specifically, the
+but the current release substantially expands on it. Specifically, the
 updated interfaces -- now based on function objects such as lambda
 functions to formulate and process queries and replies -- can now deal
 with arbitrary data types for queries and replies, rather than only
@@ -820,11 +836,12 @@ other objects do the packing and unpacking functions rely on BOOST's
 serialization library.
 
 A special case of consensus algorithms is where the sender does not
-actually require and answer. This occasionally happens during ghost
+actually require an answer. This happens, for example, during ghost
 exchange where each process sends information about cells it owns to
 some of its neighboring processes where these cells are ghost
-cells. Previously, this case was implemented by sending an empty
-message. The rewritten interfaces now support this case: Code using
+cells. Previously, this case was implemented through a consensus
+algorithm where the reply message is simply empty.
+The rewritten interfaces now support this case more explicitly: Code using
 these interfaces no longer have to provide functions that formulate
 and read the (empty) replies, though internally these functions still
 send around an empty reply; this case will be implemented in the
@@ -832,7 +849,8 @@ future, using the interfaces now already in place.
 
 Finally, in the spirit of optimizing communication, the
 \texttt{Utilities::MPI::broadcast()} function has been optimized for
-objects that are arrays of data types natively supported by MPI.
+objects that are arrays of data types natively supported by MPI and
+which consequently can be sent without packing and unpacking.
 
 
 
@@ -847,7 +865,10 @@ ways as part of this release. In addition, there are a number of new tutorial pr
 \begin{itemize}
 \item \texttt{step-82} was contributed by Andrea Bonito (Texas A\&M University) and Diane Guignard (University of Ottawa). It shows how
 \dealii{} can be used to implement the
-local discontinuous Galerkin (LDG) method for approximating the solution to the bi-Laplacian problem.
+local discontinuous Galerkin (LDG) method for approximating the
+solution to the bi-Laplacian problem. The method is an alternative to
+the C0IP method used in \texttt{step-47}.
+
 \item \texttt{step-85} was contributed by Simon Sticko (Uppsala University). It shows how to use the new CutFEM infrastructure to solve a Poisson
 problem on a circular domain that is embedded in a Cartesian background mesh.
 \end{itemize}
@@ -857,8 +878,11 @@ user-contributed programs that often solve more complicated problems
 than tutorial programs, and intended as starting points for further
 research rather than as teaching tools):
 \begin{itemize}
-\item ``\texttt{MCMC for the Laplace equation}'' TODO.
+  \item \todo[inline]{Is there actually a new program?}
 \end{itemize}
+Finally, the ``\texttt{MCMC for the Laplace equation}'' code gallery
+program has been updated by providing MATLAB and Python versions of
+the benchmark that is implemented in this code.
 
 
 
@@ -875,19 +899,23 @@ applications. That said, the following are worth mentioning since they
 may have been more widely used:
 \begin{itemize}
   \item In continuation of our attempt to merge the classes \texttt{DoFHandler} and \texttt{hp::DoFHandler}, we have removed the
-  template parameter \texttt{DoFHandlerType} from number of classes and
-  functions and replaced it by \texttt{dim}/\texttt{spacedim}. Affected
-  classes are, e.g., \texttt{SolutionTransfer} and \texttt{DataOut}.
+  template parameter \texttt{DoFHandlerType} from a number of classes and
+  functions, instead using \texttt{dim}/\texttt{spacedim} template arguments. Affected
+  classes include \texttt{SolutionTransfer} and \texttt{DataOut}.
   \item \texttt{FE\_RaviartThomasNodal} now uses a different polynomial space to allow
-  for a simpler use for faces in non-standard orientation. The new polynomials
+  for a simpler use on faces in non-standard orientation. The new polynomials
   are anisotropic tensor products of Lagrange polynomials on the points of the
   Gauss--Lobatto quadrature formula. This change leads to different entries, for example, in
   the matrices and constraints, but no change in accuracy should be expected as the resulting polynomial
   space spans the same polynomials.
-  \item The class \texttt{MappingQ} now applies a high-order mapping to all cells, not just the cells near the boundary, functionality that was previously provided by the \texttt{MappingQGeneric} class. The latter has been marked as deprecated. In order to use different degrees for the mapping, users can use \texttt{hp::MappingCollection} or \texttt{MappingFEField} with appropriate definitions of function spaces.
-  \item We made different changes in the repartitioning of \texttt{parallel::distributed::Triangulation}.
-  Most notably, we have removed the default weight in order to ensure consistency with the rest of the
-  library.
+  \item The class \texttt{MappingQ} now applies a high-order mapping
+    to all cells, not just the cells near the boundary, functionality
+    that was previously provided by the \texttt{MappingQGeneric}
+    class. The latter has been marked as deprecated.
+  \item Changes to weighted repartitioning of
+    \texttt{parallel::distributed::Triangulation} objects include.
+  the removal the default weight of each cell in order to ensure
+  consistency with the rest of the library.
 \end{itemize}
 
 
