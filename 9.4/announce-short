@@ -1,21 +1,14 @@
-Version 9.3.0 of deal.II, the object-oriented finite element library awarded
+Version 9.4.0 of deal.II, the object-oriented finite element library awarded
 the J. H. Wilkinson Prize for Numerical Software, has been released. It is
 available for free under an Open Source license from the deal.II homepage at
 https://www.dealii.org/
 
 The major changes of this release are:
-  - Ten new tutorial programs (steps 19, 66, 68, 71, 72, 74, 76-79)
-    demonstrating solving a variety of equations and illustrating
-    functionality in deal.II.
-  - Experimental support for simplex and mixed meshes.
-  - Improved flexibility of the particle infrastructure.
-  - Support for global-coarsening multigrid algorithms.
-  - Advances in the matrix-free infrastructure.
-  - Usage of MPI-3.0 shared-memory features to reduce memory footprint.  
-  - Improved support for evaluation and integration at arbitrary points.
+
+ [TODO]
 
 The main features of deal.II are:
-  - Extensive documentation and 76 working example programs
+  - Extensive documentation and 83 working example programs
   - Support for dimension-independent programming
   - Locally refined adaptive meshes and multigrid support
   - A zoo of different finite elements

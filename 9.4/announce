@@ -1,4 +1,4 @@
-Version 9.3.0 of deal.II, the object-oriented finite element library awarded the
+Version 9.4.0 of deal.II, the object-oriented finite element library awarded the
 J. H. Wilkinson Prize for Numerical Software, has been released. It is
 available for free under an Open Source license from the deal.II homepage at
 
@@ -6,38 +6,15 @@ available for free under an Open Source license from the deal.II homepage at
 
 The major changes of this release are:
 
-  - Ten new tutorial programs: step-19 introduces particle methods,
-    and step-68 uses these for tracking locations in a flow
-    field. step-66 is a matrix-free geometric multigrid solver for a
-    nonlinear problem. step-71 and step-72 illustrate automatic and
-    symbolic differentiation. step-77 demonstrates deal.II's SUNDIALS
-    interfaces to solve a nonlinear problem. step-74 shows the SIPG
-    approach to discontinuous Galerkin methods. step-76 is an explicit
-    integrator for the Euler equations. step-78 solves the
-    Black-Scholes equations, and step-79 solves a topology
-    optimization problem.
-
-  - Experimental support for simplex and mixed meshes.
-
-  - Improved flexibility of the particle infrastructure.
-
-  - Support for global-coarsening multigrid algorithms.
-
-  - Advances in the matrix-free infrastructure.
-
-  - Usage of MPI-3.0 shared-memory features to reduce memory footprint.
-
-  - Improved support for evaluation and integration at arbitrary points.
-
-  - More than 210 other new features, improvements, and bugfixes.
+  [TODO]
 
 For more information see:
-  - The preprint at https://www.dealii.org/deal93-preprint.pdf
+  - The preprint at https://www.dealii.org/deal94-preprint.pdf
   - The list of changes at
-    https://www.dealii.org/developer/doxygen/deal.II/changes_between_9_2_0_and_9_3_0.html
+    https://www.dealii.org/developer/doxygen/deal.II/changes_between_9_3_3_and_9_4_0.html
 
 The main features of deal.II are:
-  - Extensive documentation and 76 fully-functional example programs
+  - Extensive documentation and 83 fully-functional example programs
   - Support for dimension-independent programming
   - Locally refined adaptive meshes
   - Multigrid support
@@ -48,5 +25,5 @@ The main features of deal.II are:
   - Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
   - Output for a wide variety of visualization platforms.
 
-Matthias Maier and Peter Munch,
+[TODO]
 on behalf of the deal.II developer team and many contributors.
