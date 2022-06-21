@@ -223,7 +223,8 @@ which we briefly outline in the remainder of this section:
   unstructured mesh on a structured one (which might facilitate a more
   memory-efficient storage format, for example if this second
   triangulation is a uniformly refined rectangle or box), or one can create a slice in 3D.
-  \item The new member function \texttt{find\_point\_owner\_rank()} of \texttt{parallel::distributed::Triangulation} allows one to find the MPI
+  \item The new member function \texttt{find\_point\_owner\_rank()} of
+        \texttt{parallel\allowbreak ::distributed::\allowbreak Triangulation} allows one to find the MPI
   ranks of cells containing specified points.
   It is communication-free and leverages the functionality of p4est (>v.2.2).
   Its algorithm is described in \cite{burstedde2020parallel}. This information
@@ -239,10 +240,16 @@ which we briefly outline in the remainder of this section:
   shape functions by their support point. This functionality is useful in both developing nodal schemes since, e.g., the $x$, $y$, and $z$
   velocities at a point will be consecutive in the solution vector. It also improves interoperability with external libraries which expect
   data in this format.
-  \item \todo[inline]{Add something about the FEInterfaceValues improvements?}
+  \item A new module \texttt{Utilities::MPI::LargeCount} which enables sending and receiving MPI messages containing more than $2^31$ objects.
+  This library either uses the new MPI-4 functions, such as \texttt{MPI\_Send\_c()}, or an internal implementation of large objects for
+  compatibility with MPI-3.
+  \item The \texttt{FEInterfaceValues} class, which computes common quantities at the interface of two cells, has been overhauled to make it
+  more consistent with the rest of the library and use more intuitive names for functions. For example,
+  \texttt{FEInterfaceValues::jump\_gradient()} is now \texttt{FEInterfaceValues::jump\_in\_shape\_gradients()}. Several new
+  functions, such as \texttt{FEInterfaceValues::get\_jump\_in\_function\_values()}, have also been added.
 \end{itemize}
 %
-The changelog lists more than 175 other features and bugfixes.
+The changelog lists more than 100 other features and bugfixes.
 
 
 
@@ -532,7 +539,7 @@ notable ones being:
 \item Improved support for computations with Hessians of shape functions: just like values and gradients, Hessians can be
 now evaluated and integrated during matrix-free loops
 both for cells and faces. This could enable, for example, writing
-a matrix-free version of step-47, which solves the biharmonic equation with DG.
+a matrix-free version of step-47, which solves the biharmonic equation with the discontinuous Galerkin method.
 \item Cell-centric loops now also allow access to gradients and Hessians
 of neighboring cells on faces. The major difficulty here was the relative orientation
 of cells on unstructured meshes.
