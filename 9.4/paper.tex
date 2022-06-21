@@ -217,24 +217,28 @@ which we briefly outline in the remainder of this section:
 \begin{itemize}
 %  \item \texttt{AffineConstraints::make\_consistent\_in\_parallel()} allows
 %  to make constraints consistent in parallel.
-  \item The \texttt{DataOutResample} class does not output a numerical solution
-  on the cells of the original triangulation, but interpolates the result
-  onto a second triangulation (which can be completely unrelated).
+  \item The \texttt{DataOutResample} class interpolates values defined on one
+  triangulation onto a second potentially unrelated triangulation.
   By using this class, one can output the result obtained on an
   unstructured mesh on a structured one (which might facilitate a more
   memory-efficient storage format, for example if this second
   triangulation is a uniformly refined rectangle or box), or one can create a slice in 3D.
-  \item The new function \texttt{find\_point\_owner\_rank()} of \texttt{parallel::distributed::Triangulation} allows to find the MPI
-  rank of the subdomain of a distributed mesh that contains a given point.
+  \item The new member function \texttt{find\_point\_owner\_rank()} of \texttt{parallel::distributed::Triangulation} allows one to find the MPI
+  ranks of cells containing specified points.
   It is communication-free and leverages the functionality of p4est (>v.2.2).
-  Its algorithm is described in \cite{burstedde2020parallel}. Based on the information obtained,
-  the communication pattern used in \texttt{Utilties::MPI::RemotePointEvaluation} can be set up efficiently. Furthermore, this function could be used in the future to allow
-  particle simulations where particle movement is not
+  Its algorithm is described in \cite{burstedde2020parallel}. This information
+  enables efficient construction of the
+  communication pattern used in the class \texttt{Utilties::\allowbreak MPI::\allowbreak RemotePointEvaluation}. Furthermore, this function could be used in the future to allow
+  particle simulations in which particle movement is not
   limited by CFL conditions, as done in \cite{mirzadeh2016parallel}.
   \item The new function
   \texttt{GridGenerator::pipe\_junction()}
   generates a triangulation of three cone-shaped pipes that cross at a bifurcation point in any possible configuration.
   A manifold description is applied to the boundary, which can be extended into the volume via transfinite interpolation \cite{Gordon82} using the \texttt{TransfiniteInterpolationManifold} class \cite{dealII90}.
+  \item A new DoF renumbering function \texttt{DoFRenumbering::support\_point\_wise()} which groups together
+  shape functions by their support point. This functionality is useful in both developing nodal schemes since, e.g., the $x$, $y$, and $z$
+  velocities at a point will be consecutive in the solution vector. It also improves interoperability with external libraries which expect
+  data in this format.
   \item \todo[inline]{Add something about the FEInterfaceValues improvements?}
 \end{itemize}
 %
@@ -422,10 +426,10 @@ new functionality is:
   \hfill
   \phantom{.}
 
-  \caption{\it New refinement strategies for triangles and tetrahedra: Triangles
-    are subdivided into four children and tetrahedra into eight.
-  \todo[inline]{Are these ``new strategies'', or is it ``New:
-    Refinement strategies'' because we did not have refinement at all before?}}
+  % We definitely supported tri refinement in 9.3 - see 6ceb8b70559dc2274761a28dc7836f1e9602da8c (Dec 4, 2020)
+  % and also 74b8171dd030a4b2de41955b8d913cde06974b91 (Feb 4, 2021)
+  \caption{\it New: The previous release \cite{dealII93} added support for adaptive mesh
+  refinement with triangles. This release adds support for global tetrahedral refinement.}
   \label{fig:refinement}
 \end{figure}
 
@@ -459,7 +463,7 @@ implemented by the \texttt{p4est} backend. The latter, more recent
 class is currently statically partitioned at creation time.
 
 There are now new utility functions in the
-\texttt{RepartitioningPolicyTools} namepace that can be
+\texttt{RepartitioningPolicyTools} namespace that can be
 used to create a new \texttt{p::f::T} instance,
 given a distributed triangulation (\texttt{p::f::T} or
 \texttt{p::d::T}) and a vector that indicates the designated owner processes of locally
@@ -596,7 +600,7 @@ Raviart-Thomas and Nedelec elements.
 
 In release 9.3~\cite{dealII93}, we added support for global-coarsening multigrid in
 addition to the established local-smoothing infrastructure. Global
-coarsening smoothens on the whole computational domain on each
+coarsening smooths on the whole computational domain on each
 multigrid level, which is obtained by coarsening the finest cells of
 the next finer multigrid level.
 For this purpose, we use a sequence of triangulations, and we perform
@@ -739,7 +743,7 @@ A related function is
 \texttt{GridGenerator::surface\_mesh\_to\_volumetric\_mesh()}, which
 computes a tetrahedral volume triangulation \texttt{Triangulation<3>}, based on a
 given surface triangulation \texttt{Triangulation<2,3>} that bounds
-the three dimensional volume.
+the three dimensional shape.
 
 CGAL also provides us with boolean operations on meshes, as available in the
 utility function
