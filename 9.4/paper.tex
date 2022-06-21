@@ -809,30 +809,50 @@ These utilities will be the building blocks for adding functions to the \texttt{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Performance improvement of particle infrastructure}\label{sec:particles}
 
-We have improved upon the particle structure discussed in our previous release \citep{dealII93} by restructuring the storage of the particle identifiers. In our previous optimizations we stored all particle data as a separate continuous array for each particle property, but particle identifiers were still stored in a multimap tree-like structure.
+We have enhanced the capabilities of \dealii to include particle methods by reorganizing storage structures and optimizing algorithms. In our previously reported improvements~\citep{dealII93} we stored all particle data as a separate continuous array for each particle property, but particle identifiers (IDs) were still stored in a multimap tree-like structure.
 
-Our new particle storage is organized as follows: Particle IDs are stored in a list of dynamic arrays, each array contains the particle IDs of all particles in a unique cell. Each ID is a handle that determines the location of the data of this unique particle in the property arrays.
-The list of ID arrays only contains entries for cells that contain particles. We keep a separate cache structure that contains pointers to the particular list entries for each cell that contains particles, and invalid entries for all cells that do not contain particles.
+Our new particle containers are organized as follows: Particle IDs are stored in a list of dynamic arrays, each array contains the particle IDs of all particles in a unique cell. Each ID is a handle that determines the location of the data of this unique particle in the property arrays.
+The list of ID arrays only contains entries for cells that contain particles. We keep a separate cache structure that contains pointers to the particular list entries for each cell. If a cell has no particles this pointer is invalid.
 
-This new structure allows for the following significant performance improvements:
-All particle data (both their identifiers and their actual data) are now stored as separate and contiguous arrays in memory, which improves prefetching of data and makes iterating over particles extremely cache efficient.
-The choice of a list container that only includes entries for cells that contain particles means iteration is efficient, even if many cells in the domain do not contain any particles (as can be the case for discrete-element models).
-Creating separate arrays for each cell allows us to easily move particle IDs from one cell to another as a local operation, affecting only the two cell containers in question. We take care to reuse allocated memory to minimize the number of memory reallocations.
-The separate cache structure that contains entries for each cell allows quick random-access to the particles of a particular cell, and also allows to quickly determine if a particular cell has particles at all.
+This structure allows for the following significant performance improvements:
+
+\begin{itemize}
+\item All particle data (both their identifiers and their actual data) are now stored as separate and contiguous arrays in memory, which improves prefetching of data and makes iterating over particles extremely cache efficient.
+\item The choice of a list container that only includes entries for cells that contain particles means iteration is efficient, even if many cells in the domain do not contain any particles (as can be the case for discrete-element methods).
+\item Creating separate arrays for each cell allows us to easily move particle IDs from one cell to another as a local operation, affecting only the two cell containers in question. We take care to reuse allocated memory to minimize the number of memory reallocations.
+\item The separate cache structure that contains entries for each cell allows quick random-access to the particles of a particular cell, and also allows to quickly determine if a particular cell has particles at all.
+\end{itemize}
 
 In addition to the new storage structure we have made the following algorithmic improvements:
-Determining if a particle is inside a cell after changing its position involves inverting the mapping of this cell. We have reorganized our algorithms to perform these inversions on a batch of particles of a cell instead of particle-by-particle, which allows us to make use of vectorized instructions during the inversion.
-In addition, after sorting all particles into their new cells, the arrays that store particle properties are now sorted in the same order as the particle IDs in the list of arrays, which allows for cache efficient iteration over particle properties. To avoid a costly sorting operation this operation is executed as a copy of the existing data into a new data container while iterating over particle IDs.
+Determining if a particle is inside a cell after changing its position involves inverting the mapping for this cell. We have reorganized our algorithms to perform these inversions on a batch of particles in the same cell instead of particle-by-particle, which allows us to make use of vectorized instructions during the inversion.
+In addition, after sorting all particles into their new cells, the arrays that store particle properties are now sorted in the same order as the particle IDs in the list of arrays, which allows for cache efficient iteration over particle properties. To avoid a costly sorting operation this operation is executed as a copy of the existing data into a new data container that replaces the existing container.
 
+\begin{table}
+  \caption{Timing of various particle operations for tutorial program \texttt{step-68} (particle advection in a 2D, cartesian box) using 400,000 particles on a single process.}
+  \label{tab:particle_timing}
 
+  \begin{tabular}{|c|c|c|c|}
+    \hline
+   Particle Operation & \dealii 9.3 & \dealii 9.4 & Speedup \\
+   \hline
+   Generation & 444 ms & 235 ms & 1.9x \\
+   Iteration & 4.18 ms & 0.638 ms & 6.6x \\
+   Advection & 37.8 ms & 33.9 ms & 1.15x \\
+   Sorting & 21.9 ms & 9.27 ms & 2.4x \\
+   \hline
+  \end{tabular}
+  \end{table}
 
+We illustrate the combined effect of these performance improvements in Table~\ref{tab:particle_timing}. We have measured the averaged compute time for four particle operations in a slightly modified version of the \dealii tutorial program \texttt{step-68} when advecting 400,000 particles on a single process (we have not observed any influence of the described changes on the parallel scalability of the algorithms).
+The four operations we have measured are:
+\begin{itemize}
+\item Generation of a set of 400,000 particles at positions that are not aligned with the background mesh, i.e. the containing cell of each particle has to be found.
+\item Iteration without significant computation over the whole set of created particles (without accessing particle data).
+\item Advection of all particles, which involves iteration over all particles, evaluation of the finite element solution at the location of the particles, read and write access to the position of all particles to modify their location, and write access to the particle properties (to store their velocity for visualization purposes).
+\item Sorting, meaning the inversion of the mapping of each cell to find the new particle locations relative to this cell, and moving all particles that have left their original cell into new cells (both \dealii 9.3 and \dealii 9.4). In \dealii 9.4 this operation also includes reordering the particle properties for optimal iteration.
+\end{itemize}
 
-
-\todo[inline]{
-* describe the new data structure
-
-* do we have performance numbers?
-}
+Table~\ref{tab:particle_timing} shows that all particle operations are much faster faster in \dealii 9.4 than \dealii 9.3. In particular operations that depend strongly on particle storage structure and require few fixed computations (like iteration and sorting) benefit massively from the above mentioned optimizations. Please note that the exact gains will depend strongly on the exact combination of geometry, mapping, dimensionality, and number of particles per cell in any specific model, and can be smaller or larger than the measurements provided here.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1130,8 +1150,8 @@ Awards OAC-2015848, DMS-2028346, and
 EAR-1925575, and by Technical Data Analysis, Inc. through US Navy STTR
 Contract N68335-18-C-0011.
 
-R.~Gassm{\"o}ller was also partially supported by the NSF Award
-EAR-1925595.
+R.~Gassm{\"o}ller was also partially supported by the NSF Awards
+EAR-1925677, and EAR-2054605.
 
 L.~Heltai was partially supported by the Italian Ministry of Instruction,
 University and Research (MIUR), under the 2017 PRIN project NA-FROM-PDEs MIUR
