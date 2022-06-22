@@ -443,8 +443,11 @@ new functionality is:
 
   % We definitely supported tri refinement in 9.3 - see 6ceb8b70559dc2274761a28dc7836f1e9602da8c (Dec 4, 2020)
   % and also 74b8171dd030a4b2de41955b8d913cde06974b91 (Feb 4, 2021)
-  \caption{\it New: The previous release \cite{dealII93} added support for adaptive mesh
-  refinement with triangles. This release adds support for global tetrahedral refinement.}
+  \caption{\it The previous release, 9.3 \cite{dealII93}, had
+    added support for adaptive mesh 
+  refinement with triangles. This release adds support for global
+  tetrahedral refinement by subdividing each tetrahedron into eight
+  children, as shown on the right.}
   \label{fig:refinement}
 \end{figure}
 
@@ -820,9 +823,11 @@ Notice that the most relevant difference with the quadrature rules provided by c
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Performance improvement of particle infrastructure}\label{sec:particles}
 
-We have enhanced the capabilities of \dealii to include particle methods by reorganizing storage structures and optimizing algorithms. In our previously reported improvements~\citep{dealII93} we stored all particle data as a separate continuous array for each particle property, but particle identifiers (IDs) were still stored in a multimap tree-like structure.
+In the release described herein, we have reorganized the data
+structures and optimized the algorithms that support using particles
+in \dealii{}. In our previously reported improvements~\citep{dealII93} we stored all particle data as a separate contiguous array for each particle property, but particle identifiers (IDs) were still stored in a multimap tree-like structure.
 
-Our new particle containers are organized as follows: Particle IDs are stored in a list of dynamic arrays, each array contains the particle IDs of all particles in a unique cell. Each ID is a handle that determines the location of the data of this unique particle in the property arrays.
+Our new particle containers are organized as follows: Particle IDs are stored in a list of dynamic arrays, each array containing the particle IDs of all particles in a unique cell. Each ID is a handle that determines the location of the data of this unique particle in the property arrays.
 The list of ID arrays only contains entries for cells that contain particles. We keep a separate cache structure that contains pointers to the particular list entries for each cell. If a cell has no particles this pointer is invalid.
 
 This structure allows for the following significant performance improvements:
@@ -839,31 +844,34 @@ Determining if a particle is inside a cell after changing its position involves 
 In addition, after sorting all particles into their new cells, the arrays that store particle properties are now sorted in the same order as the particle IDs in the list of arrays, which allows for cache efficient iteration over particle properties. To avoid a costly sorting operation this operation is executed as a copy of the existing data into a new data container that replaces the existing container.
 
 \begin{table}
-  \caption{Timing of various particle operations for tutorial program \texttt{step-68} (particle advection in a 2D, cartesian box) using 400,000 particles on a single process.}
+  \caption{\it Timing of various particle operations for tutorial program \texttt{step-68} (particle advection in a 2D, Cartesian box) using 400,000 particles on a single process.}
   \label{tab:particle_timing}
 
+  \centering
   \begin{tabular}{|c|c|c|c|}
     \hline
    Particle Operation & \dealii 9.3 & \dealii 9.4 & Speedup \\
    \hline
-   Generation & 444 ms & 235 ms & 1.9x \\
-   Iteration & 4.18 ms & 0.638 ms & 6.6x \\
-   Advection & 37.8 ms & 33.9 ms & 1.15x \\
-   Sorting & 21.9 ms & 9.27 ms & 2.4x \\
+   Generation & 444 ms & 235 ms & 1.9$\times$ \\
+   Iteration & 4.18 ms & 0.638 ms & 6.6$\times$ \\
+   Advection & 37.8 ms & 33.9 ms & 1.15$\times$ \\
+   Sorting & 21.9 ms & 9.27 ms & 2.4$\times$ \\
    \hline
   \end{tabular}
   \end{table}
 
-We illustrate the combined effect of these performance improvements in Table~\ref{tab:particle_timing}. We have measured the averaged compute time for four particle operations in a slightly modified version of the \dealii tutorial program \texttt{step-68} when advecting 400,000 particles on a single process (we have not observed any influence of the described changes on the parallel scalability of the algorithms).
+We illustrate the combined effect of these performance improvements in Table~\ref{tab:particle_timing}. We measure the averaged compute time for four particle operations in a slightly modified version of the \dealii tutorial program \texttt{step-68} when advecting 400,000 particles on a single process (we have not observed any influence of the described changes on the parallel scalability of the algorithms).
 The four operations we have measured are:
 \begin{itemize}
 \item Generation of a set of 400,000 particles at positions that are not aligned with the background mesh, i.e. the containing cell of each particle has to be found.
-\item Iteration without significant computation over the whole set of created particles (without accessing particle data).
+\item Iteration over the whole set of created particles, without
+  significant computation and in particular without accessing particle data.
 \item Advection of all particles, which involves iteration over all particles, evaluation of the finite element solution at the location of the particles, read and write access to the position of all particles to modify their location, and write access to the particle properties (to store their velocity for visualization purposes).
-\item Sorting, meaning the inversion of the mapping of each cell to find the new particle locations relative to this cell, and moving all particles that have left their original cell into new cells (both \dealii 9.3 and \dealii 9.4). In \dealii 9.4 this operation also includes reordering the particle properties for optimal iteration.
+\item Sorting, i.e., the inversion of the mapping of each cell to find the new particle locations relative to this cell, and moving all particles that have left their original cell into new cells (both \dealii 9.3 and \dealii 9.4). In \dealii 9.4 this operation also includes reordering the particle properties for optimal iteration.
 \end{itemize}
 
-Table~\ref{tab:particle_timing} shows that all particle operations are much faster faster in \dealii 9.4 than \dealii 9.3. In particular operations that depend strongly on particle storage structure and require few fixed computations (like iteration and sorting) benefit massively from the above mentioned optimizations. Please note that the exact gains will depend strongly on the exact combination of geometry, mapping, dimensionality, and number of particles per cell in any specific model, and can be smaller or larger than the measurements provided here.
+Table~\ref{tab:particle_timing} shows that all particle operations are
+much faster faster in \dealii 9.4 than in version 9.3. In particular operations that depend strongly on particle storage structure and require few fixed computations (like iteration and sorting) benefit massively from the above mentioned optimizations. We note that the exact gains will depend strongly on the exact combination of geometry, mapping, dimensionality, and number of particles per cell in any specific model, and can be smaller or larger than the measurements provided here.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
