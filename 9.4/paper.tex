@@ -793,18 +793,19 @@ A possible workflow is the following:
     \centering
     \begin{subfigure}[b]{0.3\textwidth}
       \centering
-      \includegraphics[width=.2\paperwidth]{png/heart_implicit.png}
+      \includegraphics[width=\textwidth]{png/heart_implicit.png}
       \caption{\label{fig:heart_tria}}
     \end{subfigure}
+    \hfill
     \begin{subfigure}[b]{0.3\textwidth}
       \centering
-      \includegraphics[height=.14\paperheight]{png/intersection_cube_sphere_mesh.png}
+      \includegraphics[width=\textwidth]{png/intersection_cube_sphere_mesh.png}
       \caption{\label{fig:corefinement}}
     \end{subfigure}
-    \qquad
-    \begin{subfigure}[b]{0.3\textwidth}
+    \hfill
+    \begin{subfigure}[b]{0.37\textwidth}
       \centering
-      \includegraphics[height=.14\paperheight]{png/cube_sphere_remeshed.png}
+      \includegraphics[width=\textwidth]{png/cube_sphere_remeshed.png}
       \caption{ \label{fig:corefinement_remeshed}}
     \end{subfigure}
     \caption{\it (a) \texttt{Triangulation<3>} of a heart surface starting from an implicit function $f$. (b) Union of the unit cube with an hyper ball. Notice how the corefinement around the intersection gives badly shaped elements. (c) The remeshed \dealii{} Triangulation.}
