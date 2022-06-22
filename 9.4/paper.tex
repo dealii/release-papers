@@ -748,12 +748,6 @@ GridGenerator::implicit_function(tria, implicit_function, data,
                                  {0, 0, 0}, 10.0);
 \end{c++}
 
-\begin{figure}
-  \centering
-  \includegraphics[width=.6\paperwidth]{png/heart_implicit.png}
-  \caption{\it \texttt{Triangulation<3>} of a heart surface starting from an implicit function $f$. \label{fig:heart_tria}}
-\end{figure}
-
 A related function is
 \texttt{GridGenerator::surface\_mesh\_to\_volumetric\_mesh()}, which
 computes a tetrahedral volume triangulation \texttt{Triangulation<3>}, based on a
@@ -794,19 +788,23 @@ A possible workflow is the following:
   the same mesh has been remeshed.
   \begin{figure}
     \centering
-    \begin{subfigure}[b]{0.4\textwidth}
+    \begin{subfigure}[b]{0.3\textwidth}
       \centering
-      \includegraphics[height=.2\paperheight]{png/intersection_cube_sphere_mesh.png}
+      \includegraphics[width=.2\paperwidth]{png/heart_implicit.png}
+      \caption{\label{fig:heart_tria}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.3\textwidth}
+      \centering
+      \includegraphics[height=.14\paperheight]{png/intersection_cube_sphere_mesh.png}
       \caption{\label{fig:corefinement}}
     \end{subfigure}
     \qquad
-    \begin{subfigure}[b]{0.5\textwidth}
+    \begin{subfigure}[b]{0.3\textwidth}
       \centering
-      \includegraphics[height=.2\paperheight]{png/cube_sphere_remeshed.png}
+      \includegraphics[height=.14\paperheight]{png/cube_sphere_remeshed.png}
       \caption{ \label{fig:corefinement_remeshed}}
     \end{subfigure}
-    \caption{\it (a) Union of the unit cube with an hyper ball. Notice
-      how the corefinement around the intersection results in badly shaped elements. (b) The remeshed \dealii{} Triangulation.}
+    \caption{\it (a) \texttt{Triangulation<3>} of a heart surface starting from an implicit function $f$. (b) Union of the unit cube with an hyper ball. Notice how the corefinement around the intersection gives badly shaped elements. (c) The remeshed \dealii{} Triangulation.}
   \end{figure}
   
 \texttt{CGALWrappers::compute\_quadrature\_on\_boolean\_operation()} returns a \texttt{Quadrature<3>} that allows exact integration on polyhedral elements coming out of a \texttt{BooleanOperation} between \dealii cells.
@@ -815,6 +813,8 @@ collecting all of the rules together, giving a \texttt{Quadrature<3>} formula on
 
 
 These utilities will be the building blocks for adding functions to the \texttt{NonMatching} namespace that will assemble coupling terms like $(u,v)_{B}$, with $B$ a domain immersed in a fixed background mesh $\Omega$ and $u,v$ finite element functions on $V_h(\Omega)$, as usually happens using Nitsche's method to weakly impose boundary conditions at an interface. The same applies to coupling terms of the form $(u,q)_B$ in formulations using Lagrange multipliers, where now $q \in Q_h(B)$, with $Q_h(B)$ the space of the multiplier variable.
+Notice that the most relevant difference with the quadrature rules provided by cutFEM support in \texttt{QuadratureGenerator} is that \texttt{Quadrature} objects are not created using a level-set approach, as described in the previous section, but directly with the two overlapped grids.
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1141,8 +1141,6 @@ Their contributions are much appreciated!
 \dealii{} and its developers are financially supported through a
 variety of funding sources:
 
-\todo[inline]{Update. In particular make sure that we list how Marco
-  Feder is supported.}
 
 D.~Arndt and B.~Turcksin: Research sponsored by the Laboratory Directed Research and
 Development Program of Oak Ridge National Laboratory, managed by UT-Battelle,
