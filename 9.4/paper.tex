@@ -763,9 +763,9 @@ the three dimensional shape.
 CGAL also provides us with boolean operations on meshes, as available in the
 utility function
 \texttt{CGALWrappers::\allowbreak{}compute\_boolean\_operation()}. The
-available operations are \textit{corefinement}, \textit{intersection},
+available operations are \textit{co-refinement}, \textit{intersection},
 \textit{union}, and \textit{difference}. Oftentimes, boolean
-operations and corefinement around the intersection produces
+operations and co-refinement around the intersection produces
 badly shaped mesh cells. To overcome this issue, one can use \texttt{CGALWrappers::\allowbreak{}remesh\_surface()}. Figure~\ref{fig:corefinement_remeshed} shows a graphical example.
 A possible workflow is the following:
 \begin{c++}
@@ -811,7 +811,7 @@ A possible workflow is the following:
       \includegraphics[width=\textwidth]{png/cube_sphere_remeshed.png}
       \caption{ \label{fig:corefinement_remeshed}}
     \end{subfigure}
-    \caption{\it (a) \texttt{Triangulation<3>} of a heart surface starting from an implicit function $f$. (b) Union of the unit cube with an hyper ball. Notice how the corefinement around the intersection gives badly shaped elements. (c) The remeshed \dealii{} Triangulation.}
+    \caption{\it (a) \texttt{Triangulation<3>} of a heart surface starting from an implicit function $f$. (b) Union of the unit cube with an hyper ball. Notice how the co-refinement around the intersection gives badly shaped elements. (c) The remeshed \dealii{} Triangulation.}
   \end{figure}
   
 \texttt{CGALWrappers::compute\_quadrature\_on\_boolean\_operation()} returns a \texttt{Quadrature<3>} that allows exact integration on polyhedral elements coming out of a \texttt{BooleanOperation} between \dealii cells.
