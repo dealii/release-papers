@@ -803,31 +803,31 @@ Triangulation<2, 3> tria_out;
 CGALWrappers::cgal_surface_mesh_to_dealii_triangulation(out_mesh, tria_out);
 
 // 5) convert surface to volume mesh via surface_mesh_to_volumetric_mesh()
-  \end{c++}
-  The output of the boolean operation can be seen in Fig.~\ref{fig:corefinement}, while in Fig.~\ref{fig:corefinement_remeshed}
-  the same mesh has been remeshed.
-  \begin{figure}
+\end{c++}
+The output of the boolean operation can be seen in Fig.~\ref{fig:corefinement}, while in Fig.~\ref{fig:corefinement_remeshed}
+the same mesh has been remeshed.
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.28\textwidth}
     \centering
-    \begin{subfigure}[b]{0.28\textwidth}
-      \centering
-      \includegraphics[width=\textwidth]{png/heart_implicit.png}
-      \caption{\label{fig:heart_tria}}
-    \end{subfigure}\qquad
-    \hfill
-    \begin{subfigure}[b]{0.28\textwidth}
-      \centering
-      \includegraphics[width=\textwidth]{png/intersection_cube_sphere_mesh.png}
-      \caption{\label{fig:corefinement}}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.35\textwidth}
-      \centering
-      \includegraphics[width=\textwidth]{png/cube_sphere_remeshed.png}
-      \caption{ \label{fig:corefinement_remeshed}}
-    \end{subfigure}
-    \caption{\it (a) Triangulation created by filling a heart-shaped surface implicitly described by a function $f$. (b) Union of a cube with a sphere with badly shaped cells at the intersection. (c) Remeshed version of the same triangulation.}
-  \end{figure}
-  
+    \includegraphics[width=\textwidth]{png/heart_implicit.png}
+    \caption{\label{fig:heart_tria}}
+  \end{subfigure}\qquad
+  \hfill
+  \begin{subfigure}[b]{0.28\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{png/intersection_cube_sphere_mesh.png}
+    \caption{\label{fig:corefinement}}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.35\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{png/cube_sphere_remeshed.png}
+    \caption{ \label{fig:corefinement_remeshed}}
+  \end{subfigure}
+  \caption{\it (a) Triangulation created by filling a heart-shaped surface implicitly described by a function $f$. (b) Union of a cube with a sphere with badly shaped cells at the intersection. (c) Remeshed version of the same triangulation.}
+\end{figure}
+
 \texttt{CGALWrappers::compute\_quadrature\_on\_boolean\_operation()} returns a \texttt{Quadrature<3>} that allows exact integration on polyhedral elements coming out of a \texttt{BooleanOperation} between \dealii cells.
 The quadrature rule is built by meshing the polyhedral region with tetrahedra, computing on each tetrahedron a \texttt{QGaussSimplex<3>} quadrature rule by using \texttt{QSimplex<3>::\allowbreak{}compute\_affine\_transformation()}, and finally
 collecting all of the rules together, giving a \texttt{Quadrature<3>} formula on the \emph{physical} element.
