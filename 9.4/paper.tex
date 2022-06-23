@@ -820,7 +820,7 @@ collecting all of the rules together, giving a \texttt{Quadrature<3>} formula on
 
 
 These utilities will be the building blocks for adding functions to the \texttt{NonMatching} namespace that will assemble coupling terms like $(u,v)_{B}$,\marginpar{The $B$ and $\Omega$ here need to be streamlined with \eqref{eq:boundingbox}, right now they are the opposite} with $B$ a domain immersed in a fixed background mesh $\Omega$ and $u,v$ finite element functions on $V_h(\Omega)$, as usually happens using Nitsche's method to weakly impose boundary conditions at an interface. The same applies to coupling terms of the form $(u,q)_B$ in formulations using Lagrange multipliers, where now $q \in Q_h(B)$, with $Q_h(B)$ the space of the multiplier variable.
-Notice that the most relevant difference with the quadrature rules provided by cutFEM support in \texttt{QuadratureGenerator} is that \texttt{Quadrature} objects are not created using a level-set approach, as described in the previous section, but directly with the two overlapped grids.
+Note that the most relevant difference between this and the \texttt{QuadratureGenerator} in Section~\ref{sec:cut} is that the \texttt{Quadrature} objects are created directly from the two overlapping grids and not from a level set function.
 
 
 
