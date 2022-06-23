@@ -563,7 +563,7 @@ the fly in order to enable vectorization over cells. The new feature is useful i
 contexts. Examples are simulations with sharp interfaces (e.g., two-phase flow
 or shock capturing), where one needs to treat cells that are ``cut'' by
 the interface in a special way. A challenge is that cell batches
-might contain cut or non-cut cells, making vectorization of these operations potentially more complicated. Previous functionality has provided the option of masking certain cells in cell batches, which works well if
+might contain cut or non-cut cells, making the vectorization of these operations potentially more complicated. Previous functionality has provided the option of masking certain cells in cell batches, which works well if
 the code paths do not diverge too much. Another way is to
 categorize cells during \texttt{MatrixFree::reinit()} in such a way that mixed cell batches do not occur. However, \texttt{MatrixFree::reinit()}
 might be too expensive if recategorization needs to happen very frequently to follow the dynamics of a system, e.g., in each time step. Despite some overhead compared to static matrix-free loops, the new feature can be the best option in these scenarios.
@@ -577,7 +577,7 @@ might be too expensive if recategorization needs to happen very frequently to fo
   taking two additional \texttt{std::function} arguments. The first function
   defines the operation to be scheduled on the vector entries before the
   matrix-vector product touches them, and the second what happens
-  afterwards. The new features also include a renumbering to maximize data
+  afterward. The new features also include a renumbering to maximize data
   locality. The theory is described in the
   contribution~\cite{kronbichler2022cg}.
 \end{itemize}
@@ -589,7 +589,7 @@ to what was already done in the GPU code~\cite{ljungkvist2017matrix}. In \cite{m
 and performance numbers are shown, indicating a reduction
 of overhead of cells with hanging nodes by a factor of ten.
 
-Finally, we have performed a major restructuring of internals
+Finally, we have performed a major restructuring of the internals
 of the \texttt{FEEvaluation} classes. This reduces some overheads for low polynomial degrees and will enable us to add support for new element types in the future.
 
 We would like to remind users that we transitioned from the use of Booleans
@@ -626,14 +626,14 @@ fe_eval.evaluate(EvaluationFlags::gradients) // new
 
 In release 9.3~\cite{dealII93}, we added support for global-coarsening multigrid in
 addition to the established local-smoothing infrastructure. Global
-coarsening algorithms smoothen on the whole computational domain on each
+coarsening algorithms smoothen over the whole computational domain on each
 multigrid level, which is obtained by coarsening the finest cells of
 the next finer multigrid level.
 For this purpose, we use a sequence of triangulations, and we perform
 the smoothing only on their active levels. To create the sequence of
 triangulations, one can use the functions \texttt{MGTransferGlobalCoarseningTools::create\_geometric\_coarsening\_sequence()}. A new version takes an
-instance of \texttt{RepartitioningPolicyTools::Base} (see Subsection~\ref{sec:repartitioning}) as argument, which allows to specify the parallel
-distribution of each multigrid level (in contrast to the fixed first-child policy in the case of local smoothing). These features have been developed and tuned for running on supercomputer scale
+instance of \texttt{RepartitioningPolicyTools::Base} (see Subsection~\ref{sec:repartitioning}) as argument, which allows specifying the parallel
+distribution of each multigrid level (in contrast to the fixed first-child policy in the case of local smoothing). These features have been developed and tuned for running on a supercomputer scale
 with complicated coarse meshes as presented in \cite{kronbichler2021next}.
 Furthermore, we added support for block vectors,
 fixed a number of limitations, and performed performance optimizations of
@@ -649,8 +649,8 @@ potentially more expensive intergrid transfers. In order to judge the benefits
 of one approach against the other, \dealii{} provides new functions
 \texttt{workload\_imbalance()} and \texttt{vertical\_communication\_efficiency()}
 in the \texttt{MGTools} namespace for the  estimation of the imbalance during, e.g.,
-smoothing and the
-communication efficiency during intergrid transfer purely based on the given mesh.
+smoothing or the
+communication efficiency during intergrid transfer, purely based on the given mesh.
 % MK: I would not add this part, it does not really fit into this paper as
 % there is nothing to report at this point (and we should then add references
 % to the actual literature).
@@ -891,7 +891,7 @@ The four operations we have measured are:
 \end{itemize}
 
 Table~\ref{tab:particle_timing} shows that all particle operations are
-much faster in \dealii 9.4 than in version 9.3. In particular, operations that depend strongly on particle storage structure and require few fixed computations (like iteration and sorting) benefit massively from the above mentioned optimizations. We note that the exact gains will depend strongly on the exact combination of geometry, mapping, dimensionality, and number of particles per cell in any specific model, and can be smaller or larger than the measurements provided here.
+much faster in \dealii 9.4 than in version 9.3. In particular, operations that depend strongly on particle storage structure and require few fixed computations (like iteration and sorting) benefit massively from the above-mentioned optimizations. We note that the exact gains will depend strongly on the exact combination of geometry, mapping, dimensionality, and the number of particles per cell in any specific model, and can be smaller or larger than the measurements provided here.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -900,7 +900,7 @@ much faster in \dealii 9.4 than in version 9.3. In particular, operations that d
 
 Many problems in parallel computations can be stated in the following
 way: Each process in a parallel universe has a number of queries to
-send to other processes who do not know that they will be asked, and
+send to other processes that do not know that they will be asked, and
 who will then have to respond with replies. This problem is solved by
 ``consensus algorithms''~\cite{hoefler2010scalable}. An example of where this problem appears is
 given in Section~\ref{sec:repartitioning}.
@@ -1028,7 +1028,7 @@ software, we ask that papers using the library reference one of the
 
 There are various ways to reference \dealii{}. To acknowledge the use of
 the current version of the library, \textbf{please reference the present
-  document}. For up to date information and a bibtex entry
+  document}. For up-to-date information and a bibtex entry
 see
 \begin{center}
   \url{https://www.dealii.org/publications.html}
