@@ -824,7 +824,7 @@ CGALWrappers::cgal_surface_mesh_to_dealii_triangulation(out_mesh, tria_out);
       \includegraphics[width=\textwidth]{png/cube_sphere_remeshed.png}
       \caption{ \label{fig:corefinement_remeshed}}
     \end{subfigure}
-    \caption{\it (a) \texttt{Triangulation<3>} of a heart surface starting from an implicit function $f$. (b) Union of the unit cube with an hyper ball. Notice how the co-refinement around the intersection gives badly shaped elements. (c) The remeshed \dealii{} Triangulation.}
+    \caption{\it (a) Triangulation created by filling a heart-shaped surface implicitly described by a function $f$. (b) Union of a cube with a sphere with badly shaped cells at the intersection. (c) Remeshed version of the same triangulation.}
   \end{figure}
   
 \texttt{CGALWrappers::compute\_quadrature\_on\_boolean\_operation()} returns a \texttt{Quadrature<3>} that allows exact integration on polyhedral elements coming out of a \texttt{BooleanOperation} between \dealii cells.
