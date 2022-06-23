@@ -828,7 +828,7 @@ the same mesh has been remeshed.
   \caption{\it (a) Triangulation created by filling a heart-shaped surface implicitly described by a function $f$. (b) Union of a cube with a sphere with badly shaped cells at the intersection. (c) Remeshed version of the same triangulation.}
 \end{figure}
 
-\texttt{CGALWrappers::compute\_quadrature\_on\_boolean\_operation()} returns a \texttt{Quadrature<3>} that allows exact integration on polyhedral elements coming out of a \texttt{BooleanOperation} between \dealii cells.
+\texttt{CGALWrappers::compute\_quadrature\_on\_boolean\_operation()} returns a \texttt{Quadrature<3>} that allows exact integration of polynomials on polyhedral elements coming out of a \texttt{BooleanOperation} between \dealii cells.
 The quadrature rule is built by meshing the polyhedral region with tetrahedra, computing on each tetrahedron a \texttt{QGaussSimplex<3>} quadrature rule by using \texttt{QSimplex<3>::\allowbreak{}compute\_affine\_transformation()}, and finally
 collecting all of the rules together, giving a \texttt{Quadrature<3>} formula on the \emph{physical} element.
 
