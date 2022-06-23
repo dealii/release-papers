@@ -641,11 +641,11 @@ has been eliminated. Furthermore, hanging-node constraints are applied
 efficiently in the same way as in the matrix-free loops (see Subsection~\ref{sec:mf}).
 
 In \cite{munch2022gc}, the performance of the local-smoothing and global-coarsening
-infrastructure of \texttt{deal.II} was compared for locally refined meshes. The results indicate that
+infrastructure of \dealii{} was compared for locally refined meshes. The results indicate that
 the local definition of multigrid levels might introduce load imbalances
 in the case of local smoothing so that global coarsening is favorable despite
 potentially more expensive intergrid transfers. In order to judge the benefits
-of one approach against the other, \texttt{deal.II} provides new functions
+of one approach against the other, \dealii{} provides new functions
 \texttt{workload\_imbalance()} and \texttt{vertical\_communication\_efficiency()}
 in the \texttt{MGTools} namespace for the  estimation of the imbalance during, e.g.,
 smoothing and the
@@ -973,7 +973,7 @@ research rather than as teaching tools):
 \begin{itemize}
   \item ``\texttt{TRBDF2-DG projection solver for the incompressible Navier--Stokes equations}'' was contributed by Giuseppe Orlando Politecnico di Milano. It shows
   how to solve the incompressible Navier--Stokes equations efficiently 
-  with \texttt{deal.II}'s matrix-free DG infrastructure, multigrid, and adaptive-mesh
+  with \dealii{}'s matrix-free DG infrastructure, multigrid, and adaptive-mesh
   refinement. Interested readers are referred to~\cite{orlando2021efficient}.
 \end{itemize}
 Finally, the ``\texttt{MCMC for the Laplace equation}'' code gallery
