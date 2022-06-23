@@ -6,6 +6,7 @@
 \usepackage{anslistings}
 \usepackage{multicol}
 \usepackage{pdfsync}
+\usepackage{enumitem}
 
 \usepackage{pgfplots}
 \usepackage{pgfplotstable}
@@ -973,12 +974,12 @@ user-contributed programs that often solve more complicated problems
 than tutorial programs, and intended as starting points for further
 research rather than as teaching tools):
 \begin{itemize}
-  \item ``\texttt{TRBDF2-DG projection solver for the incompressible Navier--Stokes equations}'' was contributed by Giuseppe Orlando Politecnico di Milano. It shows
+  \item ``TRBDF2-DG projection solver for the incompressible Navier--Stokes equations'' was contributed by Giuseppe Orlando (Politecnico di Milano). It shows
   how to solve the incompressible Navier--Stokes equations efficiently 
   with \dealii{}'s matrix-free DG infrastructure, multigrid, and adaptive-mesh
   refinement. Interested readers are referred to~\cite{orlando2021efficient}.
 \end{itemize}
-Finally, the ``\texttt{MCMC for the Laplace equation}'' code gallery
+Finally, the ``MCMC for the Laplace equation'' code gallery
 program has been updated by providing MATLAB and Python versions of
 the benchmark that is implemented in this code.
 
@@ -1042,7 +1043,7 @@ specific features of the library, please consider citing any of the
 following:
 \begin{multicols}{2}
   \vspace*{-36pt}
-  \begin{itemize}
+  \begin{itemize}[leftmargin=4mm]
     \item For geometric multigrid: \cite{Kanschat2004,JanssenKanschat2011,ClevengerHeisterKanschatKronbichler2019, munch2022gc};
     \item For distributed parallel computing: \cite{BangerthBursteddeHeisterKronbichler11};
     \item For $hp$-adaptivity: \cite{BangerthKayserHerold2007,fehling2022};
@@ -1075,7 +1076,7 @@ following:
 
 \dealii{} can interface with many other libraries:
 \begin{multicols}{3}
-  \begin{itemize}
+  \begin{itemize}[leftmargin=4mm]
     \item ADOL-C \cite{Griewank1996a,adol-c}
     \item ArborX \cite{lebrun2020arborx}
     \item ARPACK \cite{arpack}
