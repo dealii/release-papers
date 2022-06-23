@@ -208,8 +208,9 @@ The major changes of this release are:
   \item Advances in matrix-free infrastructure (see Section~\ref{sec:mf});
   \item Advances in multigrid infrastructure (see Section~\ref{sec:multigrid});
   \item CutFEM support (see Section~\ref{sec:cut});
-  \item Integration with the Computational Geometry Algorithms Library (CGAL) (see Section~\ref{sec:cgalwrappers});
+  \item Integration of the Computational Geometry Algorithms Library (CGAL) (see Section~\ref{sec:cgalwrappers});
   \item Performance improvements in the particle infrastructure (see Section~\ref{sec:particles});
+  \item Improvements to unstructured communication (see Section~\ref{sec:CA});
   \item Two new tutorial programs and one new code gallery program (see
     Section~\ref{subsec:steps}).
 \end{itemize}
@@ -596,8 +597,8 @@ to flags to configure the evaluation and integration process of \texttt{FEEvalua
 and \texttt{FEFaceEvaluation}:
 
 \begin{c++}
-fe\_eval.evaluate(false, true, false)         // old (deprecated)
-fe\_eval.evaluate(EvaluationFlags::gradients) // new
+fe_eval.evaluate(false, true, false)         // old (deprecated)
+fe_eval.evaluate(EvaluationFlags::gradients) // new
 \end{c++}
 
 %\begin{c++}
