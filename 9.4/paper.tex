@@ -861,7 +861,8 @@ This structure allows for the following significant performance improvements:
 
 In addition to the new storage structure, we have made the following algorithmic improvements:
 Determining if a particle is inside a cell after changing its position involves inverting the mapping for this cell. We have reorganized our algorithms to perform these inversions on a batch of particles in the same cell instead of particle-by-particle, which allows us to make use of vectorized instructions during the inversion using the generic scheme of~\cite{KronbichlerKormann2012}.
-In addition, after sorting all particles into their new cells, the arrays that store particle properties are now sorted in the same order as the particle IDs in the list of arrays, which allows for cache efficient iteration over particle properties. To avoid a costly sorting operation this operation is executed as a copy of the existing data into a new data container that replaces the existing container\todo{@RG: I don't get this sentence.}.
+In addition, after sorting all particles into their new cells, the arrays that store particle properties are now sorted in the same order as the particle IDs in the list of arrays, which allows for cache efficient iteration over particle properties.
+Because the particle IDs are already sorted in the intended order at this time, we can reorder the particle properties as part of a copy operation into a new data container that replaces the existing container. This approach avoids a costly in-place sort of the particle properties.
 
 \begin{table}
   \caption{\it Timing of various particle operations for tutorial program \texttt{step-68} (particle advection in a 2D, Cartesian box) using 400,000 particles on a single process.}
