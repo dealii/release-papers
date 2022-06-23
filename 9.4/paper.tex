@@ -479,7 +479,7 @@ functionality based on the
 \texttt{parallel::\allowbreak fully\allowbreak distributed::\allowbreak
   Triangulation} (or, in short, \texttt{p::f::T}). The former is
 partitioned based on the space-filling Morton (or Z-order) curve
-implemented by the \texttt{p4est} backend. The latter, more recent
+implemented by the \pfrst{} backend. The latter, more recent
 class is currently statically partitioned at creation time.
 
 There are now new utility functions in the
@@ -563,10 +563,10 @@ the fly in order to enable vectorization over cells. The new feature is useful i
 contexts. Examples are simulations with sharp interfaces (e.g., two-phase flow
 or shock capturing), where one needs to treat cells that are ``cut'' by
 the interface in a special way. A challenge is that cell batches
-might contain cut or not-cut cells, making vectorization of these operations potentially more complicated. Previous functionality has provided the option of masking certain cells in cell batches, which works well if
+might contain cut or non-cut cells, making vectorization of these operations potentially more complicated. Previous functionality has provided the option of masking certain cells in cell batches, which works well if
 the code paths do not diverge too much. Another way is to
 categorize cells during \texttt{MatrixFree::reinit()} in such a way that mixed cell batches do not occur. However, \texttt{MatrixFree::reinit()}
-might be too expensive if recategorization needs to happen very frequently to follow the dynamics of a system, e.g., in each time step. Despite some overhead compared to static matrix-free loops, the new feature can be the best options in these scenarios.
+might be too expensive if recategorization needs to happen very frequently to follow the dynamics of a system, e.g., in each time step. Despite some overhead compared to static matrix-free loops, the new feature can be the best option in these scenarios.
 \item Initial support for H(div)-conforming elements with Piola transform, based on Raviart--Thomas finite element spaces with the updated class \texttt{FE\_RaviartThomasNodal}, has been added. This feature is currently limited to meshes in standard orientation and affine geometries. Full support and performance optimizations will be provided in a future release.
 \item Selected matrix-free algorithms can now exploit additional data locality
   between the matrix-vector product and vector operations happening nearby in
@@ -633,7 +633,7 @@ For this purpose, we use a sequence of triangulations, and we perform
 the smoothing only on their active levels. To create the sequence of
 triangulations, one can use the functions \texttt{MGTransferGlobalCoarseningTools::create\_geometric\_coarsening\_sequence()}. A new version takes an
 instance of \texttt{RepartitioningPolicyTools::Base} (see Subsection~\ref{sec:repartitioning}) as argument, which allows to specify the parallel
-distribution of each multigrid level (in contrast to the fixed first-child policy in the case of local smoothing). These features have been developed and tuned for runs on supercomputer scale
+distribution of each multigrid level (in contrast to the fixed first-child policy in the case of local smoothing). These features have been developed and tuned for running on supercomputer scale
 with complicated coarse meshes as presented in \cite{kronbichler2021next}.
 Furthermore, we added support for block vectors,
 fixed a number of limitations, and performed performance optimizations of
@@ -767,7 +767,7 @@ ImplicitFunction implicit_fu;
 CGALWrappers::AdditionalData<3> data; data.cell_size = .05;
 
 // 3) create mesh
-Triangulation<3>  tria;
+Triangulation<3> tria;
 GridGenerator::implicit_function(tria, implicit_fu, data, {0, 0, 0}, 10.0);
 \end{c++}
 
@@ -793,13 +793,13 @@ Triangulation<spacedim> tria0, tria1;
 CGAL::Surface_mesh<Kernel> surface_mesh0, surface_mesh1;
 CGALWrappers::dealii_tria_to_cgal_surface_mesh(tria0, surface_mesh0);
 CGALWrappers::dealii_tria_to_cgal_surface_mesh(tria1, surface_mesh1);
-  
+
 // 3) compute the union of the two meshes
 CGALWrappers::compute_boolean_operation(surface_mesh0, surface_mesh1,
   BooleanOperation::compute_union, out_mesh);
-                            
+
 // 4) convert CGAL surface mesh to deal.II surface mesh
-Triangulation<2, 3>     tria_out;
+Triangulation<2, 3> tria_out;
 CGALWrappers::cgal_surface_mesh_to_dealii_triangulation(out_mesh, tria_out);
 
 // 5) convert surface to volume mesh via surface_mesh_to_volumetric_mesh()
@@ -891,7 +891,7 @@ The four operations we have measured are:
 \end{itemize}
 
 Table~\ref{tab:particle_timing} shows that all particle operations are
-much faster faster in \dealii 9.4 than in version 9.3. In particular, operations that depend strongly on particle storage structure and require few fixed computations (like iteration and sorting) benefit massively from the above mentioned optimizations. We note that the exact gains will depend strongly on the exact combination of geometry, mapping, dimensionality, and number of particles per cell in any specific model, and can be smaller or larger than the measurements provided here.
+much faster in \dealii 9.4 than in version 9.3. In particular, operations that depend strongly on particle storage structure and require few fixed computations (like iteration and sorting) benefit massively from the above mentioned optimizations. We note that the exact gains will depend strongly on the exact combination of geometry, mapping, dimensionality, and number of particles per cell in any specific model, and can be smaller or larger than the measurements provided here.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -905,7 +905,7 @@ who will then have to respond with replies. This problem is solved by
 ``consensus algorithms''~\cite{hoefler2010scalable}. An example of where this problem appears is
 given in Section~\ref{sec:repartitioning}.
 
-\dealii{} has had an implementation of these algorithms for some time,
+\dealii{} has an implementation of these algorithms for some time,
 but the current release substantially expands on it. Specifically, the
 updated interfaces -- now based on function objects such as lambda
 functions to formulate and process queries and replies -- can deal
@@ -929,7 +929,7 @@ will send it mesh parts and the sender only needs an acknowledgment that the
 data has been received. Previously, such a case was implemented through a consensus
 algorithm where the reply message is simply empty.
 The rewritten interfaces now support this case more explicitly: Code using
-these interfaces no longer have to provide functions that formulate
+these interfaces no longer has to provide functions that formulate
 and read the (empty) replies, though internally these functions still
 send around an empty reply; this case will be implemented in the
 future, using the interfaces now already in place.
@@ -1011,8 +1011,8 @@ may have been more widely used:
     class. The latter has been marked as deprecated.
   \item Changes to weighted repartitioning of
     \texttt{parallel::distributed::Triangulation} objects include
-  the removal the default weight of each cell in order to ensure
-  consistency with the rest of the library.
+  the removal of the default weight of each cell in order to ensure
+  consistency with the rest of the library and to improve flexibility.
 \end{itemize}
 
 
