@@ -209,7 +209,7 @@ The major changes of this release are:
   \item Advances in matrix-free infrastructure (see Section~\ref{sec:mf});
   \item Advances in multigrid infrastructure (see Section~\ref{sec:multigrid});
   \item CutFEM support (see Section~\ref{sec:cut});
-  \item Integration of the Computational Geometry Algorithms Library (CGAL) (see Section~\ref{sec:cgalwrappers});
+  \item Experimental integration of the Computational Geometry Algorithms Library (CGAL) (see Section~\ref{sec:cgalwrappers});
   \item Performance improvements in the particle infrastructure (see Section~\ref{sec:particles});
   \item Improvements to unstructured communication (see Section~\ref{sec:CA});
   \item Two new tutorial programs and one new code gallery program (see
@@ -743,7 +743,7 @@ The new \texttt{step-85} tutorial illustrates how many of these classes work tog
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Integration of the Computational Geometry Algorithms
+\subsection{Experimental integration of the Computational Geometry Algorithms
   Library (CGAL)}\label{sec:cgalwrappers}
 
 The Computational Geometry Algorithms Library (CGAL, \url{https://www.cgal.org/}) is a widely used
@@ -752,9 +752,8 @@ has wrappers for CGAL classes and functions, provided in the new
 namespace \texttt{CGALWrappers}, and implementing functionality
 spanning from mesh generation to boolean operations between \dealii{}
 triangulations and cells. These wrappers are enabled only if \dealii{}
-is compiled with \texttt{C++17} and, for the first time in \dealii{}'s
-25-year history, provides a built-in ability to generate meshes for
-arbitrary geometries.
+is compiled with \texttt{C++17}. \textit{Note: This feature is still experimental and
+interfaces might change during the next release cycle.}
 
 The main mesh generation function is
 \texttt{GridGenerator::implicit\_function()}, which creates a \texttt{Triangulation<dim,3>} out of the zero level set of an implicit function $\psi$ similar to \eqref{eq:levelset}.
