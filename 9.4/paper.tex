@@ -833,8 +833,8 @@ The quadrature rule is built by meshing the polyhedral region with tetrahedra, c
 collecting all of the rules together, giving a \texttt{Quadrature<3>} formula on the \emph{physical} element.
 
 
-These utility functions will be the building blocks for functions in the \texttt{NonMatching} namespace that will, e.g.,  assemble coupling terms like $(u,v)_{B}$,\todo{The $B$ and $\Omega$ here need to be streamlined with \eqref{eq:boundingbox}, right now they are the opposite} with $B$ a domain immersed in a fixed background mesh $\Omega$ and $u,v$ finite element functions on $V_h(\Omega)$, as needed, e.g., in 
-the context of CutFEM (see Section~\ref{sec:cut}) or Nitsche's method to weakly impose boundary conditions at an interface. The same applies to coupling terms of the form $(u,q)_B$ in formulations using Lagrange multipliers, where now $q \in Q_h(B)$, with $Q_h(B)$ the space of the multiplier variable.
+These utility functions will be the building blocks for functions in the \texttt{NonMatching} namespace that will, e.g.,  assemble coupling terms like $(u,v)_{\Omega}$, with $\Omega$ a domain immersed in a fixed background mesh $B$ and $u,v$ finite element functions on $V_h(B)$, as needed, e.g., in 
+the context of CutFEM (see Section~\ref{sec:cut}) or Nitsche's method to weakly impose boundary conditions at an interface. The same applies to coupling terms of the form $(u,q)_{\Omega}$ in formulations using Lagrange multipliers, where now $q \in Q_h(\Omega)$, with $Q_h(\Omega)$ the space of the multiplier variable.
 Note that the most relevant difference between this and the \texttt{QuadratureGenerator} in Section~\ref{sec:cut} is that the \texttt{Quadrature} objects are created directly from two overlapping grids, one
 spanning over $B$ and the other one over $\Omega$, and not from a level set function.
 
