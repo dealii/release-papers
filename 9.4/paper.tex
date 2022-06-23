@@ -210,10 +210,8 @@ The major changes of this release are:
   \item CutFEM support (see Section~\ref{sec:cut});
   \item Integration with the Computational Geometry Algorithms Library (CGAL) (see Section~\ref{sec:cgalwrappers});
   \item Performance improvements in the particle infrastructure (see Section~\ref{sec:particles});
-  \item Two new tutorial programs and a new code gallery program (see
+  \item Two new tutorial programs and one new code gallery program (see
     Section~\ref{subsec:steps}).
-    \todo[inline]{Update the number of code gallery programs when
-      we're done.}
 \end{itemize}
 %
 
@@ -232,11 +230,11 @@ which we briefly outline in the remainder of this section:
   memory-efficient storage format, for example if this second
   triangulation is a uniformly refined rectangle or box), or one can create a slice in 3D.
   \item The new member function \texttt{find\_point\_owner\_rank()} of
-        \texttt{parallel\allowbreak ::distributed::\allowbreak Triangulation} allows one to find the MPI
+        \texttt{parallel\allowbreak ::distributed::\allowbreak Tri\allowbreak angulation} allows one to find the MPI
   ranks of cells containing specified points.
   It is communication-free and leverages the functionality of p4est (>v.2.2).
-  Its algorithm is described in \cite{burstedde2020parallel}. This information
-  enables efficient construction of the
+  Its algorithm is described in \cite{burstedde2020parallel}. This information will
+  enable efficient construction of the
   communication pattern used in the class \texttt{Utilties::\allowbreak MPI::\allowbreak RemotePointEvaluation}. Furthermore, this function could be used in the future to allow
   particle simulations in which particle movement is not
   limited by CFL conditions, as done in \cite{mirzadeh2016parallel}.
@@ -255,6 +253,7 @@ which we briefly outline in the remainder of this section:
   more consistent with the rest of the library and use more intuitive names for functions. For example,
   \texttt{FEInterfaceValues::jump\_gradient()} is now \texttt{FEInterfaceValues::jump\_in\_shape\_gradients()}. Several new
   functions, such as \texttt{FEInterfaceValues::get\_jump\_in\_function\_values()}, have also been added.
+  \item Vectors attached to \texttt{DataOut} do not need to be in ghosted state anymore. Internally, we create a copy of the vector with appropriate ghosting.
 \end{itemize}
 %
 The changelog lists more than 100 other features and bugfixes.
@@ -288,7 +287,7 @@ sufficient to support several larger-scale programs, although not all
 functionality in \dealii{} works with such meshes yet. Specifically,
 we have fixed many bugs and generalized existing functions that
 previously only worked for hypercube-shaped cells. The most notable
-new functionality is:
+new functionalities are:
 
 \begin{figure}
 
@@ -456,9 +455,11 @@ new functionality is:
   element computations on locally refined
 meshes, one needs (i) the possibility to locally refine the mesh (see
 Figure~\ref{fig:refinement}), and (ii) appropriate hanging-node
-constraints. Both are now available in 2d; for 3D, the implementation
+constraints. Both are now available in 2D; for 3D, the implementation
 of the constraint definitions is still in progress.
-\item \todo[inline]{TODO}
+\item \texttt{QIteratedSimplex} allows to build composite simplex quadrature rules.
+\item The new wrappers to the \texttt{CGAL} library allow to simply create simplex
+meshes. For more details, see Section~\ref{sec:cgalwrappers}.
 \end{itemize}
 
 Furthermore, we have continued to remove uses of the
@@ -474,7 +475,7 @@ functionality based on the
 \dealii{} has two classes that support distributed storage of meshes: 
 \texttt{parallel::\allowbreak distributed::\allowbreak Triangulation}
 (which in the following we will abbreviate as \texttt{p::d::T}) and
-\texttt{parallel::\allowbreak fullydistributed::\allowbreak
+\texttt{parallel::\allowbreak fully\allowbreak distributed::\allowbreak
   Triangulation} (or, in short, \texttt{p::f::T}). The former is
 partitioned based on the space-filling Morton (or Z-order) curve
 implemented by the \texttt{p4est} backend. The latter, more recent
@@ -492,7 +493,7 @@ based on arbitrary criteria. The workflow is shown in the following listing:
 parallel::distributed::Triangulation<dim> tria(communicator);
 
 // select a partitioning policy and use it:
-const RepartitioningPolicyTools::Cartesian<dim> policy(tria);
+const RepartitioningPolicyTools::CellWeightPolicy<dim> policy(tria, fu);
 const auto construction_data = TriangulationDescription::Utilities::
   create_description_from_triangulation(tria, policy.partition(tria));
 
@@ -505,17 +506,18 @@ tria_pft.create_triangulation(construction_data);
     \centering
     \def\svgwidth{0.8\columnwidth}
     \input{svg/repartitioning.pdf_tex}
-    \caption{\it Visualization of the repartitioning process. Top
+    \caption{\it Visualization of the repartitioning process and the
+      construction of the new mesh of process 0. Top
       left: Existing ownership of the cells of the mesh, distributed
       on four processes. Bottom left:
       Requested new ownership. Second column: Processes 0 and 1
       collect information about the cells they own or that are ghost
-      cells. Processes 2 and 3 would do the same. Third column: What
+      cells. Processes 2 and 3 do not contribute to process 0. Third column: What
       processes 0 and 1 would send to process 0. Fourth column: The
       combined knowledge on process 0.}\label{fig:repartitioning}
 \end{figure}
 
-The setup process is visualized in Figure~\ref{fig:repartitioning}. At
+The setup process (of \texttt{construction\_data}) is visualized in Figure~\ref{fig:repartitioning}. At
 first, locally owned cells and their
 surrounding (ghost) cells are collected on each process and
 sent to the new owner. On the
@@ -589,6 +591,14 @@ of overhead of cells with hanging nodes by a factor of ten.
 Finally, we have performed a major restructuring of internals
 of the \texttt{FEEvaluation} classes. This reduces some overheads for low polynomial degrees and will enable us to add support for new element types in the future.
 
+We would like to remind users that we transitioned from the use of Booleans
+to flags to configure the evaluation and integration process of \texttt{FEEvaluation}
+and \texttt{FEFaceEvaluation}:
+
+\begin{c++}
+fe\_eval.evaluate(false, true, true)          // old (deprecated)
+fe\_eval.evaluate(EvaluationFlags::gradients) // new
+\end{c++}
 
 %\begin{c++}
 %additional_data.mapping_update_flags = ... | update_hessians;
@@ -637,8 +647,9 @@ in the case of local smoothing so that global coarsening is favorable despite
 potentially more expensive intergrid transfers. In order to judge the benefits
 of one approach against the other, \texttt{deal.II} provides new functions
 \texttt{workload\_imbalance()} and \texttt{vertical\_communication\_efficiency()}
-in the \texttt{MGTools} namespace for the  estimation of the workload imbalance and the
-vertical communication efficiency purely based on the given mesh.
+in the \texttt{MGTools} namespace for the  estimation of the imbalance during, e.g.,
+smoothing and the
+communication efficiency during intergrid transfer purely based on the given mesh.
 % MK: I would not add this part, it does not really fit into this paper as
 % there is nothing to report at this point (and we should then add references
 % to the actual literature).
@@ -649,22 +660,6 @@ vertical communication efficiency purely based on the given mesh.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{CutFEM support}\label{sec:cut}
-
-\begin{figure}
-  \centering
-  \begin{subfigure}[b]{0.3\textwidth}
-    \centering
-    \includegraphics[height=.12\paperheight]{svg/immersed-domain.pdf}
-    \caption{\label{fig:immersed-domain}}
-  \end{subfigure}
-  \qquad
-  \begin{subfigure}[b]{0.3\textwidth}
-    \centering
-    \includegraphics[height=.12\paperheight]{svg/location-to-level-set.pdf}
-    \caption{ \label{fig:location-to-level-set}}
-  \end{subfigure}
-  \caption{\it (a) Domain immersed in a background mesh. (b) Value of \texttt{LocationToLevelSet} for each cell.}
-\end{figure}
 
 Several classes have been added to the \texttt{NonMatching} namespace to enable the use of cut finite element methods~\cite{burman_cutfem_2015}.
 In the literature, these types of methods are also referred to as immersed, extended, or fictitious finite element methods.
@@ -686,6 +681,31 @@ $\psi : \mathbb{R}^d \to \mathbb{R}$, such that
   \qquad
   \Gamma = \{x \in \mathbb{R}^d : \psi(x) = 0\}.
 \end{align}
+
+
+
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.3\textwidth}
+    \centering
+    \includegraphics[height=.12\paperheight]{svg/immersed-domain.pdf}
+    \caption{\label{fig:immersed-domain}}
+  \end{subfigure}
+  \qquad
+  \begin{subfigure}[b]{0.3\textwidth}
+    \centering
+    \includegraphics[height=.12\paperheight]{svg/location-to-level-set.pdf}
+    \caption{ \label{fig:location-to-level-set}}
+  \end{subfigure}
+  \caption{\it (a) Domain immersed in a background mesh. (b) Value of \texttt{LocationToLevelSet} for each cell.}
+%\end{figure}
+%
+%\begin{figure}
+  \centering
+  \includegraphics[width=.4\paperwidth]{svg/immersed_quadratures.pdf}
+  \caption{\it Quadrature points for integrating over the three different regions of a cell cut by the zero contour of the level set function, $\psi$. \label{fig:immersed_quadratures}}
+\end{figure}
+
 Specifically, the following are the key new classes and functions:
 \begin{itemize}
   \item The \texttt{MeshClassifier} class identifies how the active cells and faces are located relative to the zero contour of the level set function, as illustrated in Figure~\ref{fig:location-to-level-set}. Its member function \texttt{location\_to\_level\_set()} takes a cell or face and
@@ -704,12 +724,12 @@ Specifically, the following are the key new classes and functions:
 
   \item \texttt{ImmersedSurfaceQuadrature} is a class representing a quadrature rule over a $(d-1)$-dimensional surface embedded in $\mathbb{R}^d$ ($\psi = 0$ in Figure~\ref{fig:immersed_quadratures}). In addition to the weight, it stores the unit normal to the surface, for each quadrature point. This is needed to transform the quadrature rule from reference space to real space.
 
-  \item \texttt{FEImmersedSurfaceValues} is an \texttt{FEValues}-like class for evaluating real space values based on an \texttt{ImmersedSurfaceQuadrature}.
+  \item \texttt{FEImmersedSurfaceValues} is an \texttt{FEFaceValues}-like class for evaluating real space values based on an \texttt{ImmersedSurfaceQuadrature}.
 
   \item \texttt{NonMatching::FEValues} combines the functionality of
     several of the above classes to simplify assembly of linear systems. It works similarly to \texttt{hp::FEValues}:
   When calling the \texttt{reinit()} function, immersed quadrature rules are generated in the background and
-  \texttt{FEValues} objects for the inside/outside region and a \texttt{FEImmersedSurfaceValues} object for the surface regions are set up internally. These can then be obtained using getter-functions and used for the assembly.
+  \texttt{FEValues} objects for the inside/outside region and a \texttt{FEImmersedSurfaceValues} object for the surface regions are set up internally. These can then be obtained using getter-functions (\texttt{get\_inside/outside/surface\_fe\_values()}) and used for the assembly.
   Since the generation of immersed quadrature rules is not cheap,
   \texttt{NonMatching::FEValues} calls  \texttt{QuadratureGenerator} only if needed, i.e., if the cell is intersected. If not, already cached \texttt{FEValues} objects will be returned by the getter functions.
   Correspondingly, the class \texttt{NonMatching::FEInterfaceValues} generates
@@ -717,17 +737,11 @@ Specifically, the following are the key new classes and functions:
 \end{itemize}
 The new \texttt{step-85} tutorial illustrates how many of these classes work together.
 
-\begin{figure}
-  \centering
-  \includegraphics[width=.4\paperwidth]{svg/immersed_quadratures.pdf}
-  \caption{\it Quadrature points for integrating over the three different regions of a cell cut by the zero contour of the level set function, $\psi$. \label{fig:immersed_quadratures}}
-\end{figure}
-
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Integration with the Computational Geometry Algorithms
+\subsection{Integration of the Computational Geometry Algorithms
   Library (CGAL)}\label{sec:cgalwrappers}
 
 The Computational Geometry Algorithms Library (CGAL, \url{https://www.cgal.org/}) is a widely used
@@ -742,16 +756,18 @@ arbitrary geometries.
 
 The main mesh generation function is
 \texttt{GridGenerator::implicit\_function()}, which creates a \texttt{Triangulation<dim,3>} out of the zero level set of an implicit function $\psi$ similar to \eqref{eq:levelset}.
-For \texttt{dim==3}, the mesh consists of tetrahedra. A prototypical use case is the following, where the surface is the zero level set of Taubin's heart function $f=\bigl ( x^2 + \frac{9y^2}{4} +z^2 -1 \bigr ) -x^2 z^3 - \frac{9y^2z^3}{80}$. The resulting \texttt{Triangulation<3>} can be appreciated in Figure~\ref{fig:heart_tria}.
+For \texttt{dim==3}, the mesh consists of tetrahedra. A prototypical use case is the following, where the surface is the zero level set of Taubin's heart function $f=\bigl ( x^2 + \frac{9y^2}{4} +z^2 -1 \bigr ) -x^2 z^3 - \frac{9y^2z^3}{80}$. The resulting \texttt{Triangulation<3>} is shown in Figure~\ref{fig:heart_tria}
+and the required steps are:
 \begin{c++}
-// Empty triangulation.
-Triangulation<3, 3>  tria;
-//Taubin's heart surface
-ImplicitFunction                implicit_function;
-CGALWrappers::AdditionalData<3> data;
-data.cell_size = .05;
-GridGenerator::implicit_function(tria, implicit_function, data,
-                                 {0, 0, 0}, 10.0);
+// 1) An implicit function, e.g., Taubin's heart surface (not shown)
+ImplicitFunction implicit_fu;
+
+// 2) configure output mesh (optional)
+CGALWrappers::AdditionalData<3> data; data.cell_size = .05;
+
+// 3) create mesh
+Triangulation<3>  tria;
+GridGenerator::implicit_function(tria, implicit_fu, data, {0, 0, 0}, 10.0);
 \end{c++}
 
 A related function is
@@ -760,7 +776,7 @@ computes a tetrahedral volume triangulation \texttt{Triangulation<3>}, based on 
 given surface triangulation \texttt{Triangulation<2,3>} that bounds
 the three dimensional shape.
 
-CGAL also provides us with boolean operations on meshes, as available in the
+CGAL also provides Boolean operations on meshes, as available in the
 utility function
 \texttt{CGALWrappers::\allowbreak{}compute\_boolean\_operation()}. The
 available operations are \textit{co-refinement}, \textit{intersection},
@@ -769,44 +785,41 @@ operations and co-refinement around the intersection produces
 badly shaped mesh cells. To overcome this issue, one can use \texttt{CGALWrappers::\allowbreak{}remesh\_surface()}. Figure~\ref{fig:corefinement_remeshed} shows a graphical example.
 A possible workflow is the following:
 \begin{c++}
-  Triangulation<spacedim> tria0, tria1;
-  GridGenerator::hyper_cube(tria0,-1.,1.);
-  GridGenerator::hyper_ball(tria1,{1.,1.,1.},0.6);
-  tria0.refine_global(3);
-  tria1.refine_global(3);
+// 1) create deal.II triangulations, e.g., cube and sphere (not shown)  
+Triangulation<spacedim> tria0, tria1;
 
-  // Move to CGAL surfaces, assume Kernel is already defined. 
-  CGAL::Surface_mesh<Kernel> surface_mesh0, surface_mesh1;
-  CGALWrappers::dealii_tria_to_cgal_surface_mesh(tria0, surface_mesh0);
-  CGALWrappers::dealii_tria_to_cgal_surface_mesh(tria1, surface_mesh1);
+// 2) convert to CGAL surface meshes (assuming Kernel is already defined) 
+CGAL::Surface_mesh<Kernel> surface_mesh0, surface_mesh1;
+CGALWrappers::dealii_tria_to_cgal_surface_mesh(tria0, surface_mesh0);
+CGALWrappers::dealii_tria_to_cgal_surface_mesh(tria1, surface_mesh1);
   
-  // Compute the union of the two meshes
-  CGALWrappers::compute_boolean_operation(surface_mesh0,
-                            surface_mesh1,
-                            BooleanOperation::compute_union,
-                            out_mesh);
-  // Now back to deal.II
-  Triangulation<2, 3>     tria_out;
-  CGALWrappers::cgal_surface_mesh_to_dealii_triangulation(out_mesh, tria_out);
-  // tria_out is now a valid deal.II triangulation
+// 3) compute the union of the two meshes
+CGALWrappers::compute_boolean_operation(surface_mesh0, surface_mesh1,
+  BooleanOperation::compute_union, out_mesh);
+                            
+// 4) convert CGAL surface mesh to deal.II surface mesh
+Triangulation<2, 3>     tria_out;
+CGALWrappers::cgal_surface_mesh_to_dealii_triangulation(out_mesh, tria_out);
+
+// 5) convert surface to volume mesh via surface_mesh_to_volumetric_mesh()
   \end{c++}
   The output of the boolean operation can be seen in Fig.~\ref{fig:corefinement}, while in Fig.~\ref{fig:corefinement_remeshed}
   the same mesh has been remeshed.
   \begin{figure}
     \centering
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.28\textwidth}
       \centering
       \includegraphics[width=\textwidth]{png/heart_implicit.png}
       \caption{\label{fig:heart_tria}}
-    \end{subfigure}
+    \end{subfigure}\qquad
     \hfill
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.28\textwidth}
       \centering
       \includegraphics[width=\textwidth]{png/intersection_cube_sphere_mesh.png}
       \caption{\label{fig:corefinement}}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.37\textwidth}
+    \begin{subfigure}[b]{0.35\textwidth}
       \centering
       \includegraphics[width=\textwidth]{png/cube_sphere_remeshed.png}
       \caption{ \label{fig:corefinement_remeshed}}
@@ -819,8 +832,10 @@ The quadrature rule is built by meshing the polyhedral region with tetrahedra, c
 collecting all of the rules together, giving a \texttt{Quadrature<3>} formula on the \emph{physical} element.
 
 
-These utilities will be the building blocks for adding functions to the \texttt{NonMatching} namespace that will assemble coupling terms like $(u,v)_{B}$,\marginpar{The $B$ and $\Omega$ here need to be streamlined with \eqref{eq:boundingbox}, right now they are the opposite} with $B$ a domain immersed in a fixed background mesh $\Omega$ and $u,v$ finite element functions on $V_h(\Omega)$, as usually happens using Nitsche's method to weakly impose boundary conditions at an interface. The same applies to coupling terms of the form $(u,q)_B$ in formulations using Lagrange multipliers, where now $q \in Q_h(B)$, with $Q_h(B)$ the space of the multiplier variable.
-Note that the most relevant difference between this and the \texttt{QuadratureGenerator} in Section~\ref{sec:cut} is that the \texttt{Quadrature} objects are created directly from the two overlapping grids and not from a level set function.
+These utilities will be the building blocks for adding functions to the \todo{NonMatching} namespace that will assemble coupling terms like $(u,v)_{B}$,\marginpar{The $B$ and $\Omega$ here need to be streamlined with \eqref{eq:boundingbox}, right now they are the opposite} with $B$ a domain immersed in a fixed background mesh $\Omega$ and $u,v$ finite element functions on $V_h(\Omega)$, as needed, e.g., in 
+the context of CutFEM (see Section~\ref{sec:cut}) of Nitsche's method to weakly impose boundary conditions at an interface. The same applies to coupling terms of the form $(u,q)_B$ in formulations using Lagrange multipliers, where now $q \in Q_h(B)$, with $Q_h(B)$ the space of the multiplier variable.
+Note that the most relevant difference between this and the \texttt{QuadratureGenerator} in Section~\ref{sec:cut} is that the \texttt{Quadrature} objects are created directly from two overlapping grids, one
+spanning over $B$ and the other one over $\Omega$, and not from a level set function.
 
 
 
@@ -832,20 +847,20 @@ structures and optimized the algorithms that support using particles
 in \dealii{}. In our previously reported improvements~\citep{dealII93} we stored all particle data as a separate contiguous array for each particle property, but particle identifiers (IDs) were still stored in a multimap tree-like structure.
 
 Our new particle containers are organized as follows: Particle IDs are stored in a list of dynamic arrays, each array containing the particle IDs of all particles in a unique cell. Each ID is a handle that determines the location of the data of this unique particle in the property arrays.
-The list of ID arrays only contains entries for cells that contain particles. We keep a separate cache structure that contains pointers to the particular list entries for each cell. If a cell has no particles this pointer is invalid.
+The list of ID arrays only contains entries for cells that contain particles. We keep a separate cache structure that contains pointers to the particular list entries for each cell. If a cell has no particles, this pointer is invalid.
 
 This structure allows for the following significant performance improvements:
 
 \begin{itemize}
 \item All particle data (both their identifiers and their actual data) are now stored as separate and contiguous arrays in memory, which improves spatial locality for better prefetching of data and makes iterating over particles extremely efficient.
-\item The choice of a list container that only includes entries for cells that contain particles means iteration is efficient, even if many cells in the domain do not contain any particles (as can be the case for discrete-element methods).
+\item The choice of a list container that only includes entries for cells that contain particles means iteration is efficient, even if many cells in the domain do not contain any particles (as can be the case for discrete element methods~\cite{golshan2022lethe}).
 \item Creating separate arrays for each cell allows us to easily move particle IDs from one cell to another as a local operation, affecting only the two cell containers in question. We take care to reuse allocated memory to minimize the number of memory reallocations.
 \item The separate cache structure that contains entries for each cell allows quick random-access to the particles of a particular cell, and also allows to quickly determine if a particular cell has particles at all.
 \end{itemize}
 
 In addition to the new storage structure, we have made the following algorithmic improvements:
 Determining if a particle is inside a cell after changing its position involves inverting the mapping for this cell. We have reorganized our algorithms to perform these inversions on a batch of particles in the same cell instead of particle-by-particle, which allows us to make use of vectorized instructions during the inversion using the generic scheme of~\cite{KronbichlerKormann2012}.
-In addition, after sorting all particles into their new cells, the arrays that store particle properties are now sorted in the same order as the particle IDs in the list of arrays, which allows for cache efficient iteration over particle properties. To avoid a costly sorting operation this operation is executed as a copy of the existing data into a new data container that replaces the existing container.
+In addition, after sorting all particles into their new cells, the arrays that store particle properties are now sorted in the same order as the particle IDs in the list of arrays, which allows for cache efficient iteration over particle properties. To avoid a costly sorting operation this operation is executed as a copy of the existing data into a new data container that replaces the existing container\todo{@RG: I don't get this sentence.}.
 
 \begin{table}
   \caption{\it Timing of various particle operations for tutorial program \texttt{step-68} (particle advection in a 2D, Cartesian box) using 400,000 particles on a single process.}
@@ -875,7 +890,7 @@ The four operations we have measured are:
 \end{itemize}
 
 Table~\ref{tab:particle_timing} shows that all particle operations are
-much faster faster in \dealii 9.4 than in version 9.3. In particular operations that depend strongly on particle storage structure and require few fixed computations (like iteration and sorting) benefit massively from the above mentioned optimizations. We note that the exact gains will depend strongly on the exact combination of geometry, mapping, dimensionality, and number of particles per cell in any specific model, and can be smaller or larger than the measurements provided here.
+much faster faster in \dealii 9.4 than in version 9.3. In particular, operations that depend strongly on particle storage structure and require few fixed computations (like iteration and sorting) benefit massively from the above mentioned optimizations. We note that the exact gains will depend strongly on the exact combination of geometry, mapping, dimensionality, and number of particles per cell in any specific model, and can be smaller or larger than the measurements provided here.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -886,7 +901,7 @@ Many problems in parallel computations can be stated in the following
 way: Each process in a parallel universe has a number of queries to
 send to other processes who do not know that they will be asked, and
 who will then have to respond with replies. This problem is solved by
-``consensus algorithms''. An example of where this problem appears is
+``consensus algorithms''~\cite{hoefler2010scalable}. An example of where this problem appears is
 given in Section~\ref{sec:repartitioning}.
 
 \dealii{} has had an implementation of these algorithms for some time,
@@ -906,16 +921,24 @@ other objects do the packing and unpacking functions rely on BOOST's
 serialization library.
 
 A special case of consensus algorithms is where the sender does not
-actually require an answer. This happens, for example, during ghost
-exchange where each process sends information about cells it owns to
-some of its neighboring processes where these cells are ghost
-cells. Previously, this case was implemented through a consensus
+actually require an answer. This happens, for example, during repartitioning
+of meshes (Section~\ref{sec:repartitioning}), where a process sends parts of
+the new mesh to the new owners: the new owner does not know how many processes
+will send it mesh parts and the sender only needs an acknowledgment that the
+data has been received. Previously, such a case was implemented through a consensus
 algorithm where the reply message is simply empty.
 The rewritten interfaces now support this case more explicitly: Code using
 these interfaces no longer have to provide functions that formulate
 and read the (empty) replies, though internally these functions still
 send around an empty reply; this case will be implemented in the
 future, using the interfaces now already in place.
+
+By the time of writing, \dealii uses consensus-based algorithms to determine
+the owners of distributed index sets (\texttt{Utilities::MPI::Partitioner},
+\texttt{Utilities::MPI::Noncontiguous\allowbreak Partitioner}, \texttt{internal::MatrixFreeFunctions::VectorDataExchange}; see~\cite{dealII91}),
+to setup the global-coarsening transfer operators (see~\cite{dealII92} and
+Section~\ref{sec:multigrid}), to repartition distributed meshes (see Section~\ref{sec:repartitioning}), and basis coupling algorithms between non-matching
+meshes, based on the communication patters in \texttt{RemotePointeEvaluation} (see~\cite{dealII92}).
 
 Finally, in the spirit of optimizing communication, the
 \texttt{Utilities::MPI::broadcast()} function has been optimized for
@@ -948,7 +971,10 @@ user-contributed programs that often solve more complicated problems
 than tutorial programs, and intended as starting points for further
 research rather than as teaching tools):
 \begin{itemize}
-  \item \todo[inline]{Is there actually a new program?}
+  \item ``\texttt{TRBDF2-DG projection solver for the incompressible Navier--Stokes equations}'' was contributed by Giuseppe Orlando Politecnico di Milano. It shows
+  how to solve the incompressible Navier--Stokes equations efficiently 
+  with \texttt{deal.II}'s matrix-free DG infrastructure, multigrid, and adaptive-mesh
+  refinement. Interested readers are referred to~\cite{orlando2021efficient}.
 \end{itemize}
 Finally, the ``\texttt{MCMC for the Laplace equation}'' code gallery
 program has been updated by providing MATLAB and Python versions of
