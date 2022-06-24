@@ -5,7 +5,15 @@ https://www.dealii.org/
 
 The major changes of this release are:
 
- [TODO]
+ - Advances in simplex- and mixed-mesh support
+ - Repartitioning of distributed meshes
+ - Advances in matrix-free infrastructure
+ - Advances in multigrid infrastructure
+ - CutFEM support
+ - Experimental integration of the Computational Geometry Algorithms Library (CGAL)
+ - Performance improvements in the particle infrastructure
+ - Improvements to unstructured communication
+ - Three new tutorial programs (steps 81, 82, and 85) and one new code gallery program
 
 The main features of deal.II are:
   - Extensive documentation and 83 working example programs

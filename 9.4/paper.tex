@@ -212,8 +212,7 @@ The major changes of this release are:
   \item Experimental integration of the Computational Geometry Algorithms Library (CGAL) (see Section~\ref{sec:cgalwrappers});
   \item Performance improvements in the particle infrastructure (see Section~\ref{sec:particles});
   \item Improvements to unstructured communication (see Section~\ref{sec:CA});
-  \item Two new tutorial programs and one new code gallery program (see
-    Section~\ref{subsec:steps}).
+  \item Three new tutorial programs and one new code gallery program (see Section~\ref{subsec:steps}).
 \end{itemize}
 %
 
@@ -955,17 +954,27 @@ which consequently can be sent without packing and unpacking.
 \subsection{New and improved tutorials and code gallery programs}
 \label{subsec:steps}
 
-Many of the \dealii{} tutorial programs were revised in a variety of
-ways as part of this release. In addition, there are a number of new tutorial programs:
+Many of the \dealii{} tutorial programs were revised in a variety of ways
+as part of this release. In addition, there are a number of new tutorial
+programs:
 \begin{itemize}
-\item \texttt{step-82} was contributed by Andrea Bonito (Texas A\&M University) and Diane Guignard (University of Ottawa). It shows how
-\dealii{} can be used to implement the
-local discontinuous Galerkin (LDG) method for approximating the
-solution to the bi-Laplacian problem. The method is an alternative to
-the C0IP method used in \texttt{step-47}.
-
-\item \texttt{step-85} was contributed by Simon Sticko (Uppsala University). It shows how to use the new CutFEM infrastructure to solve a Poisson
-problem on a circular domain that is embedded in a Cartesian background mesh.
+  \item
+    \texttt{step-81} was contributed by Manaswinee Bezbaruah (Texas A\&M
+    University) and Matthias Maier (Texas A\&M University). It explains how
+    to solve the complex-valued time-harmonic Maxwell's equations for an
+    optical scattering problem.
+  \item
+    \texttt{step-82} was contributed by Andrea Bonito (Texas A\&M
+    University) and Diane Guignard (University of Ottawa). It shows how
+    \dealii{} can be used to implement the local discontinuous Galerkin
+    (LDG) method for approximating the solution to the bi-Laplacian
+    problem. The method is an alternative to the C0IP method used in
+    \texttt{step-47}.
+  \item
+    \texttt{step-85} was contributed by Simon Sticko (Uppsala University).
+    It shows how to use the new CutFEM infrastructure to solve a Poisson
+    problem on a circular domain that is embedded in a Cartesian background
+    mesh.
 \end{itemize}
 
 There is also a new program in the code gallery (a collection of
