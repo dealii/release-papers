@@ -925,7 +925,7 @@ much faster in \dealii 9.4 than in version 9.3. In particular, operations that d
 
 \begin{table}
   \caption{\it Performance comparison of writing large VTU graphical output using MPI I/O on
-  Frontera /scratch1/ with 16 file servers (``OSTs'') and a theoretical peak performance of 50 GB/s. ROMIO seems to enforce sequential writes when using \texttt{MPI\_File\_write\_ordered()}.}
+  TACC Frontera /scratch1/ with 16 file servers (``OSTs'') and a theoretical peak performance of 50 GB/s. The ROMIO version used enforces sequential writes when using \texttt{MPI\_File\_write\_ordered()}.}
   \label{tab:mpi-io}
 
   \centering
@@ -934,8 +934,8 @@ much faster in \dealii 9.4 than in version 9.3. In particular, operations that d
   \hline
 Version       & MPI routine used            & 1 file, striping 16 & 16 files, no striping \\
 \hline
-old VTU code  & \texttt{MPI\_File\_write\_ordered()} & 3 GB/s              & 15 GB/s              \\
-new in 9.4 & \texttt{MPI\_File\_write\_at\_all()} & 17 GB/s             & 21 GB/s
+\dealii{} 9.3 & \texttt{MPI\_File\_write\_ordered()} & 3 GB/s              & 15 GB/s              \\
+\dealii{} 9.4 & \texttt{MPI\_File\_write\_at\_all()} & 17 GB/s             & 21 GB/s
 \\
 \hline
 \end{tabular}
