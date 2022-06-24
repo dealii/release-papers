@@ -895,9 +895,52 @@ much faster in \dealii 9.4 than in version 9.3. In particular, operations that d
 \subsection{Support for large MPI buffers and parallel I/O}
 \label{sec:large-mpi}
 
-   A new module \texttt{Utilities::MPI::LargeCount} which enables sending and receiving MPI messages containing more than $2^{31}$ objects.
-  This library either uses the new MPI-4 functions, such as \texttt{MPI\_Send\_c()}, or an internal implementation of large objects for
-  compatibility with MPI-3.
+   Sending large messages over MPI or reading and writing large buffers using MPI I/O,
+   especially when dealing with small datatypes like \texttt{MPI\_CHAR},
+   can often require processing more than $2^{31}$ objects at once. Prior
+   to the recent MPI-4 standard, which introduced a new set of \texttt{MPI\_*\_c()} functions, all MPI functions expected the ``count''
+   to be a signed integer. This limits the number of objects to $2^{31}$,
+   i.e., writing of up to 2 GB at once if the datatype is \texttt{MPI\_CHAR}.
+
+   Several places in the library could run into the issue mentioned above,
+   for example when producing large graphical output (per rank), large
+   checkpointing (per rank), or when broadcasting large datasets for lookup tables.
+
+   With this release we introduce a new module \texttt{Utilities::MPI::LargeCount} which enables sending and receiving MPI messages and I/O containing more than $2^{31}$ objects by implementing
+   the before-mentioned \texttt{MPI\_*\_c()} functions, i.e., \texttt{MPI\_Bcast\_c()}, using MPI-3 features if necessary. The
+   solution is based on custom datatypes as described in~\ref{hammond2014int_max}.
+
+   This functionality is now used in all places in the library, where
+   large counts might be necessary (\texttt{DataOut::write\_vtu\_in\_parallel()} for graphical output, checkpointing of \texttt{Triangulation} objects, etc.).
+   %
+   While implementing these changes we also worked on the following:
+   \begin{itemize}
+    \item Testing of large I/O with large chunks per MPI rank (>2 GB) and
+    large total sizes (4 GB +). Several instances of 32 bit datatypes for
+    offsets were changed to 64 bit to correctly support files larger
+    than 4 GB (HDF5 output, VTU output, checkpointing).
+    \item Performance testing of MPI I/O routines used for parallel VTU output with large performance improvements by switching from a shared
+    file pointer to individual file pointers, see Table~\ref{tab:mpi-io}.
+   \end{itemize}
+
+\begin{table}
+  \caption{\it Performance comparison of writing large VTU graphical output using MPI I/O on
+  Frontera /scratch1/ with 16 file servers (``OSTs'') and a theoretical peak performance of 50 GB/s. ROMIO seems to enforce sequential writes when using \texttt{MPI\_File\_write\_ordered()}.}
+  \label{tab:mpi-io}
+
+  \centering
+
+  \begin{tabular}{|c|c|c|c|}
+  \hline
+Version       & MPI routine used            & 1 file, striping 16 & 16 files, no striping \\
+\hline
+old VTU code  & \texttt{MPI\_File\_write\_ordered()} & 3 GB/s              & 15 GB/s              \\
+new in 9.4 & \texttt{MPI\_File\_write\_at\_all()} & 17 GB/s             & 21 GB/s
+\\
+\hline
+\end{tabular}
+
+  \end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Improvements to unstructured communication}
