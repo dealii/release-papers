@@ -79,7 +79,7 @@ cross/.default={2pt}}
   pdftitle={The deal.II Library, Version 9.4, 2022},
 }
 
-\title{The \dealii{} Library, Version 9.4}
+\title{The \dealii Library, Version 9.4}
 
  \author[1*]{Daniel Arndt}
  \affil[1]{Scalable Algorithms and Coupled Physics Group,
@@ -191,11 +191,11 @@ cross/.default={2pt}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview}
 
-\dealii{} version 9.4.0 was released June 10, 2022.
+\dealii version 9.4.0 was released June 10, 2022.
 \todo{Update release date.}
 This paper provides an
 overview of the new features of this release and serves as a citable
-reference for the \dealii{} software library version 9.4. \dealii{} is an
+reference for the \dealii software library version 9.4. \dealii is an
 object-oriented finite element library used around the world in the
 development of finite element solvers. It is available for free under the
 GNU Lesser General Public License (LGPL). Downloads are available at
@@ -218,7 +218,7 @@ The major changes of this release are:
 
 While all of these major changes are discussed in detail in
 Section~\ref{sec:major}, there
-are a number of other noteworthy changes in the current \dealii{} release,
+are a number of other noteworthy changes in the current \dealii release,
 which we briefly outline in the remainder of this section:
 %
 \begin{itemize}
@@ -233,7 +233,7 @@ which we briefly outline in the remainder of this section:
   \item The new member function \texttt{find\_point\_owner\_rank()} of
         \texttt{parallel\allowbreak ::distributed::\allowbreak Tri\allowbreak angulation} allows one to find the MPI
   ranks of cells containing specified points.
-  It is communication-free and leverages the functionality of p4est (>v.2.2).
+  It is communication-free and leverages the functionality of \pfrst (>v.2.2).
   Its algorithm is described in \cite{burstedde2020parallel}. This information will
   enable efficient construction of the
   communication pattern used in the class \texttt{Utilties::\allowbreak MPI::\allowbreak RemotePointEvaluation}. Furthermore, this function could be used in the future to allow
@@ -268,7 +268,7 @@ The changelog lists more than 100 other features and bugfixes.
 \section{Major changes to the library}
 \label{sec:major}
 
-This release of \dealii{} contains a number of large and significant changes,
+This release of \dealii contains a number of large and significant changes,
 which will be discussed in this section.
 It of course also includes a
 vast number of smaller changes and added functionality; the details of these
@@ -281,11 +281,11 @@ can be found
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Advances in simplex- and mixed-mesh support}\label{sec:simplex}
 
-\dealii{} has supported simplex and mixed meshes since the previous
+\dealii has supported simplex and mixed meshes since the previous
 release, 9.3, on an experimental basis.
 We have continued to work on this support; the current state is
 sufficient to support several larger-scale programs, although not all
-functionality in \dealii{} works with such meshes yet. Specifically,
+functionality in \dealii works with such meshes yet. Specifically,
 we have fixed many bugs and generalized existing functions that
 previously only worked for hypercube-shaped cells. The most notable
 new functionalities are:
@@ -473,13 +473,13 @@ functionality based on the
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Repartitioning of distributed meshes}\label{sec:repartitioning}
 
-\dealii{} has two classes that support distributed storage of meshes: 
+\dealii has two classes that support distributed storage of meshes:
 \texttt{parallel::\allowbreak distributed::\allowbreak Triangulation}
 (which in the following we will abbreviate as \texttt{p::d::T}) and
 \texttt{parallel::\allowbreak fully\allowbreak distributed::\allowbreak
   Triangulation} (or, in short, \texttt{p::f::T}). The former is
 partitioned based on the space-filling Morton (or Z-order) curve
-implemented by the \pfrst{} backend. The latter, more recent
+implemented by the \pfrst backend. The latter, more recent
 class is currently statically partitioned at creation time.
 
 There are now new utility functions in the
@@ -545,7 +545,7 @@ as a complement to \texttt{p::d::T}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Advances in matrix-free infrastructure}\label{sec:mf}
 
-The matrix-free infrastructure of \dealii{} is used to solve problems
+The matrix-free infrastructure of \dealii is used to solve problems
 without assembling matrices, providing only the action of the matrix
 instead. It has seen a number of new features in this release, the most
 notable ones being:
@@ -642,11 +642,11 @@ has been eliminated. Furthermore, hanging-node constraints are applied
 efficiently in the same way as in the matrix-free loops (see Subsection~\ref{sec:mf}).
 
 In \cite{munch2022gc}, the performance of the local-smoothing and global-coarsening
-infrastructure of \dealii{} was compared for locally refined meshes. The results indicate that
+infrastructure of \dealii was compared for locally refined meshes. The results indicate that
 the local definition of multigrid levels might introduce load imbalances
 in the case of local smoothing so that global coarsening is favorable despite
 potentially more expensive intergrid transfers. In order to judge the benefits
-of one approach against the other, \dealii{} provides new functions
+of one approach against the other, \dealii provides new functions
 \texttt{workload\_imbalance()} and \texttt{vertical\_communication\_efficiency()}
 in the \texttt{MGTools} namespace for the  estimation of the imbalance during, e.g.,
 smoothing or the
@@ -746,11 +746,11 @@ The new \texttt{step-85} tutorial illustrates how many of these classes work tog
   Library (CGAL)}\label{sec:cgalwrappers}
 
 The Computational Geometry Algorithms Library (CGAL, \url{https://www.cgal.org/}) is a widely used
-library to describe geometries and meshes \cite{cgal}. \dealii{} now
+library to describe geometries and meshes \cite{cgal}. \dealii now
 has wrappers for CGAL classes and functions, provided in the new
 namespace \texttt{CGALWrappers}, and implementing functionality
-spanning from mesh generation to boolean operations between \dealii{}
-triangulations and cells. These wrappers are enabled only if \dealii{}
+spanning from mesh generation to boolean operations between \dealii
+triangulations and cells. These wrappers are enabled only if \dealii
 is compiled with \texttt{C++17}. \textit{Note: This feature is still experimental and
 interfaces might change during the next release cycle.}
 
@@ -844,7 +844,7 @@ spanning over $B$ and the other one over $\Omega$, and not from a level set func
 
 In the release described herein, we have reorganized the data
 structures and optimized the algorithms that support using particles
-in \dealii{}. In our previously reported improvements~\citep{dealII93} we stored all particle data as a separate contiguous array for each particle property, but particle identifiers (IDs) were still stored in a multimap tree-like structure.
+in \dealii. In our previously reported improvements~\citep{dealII93} we stored all particle data as a separate contiguous array for each particle property, but particle identifiers (IDs) were still stored in a multimap tree-like structure.
 
 Our new particle containers are organized as follows: Particle IDs are stored in a list of dynamic arrays, each array containing the particle IDs of all particles in a unique cell. Each ID is a handle that determines the location of the data of this unique particle in the property arrays.
 The list of ID arrays only contains entries for cells that contain particles. We keep a separate cache structure that contains pointers to the particular list entries for each cell. If a cell has no particles, this pointer is invalid.
@@ -905,7 +905,7 @@ who will then have to respond with replies. This problem is solved by
 ``consensus algorithms''~\cite{hoefler2010scalable}. An example of where this problem appears is
 given in Section~\ref{sec:repartitioning}.
 
-\dealii{} has an implementation of these algorithms for some time,
+\dealii has an implementation of these algorithms for some time,
 but the current release substantially expands on it. Specifically, the
 updated interfaces -- now based on function objects such as lambda
 functions to formulate and process queries and replies -- can deal
@@ -954,7 +954,7 @@ which consequently can be sent without packing and unpacking.
 \subsection{New and improved tutorials and code gallery programs}
 \label{subsec:steps}
 
-Many of the \dealii{} tutorial programs were revised in a variety of ways
+Many of the \dealii tutorial programs were revised in a variety of ways
 as part of this release. In addition, there are a number of new tutorial
 programs:
 \begin{itemize}
@@ -966,7 +966,7 @@ programs:
   \item
     \texttt{step-82} was contributed by Andrea Bonito (Texas A\&M
     University) and Diane Guignard (University of Ottawa). It shows how
-    \dealii{} can be used to implement the local discontinuous Galerkin
+    \dealii can be used to implement the local discontinuous Galerkin
     (LDG) method for approximating the solution to the bi-Laplacian
     problem. The method is an alternative to the C0IP method used in
     \texttt{step-47}.
@@ -984,7 +984,7 @@ research rather than as teaching tools):
 \begin{itemize}
   \item ``TRBDF2-DG projection solver for the incompressible Navier--Stokes equations'' was contributed by Giuseppe Orlando (Politecnico di Milano). It shows
   how to solve the incompressible Navier--Stokes equations efficiently 
-  with \dealii{}'s matrix-free DG infrastructure, multigrid, and adaptive-mesh
+  with \dealii's matrix-free DG infrastructure, multigrid, and adaptive-mesh
   refinement. Interested readers are referred to~\cite{orlando2021efficient}.
 \end{itemize}
 Finally, the ``MCMC for the Laplace equation'' code gallery
@@ -1032,11 +1032,11 @@ may have been more widely used:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{How to cite \dealii}\label{sec:cite}
 
-In order to justify the work the developers of \dealii{} put into this
+In order to justify the work the developers of \dealii put into this
 software, we ask that papers using the library reference one of the
-\dealii{} papers. This helps us justify the effort we put into this library.
+\dealii papers. This helps us justify the effort we put into this library.
 
-There are various ways to reference \dealii{}. To acknowledge the use of
+There are various ways to reference \dealii. To acknowledge the use of
 the current version of the library, \textbf{please reference the present
   document}. For up-to-date information and a bibtex entry
 see
@@ -1044,9 +1044,9 @@ see
   \url{https://www.dealii.org/publications.html}
 \end{center}
 
-The original \dealii{} paper containing an overview of its
+The original \dealii paper containing an overview of its
 architecture is \cite{BangerthHartmannKanschat2007}, and a more recent
-publication documenting \dealii{}'s design decisions is available as \cite{dealII2020design}. If you rely on
+publication documenting \dealii's design decisions is available as \cite{dealII2020design}. If you rely on
 specific features of the library, please consider citing any of the
 following:
 \begin{multicols}{2}
@@ -1076,13 +1076,13 @@ following:
           \texttt{MeshWorker::ScratchData} base class, and the
           \texttt{ParsedConvergenceTable} class:
           \cite{SartoriGiulianiBardelloni-2018-a};
-    \item For uses of the particle functionality in \dealii{}:
+    \item For uses of the particle functionality in \dealii:
           \cite{GLHPB18}.
           \vfill\null
   \end{itemize}
 \end{multicols}
 
-\dealii{} can interface with many other libraries:
+\dealii can interface with many other libraries:
 \begin{multicols}{3}
   \begin{itemize}[leftmargin=4mm]
     \item ADOL-C \cite{Griewank1996a,adol-c}
@@ -1116,13 +1116,13 @@ following:
 Please consider citing the appropriate references if you use
 interfaces to these libraries.
 
-The two previous releases of \dealii{} can be cited as
+The two previous releases of \dealii can be cited as
 \cite{dealII92,dealII93}.
 
 
 \section{Acknowledgments}
 
-\dealii{} is a world-wide project with dozens of contributors around the
+\dealii is a world-wide project with dozens of contributors around the
 globe. Other than the authors of this paper, the following people
 contributed code to this release:\\
 %
@@ -1186,7 +1186,7 @@ Their contributions are much appreciated!
 
 \bigskip
 
-\dealii{} and its developers are financially supported through a
+\dealii and its developers are financially supported through a
 variety of funding sources:
 
 
@@ -1233,7 +1233,7 @@ S.~Sticko was partially supported by eSSENCE of e-Science.
 D.~Wells was supported by the NSF Award OAC-1931516.
 
 The Interdisciplinary Center for Scientific Computing (IWR) at Heidelberg
-University has provided hosting services for the \dealii{} web page.
+University has provided hosting services for the \dealii web page.
 
 \bibliography{paper}{}
 \bibliographystyle{abbrv}
