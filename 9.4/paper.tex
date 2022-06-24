@@ -210,6 +210,7 @@ The major changes of this release are:
   \item CutFEM support (see Section~\ref{sec:cut});
   \item Experimental integration of the Computational Geometry Algorithms Library (CGAL) (see Section~\ref{sec:cgalwrappers});
   \item Performance improvements in the particle infrastructure (see Section~\ref{sec:particles});
+  \item Support for large MPI buffers and parallel I/O (see Section~\ref{sec:large-mpi});
   \item Improvements to unstructured communication (see Section~\ref{sec:CA});
   \item Three new tutorial programs and one new code gallery program (see Section~\ref{subsec:steps}).
 \end{itemize}
@@ -246,9 +247,6 @@ which we briefly outline in the remainder of this section:
   shape functions by their support point. This functionality is useful in both developing nodal schemes since, e.g., the $x$, $y$, and $z$
   velocities at a point will be consecutive in the solution vector. It also improves interoperability with external libraries which expect
   data in this format.
-  \item A new module \texttt{Utilities::MPI::LargeCount} which enables sending and receiving MPI messages containing more than $2^{31}$ objects.
-  This library either uses the new MPI-4 functions, such as \texttt{MPI\_Send\_c()}, or an internal implementation of large objects for
-  compatibility with MPI-3.
   \item The \texttt{FEInterfaceValues} class, which computes common quantities at the interface of two cells, has been overhauled to make it
   more consistent with the rest of the library and use more intuitive names for functions. For example,
   \texttt{FEInterfaceValues::jump\_gradient()} is now \texttt{FEInterfaceValues::jump\_in\_shape\_gradients()}. Several new
@@ -892,6 +890,14 @@ The four operations we have measured are:
 Table~\ref{tab:particle_timing} shows that all particle operations are
 much faster in \dealii 9.4 than in version 9.3. In particular, operations that depend strongly on particle storage structure and require few fixed computations (like iteration and sorting) benefit massively from the above-mentioned optimizations. We note that the exact gains will depend strongly on the exact combination of geometry, mapping, dimensionality, and the number of particles per cell in any specific model, and can be smaller or larger than the measurements provided here.
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Support for large MPI buffers and parallel I/O}
+\label{sec:large-mpi}
+
+   A new module \texttt{Utilities::MPI::LargeCount} which enables sending and receiving MPI messages containing more than $2^{31}$ objects.
+  This library either uses the new MPI-4 functions, such as \texttt{MPI\_Send\_c()}, or an internal implementation of large objects for
+  compatibility with MPI-3.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Improvements to unstructured communication}
