@@ -710,7 +710,9 @@ Specifically, the following are the key new classes and functions:
 \begin{itemize}
   \item The \texttt{MeshClassifier} class identifies how the active cells and faces are located relative to the zero contour of the level set function, as illustrated in Figure~\ref{fig:location-to-level-set}. Its member function \texttt{location\_to\_level\_set()} takes a cell or face and
         returns an enum, \texttt{LocationToLevelSet}, with values \{\texttt{inside}, \texttt{outside}, \texttt{intersected}\}.
-        This information is typically needed when choosing what element a cell of the \texttt{DoFHandler} should use.
+        This information is typically needed when choosing what element (e.g., \texttt{FE\_Q} or \texttt{FE\_Nothing}) and/or what quadrature (defined over the 
+        complete cell or over a part---see below) a cell
+        should use.
 
   \item The \texttt{QuadratureGenerator} class, which implements the algorithm in \cite{saye2015}, generates high-order quadrature rules for the three different regions of a \texttt{BoundingBox}, $B$, defined by the sign of the level set function:
         \begin{align}\label{eq:boundingbox}
@@ -747,8 +749,8 @@ The new \texttt{step-85} tutorial illustrates how many of these classes work tog
 The Computational Geometry Algorithms Library (CGAL, \url{https://www.cgal.org/}) is a widely used
 library to describe geometries and meshes \cite{cgal}. \dealii now
 has wrappers for CGAL classes and functions, provided in the new
-namespace \texttt{CGALWrappers}, and implementing functionality
-spanning from mesh generation to boolean operations between \dealii
+namespace \texttt{CGALWrappers}: they implement functionality
+spanning from mesh generation to boolean operations between
 triangulations and cells. These wrappers are enabled only if \dealii
 is compiled with \texttt{C++17}. \textit{Note: This feature is still experimental and
 interfaces might change during the next release cycle.}
@@ -771,18 +773,19 @@ GridGenerator::implicit_function(tria, implicit_fu, data, {0, 0, 0}, 10.0);
 
 A related function is
 \texttt{GridGenerator::surface\_mesh\_to\_volumetric\_mesh()}, which
-computes a tetrahedral volume triangulation \texttt{Triangulation<3>}, based on a
-given surface triangulation \texttt{Triangulation<2,3>} that bounds
+computes a tetrahedral volume mesh \texttt{Triangulation<3>}, based on a
+given surface mesh \texttt{Triangulation<2,3>} that bounds
 the three dimensional shape.
 
-CGAL also provides Boolean operations on meshes, as available in the
-utility function
+CGAL also provides Boolean operations on meshes: they can be accessed via 
+the utility function
 \texttt{CGALWrappers::\allowbreak{}compute\_boolean\_operation()}. The
 available operations are \textit{co-refinement}, \textit{intersection},
-\textit{union}, and \textit{difference}. Oftentimes, boolean
+\textit{union}, and \textit{difference}. Oftentimes, Boolean
 operations and co-refinement around the intersection produces
-badly shaped mesh cells. To overcome this issue, one can use \texttt{CGALWrappers::\allowbreak{}remesh\_surface()}. Figure~\ref{fig:corefinement_remeshed} shows a graphical example.
-A possible workflow is the following:
+badly shaped mesh cells. To overcome this issue, one can use \texttt{CGALWrappers::\allowbreak{}remesh\_surface()}.
+A possible workflow to create a good-quality mesh of the union of a cube and
+a sphere mesh is given in the following listing:
 \begin{c++}
 // 1) create deal.II triangulations, e.g., cube and sphere (not shown)  
 Triangulation<spacedim> tria0, tria1;
@@ -802,8 +805,8 @@ CGALWrappers::cgal_surface_mesh_to_dealii_triangulation(out_mesh, tria_out);
 
 // 5) convert surface to volume mesh via surface_mesh_to_volumetric_mesh()
 \end{c++}
-The output of the boolean operation can be seen in Fig.~\ref{fig:corefinement}, while in Fig.~\ref{fig:corefinement_remeshed}
-the same mesh has been remeshed.
+The output of the Boolean operation is shown in Fig.~\ref{fig:corefinement};
+Fig.~\ref{fig:corefinement_remeshed} shows the mesh after remeshing.
 \begin{figure}
   \centering
   \begin{subfigure}[b]{0.28\textwidth}
@@ -826,15 +829,24 @@ the same mesh has been remeshed.
   \caption{\it (a) Triangulation created by filling a heart-shaped surface implicitly described by a function $f$. (b) Union of a cube with a sphere with badly shaped cells at the intersection. (c) Remeshed version of the same triangulation.}
 \end{figure}
 
-\texttt{CGALWrappers::compute\_quadrature\_on\_boolean\_operation()} returns a \texttt{Quadrature<3>} that allows exact integration of polynomials on polyhedral elements coming out of a \texttt{BooleanOperation} between \dealii cells.
-The quadrature rule is built by meshing the polyhedral region with tetrahedra, computing on each tetrahedron a \texttt{QGaussSimplex<3>} quadrature rule by using \texttt{QSimplex<3>::\allowbreak{}compute\_affine\_transformation()}, and finally
-collecting all of the rules together, giving a \texttt{Quadrature<3>} formula on the \emph{physical} element.
+The function \texttt{CGALWrappers::compute\_quadrature\_on\_boolean\_operation()} returns a quadrature that allows exact integration of polynomials on polyhedral elements created by a \texttt{Boolean\allowbreak Operation} between \dealii cells.
+The quadrature rule is built by 1) subdividing the polyhedral region in tetrahedra, 2) computing on each a \texttt{QGaussSimplex<3>} quadrature rule via \texttt{QSimplex<3>::\allowbreak{}compute\_affine\_transformation()}, and 3)
+collecting all in a single \texttt{Quadrature<3>} object on the \emph{physical} cell.
 
+The new utility functions will be the building blocks for functions in 
+the \texttt{NonMatching} namespace in future releases. While our current 
+CutFEM implementation (see Section~\ref{sec:cut}) relies on a level set description of the domain to determine
+the boundary and the quadrature rules, one could do that also based on non-matching overlapping
+grids~\cite{massing2013efficient}, for which the newly introduced, CGAL-based Boolean operations and 
+quadrature-generation functionality might be helpful. We would like to point out
+that the functionalities are not limited to CutFEM but are also applicable
+for weakly imposing boundary conditions on the interface of an immersed boundary
+using Nitsche's method and coupling terms using Lagrange multipliers.
 
-These utility functions will be the building blocks for functions in the \texttt{NonMatching} namespace that will, e.g.,  assemble coupling terms like $(u,v)_{\Omega}$, with $\Omega$ a domain immersed in a fixed background mesh $B$ and $u,v$ finite element functions on $V_h(B)$, as needed, e.g., in 
-the context of CutFEM (see Section~\ref{sec:cut}) or Nitsche's method to weakly impose boundary conditions at an interface. The same applies to coupling terms of the form $(u,q)_{\Omega}$ in formulations using Lagrange multipliers, where now $q \in Q_h(\Omega)$, with $Q_h(\Omega)$ the space of the multiplier variable.
-Note that the most relevant difference between this and the \texttt{QuadratureGenerator} in Section~\ref{sec:cut} is that the \texttt{Quadrature} objects are created directly from two overlapping grids, one
-spanning over $B$ and the other one over $\Omega$, and not from a level set function.
+%These utility functions will be the building blocks for functions in the \texttt{NonMatching} namespace that will, e.g.,  assemble coupling terms like $(u,v)_{\Omega}$, with $\Omega$ a domain immersed in a fixed background mesh $B$ and $u,v$ finite element functions on $V_h(B)$, as needed, e.g., in 
+%the context of CutFEM (see Section~\ref{sec:cut}) or Nitsche's method to weakly impose boundary conditions at an interface. The same applies to coupling terms of the form $(u,q)_{\Omega}$ in formulations using Lagrange multipliers, where now $q \in Q_h(\Omega)$, with $Q_h(\Omega)$ the space of the multiplier variable.
+%Note that the most relevant difference between this and the \texttt{QuadratureGenerator} in Section~\ref{sec:cut} is that the \texttt{Quadrature} objects are created directly from two overlapping grids, one
+%spanning over $B$ and the other one over $\Omega$, and not from a level set function.
 
 
 
