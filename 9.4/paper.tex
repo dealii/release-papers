@@ -253,6 +253,9 @@ which we briefly outline in the remainder of this section:
   more consistent with the rest of the library and use more intuitive names for functions. For example,
   \texttt{FEInterfaceValues::jump\_gradient()} is now \texttt{FEInterfaceValues::jump\_in\_shape\_gradients()}. Several new
   functions, such as \texttt{FEInterfaceValues::get\_jump\_in\_function\_values()}, have also been added.
+  \item The\texttt{MeshWorker::ScratchData} and \texttt{MeshWorker::CopyData} have been made $hp$-compatible,
+  and supports face integration where the integration rule and mapping differs on either side of an interface.
+  The \texttt{MeshWorker::CopyData} class has also been made compatible with complex numbers.
   \item Vectors attached to \texttt{DataOut} do not need to be in ghosted state anymore. Internally, we create a copy of the vector with appropriate ghosting.
 \end{itemize}
 %
