@@ -254,7 +254,7 @@ which we briefly outline in the remainder of this section:
   \texttt{FEInterfaceValues::jump\_gradient()} is now \texttt{FEInterfaceValues::jump\_in\_shape\_gradients()}. Several new
   functions, such as \texttt{FEInterfaceValues::get\_jump\_in\_function\_values()}, have also been added.
   \item The\texttt{MeshWorker::ScratchData} and \texttt{MeshWorker::CopyData} have been made $hp$-compatible,
-  and supports face integration where the integration rule and mapping differs on either side of an interface.
+  and support face integration where the integration rule and mapping differs on either side of an interface.
   The \texttt{MeshWorker::CopyData} class has also been made compatible with complex numbers.
   \item Vectors attached to \texttt{DataOut} do not need to be in ghosted state anymore. Internally, we create a copy of the vector with appropriate ghosting.
 \end{itemize}
@@ -562,13 +562,14 @@ of cells on unstructured meshes.
 \item Users can now create their own cell batches, by providing \texttt{FEEvaluation::reinit()} a list of cell IDs. \texttt{FEEvaluation}
 accesses the appropriate data and reshuffles mapping data accordingly on
 the fly in order to enable vectorization over cells. The new feature is useful in several
-contexts. Examples are simulations with sharp interfaces (e.g., two-phase flow
+contexts, for example for sharp interfaces (e.g., two-phase flow
 or shock capturing), where one needs to treat cells that are ``cut'' by
 the interface in a special way. A challenge is that cell batches
-might contain cut or non-cut cells, making the vectorization of these operations potentially more complicated. Previous functionality has provided the option of masking certain cells in cell batches, which works well if
-the code paths do not diverge too much. Another way is to
+might contain cut or non-cut cells, effectively counteracting the cross-cell vectorization.
+Previous functionality has provided the option of masking certain cells in cell batches, which works well if
+the code paths do not diverge too much, or to
 categorize cells during \texttt{MatrixFree::reinit()} in such a way that mixed cell batches do not occur. However, \texttt{MatrixFree::reinit()}
-might be too expensive if recategorization needs to happen very frequently to follow the dynamics of a system, e.g., in each time step. Despite some overhead compared to static matrix-free loops, the new feature can be the best option in these scenarios.
+might be too expensive if recategorization needs to happen very frequently to follow the dynamics of a system, e.g., in each time step. Despite some overhead compared to static matrix-free loops, the new feature can be the best option in such dynamic scenarios.
 \item Initial support for H(div)-conforming elements with Piola transform, based on Raviart--Thomas finite element spaces with the updated class \texttt{FE\_RaviartThomasNodal}, has been added. This feature is currently limited to meshes in standard orientation and affine geometries. Full support and performance optimizations will be provided in a future release.
 \item Selected matrix-free algorithms can now exploit additional data locality
   between the matrix-vector product and vector operations happening nearby in
@@ -841,10 +842,10 @@ the \texttt{NonMatching} namespace in future releases. While our current
 CutFEM implementation (see Section~\ref{sec:cut}) relies on a level set description of the domain to determine
 the boundary and the quadrature rules, one could do that also based on non-matching overlapping
 grids~\cite{massing2013efficient}, for which the newly introduced, CGAL-based Boolean operations and 
-quadrature-generation functionality might be helpful. We would like to point out
-that the functionalities are not limited to CutFEM but are also applicable
+quadrature-generation functionality might be helpful.
+The functionalities are applicable in a broad context of immersed problems, such as
 for weakly imposing boundary conditions on the interface of an immersed boundary
-using Nitsche's method and coupling terms using Lagrange multipliers.
+using Nitsche's method and for coupling terms using Lagrange multipliers.
 
 %These utility functions will be the building blocks for functions in the \texttt{NonMatching} namespace that will, e.g.,  assemble coupling terms like $(u,v)_{\Omega}$, with $\Omega$ a domain immersed in a fixed background mesh $B$ and $u,v$ finite element functions on $V_h(B)$, as needed, e.g., in 
 %the context of CutFEM (see Section~\ref{sec:cut}) or Nitsche's method to weakly impose boundary conditions at an interface. The same applies to coupling terms of the form $(u,q)_{\Omega}$ in formulations using Lagrange multipliers, where now $q \in Q_h(\Omega)$, with $Q_h(\Omega)$ the space of the multiplier variable.
@@ -998,7 +999,7 @@ future, using the interfaces now already in place.
 By the time of writing, \dealii uses consensus-based algorithms to determine
 the owners of distributed index sets (\texttt{Utilities::MPI::Partitioner},
 \texttt{Utilities::MPI::Noncontiguous\allowbreak Partitioner}, \texttt{internal::MatrixFreeFunctions::VectorDataExchange}; see~\cite{dealII91}),
-to setup the global-coarsening transfer operators (see~\cite{dealII92} and
+to set up the global-coarsening transfer operators (see~\cite{dealII92} and
 Section~\ref{sec:multigrid}), to repartition distributed meshes (see Section~\ref{sec:repartitioning}), and basis coupling algorithms between non-matching
 meshes, based on the communication patters in \texttt{RemotePointeEvaluation} (see~\cite{dealII92}).
 
