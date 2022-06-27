@@ -230,7 +230,7 @@ which we briefly outline in the remainder of this section:
   triangulation onto a second potentially unrelated triangulation.
   By using this class, one can output the result obtained on an
   unstructured mesh on a structured one (which might facilitate a more
-  memory-efficient storage format, for example if this second
+  memory-efficient storage format, for example, if this second
   triangulation is a uniformly refined rectangle or box), or one can create a slice in 3D.
   \item The new member function \texttt{find\_point\_owner\_rank()} of
         \texttt{parallel\allowbreak ::distributed::\allowbreak Tri\allowbreak angulation} allows one to find the MPI
@@ -247,13 +247,13 @@ which we briefly outline in the remainder of this section:
   A manifold description is applied to the boundary, which can be extended into the volume via transfinite interpolation \cite{Gordon82} using the \texttt{TransfiniteInterpolationManifold} class \cite{dealII90}.
   \item A new DoF renumbering function \texttt{DoFRenumbering::support\_point\_wise()} which groups together
   shape functions by their support point. This functionality is useful in both developing nodal schemes since, e.g., the $x$, $y$, and $z$
-  velocities at a point will be consecutive in the solution vector. It also improves interoperability with external libraries which expect
+  components at a point will be consecutive in the solution vector. It also improves interoperability with external libraries which expect
   data in this format.
   \item The \texttt{FEInterfaceValues} class, which computes common quantities at the interface of two cells, has been overhauled to make it
   more consistent with the rest of the library and use more intuitive names for functions. For example,
   \texttt{FEInterfaceValues::jump\_gradient()} is now \texttt{FEInterfaceValues::jump\_in\_shape\_gradients()}. Several new
   functions, such as \texttt{FEInterfaceValues::get\_jump\_in\_function\_values()}, have also been added.
-  \item The\texttt{MeshWorker::ScratchData} and \texttt{MeshWorker::CopyData} have been made $hp$-compatible,
+  \item The \texttt{MeshWorker::ScratchData} and \texttt{MeshWorker::CopyData} have been made $hp$-compatible,
   and support face integration where the integration rule and mapping differs on either side of an interface.
   The \texttt{MeshWorker::CopyData} class has also been made compatible with complex numbers.
   \item Vectors attached to \texttt{DataOut} do not need to be in ghosted state anymore. Internally, we create a copy of the vector with appropriate ghosting.
@@ -467,7 +467,7 @@ meshes. For more details, see Section~\ref{sec:cgalwrappers}.
 
 Furthermore, we have continued to remove uses of the
 \texttt{GeometryInfo} class (which is specific to hypercube cells) from
-the library, and to replace them by more general equivalent
+the library, and to replace them with more general equivalent
 functionality based on the
 \texttt{ReferenceCell} class. Once all instances of
 \texttt{GeometryInfo} are removed, we will deprecate the class.
@@ -524,7 +524,7 @@ The setup process (of \texttt{construction\_data}) is visualized in Figure~\ref{
 first, locally owned cells and their
 surrounding (ghost) cells are collected on each process and
 sent to the new owner. On the
-receiving site, the sets of all cells are combined and possible duplicates
+receiving side, the sets of all cells are combined and possible duplicates
 are removed. This information is enough to construct a new triangulation.
 For sending/receiving, we apply consensus-based algorithms~\cite{hoefler2010scalable}, which
 we introduced into the library in release 9.2~\cite{dealII92} -- see
@@ -870,7 +870,7 @@ This structure allows for the following significant performance improvements:
 \item All particle data (both their identifiers and their actual data) are now stored as separate and contiguous arrays in memory, which improves spatial locality for better prefetching of data and makes iterating over particles extremely efficient.
 \item The choice of a list container that only includes entries for cells that contain particles means iteration is efficient, even if many cells in the domain do not contain any particles (as can be the case for discrete element methods~\cite{golshan2022lethe}).
 \item Creating separate arrays for each cell allows us to easily move particle IDs from one cell to another as a local operation, affecting only the two cell containers in question. We take care to reuse allocated memory to minimize the number of memory reallocations.
-\item The separate cache structure that contains entries for each cell allows quick random-access to the particles of a particular cell, and also allows to quickly determine if a particular cell has particles at all.
+\item The separate cache structure that contains entries for each cell allows quick random access to the particles of a particular cell, and also allows to quickly determine if a particular cell has particles at all.
 \end{itemize}
 
 In addition to the new storage structure, we have made the following algorithmic improvements:
@@ -900,7 +900,7 @@ The four operations we have measured are:
 \item Iteration over the whole set of created particles, without
   significant computation and in particular without accessing particle data.
 \item Advection of all particles, which involves iteration over all particles, evaluation of the finite element solution at the location of the particles, read and write access to the position of all particles to modify their location, and write access to the particle properties (to store their velocity for visualization purposes).
-\item Sorting, i.e., the inversion of the mapping of each cell to find the new particle locations relative to this cell, and moving all particles that have left their original cell into new cells (both \dealii 9.3 and \dealii 9.4). In \dealii 9.4 this operation also includes reordering the particle properties for optimal iteration.
+\item Sorting, i.e., the inversion of the mapping of each cell to find the new particle locations relative to this cell, and moving all particles that have left their original cell into new cells (both \dealii 9.3 and \dealii 9.4). In \dealii 9.4, this operation also includes reordering the particle properties for optimal iteration.
 \end{itemize}
 
 Table~\ref{tab:particle_timing} shows that all particle operations are
@@ -923,7 +923,7 @@ much faster in \dealii 9.4 than in version 9.3. In particular, operations that d
    checkpointing (per rank), or when broadcasting large datasets for lookup tables.
 
    With this release we introduce a new module \texttt{Utilities::MPI::LargeCount} which enables sending and receiving MPI messages and I/O containing more than $2^{31}$ objects by implementing
-   the before-mentioned \texttt{MPI\_*\_c()} functions, i.e., \texttt{MPI\_Bcast\_c()}, using MPI-3 features if necessary. The
+   the before-mentioned \texttt{MPI\_*\_c()} functions, e.g., \texttt{MPI\_Bcast\_c()}, using MPI-3 features if necessary. The
    solution is based on custom datatypes as described in~\ref{hammond2014int_max}.
 
    This functionality is now used in all places in the library, where
@@ -932,8 +932,8 @@ much faster in \dealii 9.4 than in version 9.3. In particular, operations that d
    While implementing these changes we also worked on the following:
    \begin{itemize}
     \item Testing of large I/O with large chunks per MPI rank (>2 GB) and
-    large total sizes (4 GB +). Several instances of 32 bit datatypes for
-    offsets were changed to 64 bit to correctly support files larger
+    large total sizes (4 GB +). Several instances of 32-bit data types for
+    offsets were changed to 64-bit to correctly support files larger
     than 4 GB (HDF5 output, VTU output, checkpointing).
     \item Performance testing of MPI I/O routines used for parallel VTU output with large performance improvements by switching from a shared
     file pointer to individual file pointers, see Table~\ref{tab:mpi-io}.
@@ -967,7 +967,7 @@ who will then have to respond with replies. This problem is solved by
 ``consensus algorithms''~\cite{hoefler2010scalable}. An example of where this problem appears is
 given in Section~\ref{sec:repartitioning}.
 
-\dealii has an implementation of these algorithms for some time,
+\dealii has had an implementation of these algorithms for some time,
 but the current release substantially expands on it. Specifically, the
 updated interfaces -- now based on function objects such as lambda
 functions to formulate and process queries and replies -- can deal
@@ -1184,7 +1184,7 @@ The two previous releases of \dealii can be cited as
 
 \section{Acknowledgments}
 
-\dealii is a world-wide project with dozens of contributors around the
+\dealii is a worldwide project with dozens of contributors around the
 globe. Other than the authors of this paper, the following people
 contributed code to this release:\\
 %
@@ -1273,7 +1273,7 @@ EAR-1925575, and by Technical Data Analysis, Inc. through US Navy STTR
 Contract N68335-18-C-0011.
 
 R.~Gassm{\"o}ller was also partially supported by the NSF Awards
-EAR-1925677, and EAR-2054605.
+EAR-1925677 and EAR-2054605.
 
 L.~Heltai was partially supported by the Italian Ministry of Instruction,
 University and Research (MIUR), under the 2017 PRIN project NA-FROM-PDEs MIUR
