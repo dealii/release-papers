@@ -227,13 +227,14 @@ which we briefly outline in the remainder of this section:
 %  \item \texttt{AffineConstraints::make\_consistent\_in\_parallel()} allows
 %  to make constraints consistent in parallel.
   \item The \texttt{DataOutResample} class interpolates values defined on one
-  triangulation onto a second potentially unrelated triangulation.
+  triangulation onto a second, potentially unrelated triangulation.
   By using this class, one can output the result obtained on an
   unstructured mesh on a structured one (which might facilitate a more
   memory-efficient storage format, for example, if this second
   triangulation is a uniformly refined rectangle or box), or one can create a slice in 3D.
-  \item The new member function \texttt{find\_point\_owner\_rank()} of
-        \texttt{parallel\allowbreak ::distributed::\allowbreak Tri\allowbreak angulation} allows one to find the MPI
+
+\item The new member function \texttt{find\_point\_owner\_rank()} of
+        \texttt{parallel\allowbreak ::distributed::\allowbreak Tri-\allowbreak angulation} allows one to find the MPI
   ranks of cells containing specified points.
   It is communication-free and leverages the functionality of \pfrst (>v.2.2).
   Its algorithm is described in \cite{burstedde2020parallel}. This information will
@@ -241,13 +242,15 @@ which we briefly outline in the remainder of this section:
   communication pattern used in the class \texttt{Utilities::\allowbreak MPI::\allowbreak RemotePointEvaluation}. Furthermore, this function could be used in the future to allow
   particle simulations in which particle movement is not
   limited by CFL conditions, as done in \cite{mirzadeh2016parallel}.
-  \item The new function
+
+\item The new function
   \texttt{GridGenerator::pipe\_junction()}
   generates a triangulation of three cone-shaped pipes that cross at a bifurcation point in any possible configuration.
   A manifold description is applied to the boundary, which can be extended into the volume via transfinite interpolation \cite{Gordon82} using the \texttt{TransfiniteInterpolationManifold} class \cite{dealII90}.
   \item A new DoF renumbering function \texttt{DoFRenumbering::support\_point\_wise()} which groups together
   shape functions by their support point. This functionality is useful in both developing nodal schemes since, e.g., the $x$, $y$, and $z$
-  components at a point will be consecutive in the solution vector. It also improves interoperability with external libraries which expect
+  components at a point will be consecutive in the solution vector. It
+  also improves interoperability with those external libraries that expect
   data in this format.
   \item The \texttt{FEInterfaceValues} class, which computes common quantities at the interface of two cells, has been overhauled to make it
   more consistent with the rest of the library and use more intuitive names for functions. For example,
@@ -256,7 +259,9 @@ which we briefly outline in the remainder of this section:
   \item The \texttt{MeshWorker::ScratchData} and \texttt{MeshWorker::CopyData} have been made $hp$-compatible,
   and support face integration where the integration rule and mapping differs on either side of an interface.
   The \texttt{MeshWorker::CopyData} class has also been made compatible with complex numbers.
-  \item Vectors attached to \texttt{DataOut} do not need to be in ghosted state anymore. Internally, we create a copy of the vector with appropriate ghosting.
+  \item Vectors attached to \texttt{DataOut} do not need to be in
+    ghosted state anymore. Internally, we create a copy of the vector
+    with appropriate ghost elements.
 \end{itemize}
 %
 The changelog lists more than 100 other features and bugfixes.
@@ -461,7 +466,8 @@ Figure~\ref{fig:refinement}), and (ii) appropriate hanging-node
 constraints. Both are now available in 2D; for 3D, the implementation
 of the constraint definitions is still in progress.
 \item \texttt{QIteratedSimplex} allows to build composite simplex quadrature rules.
-\item The new wrappers to the \texttt{CGAL} library allow to simply create simplex
+\item The new wrappers to the \texttt{CGAL} library allow for the easy
+  creation of simplex
 meshes. For more details, see Section~\ref{sec:cgalwrappers}.
 \end{itemize}
 
@@ -492,15 +498,15 @@ given a distributed triangulation (\texttt{p::f::T} or
 owned cells. This approach allows for partitioning \texttt{p::f::T}
 based on arbitrary criteria. The workflow is shown in the following listing:
 \begin{c++}
-// original triangulation:
+// Original triangulation:
 parallel::distributed::Triangulation<dim> tria(communicator);
 
-// select a partitioning policy and use it:
+// Select a partitioning policy and use it:
 const RepartitioningPolicyTools::CellWeightPolicy<dim> policy(tria, fu);
 const auto construction_data = TriangulationDescription::Utilities::
   create_description_from_triangulation(tria, policy.partition(tria));
 
-// create the new triangulation:
+// Create the new triangulation:
 parallel::fullydistributed::Triangulation<dim> tria_pft(comm);
 tria_pft.create_triangulation(construction_data);
 \end{c++}
@@ -548,11 +554,11 @@ as a complement to \texttt{p::d::T}.
 \subsection{Advances in matrix-free infrastructure}\label{sec:mf}
 
 The matrix-free infrastructure of \dealii is used to solve problems
-without assembling matrices, providing only the action of the matrix
+without assembling matrices, providing only the \textit{action} of the matrix
 instead. It has seen a number of new features in this release, the most
 notable ones being:
 \begin{itemize}
-\item Improved support for computations with Hessians of shape functions: just like values and gradients, Hessians can be
+\item Improved support for computations with Hessians of shape functions: Just like values and gradients, Hessians can be
 now evaluated and integrated during matrix-free loops
 both for cells and faces. This could enable, for example, writing
 a matrix-free version of step-47, which solves the biharmonic equation with the discontinuous Galerkin method.
@@ -593,7 +599,7 @@ and performance numbers are shown, indicating a reduction
 of overhead of cells with hanging nodes by a factor of ten.
 
 Finally, we have performed a major restructuring of the internals
-of the \texttt{FEEvaluation} classes. This reduces some overheads for low polynomial degrees and will enable us to add support for new element types in the future.
+of the \texttt{FEEvaluation} classes. This reduces some overhead for low polynomial degrees and will enable us to add support for new element types in the future.
 
 We would like to remind users that we transitioned from the use of Booleans
 to flags to configure the evaluation and integration process of \texttt{FEEvaluation}
@@ -648,7 +654,7 @@ In \cite{munch2022gc}, the performance of the local-smoothing and global-coarsen
 infrastructure of \dealii was compared for locally refined meshes. The results indicate that
 the local definition of multigrid levels might introduce load imbalances
 in the case of local smoothing so that global coarsening is favorable despite
-potentially more expensive intergrid transfers. In order to judge the benefits
+potentially more expensive intergrid transfers. In order to assess the benefits
 of one approach against the other, \dealii provides new functions
 \texttt{workload\_imbalance()} and \texttt{vertical\_communication\_efficiency()}
 in the \texttt{MGTools} namespace for the  estimation of the imbalance during, e.g.,
@@ -675,7 +681,7 @@ The bilinear form in the weak form would then, for example, look like
 \begin{equation}
   a(u,v) = (\nabla u, \nabla v)_\Omega - (\partial_n u, v)_\Gamma + \ldots
 \end{equation}
-Thus, when assembling on a cut cell, we are
+Thus, when assembling on a cut cell $K$, we are
 required to integrate over the part of the domain and the part of the boundary, $\Gamma = \partial \Omega$, that falls inside the cell:
 $K\cap \Omega$ and $K \cap \Gamma$.
 Many of the new classes that support these operations assume that the domain is described by a level set function,
@@ -756,7 +762,7 @@ has wrappers for CGAL classes and functions, provided in the new
 namespace \texttt{CGALWrappers}: they implement functionality
 spanning from mesh generation to boolean operations between
 triangulations and cells. These wrappers are enabled only if \dealii
-is compiled with \texttt{C++17}. \textit{Note: This feature is still experimental and
+is compiled with \texttt{C++17}. \textit{This feature is still experimental and
 interfaces might change during the next release cycle.}
 
 The main mesh generation function is
@@ -765,14 +771,14 @@ For \texttt{dim==3}, the mesh consists of tetrahedra. A prototypical use case is
 and the required steps are:
 \begin{c++}
 // 1) An implicit function, e.g., Taubin's heart surface (not shown)
-ImplicitFunction implicit_fu;
+ImplicitFunction f;
 
-// 2) configure output mesh (optional)
+// 2) Configure output mesh (optional)
 CGALWrappers::AdditionalData<3> data; data.cell_size = .05;
 
-// 3) create mesh
+// 3) Create mesh
 Triangulation<3> tria;
-GridGenerator::implicit_function(tria, implicit_fu, data, {0, 0, 0}, 10.0);
+GridGenerator::implicit_function(tria, f, data, /* more arguments */...);
 \end{c++}
 
 A related function is
@@ -788,26 +794,26 @@ available operations are \textit{co-refinement}, \textit{intersection},
 \textit{union}, and \textit{difference}. Oftentimes, Boolean
 operations and co-refinement around the intersection produces
 badly shaped mesh cells. To overcome this issue, one can use \texttt{CGALWrappers::\allowbreak{}remesh\_surface()}.
-A possible workflow to create a good-quality mesh of the union of a cube and
+A possible workflow to create a high-quality mesh of the union of a cube and
 a sphere mesh is given in the following listing:
 \begin{c++}
-// 1) create deal.II triangulations, e.g., cube and sphere (not shown)  
+// 1) Create deal.II triangulations, e.g., cube and sphere (not shown)  
 Triangulation<spacedim> tria0, tria1;
 
-// 2) convert to CGAL surface meshes (assuming Kernel is already defined) 
+// 2) Convert to CGAL surface meshes (assuming Kernel is already defined) 
 CGAL::Surface_mesh<Kernel> surface_mesh0, surface_mesh1;
 CGALWrappers::dealii_tria_to_cgal_surface_mesh(tria0, surface_mesh0);
 CGALWrappers::dealii_tria_to_cgal_surface_mesh(tria1, surface_mesh1);
 
-// 3) compute the union of the two meshes
+// 3) Compute the union of the two meshes
 CGALWrappers::compute_boolean_operation(surface_mesh0, surface_mesh1,
   BooleanOperation::compute_union, out_mesh);
 
-// 4) convert CGAL surface mesh to deal.II surface mesh
+// 4) Convert CGAL surface mesh to deal.II surface mesh
 Triangulation<2, 3> tria_out;
 CGALWrappers::cgal_surface_mesh_to_dealii_triangulation(out_mesh, tria_out);
 
-// 5) convert surface to volume mesh via surface_mesh_to_volumetric_mesh()
+// 5) Convert surface to volume mesh via surface_mesh_to_volumetric_mesh()
 \end{c++}
 The output of the Boolean operation is shown in Fig.~\ref{fig:corefinement};
 Fig.~\ref{fig:corefinement_remeshed} shows the mesh after remeshing.
@@ -833,9 +839,12 @@ Fig.~\ref{fig:corefinement_remeshed} shows the mesh after remeshing.
   \caption{\it (a) Triangulation created by filling a heart-shaped surface implicitly described by a function $f$. (b) Union of a cube with a sphere with badly shaped cells at the intersection. (c) Remeshed version of the same triangulation.}
 \end{figure}
 
-The function \texttt{CGALWrappers::compute\_quadrature\_on\_boolean\_operation()} returns a quadrature that allows exact integration of polynomials on polyhedral elements created by a \texttt{Boolean\allowbreak Operation} between \dealii cells.
-The quadrature rule is built by 1) subdividing the polyhedral region in tetrahedra, 2) computing on each a \texttt{QGaussSimplex<3>} quadrature rule via \texttt{QSimplex<3>::\allowbreak{}compute\_affine\_transformation()}, and 3)
-collecting all in a single \texttt{Quadrature<3>} object on the \emph{physical} cell.
+The function
+\texttt{CGALWrappers::compute\_quadrature\_on\_boolean\_operation()}
+returns a quadrature that allows exact integration of polynomials on
+polyhedral elements created by a Boolean operation between \dealii cells.
+The quadrature rule is built by (i) subdividing the polyhedral region in tetrahedra, (ii) computing on each a \texttt{QGaussSimplex<3>} quadrature rule via \texttt{QSimplex<3>::\allowbreak{}compute\_affine\_transformation()}, and (iii)
+collecting all in a single quadrature object on the \emph{physical} cell.
 
 The new utility functions will be the building blocks for functions in 
 the \texttt{NonMatching} namespace in future releases. While our current 
@@ -859,7 +868,7 @@ using Nitsche's method and for coupling terms using Lagrange multipliers.
 
 In the release described herein, we have reorganized the data
 structures and optimized the algorithms that support using particles
-in \dealii. In our previously reported improvements~\citep{dealII93} we stored all particle data as a separate contiguous array for each particle property, but particle identifiers (IDs) were still stored in a multimap tree-like structure.
+in \dealii. In our previously reported implementation~\citep{dealII93} we stored all particle data as a separate contiguous array for each particle property, but particle identifiers (IDs) were still stored in a multimap tree-like structure.
 
 Our new particle containers are organized as follows: Particle IDs are stored in a list of dynamic arrays, each array containing the particle IDs of all particles in a unique cell. Each ID is a handle that determines the location of the data of this unique particle in the property arrays.
 The list of ID arrays only contains entries for cells that contain particles. We keep a separate cache structure that contains pointers to the particular list entries for each cell. If a cell has no particles, this pointer is invalid.
@@ -870,7 +879,7 @@ This structure allows for the following significant performance improvements:
 \item All particle data (both their identifiers and their actual data) are now stored as separate and contiguous arrays in memory, which improves spatial locality for better prefetching of data and makes iterating over particles extremely efficient.
 \item The choice of a list container that only includes entries for cells that contain particles means iteration is efficient, even if many cells in the domain do not contain any particles (as can be the case for discrete element methods~\cite{golshan2022lethe}).
 \item Creating separate arrays for each cell allows us to easily move particle IDs from one cell to another as a local operation, affecting only the two cell containers in question. We take care to reuse allocated memory to minimize the number of memory reallocations.
-\item The separate cache structure that contains entries for each cell allows quick random access to the particles of a particular cell, and also allows to quickly determine if a particular cell has particles at all.
+\item The separate cache structure that contains entries for each cell allows quick random access to the particles of a particular cell, and also allows quickly determining if a particular cell has particles at all.
 \end{itemize}
 
 In addition to the new storage structure, we have made the following algorithmic improvements:
@@ -917,22 +926,20 @@ much faster in \dealii 9.4 than in version 9.3. In particular, operations that d
    to the recent MPI-4 standard, which introduced a new set of \texttt{MPI\_*\_c()} functions, all MPI functions expected the ``count''
    to be a signed integer. This limits the number of objects to $2^{31}$,
    i.e., writing of up to 2 GB at once if the datatype is \texttt{MPI\_CHAR}.
-
-   Several places in the library could run into the issue mentioned above,
-   for example when producing large graphical output (per rank), large
-   checkpointing (per rank), or when broadcasting large datasets for lookup tables.
+   Several places in the library could exceed this limit,
+   for example when producing large graphical output, large
+   checkpoint files, or when broadcasting large datasets such as lookup tables.
 
    With this release we introduce a new module \texttt{Utilities::MPI::LargeCount} which enables sending and receiving MPI messages and I/O containing more than $2^{31}$ objects by implementing
    the before-mentioned \texttt{MPI\_*\_c()} functions, e.g., \texttt{MPI\_Bcast\_c()}, using MPI-3 features if necessary. The
    solution is based on custom datatypes as described in~\cite{hammond2014int_max}.
-
-   This functionality is now used in all places in the library, where
+This functionality is now used in all places in the library where
    large counts might be necessary (\texttt{DataOut::write\_vtu\_in\_parallel()} for graphical output, checkpointing of \texttt{Triangulation} objects, etc.).
-   %
+   
    While implementing these changes we also worked on the following:
    \begin{itemize}
     \item Testing of large I/O with large chunks per MPI rank (>2 GB) and
-    large total sizes (4 GB +). Several instances of 32-bit data types for
+    large total sizes (>4 GB). Several instances of 32-bit data types for
     offsets were changed to 64-bit to correctly support files larger
     than 4 GB (HDF5 output, VTU output, checkpointing).
     \item Performance testing of MPI I/O routines used for parallel VTU output with large performance improvements by switching from a shared
@@ -941,7 +948,7 @@ much faster in \dealii 9.4 than in version 9.3. In particular, operations that d
 
 \begin{table}
   \caption{\it Performance comparison of writing large VTU graphical output using MPI I/O on
-  TACC Frontera /scratch1/ with 16 file servers (``OSTs'') and a theoretical peak performance of 50 GB/s. The ROMIO version used enforces sequential writes when using \texttt{MPI\_File\_write\_ordered()}.}
+  TACC Frontera \texttt{/scratch1} file system with 16 file servers (``OSTs'') and a theoretical peak performance of 50 GB/s. The ROMIO version used enforces sequential writes when using \texttt{MPI\_File\_write\_ordered()}.}
   \label{tab:mpi-io}
 
   \centering
@@ -1041,7 +1048,7 @@ programs:
 
 There is also a new program in the code gallery (a collection of
 user-contributed programs that often solve more complicated problems
-than tutorial programs, and intended as starting points for further
+than tutorial programs, and that are intended as starting points for further
 research rather than as teaching tools):
 \begin{itemize}
   \item ``TRBDF2-DG projection solver for the incompressible Navier--Stokes equations'' was contributed by Giuseppe Orlando (Politecnico di Milano). It shows
