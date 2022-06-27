@@ -491,7 +491,7 @@ Collection of deal.II Manifold Wrappers for the OpenCASCADE Library}},
   howpublished = {\url{https://www.iso.org/standard/64029.html}},
   year =         2014}
 
-@Article{trilinos,
+@Article{heroux2005trilinos,
   author =       {M. A. Heroux and R. A. Bartlett and V. E. Howle and R. J. Hoekstra and J. J. Hu
                   and T. G. Kolda and R. B. Lehoucq and K. R. Long and R. P. Pawlowski and
                   E. T. Phipps and A. G. Salinger and H. K. Thornquist and R. S. Tuminaro and
@@ -503,11 +503,10 @@ Collection of deal.II Manifold Wrappers for the OpenCASCADE Library}},
   pages =        {397--423}}
 
 See: https://trilinos.github.io/cite.html
-@Misc{trilinos-web-page,
+@Manual{trilinos-web-page,
   title = {The {T}rilinos {P}roject {W}ebsite},
-  author = {The {T}rilinos {P}roject {T}eam},
-  year = {2022},
-  url = {https://trilinos.github.io}
+  author = {{The Trilinos Project Team}},
+  note = {\url{https://trilinos.github.io/}}
 }
 
 See: https://petsc.org/release/#citing-petsc
@@ -540,7 +539,7 @@ See: https://petsc.org/release/#citing-petsc
 }
 
 
-@Article{umfpack,
+@Article{davis2004umfpack,
   author =       {T. A. Davis},
   title =        {Algorithm 832: {UMFPACK V4.3}---an unsymmetric-pattern multifrontal method},
   journal =      {ACM Transactions on Mathematical Software},
@@ -548,14 +547,14 @@ See: https://petsc.org/release/#citing-petsc
   volume =       30,
   pages =        {196--199}}
 
-@Book{Rei07,
+@Book{reinders2007tbb,
   author =       {J. Reinders},
   title =        {Intel Threading Building Blocks},
   publisher =    {O'Reilly},
   year =         2007}
 
 See: https://p4est.github.io/cite.html
-@Article{p4est,
+@Article{burstedde2011p4est,
   author =       {C. Burstedde and L. C. Wilcox and O. Ghattas},
   title =        {\texttt{p4est}: {S}calable algorithms for parallel
                   adaptive mesh refinement on forests of octrees},
@@ -577,20 +576,14 @@ See: https://p4est.github.io/cite.html
   publisher={ACM New York, NY, USA}
 }
 
-@Book{arpack,
+@Book{lehoucq1998arpack,
   author =       {R. B. Lehoucq and D. C. Sorensen and C. Yang},
   title =        {{ARPACK} users' guide: solution of large-scale eigenvalue problems with implicitly restarted Arnoldi methods},
   publisher =    {SIAM, Philadelphia},
   year =         1998}
 
 See: http://mumps.enseeiht.fr/index.php?page=bibtex
-@Misc{mumps-web-page,
-  key =          {MUMPS},
-  title =        {{MUMPS: a MUltifrontal Massively Parallel sparse direct Solver}},
-  note =         {\url{http://graal.ens-lyon.fr/MUMPS/}}}
-
-
-@Article{ADE00,
+@Article{amestoy2000,
   author =       {P.R. Amestoy and I.S. Duff and J.-Y. L'Excellent},
   title =        {Multifrontal parallel distributed symmetric and unsymmetric solvers},
   journal =      {Comput. Methods in Appl. Mech. Eng.},
@@ -599,7 +592,7 @@ See: http://mumps.enseeiht.fr/index.php?page=bibtex
   pages =        {501--520}}
 
 
-@article{MUMPS:1,
+@article{amestoy2001mumps,
    author  = {P. R. Amestoy and I. S. Duff and J. Koster and J.-Y. L'Excellent},
    title   = {A Fully Asynchronous Multifrontal Solver Using Distributed Dynamic Scheduling},
    journal = {SIAM Journal on Matrix Analysis and Applications},
@@ -607,10 +600,10 @@ See: http://mumps.enseeiht.fr/index.php?page=bibtex
    number  = {1},
    year    = {2001},
    pages   = {15-41}
- }
+}
 
 
-@article{MUMPS:2,
+@article{amestoy2006,
    author  = {P. R. Amestoy and A. Guermouche and J.-Y. L'Excellent and S. Pralet},
    title   = {Hybrid scheduling for the parallel solution of linear systems},
    journal = {Parallel Computing},
@@ -620,7 +613,7 @@ See: http://mumps.enseeiht.fr/index.php?page=bibtex
    pages   = {136-156}
 }
 
-@article{MUMPS:3,
+@article{amestoy2019mumps,
   title = {{Performance and Scalability of the Block Low-Rank Multifrontal
   Factorization on Multicore Architectures}},
   author = {P. R. Amestoy and A. Buttari and J.-Y. L'Excellent and T. Mary},
@@ -632,7 +625,7 @@ See: http://mumps.enseeiht.fr/index.php?page=bibtex
 }
 
 See: https://ginkgo-project.github.io/ginkgo/doc/develop/citing_ginkgo.html
-@article{Anzt2022,
+@article{anzt2022ginkgo,
   doi = {10.1145/3480935},
   url = {https://doi.org/10.1145/3480935},
   year = {2022},
@@ -646,11 +639,17 @@ See: https://ginkgo-project.github.io/ginkgo/doc/develop/citing_ginkgo.html
   journal = {{ACM} Transactions on Mathematical Software}
 }
 
-@Misc{ginkgo-web-page,
-  key = {ginkgo},
-  title = {Ginkgo: high-performance linear algebra library for manycore
-    systems},
-  note ={\url{https://github.com/ginkgo-project/ginkgo}}
+@article{anzt2020ginkgo,
+  doi = {10.21105/joss.02260},
+  url = {https://doi.org/10.21105/joss.02260},
+  year = {2020},
+  publisher = {The Open Journal},
+  volume = {5},
+  number = {52},
+  pages = {2260},
+  author = {Hartwig Anzt and Terry Cojean and Yen-Chen Chen and Goran Flegar and Fritz G\"{o}bel and Thomas Gr\"{u}tzmacher and Pratik Nayak and Tobias Ribizel and Yu-Hsiang Tsai},
+  title = {Ginkgo: A high performance numerical linear algebra library},
+  journal = {Journal of Open Source Software}
 }
 
 @Misc{opencascade-web-page,
@@ -658,9 +657,8 @@ See: https://ginkgo-project.github.io/ginkgo/doc/develop/citing_ginkgo.html
   title =        {{OpenCASCADE: Open CASCADE Technology, 3D modeling \& numerical simulation}},
   note =         {\url{http://www.opencascade.org/}}}
 
-
 @Misc{muparser-web-page,
-  key =          {muparse},
+  key =          {muparser},
   title =        {{muparser: Fast Math Parser Library}},
   note =         {\url{http://muparser.beltoforion.de/}}}
 
@@ -669,15 +667,20 @@ See: https://ginkgo-project.github.io/ginkgo/doc/develop/citing_ginkgo.html
   title =        {{SymEngine: fast symbolic manipulation library, written in C++}},
   note =         {\url{https://symengine.org/}}}
 
+@Misc{boost-web-page,
+  key = {Boost},
+  title  = {{Boost C++ Libraries}},
+  note = {\url{http://www.boost.org/}}}
+
 See: http://portal.hdfgroup.org/display/knowledge/How+do+I+properly+cite+HDF5+in+a+paper
-@Misc{hdf5,
+@Misc{hdf5-web-page,
     author = {{The HDF Group}},
     title = "{Hierarchical Data Format, version 5}",
     year = {2022},
     note = {\url{http://www.hdfgroup.org/HDF5/}}
 }
 
-@article{karypis1998fast,
+@article{karypis1998metis,
   title={A fast and high quality multilevel scheme for partitioning irregular graphs},
   author={Karypis, G. and Kumar, V.},
   journal={SIAM J. Sci. Comput.},
@@ -687,6 +690,7 @@ See: http://portal.hdfgroup.org/display/knowledge/How+do+I+properly+cite+HDF5+in
   year={1998},
   publisher={SIAM}
 }
+
 @article{rew1990netcdf,
   title={{NetCDF}: an interface for scientific data access},
   author={Rew, R. and Davis, G.},
@@ -697,7 +701,8 @@ See: http://portal.hdfgroup.org/display/knowledge/How+do+I+properly+cite+HDF5+in
   year={1990},
   publisher={IEEE}
 }
-@Article{Hernandez:2005:SSF,
+
+@Article{hernandez2005slepc,
    author  = "V. Hernandez and J. E. Roman and V. Vidal",
    title   = "{SLEPc}: A Scalable and Flexible Toolkit for the Solution of Eigenvalue
               Problems",
@@ -809,7 +814,7 @@ year = {2009}
 }
 
 See: https://www.gnu.org/software/gsl/#moreinfo
-@book{Galassi2009,
+@book{galassi2009gsl,
   author = {Galassi, M. and Davies, Jim and Theiler, James and Gough, B. and Jungman, G. and Booth, Michael and Rossi, F.},
   title = {GNU Scientific Library Reference Manual},
   year = {2009},
@@ -818,11 +823,10 @@ See: https://www.gnu.org/software/gsl/#moreinfo
   edition = {3rd}
 }
 
-@Misc{gsl-web-page,
-  key =          {GSL},
-  title =        {{GSL: GNU Scientific Library}},
-  note =         {\url{http://www.gnu.org/software/gsl}}
-}
+@misc{gsl-web-page,
+  key = {GSL},
+  title  = {{GSL: GNU Scientific Library}},
+  note = {\url{http://www.gnu.org/software/gsl}}}
 
 @misc{nanoflann,
   author = {Blanco, Jose Luis and Rai, Prankal Kumar},
@@ -842,7 +846,7 @@ See: https://www.gnu.org/software/gsl/#moreinfo
   year = {2012}
 }
 
-@Article{Griewank1996a,
+@Article{griewank1996adolc,
   author    = {Griewank, Andreas and Juedes, David and Utke, Jean},
   title     = {Algorithm 755: {ADOL-C}: a package for the automatic differentiation of algorithms written in {C/C++}},
   journal   = {ACM Transactions on Mathematical Software},
@@ -854,7 +858,7 @@ See: https://www.gnu.org/software/gsl/#moreinfo
   publisher = {ACM},
 }
 
-@article{sundials,
+@article{hindmarsh2005sundials,
   title={{SUNDIALS}: Suite of nonlinear and differential/algebraic equation solvers},
   author={Hindmarsh, Alan C and Brown, Peter N and Grant, Keith E and Lee, Steven L and Serban, Radu and Shumaker, Dan E and Woodward, Carol S},
   journal={ACM Transactions on Mathematical Software},
@@ -865,10 +869,10 @@ See: https://www.gnu.org/software/gsl/#moreinfo
   publisher={ACM}
 }
 
-@Misc{assimp,
+@Misc{schulze2021assimp,
   title={Open asset import library (assimp)},
   author={Schulze, Thomas and Gessler, Alexander and Kulling, Kim and Nadlinger, David and Klein, Jonathan and Sibly, Mark and Gubisch, Matthias},
-  HowPublished={\url{https://github. com/assimp/assimp}},
+  HowPublished={\url{https://github.com/assimp/assimp}},
   year={2021}
 }
 
@@ -907,14 +911,14 @@ See: https://www.gnu.org/software/gsl/#moreinfo
   volume =    210,
   pages =     {833--851}}
 
-@techreport{ridzal2014rapid,
-  title={Rapid Optimization Library.},
+@techreport{ridzal2014rol,
+  title={Rapid Optimization Library},
   author={Ridzal, Denis and Kouri, Drew Philip},
   year={2014},
   institution={Sandia National Laboratories (SNL-NM), Albuquerque, NM (United States)}
 }
 
-@BOOK{slug,
+@BOOK{blackford1997scalapack,
   AUTHOR = {Blackford, L. S. and Choi, J. and Cleary, A. and
             D'Azevedo, E. and Demmel, J. and Dhillon, I. and
             Dongarra, J. and Hammarling, S. and Henry, G. and
@@ -962,7 +966,7 @@ See: https://gmsh.info/
 }
 
 
-@BOOK{lapack,
+@BOOK{anderson1999lapack,
     AUTHOR = {Anderson, E. and Bai, Z. and Bischof, C. and
               Blackford, S. and Demmel, J. and Dongarra, J. and
               Du Croz, J. and Greenbaum, A. and Hammarling, S. and
@@ -996,13 +1000,13 @@ See: https://gmsh.info/
   organization  = {Springer},
 }
 
-@Misc{cusolver,
+@Misc{cusolver-web-page,
   key = {cusolver},
   title = {cu{SOLVER} {L}ibrary},
   note = {\url{https://docs.nvidia.com/cuda/cusolver/index.html}}
 }
 
-@Misc{cusparse,
+@Misc{cusparse-web-page,
   key = {cusparse},
   title = {cu{SPARSE} {L}ibrary},
   note = {\url{https://docs.nvidia.com/cuda/cusparse/index.html}}
@@ -1247,7 +1251,8 @@ doi = {10.1504/IJCSE.2009.029164}
   number={1},
   pages={1--15},
   year={2020},
-  publisher={ACM New York, NY, USA}
+  publisher={ACM New York, NY, USA},
+  doi={10.1145/3412558}
 }
 
 @article{bungartz2016precice,
@@ -1391,13 +1396,13 @@ doi = {10.1504/IJCSE.2009.029164}
 }
 
 See: https://doc.cgal.org/latest/Manual/how_to_cite_cgal.html
-@book{ cgal
-, title        = "{CGAL} User and Reference Manual"
-, author      = "{The CGAL Project}"
-, publisher     = "{CGAL Editorial Board}"
-, edition     = "{5.4.1}"
-, year         = 2022
-, url =    "https://doc.cgal.org/5.4.1/Manual/packages.html"
+@book{cgal-user-ref,
+  title = {{CGAL} User and Reference Manual},
+  author = {{The CGAL Project}},
+  publisher = {{CGAL Editorial Board}},
+  edition = {{5.4.1}},
+  year = 2022,
+  note = {\url{https://doc.cgal.org/5.4.1/Manual/packages.html}}
 }
 
 
