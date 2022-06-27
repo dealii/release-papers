@@ -924,7 +924,7 @@ much faster in \dealii 9.4 than in version 9.3. In particular, operations that d
 
    With this release we introduce a new module \texttt{Utilities::MPI::LargeCount} which enables sending and receiving MPI messages and I/O containing more than $2^{31}$ objects by implementing
    the before-mentioned \texttt{MPI\_*\_c()} functions, e.g., \texttt{MPI\_Bcast\_c()}, using MPI-3 features if necessary. The
-   solution is based on custom datatypes as described in~\ref{hammond2014int_max}.
+   solution is based on custom datatypes as described in~\cite{hammond2014int_max}.
 
    This functionality is now used in all places in the library, where
    large counts might be necessary (\texttt{DataOut::write\_vtu\_in\_parallel()} for graphical output, checkpointing of \texttt{Triangulation} objects, etc.).
