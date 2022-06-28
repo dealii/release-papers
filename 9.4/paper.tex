@@ -248,9 +248,8 @@ which we briefly outline in the remainder of this section:
   generates a triangulation of three cone-shaped pipes that cross at a bifurcation point in any possible configuration.
   A manifold description is applied to the boundary, which can be extended into the volume via transfinite interpolation \cite{Gordon82} using the \texttt{TransfiniteInterpolationManifold} class \cite{dealII90}.
   \item A new DoF renumbering function \texttt{DoFRenumbering::support\_point\_wise()} which groups together
-  shape functions by their support point. This functionality is useful in both developing nodal schemes since, e.g., the $x$, $y$, and $z$
-  components at a point will be consecutive in the solution vector. It
-  also improves interoperability with those external libraries that expect
+  shape functions by their support point. This functionality is useful in developing nodal schemes since, e.g., the $x$, $y$, and $z$
+  components at a point will be consecutive in the solution vector. It also improves interoperability with external libraries which expect
   data in this format.
   \item The \texttt{FEInterfaceValues} class, which computes common quantities at the interface of two cells, has been overhauled to make it
   more consistent with the rest of the library and use more intuitive names for functions. For example,
