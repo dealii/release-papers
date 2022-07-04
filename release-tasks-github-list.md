@@ -17,6 +17,7 @@ Release preparation steps:
 - [ ] <b>0e</b>  Run the copyright script
 - [ ] <b>0f</b>  Update Trilinos and PETSc to the latest release on the tester and update documentation of supported version.
 - [ ] <b>0g</b>  Run codespell
+- [ ] <b>0h</b>  Run ASPECT's test suite
 
 Release steps:
 --
