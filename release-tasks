@@ -220,7 +220,7 @@ Best
   convert 9.4 into 10.0 later, but one can't easily back down any more.)
 
   git checkout master
-  git commit -a -m "Update VERSION."
+  git commit -a -m "Update VERSION"
 
   [ pull request for master branch ]
 
