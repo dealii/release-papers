@@ -185,7 +185,7 @@ The major changes of this release are:
 %
 \begin{itemize}
   \item Integration of \texttt{Kokkos} (see Section~\ref{sec:kokkos});
-  \item Update of the \texttt{PETSc} infrastructure (see Section~\ref{sec:petsc});
+  \item Update to and extension of the \texttt{PETSc} wrappers (see Section~\ref{sec:petsc});
   \item Addition of new \texttt{Trilinos} wrappers (see Section~\ref{sec:trilinos});
   \item Advances in matrix-free infrastructure (see Section~\ref{sec:mf});
   \item Advance in non-matching support (see Section~\ref{sec:nonmatching});
@@ -230,10 +230,13 @@ can be found
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Update of the PETSc infrastructure}\label{sec:petsc}
+\subsection{Update of and additions to the PETSc wrappers}\label{sec:petsc}
 
 \begin{itemize}
 \item PreconditionBDDC
+\item SNES
+\item TS
+\item Wrapping PETSc matrices and vectors
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
