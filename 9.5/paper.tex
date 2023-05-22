@@ -259,35 +259,43 @@ can be found
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Interfaces to Trilinos' Belos and NOX packages}\label{sec:trilinos}
 
-We have added a new wrapper to \texttt{Belos}. The package
-\texttt{Belos}  is the
-successor of \texttt{AztecOO} and provides basic and advanced iterative solvers
-that heavily rely on multivector operations. The interface of the
-wrapper is similar to the one of the native iterative solvers
-provided by \dealii:
+Trilinos is a large collection of individual sub-packages. \dealii{}
+has long had interfaces to the Trilinos packages that provide parallel
+vector and matrix classes (both \texttt{Epetra} and \texttt{Tpetra}),
+as well as a small number of linear algebra packages for iterative
+solvers and preconditions. In the current release, there are now also
+interfaces to two additional packages: \texttt{Belos} and \texttt{NOX}.
 
+\texttt{Belos} is the
+successor of the Trilinos package \texttt{AztecOO} and provides basic and advanced iterative solvers
+that heavily rely on multivector operations. The interface of the
+wrapper is similar to \dealii{}'s own iterative solvers:
 \begin{c++}
 TrilinosWrappers::SolverBelos<VectorType> solver(/*...*/);
 solver.solve(matrix, x, r, preconditioner);
 \end{c++}
+The omitted constructor arguments allow selecting the actual iterative
+solver to be used, along with other configuration options.
 
-Via additional data, the user can select the actual iterative
-solver to be used and set its configurations.
-
-Furthermore, we have added a wrapper to \texttt{NOX}. This is a
-nonlinear-solver library similar to \texttt{KINSOL} from \texttt{SUNDIALS}
-and to \texttt{SNES} from \texttt{PETSc}. The basic interface
-of the \texttt{NOX} wrapper is similar to the one of the other wrappers
-mentioned before:
-
+Secondly, we have added a wrapper to \texttt{NOX}, a
+nonlinear solver library similar to the \texttt{KINSOL} solver from
+the \texttt{SUNDIALS} package to which we already had interfaces, as
+well as to \texttt{SNES} from \texttt{PETSc} (see also
+Section~\ref{sec:petsc}). The interfaces to these three solvers are
+essentially the same and require setting function objects for
+computing the residual of the nonlinear problem, along with setting
+up, applying, and solving with the Jacobian matrix:
 \begin{c++}
 TrilinosWrappers::NOXSolver<VectorType> solver(/*...*/);
 
-solver.residual            = [ ](const auto &src, auto &dst) {/*...*/};
-solver.setup_jacobian      = [&](const auto &src) {/*...*/};
-solver.apply_jacobian      = [&](const auto &src, auto &dst) {/*...*/};
-solver.solve_with_jacobian = 
-  [&](const auto &src, auto &dst, const auto tol) {/*...*/};
+solver.residual            = [ ](const VectorType &src,
+                                 VectorType       &dst) {/*...*/};
+solver.setup_jacobian      = [&](const VectorType &src) {/*...*/};
+solver.apply_jacobian      = [&](const VectorType &src,
+                                 VectorType       &dst) {/*...*/};
+solver.solve_with_jacobian = [&](const VectorType &src,
+                                 VectorType       &dst,
+                                 const double      tol) {/*...*/};
 
 solver.solve(solution);
 \end{c++}
@@ -297,6 +305,10 @@ functions of this wrapper which are related to the differences in features of th
 In particular, we have added the possibility to reuse the preconditioner between
 nonlinear steps (also known as \textit{preconditioner lagging}), which is
 unfortunately natively only  supported in the official \texttt{EPetra} implementations.
+
+\todo[inline]{I don't understand this last sentence. Can you
+  elaborate? At least in the KINSOL interfaces, you only update the
+  preconditioner whenever setup\_jacobian() is called.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
