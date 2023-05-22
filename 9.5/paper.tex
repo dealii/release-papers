@@ -312,7 +312,49 @@ unfortunately natively only  supported in the official \texttt{EPetra} implement
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Uniform structure of callbacks}\label{sec:callbacks}
+\subsubsection{Uniform error reporting in callbacks}\label{sec:callbacks}
+
+With the current release, \dealii{} has gained interfaces to several
+external packages that are largely driven via \textit{callbacks} --
+see for example the code example in Section~\ref{sec:trilinos} on how
+NOX gains information about the residual vector, how it indicates to
+user code that the Jacobian matrix needs to be rebuilt,
+and how to solve linearized systems of equations as the sub-steps of
+solving a nonlinear problem. Indeed, the interfaces to the nonlinear
+solver KINSOL (as part of SUNDIALS) and SNES (as part of PETSc, see
+Section~\ref{sec:petsc} function in exactly the same way; the
+ODE solver interfaces to ARKode and IDA (also part of SUNDIALS) and TS
+(as part of PETSc) also use this style.
+
+This substantially enlarged use of callbacks used by different backend
+libraries raises the issue that each underlying package has its own
+convention on how success or error codes of these callbacks should be
+encoded. In the case of PETSc's SNES and TS, and for Trilinos's NOX,
+success is indicated by a zero integer return value, whereas failure is
+indicated by a nonzero return value. On the other hand, the SUNDIALS
+packages indicate success by a zero integer return value, a
+recoverable failure with a positive value, and an irrecoverable failure
+with a negative value. Neither of these conventions mesh well with C++
+where error codes are generally indicated via exceptions.
+It is conceivable that libraries we want to
+interface with in the future use yet other conventions.
+
+In order to shield those who write these callbacks from having to
+learn the intricacies of the underlying libraries, we have adopted a
+convention whereby user-provided callbacks are just regular functions
+that return errors via exception as is common in C++. Internally, the
+interfaces to different underlying libraries then translate these
+exceptions into the appropriate error codes, saving the thrown exception for possible
+later use; if an underlying library supports
+recoverable errors, then a callback should indicate such an error by
+throwing an object of the special type
+\texttt{RecoverableUserCallbackError}. If one of the underlying
+packages returns with an error caused by a user-provided callback
+throwing an exception, then the wrapper code re-throws the previously
+saved exception, allowing the calling site to catch it to obtain information
+about what might have gone wrong.
+
+This convention for user callbacks is documented in the glossary.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
