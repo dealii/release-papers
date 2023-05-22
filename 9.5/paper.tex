@@ -238,12 +238,16 @@ can be found
 %\newpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Integration of Kokkos}\label{sec:kokkos}
+\subsection{Updates to interfaces to other packages}\label{sec:kokkos}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Integration of Kokkos}\label{sec:kokkos}
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Update of and additions to the PETSc wrappers}\label{sec:petsc}
+\subsubsection{Updates and additions to the PETSc wrappers}\label{sec:petsc}
 
 \begin{itemize}
 \item PreconditionBDDC
@@ -253,7 +257,7 @@ can be found
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{New Trilinos wrappers}\label{sec:trilinos}
+\subsubsection{Interfaces to Trilinos' Belos and NOX packages}\label{sec:trilinos}
 
 We have added a new wrapper to \texttt{Belos}. The package
 \texttt{Belos}  is the
@@ -293,6 +297,10 @@ functions of this wrapper which are related to the differences in features of th
 In particular, we have added the possibility to reuse the preconditioner between
 nonlinear steps (also known as \textit{preconditioner lagging}), which is
 unfortunately natively only  supported in the official \texttt{EPetra} implementations.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Uniform structure of callbacks}\label{sec:callbacks}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
