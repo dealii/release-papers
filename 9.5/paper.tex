@@ -186,9 +186,14 @@ GNU Lesser General Public License (LGPL). Downloads are available at
 The major changes of this release are:
 %
 \begin{itemize}
-  \item Integration of \texttt{Kokkos} (see Section~\ref{sec:kokkos});
-  \item Update to and extension of the \texttt{PETSc} wrappers (see Section~\ref{sec:petsc});
-  \item Addition of new \texttt{Trilinos} wrappers (see Section~\ref{sec:trilinos});
+  \item Substantial updates and extensions to \dealii{}'s interfaces
+    to other libraries (see Section~\ref{sec:external}). This
+    includes, in particular, the integration of \texttt{Kokkos} (Section~\ref{sec:kokkos});
+    additions and updates to the \texttt{PETSc} and Trilinos
+    interfaces
+    (Sections~\ref{sec:petsc} and \ref{sec:trilinos}); and a uniform
+    way of defining callbacks used by external libraries
+    (Section~\ref{sec:callbacks}).
   \item Advances in matrix-free infrastructure (see Section~\ref{sec:mf});
   \item Advances in non-matching support (see Section~\ref{sec:nonmatching});
   \item New features related to liner algebra (see Section~\ref{sec:lac})
@@ -210,7 +215,8 @@ const auto cell_dof = typename DoFHandler<dim, spacedim>::
   active_cell_iterator(&dof_handler.get_triangulation(),
     cell->level(), cell->index(), &dof_handler);
 \end{c++}
-was lengthy and error-prone. In contrast, the new way:
+was lengthy and error-prone. In contrast, the following function is
+substantially clearer and more concise:
 \begin{c++}
 const auto cell_dof = cell->as_dof_handler_iterator(dof_handler);
 \end{c++}
@@ -238,7 +244,7 @@ can be found
 %\newpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Updates to interfaces to other packages}\label{sec:kokkos}
+\subsection{Updates to interfaces to other packages}\label{sec:external}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
