@@ -610,8 +610,54 @@ vertex-star patch.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{C++ language modernization}\label{sec:language}
 
-Mention the C++20 work. Starting point: \dealii{} relies heavily on
-templates that are explicitly instantiated.
+\dealii{} currently uses C++14 as the language standard to which its
+code base is written. It can also use the classes
+\texttt{std::optional} and \texttt{std::variant} if the compiler
+supports C++17, but falls back to implementations obtained via the
+BOOST library otherwise, and this is true also for a number of
+individual functions that were introduced in C++17 or C++20.
+
+As part of the current release, \dealii{} now also uses some C++20
+features to annotate classes and functions with regard to properties
+template arguments need to satisfy. This aids in situations such as
+with the
+following function:
+\begin{c++}
+  template <class MeshType>
+  std::vector<typename MeshType::active_cell_iterator>
+  find_cells_adjacent_to_vertex(const MeshType &   mesh,
+                                const unsigned int vertex);
+\end{c++}
+This function is intended to be called with either a
+\texttt{Triangulation} or \texttt{DoFHandler} object as first
+argument (and documents this requirement), but the compiler can not check this requirement at the call
+site and will gladly call it with any other kind of object as
+well. Because the implementation of the function is in a \texttt{.cc}
+file, and the template is only instantiated for the two classes
+mentioned above, calling the function (erroneously) with anything else
+as first argument is not detected at compile time, but only later when
+the linker reports an undefined symbol.
+
+We have started to address this by annotating functions using
+C++20-style ``\texttt{requires}'' clauses:
+\begin{c++}
+  template <class MeshType>
+    requires (concepts::is_triangulation_or_dof_handler<MeshType>)
+  std::vector<typename MeshType::active_cell_iterator>
+  find_cells_adjacent_to_vertex(const MeshType &   mesh,
+                                const unsigned int vertex)
+\end{c++}
+If the compiler supports C++20, then the added clause will cause the
+compiler to reject any call to the function for which the first
+argument \texttt{MeshType} does not satisfy the named concept, which
+is internally defined as the type being either a \texttt{Triangulation} or \texttt{DoFHandler}
+object, as intended. (The \texttt{requires} annotation is suppressed if the compiler
+does not support C++20.)
+
+Given the heavy dependence of \dealii{} on templates, there are likely
+hundreds or thousands of locations that should be annotated with
+requirements on template arguments over time; for the moment, the
+library contains some 300 of these \texttt{requires} clauses.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
