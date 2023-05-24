@@ -224,6 +224,9 @@ const auto cell_dof = cell->as_dof_handler_iterator(dof_handler);
 %
 The changelog lists more than X other features and bugfixes.
 
+\todo[inline]{We are not consistent in whether or not we print PETSc,
+  SUNDIALS, Trilinos, SNES, ... with a TT font (texttt) or
+  not. Someone should go through the paper and make it consistent.}
 
 
 
@@ -255,6 +258,8 @@ can be found
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Updates and additions to the PETSc wrappers}\label{sec:petsc}
 
+\todo[inline]{Stefano Z.: Please write this section.}
+
 \begin{itemize}
 \item PreconditionBDDC
 \item SNES
@@ -284,9 +289,9 @@ The omitted constructor arguments allow selecting the actual iterative
 solver to be used, along with other configuration options.
 
 Secondly, we have added a wrapper to \texttt{NOX}, a
-nonlinear solver library similar to the \texttt{KINSOL} solver from
-the \texttt{SUNDIALS} package to which we already had interfaces, as
-well as to \texttt{SNES} from \texttt{PETSc} (see also
+nonlinear solver library that is similar to both the \texttt{KINSOL} solver from
+the \texttt{SUNDIALS} package to which we already had interfaces, and also
+to the \texttt{SNES} collections of functions from \texttt{PETSc} (see also
 Section~\ref{sec:petsc}). The interfaces to these three solvers are
 essentially the same and require setting function objects for
 computing the residual of the nonlinear problem, along with setting
@@ -327,7 +332,7 @@ NOX gains information about the residual vector, how it indicates to
 user code that the Jacobian matrix needs to be rebuilt,
 and how to solve linearized systems of equations as the sub-steps of
 solving a nonlinear problem. Indeed, the interfaces to the nonlinear
-solver KINSOL (as part of SUNDIALS) and SNES (as part of PETSc, see
+solver KINSOL (as part of SUNDIALS) and SNES (as part of \texttt{PETSc}, see
 Section~\ref{sec:petsc} function in exactly the same way; the
 ODE solver interfaces to ARKode and IDA (also part of SUNDIALS) and TS
 (as part of PETSc) also use this style.
@@ -335,7 +340,7 @@ ODE solver interfaces to ARKode and IDA (also part of SUNDIALS) and TS
 This substantially enlarged use of callbacks used by different backend
 libraries raises the issue that each underlying package has its own
 convention on how success or error codes of these callbacks should be
-encoded. In the case of PETSc's SNES and TS, and for Trilinos's NOX,
+encoded. In the case of PETSc's SNES and TS, and for Trilinos's \texttt{NOX},
 success is indicated by a zero integer return value, whereas failure is
 indicated by a nonzero return value. On the other hand, the SUNDIALS
 packages indicate success by a zero integer return value, a
@@ -360,7 +365,9 @@ throwing an exception, then the wrapper code re-throws the previously
 saved exception, allowing the calling site to catch it to obtain information
 about what might have gone wrong.
 
-This convention for user callbacks is documented in the glossary.
+This convention for user callbacks is documented in a glossary entry
+that is also linked to from the documentation of all variables storing
+callbacks.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
