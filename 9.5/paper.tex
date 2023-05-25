@@ -84,7 +84,7 @@ cross/.default={2pt}}
 \title{The \dealii Library, Version 9.5}
 
  \author[1*]{Daniel Arndt}
- \affil[1]{Scalable Algorithms and Coupled Physics Group,
+ \affil[1]{Computational Coupled Physics Group,
    Computational Sciences and Engineering Division,
    Oak Ridge National Laboratory, 1 Bethel Valley Rd.,
    TN 37831, USA.
@@ -151,14 +151,16 @@ cross/.default={2pt}}
 \footnotetext{%
   $^\ast$ This manuscript has been authored by UT-Battelle, LLC under Contract No.
   DE-AC05-00OR22725 with the U.S. Department of Energy.
-  %The United States
-  %Government retains and the publisher, by accepting the article for
-  %publication, acknowledges that the United States Government retains a
-  %non-exclusive, paid-up, irrevocable, worldwide license to publish or reproduce
-  %the published form of this manuscript, or allow others to do so, for United
-  %States Government purposes. The Department of Energy will provide public
-  %access to these results of federally sponsored research in accordance with the
-  %DOE Public Access Plan (http://energy.gov/downloads/doe-public-access-plan).
+  % We need to submit the manuscript with the text below. If the editor
+  % complains we can remove it. 
+  The United States
+  Government retains and the publisher, by accepting the article for
+  publication, acknowledges that the United States Government retains a
+  non-exclusive, paid-up, irrevocable, worldwide license to publish or reproduce
+  the published form of this manuscript, or allow others to do so, for United
+  States Government purposes. The Department of Energy will provide public
+  access to these results of federally sponsored research in accordance with the
+  DOE Public Access Plan (http://energy.gov/downloads/doe-public-access-plan).
 }
 
 
@@ -260,25 +262,19 @@ detailed in the following sub-sections.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Integration of Kokkos}\label{sec:kokkos}
 
-\todo[inline]{Those of you involved in the Kokkos effort, please see
-  if the following text is useful as a starting point, and complete
-  the section. You might also want to add references as appropriate.}
-
-Kokkos -- originally a part of Trilinos \cite{heroux2005trilinos,trilinos-web-page} but now an
-independent project -- has in recent years emerged as the most
-versatile and platform-independent library for interfacing CPU-based
-codes with the platform-dependent programming environments available
-for GPUs from a variety of vendors. As such, it makes it unnecessary
-to program to either NVidia's CUDA, AMD's HiP, or Intel's SYCL
-standards, and instead makes their functionality available using a
-common interface that provides abstractions for memory operations as
-well as kernels that act on this memory. It can also utilize CPU-based
-resources by dispatching operations via OpenMP directives.
+Kokkos \cite{trott2022} is a C++ library that enables the creation of
+performance portable applications for all major high-performance computing (HPC)
+platforms. It implements a programming model that allows developers to write
+code that can efficiently run on diverse architectures. Kokkos provides
+abstractions for both parallel execution of code and data management. It
+supports a wide range of backend programming models, including CUDA, HIP, SYCL,
+HPX, OpenMP, and C++ threads, and continues to evolve with the development of
+new backend options.
 
 \dealii{} has, for several releases already, used CUDA to offload some
 operations onto GPUs. It has also had interfaces to CUDA-based linear
 algebra libraries. Yet, the diversification of GPU platforms away from
-a single vendor (NVidia) has made it clear that we need a different
+a single vendor (Nvidia) has made it clear that we need a different
 strategy to support what users want. As a consequence, Kokkos has
 become a mandatory dependency of \dealii{} as part of the current
 release; if it is not found on a given system during configuration
@@ -286,9 +282,11 @@ time, then the library will fall back on a copy of Kokkos stored in
 the \texttt{bundled/} directory in the same way as we already
 interface with BOOST.
 
-\todo[inline]{Say what we use Kokkos for at this point, and perhaps
-  point out longer-term plans.}
-
+In the current release, LinearAlgebra::distributed::Vector and the
+CUDAWrappers::MatrixFree framework are using Kokkos. This allows them to work on
+all the architectures supported by Kokkos. The Kokkos backend used in deal.II is
+`Kokkos::DefaultExecutionSpace` which is the highest available in the hierarchy
+device, host-parallel, and host-serial.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Updates and additions to the PETSc wrappers}\label{sec:petsc}
