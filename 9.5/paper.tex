@@ -249,10 +249,45 @@ can be found
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Updates to interfaces to other packages}\label{sec:external}
 
+For many operations, \dealii{} relies on external libraries -- some of
+these are optional, others are mandatory (such as BOOST and, now,
+Kokkos); a complete list of external dependencies is provided in
+Section~\ref{sec:cite}. A substantial amount of work has gone into
+overhauling and extending these interfaces for the current release, as
+detailed in the following sub-sections.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Integration of Kokkos}\label{sec:kokkos}
 
+\todo[inline]{Those of you involved in the Kokkos effort, please see
+  if the following text is useful as a starting point, and complete
+  the section. You might also want to add references as appropriate.}
+
+Kokkos -- originally a part of Trilinos \cite{heroux2005trilinos,trilinos-web-page} but now an
+independent project -- has in recent years emerged as the most
+versatile and platform-independent library for interfacing CPU-based
+codes with the platform-dependent programming environments available
+for GPUs from a variety of vendors. As such, it makes it unnecessary
+to program to either NVidia's CUDA, AMD's HiP, or Intel's SYCL
+standards, and instead makes their functionality available using a
+common interface that provides abstractions for memory operations as
+well as kernels that act on this memory. It can also utilize CPU-based
+resources by dispatching operations via OpenMP directives.
+
+\dealii{} has, for several releases already, used CUDA to offload some
+operations onto GPUs. It has also had interfaces to CUDA-based linear
+algebra libraries. Yet, the diversification of GPU platforms away from
+a single vendor (NVidia) has made it clear that we need a different
+strategy to support what users want. As a consequence, Kokkos has
+become a mandatory dependency of \dealii{} as part of the current
+release; if it is not found on a given system during configuration
+time, then the library will fall back on a copy of Kokkos stored in
+the \texttt{bundled/} directory in the same way as we already
+interface with BOOST.
+
+\todo[inline]{Say what we use Kokkos for at this point, and perhaps
+  point out longer-term plans.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -270,7 +305,7 @@ can be found
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Interfaces to Trilinos' Belos and NOX packages}\label{sec:trilinos}
 
-Trilinos is a large collection of individual sub-packages. \dealii{}
+Trilinos is a large collection of individual sub-packages \cite{heroux2005trilinos,trilinos-web-page}. \dealii{}
 has long had interfaces to the Trilinos packages that provide parallel
 vector and matrix classes (both \texttt{Epetra} and \texttt{Tpetra}),
 as well as a small number of linear algebra packages for iterative
@@ -371,47 +406,50 @@ callbacks.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Advances in matrix-free infrastructure}\label{sec:mf}
+\subsection{Updates to matrix-free operations}\label{sec:mf}
 
-In the matrix-free infrastructure, numerous advances have been made. Some of these
-are:
+The current release includes numerous updates to the matrix-free
+infrastructure, including:
 \begin{itemize}
 \item In release 9.3, we enabled parallel $hp$-operations in the matrix-free infrastructure.
 The infrastructure did not work properly in the case that certain cells
 did not get any degrees of freedom due to the usage of \texttt{FE\_Nothing}. This has been
-fixed now. Furthermore, \texttt{FE\_Nothing} now also works together with DG (\texttt{FE\_DGQ}). Due to the popularity of \texttt{FE\_Nothing} as a mean to enable
+fixed now. Furthermore, \texttt{FE\_Nothing} now also works together
+with discontinuous Lagrange elements (i.e., with the \texttt{FE\_DGQ} class). Due to the popularity of \texttt{FE\_Nothing} as a mean to enable
 or disable cells, we have introduced the new class
 \texttt{ElementActivationAndDeactivationMatrixFree}, which wraps a \texttt{MatrixFree} object, only loops over all
 active cells and optionally interprets faces between active and deactivated cells
-as boundary face. A use case is shown in~\cite{proell2023highly} in the context of powder-bed-fusion additive
+as boundary faces. A use case is shown in~\cite{proell2023highly} in the context of powder-bed-fusion additive
 manufacturing.
 \item The matrix-free infrastructure allows to interleave cell loops with vector updates
 by providing \texttt{pre}/\texttt{post} functions that are run on index ranges. This
 feature is used, e.g., in \dealii to improve the performance of (preconditioned)
 conjugate gradient solvers~\cite{kronbichler2022cg} as well as of relaxation and Chebyshev iterations (see Subsection~\ref{sec:lac}).
 Up to release~9.3, the \texttt{pre}/\texttt{post} infrastructure was only supported for
-continuous elements (cell loop); now, it also works for discontinuous elements which require
-face loops additionally.
+continuous elements (cell loop); now, it also works for discontinuous
+elements which also require face loops to assemble jump and penalty terms.
 \item The operator \texttt{CellwiseInverseMassMatrix} now also efficiently
 evaluates the inverse for coupling (dyadic) coefficients in the case of  multiple
 components:
 \begin{align*}
-\left(v_j, D_{ji} u_i  \right)_{\Omega^{(K)}}
+\left(v_i, D_{ij} u_j  \right)_{\Omega^{(K)}}
 \quad  1\le i,j \le c,
 \end{align*}
-with $c$ being the number of components and $D\in \mathbb{R}^{c\times c}$ the tensorial
+with $c$ being the number of components and $D\in \mathbb{R}^{c\times c}$ a tensorial
 coefficient.
 This is possible due to the tensor-product structure of the resulting element matrix:
 \begin{align*}
 M =  ( I_1 \otimes N^T) (D \otimes I_2 ) ( I_1 \otimes N),
 \end{align*}
-with $N$ being the tabulated shape functions and $I_1$/$I_2$ the appropriate identity matrices.
+with $N$ being the tabulated shape functions and $I_1,I_2$ the appropriate identity matrices.
 For square and invertible $N$, the inverse is explicitly given as:
 \begin{align*}
 M^{-1} =  ( I_1 \otimes N^{-1}) (D^{-1} \otimes I_2 ) ( I_1 \otimes N^{-T}).
 \end{align*}
-Please note that $N^{-1} = N_{1D}^{-1} \otimes N_{1D}^{-1} \otimes N_{1D}^{-1}$ is given
-for hypercube-shaped cells, allowing to use sum factorization.
+For hypercube-shaped cells, $N^{-1}$ has an explicit representation
+again in terms of tensor products; for example, in 3d it can be
+expressed as $N^{-1} = N_{1D}^{-1} \otimes N_{1D}^{-1} \otimes
+N_{1D}^{-1}$, allowing the use sum factorization.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -422,27 +460,31 @@ on the classes \texttt{FE\-Point\-Eval\-u\-ation} and \texttt{RemotePointEvaluat
 which have been introduced in release 9.3. While \texttt{FE\-Point\-Eval\-u\-a\-tion}
 is responsible for efficient evaluation/integration at arbitrary (reference)
 points within a cell, \texttt{RemotePointEvaluation} is responsible for
-sorting the (real) points within cells and for the successive communication.
+sorting points with regards to the cells they reside in, and for the
+communication necessary to evaluate solutions on cells owned by other
+MPI processes.
 
 In the current release, we considerably optimized \texttt{FEPointEvaluation}, e.g,
 by caching the evaluated shape functions, templating loop bounds, and
 exploiting the tensor-product structure of the shape functions if all points are
 positioned on a face, a common use case in the context of fluid-structure
 interaction. Furthermore, the extended class \texttt{NonMatching::MappingInfo}
-allows to precompute and store metric terms, like the Jacobian, its determinant,
+allows for precomputing and storing metric terms, like the Jacobian, its determinant,
 or the normals. This is useful in cases in which these metric terms do not change
 and can be reused, e.g., in the context of iterative solvers. This development
-is part of the efforts to make the interfaces of the 
+is part of an effort to make the interfaces of the 
 (matrix-free) non-matching support more similar to the ones of the 
 established matrix-free infrastructure of \dealii for structured (quadrature) points.
 
 In addition to these node-level performance optimizations, we added experimental
-support 1) for generating intersections of distributed
-non-matching grids and working on them
-and 2) for multigrid with non-nested levels. In the following, we describe these
-features in detail.
+support for (i) generating intersections of distributed
+non-matching grids and working on them,
+and (ii) multigrid with non-nested levels. In the following, we describe these
+in more detail.
 
-\subsubsection*{Intersected meshes}
+\subsubsection{Intersected meshes}
+
+\todo[inline]{Complete.}
 
 \begin{itemize}
 \item uses \texttt{CGAL}~\cite{cgal-user-ref}
@@ -452,15 +494,20 @@ of the conservative formulation of acoustic equations discretized with
 DG, in order to suppress artificial modes
 \end{itemize}
 
-\subsubsection*{Non-nested multigrid}
+\subsubsection{Non-nested multigrid}
 
-The library \dealii provides traditionally strong support for multigrid methods.
-We support, in the context of geometric multigrid, both local-smoothing~\cite{ClevengerHeisterKanschatKronbichler2019}
-and global-coarsening algorithms~\cite{munch2022gc} for locally refined meshes. The global-coarsening
+\dealii has provided support for geometric multigrid methods%
+\footnote{\dealii{} also supports algebraic multigrid methods
+by interfacing to the external libraries \texttt{PETSc}
+and \texttt{Trilinos}.}
+for locally refined meshes nearly since its inception.
+Traditionally, these were based on local-smoothing
+methods (described many years later in \cite{JanssenKanschat2011}, see also
+~\cite{ClevengerHeisterKanschatKronbichler2019}), and more
+recently also global-coarsening algorithms~\cite{munch2022gc}. The global-coarsening
 infrastructure, furthermore, allows to globally coarsen the polynomial degree ($p$-multigrid),
-whose applicability to $hp$-adaptive problems has been demonstrated. Algebraic
-multigrid is supported by interfacing to the external libraries \texttt{PETSc}
-and \texttt{Trilinos}. In the current release, we have added support for the case
+with specific applicability to $hp$-adaptive methods.
+In the current release, we have added support for the case
 that multigrid levels are given by non-nested meshes~\cite{adams2002evaluation, bittencourt2001nonnested, bramble1991analysis}. An example for such meshes is
 presented in Figure~\ref{fig:nonnested}.
 
@@ -468,18 +515,19 @@ presented in Figure~\ref{fig:nonnested}.
 
 \centering
 
+\todo[inline]{Complete these figures.}
+
 \fbox{\begin{minipage}{0.31\textwidth}\centering 0\vspace{5cm}\end{minipage}}
 \fbox{\begin{minipage}{0.31\textwidth}\centering 1\vspace{5cm}\end{minipage}}
 \fbox{\begin{minipage}{0.31\textwidth}\centering 2\vspace{5cm}\end{minipage}}
 
-\caption{Example of non-nested multigrid levels.}\label{fig:nonnested}
+\caption{\it Example of non-nested multigrid levels.}\label{fig:nonnested}
 
 \end{figure}
 
 The current implementation extends the existing global-coarsening infrastructure by
 introducing, in addition to the (conformal) \texttt{MGTwoLevelTransfer},
- a new (non-conformal) two-level transfer operator
-
+ a new (non-conformal) two-level transfer operator:
 \begin{c++}
 MGTwoLevelTransferNonNested two_level_transfer(/*...*/);
 
@@ -488,20 +536,21 @@ two_level_transfer.reinit(dof_handler_fine, dof_handler_coarse,
                           mapping_fine, mapping_coarse, 
                           constraints_fine, constraints_coarse)
 \end{c++}
-
-which can be passed to \texttt{MGTransferGlobalCoarsening} (and
-\texttt{MGTransferBlockGlobalCoarsening}) in the usual way. Please note
-the similarity between the interfaces of \texttt{MGTwoLevelTransfer} and
-of \texttt{MGTwoLevel\-Transfer\-Non\-Nested}, with the difference that the latter also
-takes \texttt{Mapping} instances. Furthermore, it is not limited to the case
-that the \texttt{DoFHandler} instances need to share the same coarse triangulation
-and the coarser mesh has to be able to be generated by a coarsening step from the fine
+The resulting object can be passed to \texttt{MGTransferGlobalCoarsening} (and
+\texttt{MGTransferBlockGlobalCoarsening}) in the usual way. The
+interface of the new class is purposefully similar to
+\texttt{MGTwoLevelTransfer},
+with the difference that the former (i) also
+takes \texttt{Mapping} instances, and (ii) is not limited to the case
+that the coarser of the two \texttt{DoFHandler} instances can be generated by a coarsening step from the fine
 mesh.
 
 At the time of writing, the \texttt{MGTwoLevelTransferNonNested} operator performs
 a pointwise interpolation (injection) from the coarse mesh to the support points
 of the fine mesh. Adopting the notation of~\cite{munch2022gc}, we perform
 for prolongation
+\todo{I think you need to at least explain in a few words what each of
+  the components of this formula is.}
 \begin{align*}
 x^{(f)} = \mathcal{W}^{(f)} \circ \sum_{e \in \{\text{coarse cells}\}} \mathcal{S}_e^{(f)} \circ \mathcal{P}_e^{(f, c)}
 \circ \mathcal{C}_e^{(c)} \circ \mathcal{G}_e^{(c)} x^{(c)},
@@ -510,10 +559,12 @@ i.e., loop over all coarse cells and interpolate to all (fine support) points th
 into the cell with \texttt{FEPointEvaluation}. The local result is scattered into a global
 vector, which is finalized by a communication and a weighting step.
 
-The current implementation works for scalar and vectorial continuous (\texttt{FE\_Q})
-and discontinuous elements (\texttt{FE\_DGQ}) for hypercube-shaped cells. We plan to support
-simplices and to add, in addition to the pointwise interpolation, also support
-for projection. Furthermore, we envision to provide utility tools to generate coarser
+The current implementation works for scalar and vectorial, continuous (\texttt{FE\_Q})
+and discontinuous (\texttt{FE\_DGQ}) elements on hypercube-shaped cells. We plan to support
+simplex elements and to add support
+for projection, in addition to the pointwise interpolation outlined
+above. Furthermore, we envision providing utility tools to generate
+coarser 
 meshes, based on a fine mesh. Currently, the users themselves 
 have to provide such meshes,
 e.g., by generating meshes with different cell sizes in external mesh-generation tools.
@@ -523,61 +574,63 @@ multigrid but can be used to prolongate results and restrict residuals between a
 two meshes. Indeed, the infrastructure has been successfully applied to perform
 conservative interpolation between a fine (near) mesh and a coarse (far) mesh in the
 context of aeroacoustic problems.
+\todo{Can we add a reference for this?}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{New features regarding linear algebra}\label{sec:lac}
+\subsection{New linear algebra features}\label{sec:lac}
 
-In addition to the new wrappers for linear-algebra functionalities of \texttt{PETSc}
-and \texttt{Trilinos} (see Sections~\ref{sec:petsc} and \ref{sec:trilinos}) as well
-as the new non-nested multigrid infrastructure, 
-we made multiple additions to our own linear-algebra infrastructure.
-
+There are a number of linear-algebra related new features in this release:
 \begin{itemize}
   \item Both \texttt{SolverGMRES} and \texttt{SolverFGMRES} now support the classical
   Gram--Schmidt orthonormalization in addition to the existing modified one. This
-  allows to reduce the cost of vector operations in terms of
+  reduces the cost of vector operations in terms of
   communication latency and memory transfer significantly.
   \item Our Chebyshev preconditioner (\texttt{PreconditionChebyshev}) now also
   supports James Lottes’s novel fourth-kind Chebyshev
   polynomial~\cite{lottes2022optimal, phillips2022optimal}.
   \item Our relaxation preconditioner (\texttt{PreconditionRelaxation}) now also
-  allows to interleave cell loops and vector updates related to relaxation. The
+  allows interleaving cell loops and vector updates related to relaxation. The
   relaxation iteration reads as
   \begin{align*}
   x^{(i+1)} \gets x^{(i)} + \omega P^{-1}(b-Ax^{(i)}).
   \end{align*}
-  E.g, in the case that the preconditioner $P$ is a diagonal matrix, the zeroing of
-  the destination vector $x_{i+1}$ can be performed during a \texttt{pre}-operation  of $A$
+  In the case that the preconditioner $P$ is a diagonal matrix, the zeroing of
+  the destination vector $x_{i+1}$ can be performed during a
+  \texttt{pre}-operation  of the application of $A$
   and the vector update $x^{(i+1)}_j \gets x^{(i)}_j + \omega P^{-1}_{j,j}(b_j-(Ax^{(i)})_j)$
-  during a \texttt{post} operation, allowing to reduce the number of read and write
-  accesses from 8 and 4 to 1 and 3, respectively. The existing \texttt{pre}/\texttt{post}
+  during a \texttt{post} operation, allowing for a reduction in the number of read and write
+  accesses from 8 and 4, to 1 and 3, respectively. The existing \texttt{pre}/\texttt{post}
   support in our Chebyshev-preconditioner implementation (\texttt{PreconditionChebyshev})
   has been improved. In addition, both \texttt{PreconditionRelaxation} and 
   \texttt{PreconditionChebyshev} support \texttt{pre}/\texttt{post} optimizations
   now not only for diagonal preconditioners but also for preconditioners that are
-  built around cell loops and, as a consequence, support interleaving. An example of
-  such a preconditioner are patch-based additive Schwarz preconditioners.
+  built around cell loops and, as a consequence, support interleaving. Examples of
+  such preconditioners are patch-based additive Schwarz preconditioners.
   \item In the context of additive Schwarz methods, the preconditioner application
   is defined as
   \begin{align*}
   v = P^{-1} u = \sum R_i^\top A_i^{-1} R_i u 
   \end{align*}
-  with $A_i = R_i A R_i^T$ being a block of the assembled system matrix restricted
-  to an index set (inverse of the assembly step). During the restriction step,
+  with $A_i = R_i A R_i^T$ being a block of the assembled system
+  matrix $A$ restricted
+  to an index set (inverse of the assembly step).
+\todo{I don't think this is true. The assembly step adds information
+  together. The restriction of the matrix cannot untangle these
+  different contributions. So the operation is similar, but not the
+  exact inverse.}
+  During the restriction step,
   rows of the system matrix that are potentially owned by other
   processes are needed. In \texttt{deal.II}, it is not possible to access remote entries
-  of sparse matrices. Two novel functions allow to query this information. The
-  function \texttt{restrict\_to\_serial\_sparse\_matrix()} creates, based
+  of sparse matrices. Two new functions query this information. First,
+  \texttt{restrict\_to\_serial\_sparse\_matrix()} creates, based
   on a given index set, a serial
   sparse matrix from a distributed one on each process:
-  
 \begin{c++}
 SparseMatrixTools::restrict_to_serial_sparse_matrix (
-  sparse_matrix_in, sparsity_pattern, requested_is, 
+  sparse_matrix_in, sparsity_pattern, requested_index_set, 
   system_matrix_out, sparsity_pattern_out)
 \end{c++}
-
 This function can be used, e.g., if the granularity of the additive Schwarz preconditioner
 is a complete subdomain, potentially, with a fixed overlap.
 
@@ -593,22 +646,23 @@ The data is stored in full matrices, since the typical granularity is a (rather 
 vertex-star patch.
   
   \item For certain types of configurations, there are computationally more efficient
-  approaches than extracting submatrices from an assembled matrix. For example, the Laplace
+  approaches than extracting submatrices from an assembled matrix. For
+  example, for the Laplace
   operator on 2D Cartesian meshes, the (element/patch) matrix is given as
   \begin{align*}
   A_i^{\text{cart}} = K_1 \otimes M_0 + M_1 \otimes K_0,
   \end{align*}
   i.e., as the tensor product of 1D mass and stiffness matrices. The inverse is
-  explicitly given according to the fast diagnilization method~\cite{lynch1964direct}, as
+  explicitly available via the fast diagonalization method~\cite{lynch1964direct} as
   \begin{align*}
   \left(A_i^{\text{cart}}\right)^{-1} = (T_1 \otimes T_0) (\Lambda_1 \otimes I + I \otimes \Lambda_0)^{-1} (T_1^\top \otimes T_0^\top),
   \end{align*}
-  with $T_i$ and $\Lambda_i$, being the (orthonormal) eigenvectors and the diagonal
+  with $T_i$ and $\Lambda_i$ being the (orthonormal) eigenvectors and the diagonal
   matrix of eigenvalues, obtained from a generalized eigendecomposition
   $K_iT_i = \Lambda_i M_i T_i$. Since $A_i \approx A_i^{\text{cart}}$
   might be a good approximation also in the case of non-Cartesian meshes and 
   $A_i^{\text{cart}}$ has an explicit inverse, it is considered in the
-  literature as patch preconditioners in the context of additive
+  literature as a patch preconditioner in the context of additive
   Schwarz~\cite{witte2021fast, phillips2021auto, couzy1995spectral} and block-Jacobi methods~\cite{kronbichler2019hermite}.
   In \dealii, the new function
   \texttt{Tensor\-Product\-Matrix\-Creator::create\_\allowbreak laplace\_\allowbreak tensor\_\allowbreak product\_\allowbreak matrix()} computes $T_i$ and $\Lambda_i$
@@ -676,32 +730,30 @@ library contains some 300 of these \texttt{requires} clauses.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Build-system modernization}\label{sec:buildsystem}
 
-?
+\todo[inline]{Write}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and improved tutorials and code gallery programs}
 \label{subsec:steps}
 
-Many of the \dealii tutorial programs were revised in a variety of ways
-as part of this release. 
-%In addition, there are a number of new tutorial
-%programs:
-%\begin{itemize}
-%  \item
-%\end{itemize}
+While there are no new \dealii tutorial programs in this release, many
+were extensively revised.
+\todo[inline]{See if we can say something more concrete.}
 
-There is also two new programs in the code gallery (a collection of
+There are also two new programs in the code gallery (a collection of
 user-contributed programs that often solve more complicated problems
 than tutorial programs, and that are intended as starting points for further
 research rather than as teaching tools):
 \begin{itemize}
-  \item The program \texttt{A posteriori error estimator for first order hyperbolic problems}
+  \item The program \textit{``A posteriori error estimator for first order hyperbolic problems''}
   was contributed by Marco Feder.
-  \item The program \texttt{Distributed moving laser heating} was contributed by
-  Hongfeng Ma and Tatiana E. Itina.
+  \item The program \textit{``Distributed moving laser heating''} was contributed by
+  Hongfeng Ma and Tatiana E.~Itina.
 \end{itemize}
 
+\todo[inline]{There may be another one by Sam Scheuerman. Let's see
+  whether it still arrives in time.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -717,6 +769,7 @@ applications. That said, the following are worth mentioning since they
 may have been more widely used:
 \begin{itemize}
   \item 
+\todo[inline]{Write}
 \end{itemize}
 
 
@@ -799,6 +852,8 @@ following:
     \item p4est \cite{burstedde2011p4est,burstedde2020parallel}
     \item PETSc \cite{petsc-user-ref,petsc-web-page}
     \item ROL \cite{ridzal2014rol}
+      \todo{ROL is part of Trilinos. Do we also need to cite something
+        for NOX?}
     \item ScaLAPACK \cite{blackford1997scalapack}
     \item SLEPc \cite{hernandez2005slepc}
     \item SUNDIALS \cite{hindmarsh2005sundials}
@@ -826,7 +881,8 @@ contributed code to this release:\\
 %
 
 % This is up-to-date as of 9.4 RC1 - should be the final list.
-.
+
+\todo[inline]{Add.}
 
 
 Their contributions are much appreciated!
@@ -837,15 +893,18 @@ Their contributions are much appreciated!
 \dealii and its developers are financially supported through a
 variety of funding sources:
 
+\todo[inline]{Need to update. Also remove those not on the current paper.}
 
 D.~Arndt and B.~Turcksin: Research sponsored by the Laboratory Directed Research and
 Development Program of Oak Ridge National Laboratory, managed by UT-Battelle,
 LLC, for the U. S. Department of Energy.
 
-W.~Bangerth, T.~Heister, and R.~Gassm{\"o}ller were partially
+W.~Bangerth and T.~Heister were partially
 supported by the Computational Infrastructure for Geodynamics initiative
 (CIG), through the National Science Foundation (NSF) under Award
 No.~EAR-1550901 and The University of California -- Davis.
+\todo{This is the CIG-II grant. We need to update this to the CIG-III
+  (and CIG-IV?) grants.}
 
 W.~Bangerth and M.~Fehling were partially supported by Award OAC-1835673
 as part of the Cyberinfrastructure for Sustained Scientific Innovation (CSSI)
@@ -876,6 +935,7 @@ D.~Wells was supported by the NSF Award OAC-1931516.
 
 The Interdisciplinary Center for Scientific Computing (IWR) at Heidelberg
 University has provided hosting services for the \dealii web page.
+\todo{Is this still true?}
 
 \bibliography{paper}{}
 \bibliographystyle{abbrv}
