@@ -421,7 +421,7 @@ or disable cells, we have introduced the new class
 active cells and optionally interprets faces between active and deactivated cells
 as boundary faces. A use case is shown in~\cite{proell2023highly} in the context of powder-bed-fusion additive
 manufacturing.
-\item The matrix-free infrastructure allows to interleave cell loops with vector updates
+\item The matrix-free infrastructure allows interleaving cell loops with vector updates
 by providing \texttt{pre}/\texttt{post} functions that are run on index ranges. This
 feature is used, e.g., in \dealii to improve the performance of (preconditioned)
 conjugate gradient solvers~\cite{kronbichler2022cg} as well as of relaxation and Chebyshev iterations (see Subsection~\ref{sec:lac}).
@@ -505,7 +505,7 @@ Traditionally, these were based on local-smoothing
 methods (described many years later in \cite{JanssenKanschat2011}, see also
 ~\cite{ClevengerHeisterKanschatKronbichler2019}), and more
 recently also global-coarsening algorithms~\cite{munch2022gc}. The global-coarsening
-infrastructure, furthermore, allows to globally coarsen the polynomial degree ($p$-multigrid),
+infrastructure, furthermore, allows globally coarsening the polynomial degree ($p$-multigrid),
 with specific applicability to $hp$-adaptive methods.
 In the current release, we have added support for the case
 that multigrid levels are given by non-nested meshes~\cite{adams2002evaluation, bittencourt2001nonnested, bramble1991analysis}. An example for such meshes is
