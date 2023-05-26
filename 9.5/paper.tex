@@ -284,7 +284,7 @@ interface with BOOST.
 
 In the current release, LinearAlgebra::distributed::Vector and the
 CUDAWrappers::MatrixFree framework are using Kokkos. This allows them to work on
-all the architectures supported by Kokkos. The Kokkos backend used in deal.II is
+all the architectures supported by Kokkos. The Kokkos backend used \dealii is
 `Kokkos::DefaultExecutionSpace` which is the highest available in the hierarchy
 device, host-parallel, and host-serial.
 
@@ -453,7 +453,7 @@ N_{1D}^{-1}$, allowing the use sum factorization.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Advances in non-matching support}\label{sec:nonmatching}
 
-The (matrix-free) non-matching support of \texttt{deal.II} heavily relies
+The (matrix-free) non-matching support of \dealii heavily relies
 on the classes \texttt{FE\-Point\-Eval\-u\-ation} and \texttt{RemotePointEvaluation},
 which have been introduced in release 9.3. While \texttt{FE\-Point\-Eval\-u\-a\-tion}
 is responsible for efficient evaluation/integration at arbitrary (reference)
@@ -619,7 +619,7 @@ There are a number of linear-algebra related new features in this release:
   exact inverse.}
   During the restriction step,
   rows of the system matrix that are potentially owned by other
-  processes are needed. In \texttt{deal.II}, it is not possible to access remote entries
+  processes are needed. In \dealii, it is not possible to access remote entries
   of sparse matrices. Two new functions query this information. First,
   \texttt{restrict\_to\_serial\_sparse\_matrix()} creates, based
   on a given index set, a serial
