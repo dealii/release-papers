@@ -774,7 +774,7 @@ may have been more widely used:
   The class \texttt{hp::DoFHandler} has been removed. The standard \texttt{DoFHandler} now implements all hp-related functionality.
 
   \item
-  We improved the type safety for active and future FE indices in the \texttt{DoFHandler} implementation by introducing a new datatype \texttt{types::fe\textunderscore{}index}. Corresponding functions like \texttt{DoFCellAccessor::active\textunderscore{}fe\textunderscore{}index()} and \texttt{DoFHandler::get\textunderscore{}active\textunderscore{}fe\textunderscore{}indices()} have changed their interface.
+  We improved the type safety for active and future FE indices in the \texttt{DoFHandler} implementation by introducing a new data type \texttt{types::fe\textunderscore{}index}. Corresponding functions like \texttt{DoFCellAccessor::active\textunderscore{}fe\textunderscore{}index()} and \texttt{DoFHandler::get\textunderscore{}active\textunderscore{}fe\textunderscore{}indices()} have changed their interface.
 
   \item
   This rework also affects the serialization process of active FE indices. You will need to recreate your serialized data \textit{if and only if} you work in hp-mode. You can continue to use previously generated data if you do not use hp-mode. A special case forms \texttt{parallel::distributed::Triangulation} for non-hp data, in which it is sufficient to increase the version in the metadata file by one from ``4'' to ``5''.
