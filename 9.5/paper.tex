@@ -284,9 +284,14 @@ interface with BOOST.
 
 In the current release, LinearAlgebra::distributed::Vector and the
 CUDAWrappers::MatrixFree framework are using Kokkos. This allows them to work on
-all the architectures supported by Kokkos. The Kokkos backend used \dealii is
-`Kokkos::DefaultExecutionSpace` which is the highest available in the hierarchy
+all the architectures supported by Kokkos. The Kokkos backend used by \dealii is
+\texttt{Kokkos::DefaultExecutionSpace} which is the highest available in the hierarchy
 device, host-parallel, and host-serial.
+
+\todo[inline]{Are you saying that all three of these are used? If so,
+  maybe replace ``backend'' by ``backends''?}
+
+\todo[inline]{Would it be useful to add a paragraph about future plans?}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Updates and additions to the PETSc wrappers}\label{sec:petsc}
@@ -739,19 +744,18 @@ While there are no new \dealii tutorial programs in this release, many
 were extensively revised.
 \todo[inline]{See if we can say something more concrete.}
 
-There are also two new programs in the code gallery (a collection of
+There are also three new programs in the code gallery (a collection of
 user-contributed programs that often solve more complicated problems
 than tutorial programs, and that are intended as starting points for further
 research rather than as teaching tools):
 \begin{itemize}
-  \item The program \textit{``A posteriori error estimator for first order hyperbolic problems''}
-  was contributed by Marco Feder.
-  \item The program \textit{``Distributed moving laser heating''} was contributed by
-  Hongfeng Ma and Tatiana E.~Itina.
+  \item \textit{``A posteriori error estimator for first order hyperbolic problems''},
+  contributed by Marco Feder;
+  \item \textit{``Distributed moving laser heating''}, contributed by
+  Hongfeng Ma and Tatiana E.~Itina;
+  \item \textit{``Generalized Swift-Hohenberg Equation Solver''}, contributed by
+  Sam Scheuerman.
 \end{itemize}
-
-\todo[inline]{There may be another one by Sam Scheuerman. Let's see
-  whether it still arrives in time.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
