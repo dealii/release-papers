@@ -741,8 +741,13 @@ library contains some 300 of these \texttt{requires} clauses.
 \label{subsec:steps}
 
 While there are no new \dealii tutorial programs in this release, many
-were extensively revised.
-\todo[inline]{See if we can say something more concrete.}
+were extensively revised: Around 130 of the more than 2000 (non-merge)
+commits that went into this release touched the tutorial, in some
+cases adding substantial amounts of text.
+
+% data generated using these commands:
+% - tutorial: git log --since 2022/06/01 --no-merges examples | grep commit | wc -l
+% - total:    git log --since 2022/06/01 --no-merges | grep commit | wc -l
 
 There are also three new programs in the code gallery (a collection of
 user-contributed programs that often solve more complicated problems
