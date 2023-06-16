@@ -239,6 +239,14 @@ substantially clearer and more concise:
 \begin{c++}
 const auto cell_dof = cell->as_dof_handler_iterator(dof_handler);
 \end{c++}
+\item Several functions used intensively during initialization of
+  \dealii-based programs, such as the refinement of triangulations, the
+  enumeration of degrees of freedom, the setup of global-coarsening multigrid
+  algorithms, and several evaluation functions of the \texttt{MappingQ} class
+  representing a polynomial mapping of quadrilateral and hexahedral, have been
+  overhauled to run more quickly and sometimes also consume less memory. These
+  and related improvements are guided by several performance tests that are
+  used to monitor the performance of the library over time.
 \end{itemize}
 %
 The changelog lists more than X other features and bugfixes.
@@ -408,7 +416,7 @@ interface with in the future use yet other conventions.
 In order to shield those who write these callbacks from having to
 learn the intricacies of the underlying libraries, we have adopted a
 convention whereby user-provided callbacks are just regular functions
-that return errors via exception as is common in C++. Internally, the
+that return errors via exceptions as is common in C++. Internally, the
 interfaces to different underlying libraries then translate these
 exceptions into the appropriate error codes, saving the thrown exception for possible
 later use; if an underlying library supports
@@ -426,7 +434,7 @@ callbacks.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Updates to matrix-free operations}\label{sec:mf}
+\subsection{Updates to matrix-free algorithms}\label{sec:mf}
 
 The current release includes numerous updates to the matrix-free
 infrastructure, including:
@@ -439,37 +447,38 @@ with discontinuous Lagrange elements (i.e., with the \texttt{FE\_DGQ} class). Du
 or disable cells, we have introduced the new class
 \texttt{ElementActivationAndDeactivationMatrixFree}, which wraps a \texttt{MatrixFree} object, only loops over all
 active cells and optionally interprets faces between active and deactivated cells
-as boundary faces. A use case is shown in~\cite{proell2023highly} in the context of powder-bed-fusion additive
-manufacturing.
+as boundary faces. This functionality has enabled simulations in powder-bed-fusion additive
+manufacturing in~\cite{proell2023highly}.
 \item The matrix-free infrastructure allows interleaving cell loops with vector updates
-by providing \texttt{pre}/\texttt{post} functions that are run on index ranges. This
-feature is used, e.g., in \dealii to improve the performance of (preconditioned)
+  by providing \texttt{pre}/\texttt{post} functions that are run on index ranges.  The \dealii
+  library uses this feature, e.g., to improve the performance of (preconditioned)
 conjugate gradient solvers~\cite{kronbichler2022cg} as well as of relaxation and Chebyshev iterations (see Subsection~\ref{sec:lac}).
 Up to release~9.3, the \texttt{pre}/\texttt{post} infrastructure was only supported for
 continuous elements (cell loop); now, it also works for discontinuous
 elements which also require face loops to assemble jump and penalty terms.
 \item The operator \texttt{CellwiseInverseMassMatrix} now also efficiently
-evaluates the inverse for coupling (dyadic) coefficients in the case of  multiple
+evaluates the inverse for coupling (dyadic) coefficients in the case of multiple
 components:
 \begin{align*}
 \left(v_i, D_{ij} u_j  \right)_{\Omega^{(K)}}
 \quad  1\le i,j \le c,
 \end{align*}
 with $c$ being the number of components and $D\in \mathbb{R}^{c\times c}$ a tensorial
-coefficient.
-This is possible due to the tensor-product structure of the resulting element matrix:
+coefficient. The algorithm relies on the construction of the element mass matrix,
 \begin{align*}
 M =  ( I_1 \otimes N^T) (D \otimes I_2 ) ( I_1 \otimes N),
 \end{align*}
-with $N$ being the tabulated shape functions and $I_1,I_2$ the appropriate identity matrices.
-For square and invertible $N$, the inverse is explicitly given as:
+with $N$ being the tabulated values of shape functions at quadrature and
+$I_1,I_2$ identity matrices associated to $c$ vector components and the
+quadrature points, respectively.
+The algorithms assumes a square $N$:
 \begin{align*}
 M^{-1} =  ( I_1 \otimes N^{-1}) (D^{-1} \otimes I_2 ) ( I_1 \otimes N^{-T}).
 \end{align*}
 For hypercube-shaped cells, $N^{-1}$ has an explicit representation
 again in terms of tensor products; for example, in 3d it can be
 expressed as $N^{-1} = N_{1D}^{-1} \otimes N_{1D}^{-1} \otimes
-N_{1D}^{-1}$, allowing the use sum factorization.
+N_{1D}^{-1}$, allowing the use sum factorization \cite{kronbichler2016comparison}.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -484,17 +493,17 @@ sorting points with regards to the cells they reside in, and for the
 communication necessary to evaluate solutions on cells owned by other
 MPI processes.
 
-In the current release, we considerably optimized \texttt{FEPointEvaluation}, e.g,
+In the current release, we have considerably optimized \texttt{FEPointEvaluation}, e.g,
 by caching the evaluated shape functions, templating loop bounds, and
 exploiting the tensor-product structure of the shape functions if all points are
 positioned on a face, a common use case in the context of fluid-structure
 interaction. Furthermore, the extended class \texttt{NonMatching::MappingInfo}
 allows for precomputing and storing metric terms, like the Jacobian, its determinant,
-or the normals. This is useful in cases in which these metric terms do not change
+or the unit outer normal vectors. This is useful in cases in which these metric terms do not change
 and can be reused, e.g., in the context of iterative solvers. This development
 is part of an effort to make the interfaces of the 
 (matrix-free) non-matching support more similar to the ones of the 
-established matrix-free infrastructure of \dealii for structured (quadrature) points.
+established matrix-free infrastructure of \dealii for fixed quadrature formulas.
 
 In addition to these node-level performance optimizations, we added experimental
 support for (i) generating intersections of distributed
@@ -504,9 +513,9 @@ in more detail.
 
 \subsubsection{Intersected meshes}
 In the current release, we added experimental support to compute intersections on parallel::distributed::Triangulation objects using \texttt{CGAL}~\cite{cgal-user-ref}.
-For this purpose we introduced a free function which computes intersections and relevant information for communication from \texttt{intersection\_requests}.
-\texttt{intersection\_requests} is a vector that contains entities for which intersections are computed on a given triangulation (in the form of \texttt{GridTools::Cache}).
-Each entity (faces or cells) is described by a vector of vertices.
+For this purpose we introduced a free function, which computes intersections and relevant information for communication from \texttt{intersection\_requests}.
+\texttt{intersection\_requests} is a vector indicating entities of a given triangulation (in the form of \texttt{GridTools::Cache}) that intersections are computed upon.
+Each entity (face or cell) is described by a vector of vertices.
 
 \begin{c++}
 // compute intersections on distributed triangulation  
@@ -516,7 +525,7 @@ auto intersection_data =
          tolerance);
 \end{c++}
 
-For the common case of Nitsche-type mortaring, quadrature points must be distributed on the intersections where relevant quantities are evaluated.
+For the common case of Nitsche-type mortaring, quadrature points must be distributed on the intersections to evaluate the underlying physical coupling terms.
 The \texttt{intersection\_data} returned by the function above can convert itself to data which can be used to fill \texttt{RemotePointEvaluation}.
 The whole procedure is done communication-free.
 
@@ -534,7 +543,7 @@ Utilities::MPI::RemotePointEvaluation<dim> rpe;
 rpe.reinit(point_data,tria, mapping);
 \end{c++}
 
-This functionality is handy since \texttt{RemotePointEvaluation} can now be used to access quantities in quadrature points on intersections without further ado.
+This functionality is handy since \texttt{RemotePointEvaluation} can now be used to access quantities at quadrature points on intersections without further ado.
 To reduce the user's effort, we plan to add a wrapper that takes care of the described procedure and provides interfaces like \texttt{FEEvaluation} to access quantities easily, e.g., in a matrix-free loop.
 
 Described implementation and an early version of the wrapper have been used successfully in~\cite{heinz2023high} to perform Nitsche-type mortaring in the context of the conservative formulation of acoustic equations discretized with DG to suppress artificial modes.
@@ -546,8 +555,8 @@ by interfacing to the external libraries \texttt{PETSc}
 and \texttt{Trilinos}.}
 for locally refined meshes nearly since its inception.
 Traditionally, these were based on local-smoothing
-methods (described many years later in \cite{JanssenKanschat2011}, see also
-~\cite{ClevengerHeisterKanschatKronbichler2019}), and more
+methods (described many years later in \cite{Kanschat2004,JanssenKanschat2011}, see
+also~\cite{ClevengerHeisterKanschatKronbichler2019}), and more
 recently also global-coarsening algorithms~\cite{munch2022gc}. The global-coarsening
 infrastructure, furthermore, allows globally coarsening the polynomial degree ($p$-multigrid),
 with specific applicability to $hp$-adaptive methods.
@@ -595,6 +604,8 @@ of the fine mesh. Adopting the notation of~\cite{munch2022gc}, we perform
 for prolongation
 \todo{I think you need to at least explain in a few words what each of
   the components of this formula is.}
+\todo{Alternatively (MK's preference), skip the parts that are just unnecessary
+  abstractions that do not help the reader's understanding.}
 \begin{align*}
 x^{(f)} = \mathcal{W}^{(f)} \circ \sum_{e \in \{\text{coarse cells}\}} \mathcal{S}_e^{(f)} \circ \mathcal{P}_e^{(f, c)}
 \circ \mathcal{C}_e^{(c)} \circ \mathcal{G}_e^{(c)} x^{(c)},
@@ -627,7 +638,7 @@ context of aeroacoustic problems.
 There are a number of linear-algebra related new features in this release:
 \begin{itemize}
   \item Both \texttt{SolverGMRES} and \texttt{SolverFGMRES} now support the classical
-  Gram--Schmidt orthonormalization in addition to the existing modified one. This
+  Gram--Schmidt orthonormalization in addition to the modified Gram--Schmidt algorithm. This
   reduces the cost of vector operations in terms of
   communication latency and memory transfer significantly.
   \item Our Chebyshev preconditioner (\texttt{PreconditionChebyshev}) now also
@@ -658,18 +669,16 @@ There are a number of linear-algebra related new features in this release:
   \end{align*}
   with $A_i = R_i A R_i^T$ being a block of the assembled system
   matrix $A$ restricted
-  to an index set (inverse of the assembly step).
-\todo{I don't think this is true. The assembly step adds information
-  together. The restriction of the matrix cannot untangle these
-  different contributions. So the operation is similar, but not the
-  exact inverse.}
+  to an index set described by $R_i$. In the special case when $R_i$ denotes the unknowns
+  of cells, the expression $R_i A R_i^T$ resembles the reverse of matrix
+  assembly.
   During the restriction step,
   rows of the system matrix that are potentially owned by other
-  processes are needed. In \dealii, it is not possible to access remote entries
+  processes are needed.  In \dealii, it is not possible to access remote entries
   of sparse matrices. Two new functions query this information. First,
   \texttt{restrict\_to\_serial\_sparse\_matrix()} creates, based
   on a given index set, a serial
-  sparse matrix from a distributed one on each process:
+  sparse matrix from a distributed matrix:
 \begin{c++}
 SparseMatrixTools::restrict_to_serial_sparse_matrix (
   sparse_matrix_in, sparsity_pattern, requested_index_set, 
@@ -686,7 +695,7 @@ SparseMatrixTools::restrict_to_full_matrices (
   sparse_matrix_in, sparsity_pattern, indices_of_blocks, blocks)
 \end{c++}
 
-The data is stored in full matrices, since the typical granularity is a (rather small) cell-centric or
+The data is stored in dense matrices, since the typical granularity is a (rather small) cell-centric or
 vertex-star patch.
   
   \item For certain types of configurations, there are computationally more efficient
@@ -703,13 +712,14 @@ vertex-star patch.
   \end{align*}
   with $T_i$ and $\Lambda_i$ being the (orthonormal) eigenvectors and the diagonal
   matrix of eigenvalues, obtained from a generalized eigendecomposition
-  $K_iT_i = \Lambda_i M_i T_i$. Since $A_i \approx A_i^{\text{cart}}$
+  $K_iT_i =  M_i T_i \Lambda_i$, as also used by \dealii's \texttt{step-59} tutorial program.
+  Since $A_i \approx A_i^{\text{cart}}$
   might be a good approximation also in the case of non-Cartesian meshes and 
   $A_i^{\text{cart}}$ has an explicit inverse, it is considered in the
   literature as a patch preconditioner in the context of additive
   Schwarz~\cite{witte2021fast, phillips2021auto, couzy1995spectral} and block-Jacobi methods~\cite{kronbichler2019hermite}.
   In \dealii, the new function
-  \texttt{Tensor\-Product\-Matrix\-Creator::create\_\allowbreak laplace\_\allowbreak tensor\_\allowbreak product\_\allowbreak matrix()} computes $T_i$ and $\Lambda_i$
+  \texttt{Tensor\-Product\-Matrix\-Creator::create\_\allowbreak laplace\_\allowbreak tensor\_\allowbreak product\_\allowbreak matrix()} computes $K_i$ and $M_i$
   for cell-centric patches with a specified overlap and given boundary conditions.
   A set of $T_i$ and $\Lambda_i$ is applied to a cell via
   \texttt{Tensor\-Product\-Matrix\-Symmetric\-Sum} or to a collection of cells
@@ -809,9 +819,8 @@ research rather than as teaching tools):
 
 The 9.5 release includes
 \href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_4_2_and_9_5_0.html}
-{around X incompatible changes}; see \cite{changes95}. The majority of these changes
-should not be visible to typical user codes; some remove previously
-deprecated classes and functions; and the majority changes internal
+{around X incompatible changes}; see \cite{changes95}. Many of the
+incompatible change internal
 interfaces that are not usually used in external
 applications. That said, the following are worth mentioning since they
 may have been more widely used:
@@ -827,7 +836,12 @@ may have been more widely used:
   \item
   This rework also affects the serialization process of active FE indices. You will need to recreate your serialized data \textit{if and only if} you work in $hp$-mode. You can continue to use previously generated data if you do not use $hp$-mode. A special case forms \texttt{parallel::distributed::Triangulation} for non-$hp$ data, in which it is sufficient to increase the version in the metadata file by one from ``4'' to ``5''.
 
-  \item
+\item Several old interfaces to \texttt{MatrixFree} have been removed, e.g.,
+  initialization functions without \texttt{Mapping} argument, the query
+  to the number of cell batches, \texttt{DoFHandler} objects. In
+  each case, new interfaces are available.
+
+\item
   ...
 \end{itemize}
 \todo[inline]{Write}
@@ -972,9 +986,10 @@ program.
 
 W.~Bangerth was also partially supported by Awards DMS-1821210 and EAR-1925595.
 
-M.~Bergbauer was supported by the German Research Foundation (DFG) 
-under the project ``High-Performance Cut Discontinuous Galerkin Methods
-for Flow Problems and Surface-Coupled Multiphysics Problems''.
+M.~Bergbauer was supported by the German Research Foundation (DFG) under the
+project ``High-Performance Cut Discontinuous Galerkin Methods for Flow
+Problems and Surface-Coupled Multiphysics Problems'' Grant Agreement
+No.~456365667.
 
 J.~Heinz was supported by the European Union’s Framework Programme for Research
 and Innovation Horizon 2020 (2014-2020) under the Marie Sk\l{}odowska--Curie Grant
@@ -991,9 +1006,11 @@ and accurate solution of complex systems governed by Partial Differential
 Equations''.
 
 M.~Kronbichler and P.~Munch were partially supported by the
-Bayerisches Kompetenznetzwerk
+German Ministry of Education and Research, project
+``PDExa: Optimized software methods for solving partial differential
+equations on exascale supercomputers'' and the Bayerisches Kompetenznetzwerk
 f\"ur Technisch-Wissen\-schaft\-li\-ches Hoch- und H\"ochstleistungsrechnen
-(KONWIHR) in the context of the projects ``High-order matrix-free finite
+(KONWIHR), projects ``High-order matrix-free finite
 element implementations with hybrid parallelization and improved data
 locality'' and ``Fast and scalable finite element algorithms for coupled
 multiphysics problems and non-matching grids''.
