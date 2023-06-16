@@ -493,17 +493,41 @@ and (ii) multigrid with non-nested levels. In the following, we describe these
 in more detail.
 
 \subsubsection{Intersected meshes}
+In the current release, we added experimental support to compute intersections on parallel::distributed::Triangulation objects using \texttt{CGAL}~\cite{cgal-user-ref}.
+For this purpose we introduced a free function which computes intersections and relevant information for communication from \texttt{intersection\_requests}.
+\texttt{intersection\_requests} is a vector that contains entities for which intersections are computed on a given triangulation (in the form of \texttt{GridTools::Cache}).
+Each entity (faces or cells) is described by a vector of vertices.
 
-\todo[inline]{Complete.}
+\begin{c++}
+// compute intersections on distributed triangulation  
+auto intersection_data =
+       GridTools::internal::distributed_compute_intersection_locations(
+         cache, intersection_requests, global_bboxes, marked_vertices,
+         tolerance);
+\end{c++}
 
-\begin{itemize}
-\item uses \texttt{CGAL}~\cite{cgal-user-ref}
-\item data can be used to fill \texttt{RemotePointEvaluation} (communication-free)
-\item used successfully in \cite{heinz2023high} to perform Nitsche-type mortaring in the context
-of the conservative formulation of acoustic equations discretized with
-DG, in order to suppress artificial modes
-\end{itemize}
+For the common case of Nitsche-type mortaring, quadrature points must be distributed on the intersections where relevant quantities are evaluated.
+The \texttt{intersection\_data} returned by the function above can convert itself to data which can be used to fill \texttt{RemotePointEvaluation}.
+The whole procedure is done communication-free.
 
+\begin{c++}
+// distribute n_points_1D quadrature points to the intersections
+auto point_data = intersection_data.template 
+       convert_to_distributed_compute_point_locations_internal<dim>(
+         n_points_1D, tria, mapping,
+         // following parameter is optional would need additional
+         // communication 
+         consistent_numbering_of_sender_and_receiver);
+
+// use point_data to reinit RemotePointEvaluation
+Utilities::MPI::RemotePointEvaluation<dim> rpe;
+rpe.reinit(point_data,tria, mapping);
+\end{c++}
+
+This functionality is handy since \texttt{RemotePointEvaluation} can now be used to access quantities in quadrature points on intersections without further ado.
+To reduce the user's effort, we plan to add a wrapper that takes care of the described procedure and provides interfaces like \texttt{FEEvaluation} to access quantities easily, e.g., in a matrix-free loop.
+
+Described implementation and an early version of the wrapper have been used successfully in~\cite{heinz2023high} to perform Nitsche-type mortaring in the context of the conservative formulation of acoustic equations discretized with DG to suppress artificial modes.
 \subsubsection{Non-nested multigrid}
 
 \dealii has provided support for geometric multigrid methods%
