@@ -48,9 +48,15 @@
 \newcommand{\trilinos}{{\specialword{Trilinos}}\xspace}
 \newcommand{\aspect}{\specialword{Aspect}\xspace}
 \newcommand{\petsc}{\specialword{PETSc}\xspace}
+\newcommand{\snes}{{\specialword{SNES}}\xspace}
+\newcommand{\ts}{{\specialword{TS}}\xspace}
+\newcommand{\petscsf}{{\specialword{SF}}\xspace}
 \newcommand{\cmake}{{\specialword{CMake}}\xspace}
 \newcommand{\candi}{{\specialword{candi}}\xspace}
-
+\newcommand{\sundials}{{\specialword{SUNDIALS}}\xspace}
+\newcommand{\kinsol}{{\specialword{KINSOL}}\xspace}
+\newcommand{\ida}{{\specialword{IDA}}\xspace}
+\newcommand{\arkode}{{\specialword{ARKODE}}\xspace}
 
 
 \usetikzlibrary{shapes.misc}
@@ -321,14 +327,97 @@ device, host-parallel, and host-serial.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Updates and additions to the PETSc wrappers}\label{sec:petsc}
 
-\todo[inline]{Stefano Z.: Please write this section.}
+The \dealii classes wrapping \petsc objects have been heavily rewritten
+to support the nonlinear solver \snes and the Ordinary Differential Equations (ODE)
+solver \ts \cite{abhyankar2018petsc}.
+First, we briefly describe the most important improvements to the existing
+classes and then outline the newly designed interfaces to the nonlinear solvers, together
+with a new interface to the communication module \petscsf in \petsc \cite{zhang2021petscsf}.
 
-\begin{itemize}
-\item PreconditionBDDC
-\item SNES
-\item TS
-\item Wrapping PETSc matrices and vectors
-\end{itemize}
+Vector and matrix classes of the \petsc wrappers have been extended with an additional constructor
+that can wrap an already existing \petsc vector or matrix, respectively.
+The \texttt{BlockVector} and
+\texttt{BlockSparseMatrix} classes now internally use
+\petsc nested objects, i.e. \texttt{VECNEST} and  \texttt{MATNEST} respectively.
+We have added a new class \texttt{PETScWrappers::PreconditionShell} to support user-defined
+preconditioning that can be simply customized as:
+\begin{c++}
+PETScWrappers::PreconditionShell preconditioner(/*...*/);
+
+preconditioner.vmult = [&](const VectorType &src,
+                           VectorType       &dst) {/*...*/};
+
+\end{c++}
+The resulting object can be passed to \petsc and used within the nonlinear solver hierarchy.
+See \ref{sec:callbacks} for additional informations on such kind of callbacks.
+
+The \petsc~\snes class solves system of nonlinear equations of the form $F(x) = 0$.
+The interface to \snes has been modeled on the already existing interface
+to the \kinsol solver from the \sundials package, and the nonlinear problem
+is specified with a set of callbacks that are used by the solver:
+\begin{c++}
+PETScWrappers::NonlinearSolver<VectorType> solver(/*...*/);
+
+solver.residual            = [&](const VectorType &x,
+                                 VectorType       &F) {/*...*/};
+solver.setup_jacobian      = [&](const VectorType &x) {/*...*/};
+solver.solve_with_jacobian = [&](const VectorType &rhs,
+                                 VectorType       &sol) {/*...*/};
+solver.solve(x);
+\end{c++}
+The default configuration is set up to use a Jacobian-free Newton-Krylov (JFNK)
+approach~\cite{knoll2004jacobian}, using \texttt{solve\_with\_jacobian} as linear solver.
+Numerous other solver configurations are possible and can be selected
+programmatically, or via the powerful command line customization of \petsc.
+This includes for example Quasi-Newton methods, Anderson's acceleration, and
+nonlinear preconditioning~\cite{brune2015composing}.
+
+The \petsc~\ts class solves ODEs in explicit or implicit form \cite{abhyankar2018petsc}, i.e.:
+\begin{eqnarray*}
+%\frac{\partial u}{\partial t} = G(t,u), &\text{explicit}\\
+%F(t,u,\frac{\partial u}{\partial t}) = 0, &\text{implicit}\\
+\dot{u} = G(t,u), &\text{(explicit)}\\
+F(t,u,\dot{u}) = 0, &\text{(implicit)}.\\
+\end{eqnarray*}
+The interface to \ts has been modeled on the already existing interfaces
+to the \ida and \arkode solvers from the \sundials package. Specifically:
+\begin{c++}
+PETScWrappers::TimeDependentSolver<VectorType> solver(/*...*/);
+
+// If solving udot = G(t,u)
+solver.explicit_function = [&](const double     t,
+                               const VectorType &u,
+                               VectorType       &G) {/*...*/};
+// If solving F(t,u,udot) = 0
+solver.implicit_function = [&](const double     t,
+                               const VectorType &u,
+                               const VectorType &udot,
+                               VectorType       &F) {/*...*/};
+\end{c++}
+In addition to specifying the function callbacks, users can further customize
+the solution of the linearized equations $\alpha * \frac{\partial{F}}{\partial{\dot{u}}} + \frac{\partial{F}}{\partial{u}}$
+via the callbacks:
+\begin{c++}
+solver.setup_jacobian = [&](const double     t,
+                            const VectorType &u,
+                            const VectorType &udot,
+                            const double     alpha) {/*...*/};
+solver.solve_with_jacobian = [&](const VectorType &rhs,
+                                 VectorType       &sol) {/*...*/};
+\end{c++}
+As for \snes, the default configuration of an implicit solver is set up to
+a JFNK approach, and the entire suite of solvers offered by PETSc is available,
+including adaptive time-stepping and Implicit-Explicit schemes.
+
+We refer interested readers to our documentation for other more advanced
+functions of the \ts and \snes wrappers, and to the {\tt tests/petsc/} folder
+for examples on how to use them.
+
+We close this section by introducing the interface to the \petscsf class,
+the abstract communication model of \petsc. The \dealii interface to
+\petscsf has been modelled on those of \texttt{Utilities::MPI::Partitioner} and
+\texttt{Utilities::MPI::NoncontiguousPartitioner}. Future developments
+will add support for GPU buffers.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Interfaces to Trilinos' Belos and NOX packages}\label{sec:trilinos}
