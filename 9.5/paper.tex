@@ -374,7 +374,8 @@ solver.solve(x);
 The default configuration is set up to use a Jacobian-free Newton-Krylov (JFNK)
 approach~\cite{knoll2004jacobian}, using \texttt{solve\_with\_jacobian} as linear solver.
 Numerous other solver configurations are possible and can be selected
-programmatically, or via the powerful command line customization of \petsc.
+programmatically using the constructor arguments,
+or via the powerful command line customization of \petsc.
 This includes for example Quasi-Newton methods, Anderson's acceleration, and
 nonlinear preconditioning~\cite{brune2015composing}.
 
@@ -412,7 +413,8 @@ solver.solve_with_jacobian = [&](const VectorType &rhs,
                                  VectorType       &sol) {/*...*/};
 \end{c++}
 As for \snes, the default configuration of an implicit solver is set up to
-a JFNK approach, and the entire suite of solvers offered by PETSc is available,
+use a JFNK approach, and the entire suite of solvers offered by PETSc is available
+programmatically or via the command line interface,
 including adaptive time-stepping and Implicit-Explicit schemes.
 
 We close this section by introducing the interface to the \petscsf class,
@@ -424,7 +426,7 @@ on \petscsf are \texttt{PETScWrappers::Partitioner} and
 \texttt{PETScWrappers::CommunicationPattern}.
 Future developments will add support for GPU buffers.
 
-We refer interested readers to our documentation for other more advanced
+We refer interested readers to our documentation for more advanced
 functions of the \snes, \ts and \petscsf wrappers, and to the {\tt tests/petsc/} folder
 for examples on how to use them.
 
