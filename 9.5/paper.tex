@@ -85,7 +85,8 @@ cross/.default={2pt}}
     Peter Munch,
     Jean-Paul Pelteret,
     Bruno Turcksin,
-    David Wells
+    David Wells,
+    Stefano Zampini
   },
   pdftitle={The deal.II Library, Version 9.5, 2023},
 }
@@ -164,6 +165,11 @@ Via Bonomea 265,
 \affil[12]{Department of Mathematics, University of North Carolina,
   Chapel Hill, NC 27516, USA.
   {\texttt{drwells@email.unc.edu}}}
+
+\author[13]{Stefano Zampini}
+\affil[13]{Extreme Computing Research Center, King Abdullah University of Science and Technology,
+  23955-6900 Thuwal, Saudi Arabia.
+  {\texttt{stefano.zampini@gmail.com}}}
 
 \renewcommand{\labelitemi}{--}
 
@@ -328,7 +334,7 @@ device, host-parallel, and host-serial.
 \subsubsection{Updates and additions to the PETSc wrappers}\label{sec:petsc}
 
 The \dealii classes wrapping \petsc objects have been heavily rewritten
-to support the nonlinear solver \snes and the Ordinary Differential Equations (ODE)
+to support the System of Nonlinear Equations Solver \snes and the Ordinary Differential Equations (ODE)
 solver \ts \cite{abhyankar2018petsc}.
 First, we briefly describe the most important improvements to the existing
 classes and then outline the newly designed interfaces to the nonlinear solvers, together
@@ -409,15 +415,19 @@ As for \snes, the default configuration of an implicit solver is set up to
 a JFNK approach, and the entire suite of solvers offered by PETSc is available,
 including adaptive time-stepping and Implicit-Explicit schemes.
 
-We refer interested readers to our documentation for other more advanced
-functions of the \ts and \snes wrappers, and to the {\tt tests/petsc/} folder
-for examples on how to use them.
-
 We close this section by introducing the interface to the \petscsf class,
 the abstract communication model of \petsc. The \dealii interface to
-\petscsf has been modelled on those of \texttt{Utilities::MPI::Partitioner} and
-\texttt{Utilities::MPI::NoncontiguousPartitioner}. Future developments
-will add support for GPU buffers.
+\petscsf has been modelled on \texttt{Utilities::MPI::Partitioner} and
+\texttt{Utilities::MPI::NoncontiguousPartitioner}, with minimal changes for the
+communication routines API; the equivalent classes based
+on \petscsf are \texttt{PETScWrappers::Partitioner} and
+\texttt{PETScWrappers::CommunicationPattern}.
+Future developments will add support for GPU buffers.
+
+We refer interested readers to our documentation for other more advanced
+functions of the \snes, \ts and \petscsf wrappers, and to the {\tt tests/petsc/} folder
+for examples on how to use them.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Interfaces to Trilinos' Belos and NOX packages}\label{sec:trilinos}
