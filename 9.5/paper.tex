@@ -205,7 +205,8 @@ Via Bonomea 265,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview}
 
-\dealii version 9.5.0 was released XX XX, 2023.
+\dealii version 9.5.0 was released June XX, 2023.
+\todo{Add exact date.}
 This paper provides an
 overview of the new features of this release and serves as a citable
 reference for the \dealii software library version 9.5. \dealii is an
@@ -240,7 +241,7 @@ which we briefly outline in the remainder of this section:
 \begin{itemize}
   \item The new function \texttt{CellAccessor::as\_dof\_handler\_iterator()}
   simplifies the conversion from a \texttt{Cell\-Accessor} to a \texttt{DoF\-Cell\-Accessor}.
-  The old way 
+  The old way,
 \begin{c++}
 const auto cell_dof = typename DoFHandler<dim, spacedim>::
   active_cell_iterator(&dof_handler.get_triangulation(),
@@ -333,8 +334,9 @@ device, host-parallel, and host-serial.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Updates and additions to the PETSc wrappers}\label{sec:petsc}
 
-The \dealii classes wrapping \petsc objects have been heavily rewritten
-to support the System of Nonlinear Equations Solver \snes and the Ordinary Differential Equations (ODE)
+The \dealii classes wrapping \petsc objects have been rewritten in
+substantial ways
+to support \petsc's System of Nonlinear Equations Solver \snes and the Ordinary Differential Equations (ODE)
 solver \ts \cite{abhyankar2018petsc}.
 First, we briefly describe the most important improvements to the existing
 classes and then outline the newly designed interfaces to the nonlinear solvers, together
@@ -346,7 +348,8 @@ The \texttt{BlockVector} and
 \texttt{BlockSparseMatrix} classes now internally use
 \petsc nested objects, i.e. \texttt{VECNEST} and  \texttt{MATNEST} respectively.
 We have added a new class \texttt{PETScWrappers::PreconditionShell} to support user-defined
-preconditioning that can be simply customized as:
+preconditioning that can be as simply customized as the following code
+snippet:
 \begin{c++}
 PETScWrappers::PreconditionShell preconditioner(/*...*/);
 
@@ -357,7 +360,7 @@ preconditioner.vmult = [&](const VectorType &src,
 The resulting object can be passed to \petsc and used within the nonlinear solver hierarchy.
 See \ref{sec:callbacks} for additional informations on such kind of callbacks.
 
-The \petsc~\snes class solves system of nonlinear equations of the form $F(x) = 0$.
+The \petsc~\snes sub-package solves systems of nonlinear equations of the form $F(x) = 0$.
 The interface to \snes has been modeled on the already existing interface
 to the \kinsol solver from the \sundials package, and the nonlinear problem
 is specified with a set of callbacks that are used by the solver:
@@ -376,15 +379,17 @@ approach~\cite{knoll2004jacobian}, using \texttt{solve\_with\_jacobian} as linea
 Numerous other solver configurations are possible and can be selected
 programmatically using the constructor arguments,
 or via the powerful command line customization of \petsc.
-This includes for example Quasi-Newton methods, Anderson's acceleration, and
-nonlinear preconditioning~\cite{brune2015composing}.
+This includes, for example, Quasi-Newton methods, Anderson's acceleration, and
+nonlinear preconditioning~\cite{brune2015composing}. The step-77
+tutorial program has gained a section that discusses the use of these
+new \snes interfaces.
 
-The \petsc~\ts class solves ODEs in explicit or implicit form \cite{abhyankar2018petsc}, i.e.:
+The \petsc~\ts sub-package solves ODEs in explicit or implicit form \cite{abhyankar2018petsc}, i.e.:
 \begin{eqnarray*}
-%\frac{\partial u}{\partial t} = G(t,u), &\text{explicit}\\
-%F(t,u,\frac{\partial u}{\partial t}) = 0, &\text{implicit}\\
-\dot{u} = G(t,u), &\text{(explicit)}\\
-F(t,u,\dot{u}) = 0, &\text{(implicit)}.\\
+%\frac{\partial u}{\partial t} = G(t,u) &\text{explicit},\\
+%F(t,u,\frac{\partial u}{\partial t}) = 0 &\text{implicit}\\
+\dot{u} = G(t,u) &\text{(explicit)},\\
+F(t,u,\dot{u}) = 0 &\text{(implicit)}.\\
 \end{eqnarray*}
 The interface to \ts has been modeled on the already existing interfaces
 to the \ida and \arkode solvers from the \sundials package. Specifically:
@@ -402,8 +407,8 @@ solver.implicit_function = [&](const double     t,
                                VectorType       &F) {/*...*/};
 \end{c++}
 In addition to specifying the function callbacks, users can further customize
-the solution of the linearized equations $\alpha * \frac{\partial{F}}{\partial{\dot{u}}} + \frac{\partial{F}}{\partial{u}}$
-via the callbacks:
+the solution of the linearized equations $\alpha \frac{\partial{F}}{\partial{\dot{u}}} + \frac{\partial{F}}{\partial{u}}$
+via the following callbacks:
 \begin{c++}
 solver.setup_jacobian = [&](const double     t,
                             const VectorType &u,
@@ -412,15 +417,15 @@ solver.setup_jacobian = [&](const double     t,
 solver.solve_with_jacobian = [&](const VectorType &rhs,
                                  VectorType       &sol) {/*...*/};
 \end{c++}
-As for \snes, the default configuration of an implicit solver is set up to
+As with \snes, the default configuration of an implicit solver is set up to
 use a JFNK approach, and the entire suite of solvers offered by PETSc is available
 programmatically or via the command line interface,
 including adaptive time-stepping and Implicit-Explicit schemes.
 
-We close this section by introducing the interface to the \petscsf class,
+We close this section by introducing the interface to the \petscsf sub-package,
 the abstract communication model of \petsc. The \dealii interface to
-\petscsf has been modelled on \texttt{Utilities::MPI::Partitioner} and
-\texttt{Utilities::MPI::NoncontiguousPartitioner}, with minimal changes for the
+\petscsf has been modeled on the existing \texttt{Utilities::MPI::Partitioner} and
+\texttt{Utilities::MPI::NoncontiguousPartitioner} classes, with minimal changes for the
 communication routines API; the equivalent classes based
 on \petscsf are \texttt{PETScWrappers::Partitioner} and
 \texttt{PETScWrappers::CommunicationPattern}.
@@ -587,7 +592,7 @@ N_{1D}^{-1}$, allowing the use sum factorization \cite{kronbichler2016comparison
 
 The (matrix-free) non-matching support of \dealii heavily relies
 on the classes \texttt{FE\-Point\-Eval\-u\-ation} and \texttt{RemotePointEvaluation},
-which have been introduced in release 9.3. While \texttt{FE\-Point\-Eval\-u\-a\-tion}
+which were introduced in release 9.3. While \texttt{FE\-Point\-Eval\-u\-a\-tion}
 is responsible for efficient evaluation/integration at arbitrary (reference)
 points within a cell, \texttt{RemotePointEvaluation} is responsible for
 sorting points with regards to the cells they reside in, and for the
@@ -613,12 +618,14 @@ and (ii) multigrid with non-nested levels. In the following, we describe these
 in more detail.
 
 \subsubsection{Intersected meshes}
-In the current release, we added experimental support to compute intersections on parallel::distributed::Triangulation objects using \texttt{CGAL}~\cite{cgal-user-ref}.
-For this purpose we introduced a free function, which computes intersections and relevant information for communication from \texttt{intersection\_requests}.
+In the current release, we added experimental support to compute intersections on \texttt{parallel::distributed::Triangulation} objects using \texttt{CGAL}~\cite{cgal-user-ref}.
+For this purpose we introduce a free function that computes intersections and relevant information for communication from \texttt{intersection\_requests}.
 \texttt{intersection\_requests} is a vector indicating entities of a given triangulation (in the form of \texttt{GridTools::Cache}) that intersections are computed upon.
 Each entity (face or cell) is described by a vector of vertices. The actual computation of the intersection of two geometric
 entities is performed by the new function \texttt{CGALWrappers::compute\_intersection\_of\_cells()}.
 
+\todo[inline]{The following code snippet uses a different function
+  that the text above. The connection between the two is not clear to me.}
 
 \begin{c++}
 // compute intersections on distributed triangulation  
@@ -628,10 +635,12 @@ auto intersection_data =
          tolerance);
 \end{c++}
 
+\todo[inline]{Marco: It is unfortunate that we advertise a function in
+  namespace `internal' here. We should think about moving it, see \url{https://github.com/dealii/dealii/issues/15463}.}
+
 For the common case of Nitsche-type mortaring, quadrature points must be distributed on the intersections to evaluate the underlying physical coupling terms.
 The \texttt{intersection\_data} returned by the function above can convert itself to data which can be used to fill \texttt{RemotePointEvaluation}.
 The whole procedure is done communication-free.
-
 \begin{c++}
 // distribute n_points_1D quadrature points to the intersections
 auto point_data = intersection_data.template 
@@ -646,18 +655,23 @@ Utilities::MPI::RemotePointEvaluation<dim> rpe;
 rpe.reinit(point_data,tria, mapping);
 \end{c++}
 
-This functionality is handy since \texttt{RemotePointEvaluation} can now be used to access quantities at quadrature points on intersections without further ado.
+This functionality is useful since \texttt{RemotePointEvaluation} can now be used to access quantities at quadrature points on intersections without further ado.
 To reduce the user's effort, we plan to add a wrapper that takes care of the described procedure and provides interfaces like \texttt{FEEvaluation} to access quantities easily, e.g., in a matrix-free loop.
 
-Described implementation and an early version of the wrapper have been used successfully in~\cite{heinz2023high} to perform Nitsche-type mortaring in the context of the conservative formulation of acoustic equations discretized with DG to suppress artificial modes.
+The interface described above and an early version of the wrapper have
+been used successfully in~\cite{heinz2023high} to perform Nitsche-type
+mortaring in the context of the conservative formulation of acoustic
+equations discretized with a discontinuous Galerkin method to suppress
+artificial modes.
+
+
 \subsubsection{Non-nested multigrid}
 
-\dealii has provided support for geometric multigrid methods%
-\footnote{\dealii{} also supports algebraic multigrid methods
-by interfacing to the external libraries \texttt{PETSc}
-and \texttt{Trilinos}.}
-for locally refined meshes nearly since its inception.
-Traditionally, these were based on local-smoothing
+\dealii has provided support for geometric multigrid methods (GMG)
+for locally refined meshes nearly since its inception. (\dealii{} also
+supports algebraic multigrid methods by interfacing to the external
+libraries \texttt{PETSc} and \texttt{Trilinos}.)
+Traditionally, these GMGs were based on local-smoothing
 methods (described many years later in \cite{Kanschat2004,JanssenKanschat2011}, see
 also~\cite{ClevengerHeisterKanschatKronbichler2019}), and more
 recently also global-coarsening algorithms~\cite{munch2022gc}. The global-coarsening
@@ -875,7 +889,7 @@ C++20-style ``\texttt{requires}'' clauses:
 If the compiler supports C++20, then the added clause will cause the
 compiler to reject any call to the function for which the first
 argument \texttt{MeshType} does not satisfy the named concept, which
-is internally defined as the type being either a \texttt{Triangulation} or \texttt{DoFHandler}
+is defined as the type being either a \texttt{Triangulation} or \texttt{DoFHandler}
 object, as intended. (The \texttt{requires} annotation is suppressed if the compiler
 does not support C++20.)
 
@@ -888,7 +902,7 @@ library contains some 300 of these \texttt{requires} clauses.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Build-system modernization}\label{sec:buildsystem}
 
-\todo[inline]{Write}
+\todo[inline]{Matthias: Write}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -896,7 +910,7 @@ library contains some 300 of these \texttt{requires} clauses.
 \label{subsec:steps}
 
 While there are no new \dealii tutorial programs in this release, many
-were extensively revised: Around 130 of the more than 2000 (non-merge)
+were extensively revised: Around 145 of the more than 2100 (non-merge)
 commits that went into this release touched the tutorial, in some
 cases adding substantial amounts of text.
 
@@ -925,8 +939,10 @@ research rather than as teaching tools):
 
 The 9.5 release includes
 \href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_4_2_and_9_5_0.html}
-{around X incompatible changes}; see \cite{changes95}. Many of the
-incompatible change internal
+     {around XXX incompatible changes};
+\todo{Fix number before release}
+see \cite{changes95}. Many of these
+incompatibilities change internal
 interfaces that are not usually used in external
 applications. That said, the following are worth mentioning since they
 may have been more widely used:
@@ -934,23 +950,27 @@ may have been more widely used:
   \item
   The class \texttt{hp::DoFHandler} has been removed. The
   \texttt{DoFHandler} class now implements all $hp$-related
-  functionality, as it has for the past few releases.
+  functionality, as it has for the past several releases.
 
   \item
   We improved the type safety for active and future FE indices in the \texttt{DoFHandler} implementation by introducing a new data type \texttt{types::fe\textunderscore{}index}. Corresponding functions like \texttt{DoFCellAccessor::active\textunderscore{}fe\textunderscore{}index()} and \texttt{DoFHandler::get\textunderscore{}active\textunderscore{}fe\textunderscore{}indices()} have changed their interface.
 
   \item
-  This rework also affects the serialization process of active FE indices. You will need to recreate your serialized data \textit{if and only if} you work in $hp$-mode. You can continue to use previously generated data if you do not use $hp$-mode. A special case forms \texttt{parallel::distributed::Triangulation} for non-$hp$ data, in which it is sufficient to increase the version in the metadata file by one from ``4'' to ``5''.
+  This rework also affects the serialization process of active FE
+  indices. You will need to recreate your serialized data \textit{if
+    and only if} you work in $hp$-mode, but can continue to use
+  previously generated data otherwise. For
+  \texttt{parallel::distributed::Triangulation} when used with non-$hp$ data, it is sufficient to increase the version in the metadata file from ``4'' to ``5''.
 
 \item Several old interfaces to \texttt{MatrixFree} have been removed, e.g.,
   initialization functions without \texttt{Mapping} argument, the query
   to the number of cell batches, \texttt{DoFHandler} objects. In
   each case, new interfaces are available.
-
-\item
-  ...
+\todo[inline]{The sentence part ``e.g., initialization
+  functions...objects'' does not sound grammatically correct. Should
+  it have been ``and the functions querying \texttt{DoFHandler}
+  objects''? Please fix and remove this box.}
 \end{itemize}
-\todo[inline]{Write}
 
 
 
@@ -1073,8 +1093,6 @@ Their contributions are much appreciated!
 \dealii and its developers are financially supported through a
 variety of funding sources:
 
-\todo[inline]{Need to update. Also remove those not on the current paper.}
-
 D.~Arndt and B.~Turcksin: Research sponsored by the Laboratory Directed Research and
 Development Program of Oak Ridge National Laboratory, managed by UT-Battelle,
 LLC, for the U. S. Department of Energy.
@@ -1083,8 +1101,6 @@ W.~Bangerth and T.~Heister were partially
 supported by the Computational Infrastructure for Geodynamics initiative
 (CIG), through the National Science Foundation (NSF) under Award
 No.~EAR-1550901 and The University of California -- Davis.
-\todo{This is the CIG-II grant. We need to update this to the CIG-III
-  (and CIG-IV?) grants.}
 
 W.~Bangerth and M.~Fehling were partially supported by Award OAC-1835673
 as part of the Cyberinfrastructure for Sustained Scientific Innovation (CSSI)
@@ -1096,6 +1112,8 @@ M.~Bergbauer was supported by the German Research Foundation (DFG) under the
 project ``High-Performance Cut Discontinuous Galerkin Methods for Flow
 Problems and Surface-Coupled Multiphysics Problems'' Grant Agreement
 No.~456365667.
+
+\todo[inline]{Marco: Anything to add here?.}
 
 J.~Heinz was supported by the European Union’s Framework Programme for Research
 and Innovation Horizon 2020 (2014-2020) under the Marie Sk\l{}odowska--Curie Grant
@@ -1126,6 +1144,10 @@ Air Force Office of Scientific Research under grant/contract number
 FA9550-23-1-0007.
 
 D.~Wells was supported by the NSF Award OAC-1931516.
+
+\todo[inline]{Stefano: Anything to add here?.}
+
+
 
 \bibliography{paper}{}
 \bibliographystyle{abbrv}
