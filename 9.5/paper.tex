@@ -26,7 +26,7 @@
 %\renewcommand{\baselinestretch}{2.0}
 %\usepackage{lineno}
 %\renewcommand\linenumberfont{\normalfont\tiny}
-%\linenumbers	
+%\linenumbers
 
 \graphicspath{{svg/}}
 
@@ -181,7 +181,7 @@ Via Bonomea 265,
   $^\ast$ This manuscript has been authored by UT-Battelle, LLC under Contract No.
   DE-AC05-00OR22725 with the U.S. Department of Energy.
   % We need to submit the manuscript with the text below. If the editor
-  % complains we can remove it. 
+  % complains we can remove it.
   The United States
   Government retains and the publisher, by accepting the article for
   publication, acknowledges that the United States Government retains a
@@ -223,12 +223,13 @@ The major changes of this release are:
     includes, in particular, the integration of \texttt{Kokkos} (Section~\ref{sec:kokkos});
     additions and updates to the \texttt{PETSc} and Trilinos
     interfaces
-    (Sections~\ref{sec:petsc} and \ref{sec:trilinos}); and a uniform
-    way of defining callbacks used by external libraries
-    (Section~\ref{sec:callbacks}).
-  \item Advances in matrix-free infrastructure (see Section~\ref{sec:mf});
-  \item Advances in non-matching support (see Section~\ref{sec:nonmatching});
-  \item New features related to liner algebra (see Section~\ref{sec:lac})
+    (Sections~\ref{sec:petsc} and \ref{sec:trilinos}).
+  \item Uniform handling of nonlinear solver
+  packages (Section~\ref{sec:nonlinear}) and a uniform
+    way of defining callbacks used by external libraries (Section~\ref{sec:callbacks}).
+  \item Advances in matrix-free infrastructure (see Section~\ref{sec:mf}).
+  \item Advances in non-matching support (see Section~\ref{sec:nonmatching}).
+  \item New features related to linear algebra (see Section~\ref{sec:lac}).
   \item C++ language modernization (see Section~\ref{sec:language}).
 \end{itemize}
 %
@@ -490,6 +491,41 @@ unfortunately natively only  supported in the official \texttt{EPetra} implement
   elaborate? At least in the KINSOL interfaces, you only update the
   preconditioner whenever setup\_jacobian() is called.}
 
+\subsubsection{Uniform interface for nonlinear solvers}\label{sec:nonlinear}
+
+With the current release, \dealii{} now supports solvers for nonlinear problems
+provided by several different external packages:
+1. KINSOL (part of SUNDIALS), 2. SNES (part of PETSc, see Section~\ref{sec:petsc}), 3. NOX (part of Trilinos, see Section~\ref{sec:trilinos}).
+The wrappers are provided by the classes \texttt{PETScWrappers::NonlinearSolver<VectorType>}, \texttt{SUNDIALS::KINSOL<VectorType>}, and \texttt{TrilinosWrappers::NOXSolver<VectorType>}, respectively.
+
+All classes have a very similar interface, except that they vary in the kind of
+algorithms and parameters offered. The new class \texttt{NonlinearSolverSelector<VectorType>} provides a wrapper on top of
+the three external solvers with a unified interface. The user can either let
+\dealii{} decide which of the packages to use (depending on the current availability of
+the external packages) or specify it manually.
+
+Here is a complete example of an MPI parallel Newton solver that automatically chooses one of the available packages:
+\begin{c++}
+    using NLSolver = NonlinearSolverSelector<LA::MPI::Vector>;
+
+    NLSolver::AdditionalData additional_data(NLSolver::automatic,
+                                             NLSolver::newton);
+    NLSolver nonlinear_solver(additional_data, mpi_communicator);
+
+    nonlinear_solver.reinit_vector = [&](LA::MPI::Vector &x)
+                                     {/*...*/};
+    nonlinear_solver.residual = [&](const LA::MPI::Vector &evaluation_point,
+                                    LA::MPI::Vector &      residual)
+                                {/*...*/};
+    nonlinear_solver.setup_jacobian = [&](const LA::MPI::Vector &current_u)
+                                      {/*...*/};
+    nonlinear_solver.solve_with_jacobian = [&](const LA::MPI::Vector &rhs,
+                                               LA::MPI::Vector &      dst,
+                                               const double tolerance)
+                                           {/*...*/};
+
+    nonlinear_solver.solve(current_solution);
+\end{c++}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Uniform error reporting in callbacks}\label{sec:callbacks}
@@ -607,8 +643,8 @@ interaction. Furthermore, the extended class \texttt{NonMatching::MappingInfo}
 allows for precomputing and storing metric terms, like the Jacobian, its determinant,
 or the unit outer normal vectors. This is useful in cases in which these metric terms do not change
 and can be reused, e.g., in the context of iterative solvers. This development
-is part of an effort to make the interfaces of the 
-(matrix-free) non-matching support more similar to the ones of the 
+is part of an effort to make the interfaces of the
+(matrix-free) non-matching support more similar to the ones of the
 established matrix-free infrastructure of \dealii for fixed quadrature formulas.
 
 In addition to these node-level performance optimizations, we added experimental
@@ -624,7 +660,7 @@ For this purpose we introduce a free function that computes intersections and re
 Each entity (face or cell) is described by a vector of vertices.
 
 \begin{c++}
-// compute intersections on distributed triangulation  
+// compute intersections on distributed triangulation
 auto intersection_data =
        GridTools::internal::distributed_compute_intersection_locations(
          cache, intersection_requests, global_bboxes, marked_vertices,
@@ -641,7 +677,7 @@ The \texttt{intersection\_data} returned by the function above can convert itsel
 The whole procedure is done communication-free.
 \begin{c++}
 // distribute n_points_1D quadrature points to the intersections
-auto point_data = intersection_data.template 
+auto point_data = intersection_data.template
        convert_to_distributed_compute_point_locations_internal<dim>(
          n_points_1D, tria, mapping,
          // The following parameter is optional and setting it to 
@@ -707,7 +743,7 @@ MGTwoLevelTransferNonNested two_level_transfer(/*...*/);
 
 two_level_transfer.reinit(dof_handler_fine, dof_handler_coarse,
                           // the following parameters are optional
-                          mapping_fine, mapping_coarse, 
+                          mapping_fine, mapping_coarse,
                           constraints_fine, constraints_coarse)
 \end{c++}
 The resulting object can be passed to \texttt{MGTransferGlobalCoarsening} (and
@@ -735,8 +771,8 @@ and discontinuous (\texttt{FE\_DGQ}) elements on hypercube-shaped cells. We plan
 simplex elements and to add support
 for projection, in addition to the pointwise interpolation outlined
 above. Furthermore, we envision providing utility tools to generate
-coarser 
-meshes, based on a fine mesh. Currently, the users themselves 
+coarser
+meshes, based on a fine mesh. Currently, the users themselves
 have to provide such meshes,
 e.g., by generating meshes with different cell sizes in external mesh-generation tools.
 
@@ -772,7 +808,7 @@ There are a number of linear-algebra related new features in this release:
   during a \texttt{post} operation, allowing for a reduction in the number of read and write
   accesses from 8 and 4, to 1 and 3, respectively. The existing \texttt{pre}/\texttt{post}
   support in our Chebyshev-preconditioner implementation (\texttt{PreconditionChebyshev})
-  has been improved. In addition, both \texttt{PreconditionRelaxation} and 
+  has been improved. In addition, both \texttt{PreconditionRelaxation} and
   \texttt{PreconditionChebyshev} support \texttt{pre}/\texttt{post} optimizations
   now not only for diagonal preconditioners but also for preconditioners that are
   built around cell loops and, as a consequence, support interleaving. Examples of
@@ -780,7 +816,7 @@ There are a number of linear-algebra related new features in this release:
   \item In the context of additive Schwarz methods, the preconditioner application
   is defined as
   \begin{align*}
-  v = P^{-1} u = \sum R_i^\top A_i^{-1} R_i u 
+  v = P^{-1} u = \sum R_i^\top A_i^{-1} R_i u
   \end{align*}
   with $A_i = R_i A R_i^T$ being a block of the assembled system
   matrix $A$ restricted
@@ -796,7 +832,7 @@ There are a number of linear-algebra related new features in this release:
   sparse matrix from a distributed matrix:
 \begin{c++}
 SparseMatrixTools::restrict_to_serial_sparse_matrix (
-  sparse_matrix_in, sparsity_pattern, requested_index_set, 
+  sparse_matrix_in, sparsity_pattern, requested_index_set,
   system_matrix_out, sparsity_pattern_out)
 \end{c++}
 This function can be used, e.g., if the granularity of the additive Schwarz preconditioner
@@ -812,7 +848,7 @@ SparseMatrixTools::restrict_to_full_matrices (
 
 The data is stored in dense matrices, since the typical granularity is a (rather small) cell-centric or
 vertex-star patch.
-  
+
   \item For certain types of configurations, there are computationally more efficient
   approaches than extracting submatrices from an assembled matrix. For
   example, for the Laplace
@@ -829,7 +865,7 @@ vertex-star patch.
   matrix of eigenvalues, obtained from a generalized eigendecomposition
   $K_iT_i =  M_i T_i \Lambda_i$, as also used by \dealii's \texttt{step-59} tutorial program.
   Since $A_i \approx A_i^{\text{cart}}$
-  might be a good approximation also in the case of non-Cartesian meshes and 
+  might be a good approximation also in the case of non-Cartesian meshes and
   $A_i^{\text{cart}}$ has an explicit inverse, it is considered in the
   literature as a patch preconditioner in the context of additive
   Schwarz~\cite{witte2021fast, phillips2021auto, couzy1995spectral} and block-Jacobi methods~\cite{kronbichler2019hermite}.
