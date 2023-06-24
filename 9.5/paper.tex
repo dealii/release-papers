@@ -634,7 +634,7 @@ auto intersection_data =
 \todo[inline]{Marco: It is unfortunate that we advertise a function in
   namespace `internal' here. We should think about moving it, see \url{https://github.com/dealii/dealii/issues/15463}.}
 
-Internally above function uses the new function \texttt{CGALWrappers::compute\_intersection\_of\_cells()}, to actually compute intersections between two geometric entities.
+The above function uses the new function \texttt{CGALWrappers::compute\_intersection\_of\_cells()} internally to compute intersections between two geometric entities.
 
 For the common case of Nitsche-type mortaring, quadrature points must be distributed on the intersections to evaluate the underlying physical coupling terms.
 The \texttt{intersection\_data} returned by the function above can convert itself to data which can be used to fill \texttt{RemotePointEvaluation}.
