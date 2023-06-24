@@ -646,8 +646,8 @@ The whole procedure is done communication-free.
 auto point_data = intersection_data.template 
        convert_to_distributed_compute_point_locations_internal<dim>(
          n_points_1D, tria, mapping,
-         // following parameter is optional would need additional
-         // communication 
+         // following parameter is optional
+         // setting it true requires additional communication
          consistent_numbering_of_sender_and_receiver);
 
 // use point_data to reinit RemotePointEvaluation
