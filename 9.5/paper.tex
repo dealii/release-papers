@@ -621,11 +621,7 @@ in more detail.
 In the current release, we added experimental support to compute intersections on \texttt{parallel::distributed::Triangulation} objects using \texttt{CGAL}~\cite{cgal-user-ref}.
 For this purpose we introduce a free function that computes intersections and relevant information for communication from \texttt{intersection\_requests}.
 \texttt{intersection\_requests} is a vector indicating entities of a given triangulation (in the form of \texttt{GridTools::Cache}) that intersections are computed upon.
-Each entity (face or cell) is described by a vector of vertices. The actual computation of the intersection of two geometric
-entities is performed by the new function \texttt{CGALWrappers::compute\_intersection\_of\_cells()}.
-
-\todo[inline]{The following code snippet uses a different function
-  that the text above. The connection between the two is not clear to me.}
+Each entity (face or cell) is described by a vector of vertices.
 
 \begin{c++}
 // compute intersections on distributed triangulation  
@@ -637,6 +633,8 @@ auto intersection_data =
 
 \todo[inline]{Marco: It is unfortunate that we advertise a function in
   namespace `internal' here. We should think about moving it, see \url{https://github.com/dealii/dealii/issues/15463}.}
+
+Internally above function uses the new function \texttt{CGALWrappers::compute\_intersection\_of\_cells()}, to actually compute intersections between two geometric entities.
 
 For the common case of Nitsche-type mortaring, quadrature points must be distributed on the intersections to evaluate the underlying physical coupling terms.
 The \texttt{intersection\_data} returned by the function above can convert itself to data which can be used to fill \texttt{RemotePointEvaluation}.
