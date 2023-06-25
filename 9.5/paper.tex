@@ -495,10 +495,10 @@ unfortunately natively only  supported in the official \texttt{EPetra} implement
 
 With the current release, \dealii{} now supports solvers for nonlinear problems
 provided by several different external packages:
-1. KINSOL (part of SUNDIALS), 2. SNES (part of PETSc, see Section~\ref{sec:petsc}), 3. NOX (part of Trilinos, see Section~\ref{sec:trilinos}).
+(i) KINSOL (part of SUNDIALS); (ii) SNES (part of PETSc, see Section~\ref{sec:petsc}); and (iii) NOX (part of Trilinos, see Section~\ref{sec:trilinos}).
 The wrappers are provided by the classes \texttt{PETScWrappers::NonlinearSolver<VectorType>}, \texttt{SUNDIALS::KINSOL<VectorType>}, and \texttt{TrilinosWrappers::NOXSolver<VectorType>}, respectively.
 
-All classes have a very similar interface, except that they vary in the kind of
+All three of these classes have a very similar interface, except that they vary in the kind of
 algorithms and parameters offered. The new class \texttt{NonlinearSolverSelector<VectorType>} provides a wrapper on top of
 the three external solvers with a unified interface. The user can either let
 \dealii{} decide which of the packages to use (depending on the current availability of
