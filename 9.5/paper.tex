@@ -57,6 +57,8 @@
 \newcommand{\kinsol}{{\specialword{KINSOL}}\xspace}
 \newcommand{\ida}{{\specialword{IDA}}\xspace}
 \newcommand{\arkode}{{\specialword{ARKODE}}\xspace}
+\newcommand{\boost}{{\specialword{Boost}}\xspace}
+\newcommand{\kokkos}{{\specialword{Kokkos}}\xspace}
 
 
 \usetikzlibrary{shapes.misc}
@@ -220,8 +222,8 @@ The major changes of this release are:
 \begin{itemize}
   \item Substantial updates and extensions to \dealii{}'s interfaces
     to other libraries (see Section~\ref{sec:external}). This
-    includes, in particular, the integration of \texttt{Kokkos} (Section~\ref{sec:kokkos});
-    additions and updates to the \texttt{PETSc} and Trilinos
+    includes, in particular, the integration of \kokkos (Section~\ref{sec:kokkos});
+    additions and updates to the \petsc and \trilinos
     interfaces
     (Sections~\ref{sec:petsc} and \ref{sec:trilinos}).
   \item Uniform handling of nonlinear solver
@@ -265,11 +267,6 @@ const auto cell_dof = cell->as_dof_handler_iterator(dof_handler);
 %
 The changelog lists more than X other features and bugfixes.
 
-\todo[inline]{We are not consistent in whether or not we print PETSc,
-  SUNDIALS, Trilinos, SNES, ... with a TT font (texttt) or
-  not. Someone should go through the paper and make it consistent.}
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -291,20 +288,20 @@ can be found
 \subsection{Updates to interfaces to other packages}\label{sec:external}
 
 For many operations, \dealii{} relies on external libraries -- some of
-these are optional, others are mandatory (such as BOOST and, now,
-Kokkos); a complete list of external dependencies is provided in
+these are optional, others are mandatory (such as \boost and, now,
+\kokkos); a complete list of external dependencies is provided in
 Section~\ref{sec:cite}. A substantial amount of work has gone into
 overhauling and extending these interfaces for the current release, as
 detailed in the following sub-sections.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Integration of Kokkos}\label{sec:kokkos}
+\subsubsection{Integration of \kokkos}\label{sec:kokkos}
 
-Kokkos \cite{trott2022} is a C++ library that enables the creation of
+\kokkos \cite{trott2022} is a C++ library that enables the creation of
 performance portable applications for all major high-performance computing (HPC)
 platforms. It implements a programming model that allows developers to write
-code that can efficiently run on diverse architectures. Kokkos provides
+code that can efficiently run on diverse architectures. \kokkos provides
 abstractions for both parallel execution of code and data management. It
 supports a wide range of backend programming models, including CUDA, HIP, SYCL,
 HPX, OpenMP, and C++ threads, and continues to evolve with the development of
@@ -314,16 +311,15 @@ new hardware and corresponding backend options.
 operations onto GPUs. It has also had interfaces to CUDA-based linear
 algebra libraries. Yet, the diversification of GPU platforms away from
 a single vendor (Nvidia) has made it clear that we need a different
-strategy to support what users want. As a consequence, Kokkos has
+strategy to support what users want. As a consequence, \kokkos has
 become a mandatory dependency of \dealii{} as part of the current
 release; if it is not found on a given system during configuration
-time, then the library will fall back on a copy of Kokkos stored in
+time, then the library will fall back on a copy of \kokkos stored in
 the \texttt{bundled/} directory in the same way as we already
-interface with BOOST.
+interface with \boost.
 
-In the current release, LinearAlgebra::distributed::Vector and the
-CUDAWrappers::MatrixFree framework are using Kokkos. This allows them to work on
-all the architectures supported by Kokkos. The Kokkos backend used by \dealii is
+In the current release, \texttt{LinearAlgebra::distributed::Vector} and the \texttt{CUDAWrappers::MatrixFree} framework are using \kokkos. This allows them to work on
+all the architectures supported by \kokkos. The \kokkos backend used by \dealii is
 \texttt{Kokkos::DefaultExecutionSpace} which is the highest available in the hierarchy
 device, host-parallel, and host-serial.
 
@@ -333,7 +329,7 @@ device, host-parallel, and host-serial.
 \todo[inline]{Would it be useful to add a paragraph about future plans?}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Updates and additions to the PETSc wrappers}\label{sec:petsc}
+\subsubsection{Updates and additions to the \petsc wrappers}\label{sec:petsc}
 
 The \dealii classes wrapping \petsc objects have been rewritten in
 substantial ways
@@ -419,7 +415,7 @@ solver.solve_with_jacobian = [&](const VectorType &rhs,
                                  VectorType       &sol) {/*...*/};
 \end{c++}
 As with \snes, the default configuration of an implicit solver is set up to
-use a JFNK approach, and the entire suite of solvers offered by PETSc is available
+use a JFNK approach, and the entire suite of solvers offered by \petsc is available
 programmatically or via the command line interface,
 including adaptive time-stepping and Implicit-Explicit schemes.
 
@@ -438,17 +434,17 @@ for examples on how to use them.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Interfaces to Trilinos' Belos and NOX packages}\label{sec:trilinos}
+\subsubsection{Interfaces to \trilinos{}' \texttt{Belos} and \texttt{NOX} packages}\label{sec:trilinos}
 
-Trilinos is a large collection of individual sub-packages \cite{heroux2005trilinos,trilinos-web-page}. \dealii{}
-has long had interfaces to the Trilinos packages that provide parallel
+\trilinos is a large collection of individual sub-packages \cite{heroux2005trilinos,trilinos-web-page}. \dealii{}
+has long had interfaces to the \trilinos packages that provide parallel
 vector and matrix classes (both \texttt{Epetra} and \texttt{Tpetra}),
 as well as a small number of linear algebra packages for iterative
 solvers and preconditions. In the current release, there are now also
 interfaces to two additional packages: \texttt{Belos} and \texttt{NOX}.
 
 \texttt{Belos} is the
-successor of the Trilinos package \texttt{AztecOO} and provides basic and advanced iterative solvers
+successor of the \trilinos package \texttt{AztecOO} and provides basic and advanced iterative solvers
 that heavily rely on multivector operations. The interface of the
 wrapper is similar to \dealii{}'s own iterative solvers:
 \begin{c++}
@@ -459,9 +455,9 @@ The omitted constructor arguments allow selecting the actual iterative
 solver to be used, along with other configuration options.
 
 Secondly, we have added a wrapper to \texttt{NOX}, a
-nonlinear solver library that is similar to both the \texttt{KINSOL} solver from
-the \texttt{SUNDIALS} package to which we already had interfaces, and also
-to the \texttt{SNES} collections of functions from \texttt{PETSc} (see also
+nonlinear solver library that is similar to both the \kinsol{} solver from
+the \sundials{} package to which we already had interfaces, and also
+to the \snes{} collections of functions from \petsc (see also
 Section~\ref{sec:petsc}). The interfaces to these three solvers are
 essentially the same and require setting function objects for
 computing the residual of the nonlinear problem, along with setting
@@ -488,14 +484,14 @@ nonlinear steps (also known as \textit{preconditioner lagging}), which is
 unfortunately natively only  supported in the official \texttt{EPetra} implementations.
 
 \todo[inline]{I don't understand this last sentence. Can you
-  elaborate? At least in the KINSOL interfaces, you only update the
+  elaborate? At least in the \kinsol{} interfaces, you only update the
   preconditioner whenever setup\_jacobian() is called.}
 
 \subsubsection{Uniform interface for nonlinear solvers}\label{sec:nonlinear}
 
 With the current release, \dealii{} now supports solvers for nonlinear problems
 provided by several different external packages:
-(i) KINSOL (part of SUNDIALS); (ii) SNES (part of PETSc, see Section~\ref{sec:petsc}); and (iii) NOX (part of Trilinos, see Section~\ref{sec:trilinos}).
+(i) \kinsol{} (part of \sundials{}); (ii) \snes{} (part of \petsc{}, see Section~\ref{sec:petsc}); and (iii) \texttt{NOX} (part of \trilinos{}, see Section~\ref{sec:trilinos}).
 The wrappers are provided by the classes \texttt{PETScWrappers::NonlinearSolver<VectorType>}, \texttt{SUNDIALS::KINSOL<VectorType>}, and \texttt{TrilinosWrappers::NOXSolver<VectorType>}, respectively.
 
 All three of these classes have a very similar interface, except that they vary in the kind of
@@ -533,21 +529,21 @@ Here is a complete example of an MPI parallel Newton solver that automatically c
 With the current release, \dealii{} has gained interfaces to several
 external packages that are largely driven via \textit{callbacks} --
 see for example the code example in Section~\ref{sec:trilinos} on how
-NOX gains information about the residual vector, how it indicates to
+\texttt{NOX} gains information about the residual vector, how it indicates to
 user code that the Jacobian matrix needs to be rebuilt,
 and how to solve linearized systems of equations as the sub-steps of
 solving a nonlinear problem. Indeed, the interfaces to the nonlinear
-solver KINSOL (as part of SUNDIALS) and SNES (as part of \texttt{PETSc}, see
+solver \kinsol{} (as part of \sundials{}) and \snes{} (as part of \petsc, see
 Section~\ref{sec:petsc} function in exactly the same way; the
-ODE solver interfaces to ARKode and IDA (also part of SUNDIALS) and TS
-(as part of PETSc) also use this style.
+ODE solver interfaces to \arkode{} and \ida{} (also part of \sundials{}) and \ts{}
+(as part of \petsc{}) also use this style.
 
 This substantially enlarged use of callbacks used by different backend
 libraries raises the issue that each underlying package has its own
 convention on how success or error codes of these callbacks should be
-encoded. In the case of PETSc's SNES and TS, and for Trilinos's \texttt{NOX},
+encoded. In the case of \petsc{}'s \snes{} and \ts{}, and for \trilinos{}'s \texttt{NOX},
 success is indicated by a zero integer return value, whereas failure is
-indicated by a nonzero return value. On the other hand, the SUNDIALS
+indicated by a nonzero return value. On the other hand, the \sundials{}
 packages indicate success by a zero integer return value, a
 recoverable failure with a positive value, and an irrecoverable failure
 with a negative value. Neither of these conventions mesh well with C++
@@ -704,7 +700,7 @@ artificial modes.
 \dealii has provided support for geometric multigrid methods (GMG)
 for locally refined meshes nearly since its inception. (\dealii{} also
 supports algebraic multigrid methods by interfacing to the external
-libraries \texttt{PETSc} and \texttt{Trilinos}.)
+libraries \petsc and \trilinos.)
 Traditionally, these GMGs were based on local-smoothing
 methods (described many years later in \cite{Kanschat2004,JanssenKanschat2011}, see
 also~\cite{ClevengerHeisterKanschatKronbichler2019}), and more
@@ -886,7 +882,7 @@ vertex-star patch.
 code base is written. It can also use the classes
 \texttt{std::optional} and \texttt{std::variant} if the compiler
 supports C++17, but falls back to implementations obtained via the
-BOOST library otherwise, and this is true also for a number of
+\boost library otherwise, and this is true also for a number of
 individual functions that were introduced in C++17 or C++20.
 
 As part of the current release, \dealii{} now also uses some C++20
