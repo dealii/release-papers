@@ -355,7 +355,7 @@ preconditioner.vmult = [&](const VectorType &src,
 
 \end{c++}
 The resulting object can be passed to \petsc and used within the nonlinear solver hierarchy.
-See \ref{sec:callbacks} for additional informations on such kind of callbacks.
+See \ref{sec:callbacks} for additional information on such kind of callbacks.
 
 The \petsc~\snes sub-package solves systems of nonlinear equations of the form $F(x) = 0$.
 The interface to \snes has been modeled on the already existing interface
@@ -581,7 +581,7 @@ infrastructure, including:
 The infrastructure did not work properly in the case that certain cells
 did not get any degrees of freedom due to the usage of \texttt{FE\_Nothing}. This has been
 fixed now. Furthermore, \texttt{FE\_Nothing} now also works together
-with discontinuous Lagrange elements (i.e., with the \texttt{FE\_DGQ} class). Due to the popularity of \texttt{FE\_Nothing} as a mean to enable
+with discontinuous Lagrange elements (i.e., with the \texttt{FE\_DGQ} class). Due to the popularity of \texttt{FE\_Nothing} as a means to enable
 or disable cells, we have introduced the new class
 \texttt{ElementActivationAndDeactivationMatrixFree}, which wraps a \texttt{MatrixFree} object, only loops over all
 active cells and optionally interprets faces between active and deactivated cells
