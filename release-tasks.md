@@ -5,7 +5,8 @@ Copy and paste the following markdown list into a deal.II Issue:
 The following is a list of ouststanding QA tests that should be checked before proceeding with a release. In order to duplicated efforts, add your a tag `@name` with your name after `assigned:` and link corresponding pull requests after `pr:`. finally, tick of the box when the task is done.
 
  - [ ] <b>Update regression tester</b> (assigned:, pr: &mdash;)
-   Check and (if necessary) update testing infrastructure so that at least one configuration runs with the latest versions of external dependencies and compilers. 
+   Check and (if necessary) update testing infrastructure so that at least one configuration runs with the latest versions of external dependencies and compilers.
+   Also temporarily remove all test exclusion lists from the regression tester and re-evaluate whether they still have to be excluded.
  - [ ] <b>Outstanding issues and pull-requests</b>
    Check issues and pull-requests for outstanding fixes.
    Update release milestones https://github.com/dealii/dealii/milestone/12
