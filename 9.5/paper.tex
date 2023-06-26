@@ -655,44 +655,21 @@ in more detail.
 
 \subsubsection{Intersected meshes}
 In the current release, we added experimental support to compute intersections on \texttt{parallel::distributed::Triangulation} objects using \texttt{CGAL}~\cite{cgal-user-ref}.
-For this purpose we introduce a free function that computes intersections and relevant information for communication from \texttt{intersection\_requests}.
-\texttt{intersection\_requests} is a vector indicating entities of a given triangulation (in the form of \texttt{GridTools::Cache}) that intersections are computed upon.
+For this purpose, we introduced a free function \texttt{distributed\_compute\_intersection\_locations()} that computes intersections and relevant information for communication from \texttt{intersection\_requests}.
+\texttt{intersection\_requests} is a vector indicating entities of a given triangulation that intersections are computed upon.
 Each entity (face or cell) is described by a vector of vertices.
-
-\begin{c++}
-// compute intersections on distributed triangulation
-auto intersection_data =
-       GridTools::internal::distributed_compute_intersection_locations(
-         cache, intersection_requests, global_bboxes, marked_vertices,
-         tolerance);
-\end{c++}
-
-\todo[inline]{Marco: It is unfortunate that we advertise a function in
-  namespace `internal' here. We should think about moving it, see \url{https://github.com/dealii/dealii/issues/15463}.}
-
-The above function uses the new function \texttt{CGALWrappers::compute\_intersection\_of\_cells()} internally to compute intersections between two geometric entities.
+Currently, the function is placed in \texttt{GridTools::internal}, but the location and arguments of the function might still change in the future.
+To compute intersections between two geometric entities, the function internally uses the new function \texttt{CGALWrappers::compute\_intersection\_of\_cells()}.
 
 For the common case of Nitsche-type mortaring, quadrature points must be distributed on the intersections to evaluate the underlying physical coupling terms.
-The \texttt{intersection\_data} returned by the function above can convert itself to data which can be used to fill \texttt{RemotePointEvaluation}.
+The data structure returned by \texttt{distributed\_compute\_intersection\_locations()} can convert itself to a data structure that can be used to fill \texttt{RemotePointEvaluation}.
+This conversion is triggered by the member function~\texttt{convert\_to\_distributed\_compute\_point\_locations\_internal()}, given the number of quadrature points per intersection.
 The whole procedure is done communication-free.
-\begin{c++}
-// distribute n_points_1D quadrature points to the intersections
-auto point_data = intersection_data.template
-       convert_to_distributed_compute_point_locations_internal<dim>(
-         n_points_1D, tria, mapping,
-         // The following parameter is optional and setting it to 
-         // true requires additional communication
-         consistent_numbering_of_sender_and_receiver);
-
-// use point_data to reinit RemotePointEvaluation
-Utilities::MPI::RemotePointEvaluation<dim> rpe;
-rpe.reinit(point_data,tria, mapping);
-\end{c++}
 
 This functionality is useful since \texttt{RemotePointEvaluation} can now be used to access quantities at quadrature points on intersections without further ado.
 To reduce the user's effort, we plan to add a wrapper that takes care of the described procedure and provides interfaces like \texttt{FEEvaluation} to access quantities easily, e.g., in a matrix-free loop.
 
-The interface described above and an early version of the wrapper have
+The procedure described above and an early version of the wrapper have
 been used successfully in~\cite{heinz2023high} to perform Nitsche-type
 mortaring in the context of the conservative formulation of acoustic
 equations discretized with a discontinuous Galerkin method to suppress
