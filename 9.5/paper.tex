@@ -500,7 +500,15 @@ the three external solvers with a unified interface. The user can either let
 \dealii{} decide which of the packages to use (depending on the current availability of
 the external packages) or specify it manually.
 
-Here is a complete example of an MPI parallel Newton solver that automatically chooses one of the available packages:
+Here is a complete example of an MPI parallel Newton solver that
+automatically chooses one of the available packages:
+\todo[inline]{The NOX example was nicely indented. Can we do the same
+  here? Perhaps if we call the variable \texttt{nl\_solver}?}
+\todo[inline]{But separately: Does the code snippet really provide any
+  additional value? It is for all practical purposes identical to the
+  NOX one, and the NOX one is already identical to the SNES one. Do we
+need to repeat things a third time, or could one just use one or two
+sentences to express the same?}
 \begin{c++}
     using NLSolver = NonlinearSolverSelector<LA::MPI::Vector>;
 
