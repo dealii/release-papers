@@ -2,7 +2,7 @@ Copy and paste the following markdown list into a deal.II Issue:
 
 ## Pre-Release testing, QA and final code changes:
 
-The following is a list of ouststanding QA tests that should be checked before proceeding with a release. In order to avoid duplicated efforts, add your a tag `@name` with your name after `assigned:` and link corresponding pull requests after `pr:`. finally, tick of the box when the task is done.
+The following is a list of ouststanding QA tests that should be checked before proceeding with a release. In order to avoid duplicated efforts, add your a tag `@name` with your name after `assigned:` and link corresponding pull requests after `pr:`. Finally, tick of the box when the task is done.
 
  - [ ] <b>Update regression tester</b> (assigned:, pr: &mdash;)
    Check and (if necessary) update testing infrastructure so that at least one configuration runs with the latest versions of external dependencies and compilers.
@@ -104,7 +104,7 @@ The following steps have to be done by a single developer (with admin privileges
 
 ## Post-Branching tasks and cleanup:
 
-The following is a list of ouststanding tasks that have to happen on the release branch before we can tag a release (candidate). In order to avoid duplicated efforts, add your a tag `@name` with your name after `assigned:` and link corresponding pull requests after `pr:`. finally, tick of the box when the task is done.
+The following is a list of ouststanding tasks that have to happen on the release branch before we can tag a release (candidate). In order to avoid duplicated efforts, add your a tag `@name` with your name after `assigned:` and link corresponding pull requests after `pr:`. Finally, tick of the box when the task is done.
 
  - [ ] <b>Update `AUTHORS.md` and `LICENSE.md`</b> (assigned:, pr:)
    * Create an `AUTHORS.md` file in the top-level directory of the branch that contains a text-only copy of the authors.html file from the website. You can start from lynx -dump -nolist https://www.dealii.org/authors.html >AUTHORS and format it like this: https://github.com/dealii/dealii/blob/dealii-9.0/AUTHORS
@@ -204,25 +204,25 @@ The following steps have to be done by a single developer (with admin privileges
 
 ## Post (Pre-)release steps:
 
-The following is a list of ouststanding tasks that have to happen after we tagged a release (candidate). In order to avoid duplicated efforts, add your a tag `@name` with your name after `assigned:` and link corresponding pull requests after `pr:`. finally, tick of the box when the task is done.
+The following is a list of ouststanding tasks that have to happen after we tagged a release (candidate). In order to avoid duplicated efforts, add your a tag `@name` with your name after `assigned:`. Finally, tick of the box when the task is done.
 
- - [ ] <b>Generate the documentation on the webserver</b>
- - [ ] <b>Adjust `header.include` on the homepage</b>
+ - [ ] <b>Generate the documentation on the webserver</b> (assigned:)
+ - [ ] <b>Adjust `header.include` on the homepage</b> (assigned:)
    Change links to the documentation of the most recent version; change the link to the changes_after_X_Y_Z.html file.
- - [ ] <b>Adjust `news.html` on the homepage</b>
+ - [ ] <b>Adjust `news.html` on the homepage</b> (assigned:)
    * add a new entry for the release using the link to the copied changes.h file from above
    * also rotate the news entry in the short news blurbb on the fron page in `index.html`
- - [ ] <b>Generate MAC bundles and attach to current (pre-)release</b>
- - [ ] <b>Update deal.II package in Spack</b>
- - [ ] <b>Update deal.II package in Candi</b>
- - [ ] <b>Update deal.II package in Gentoo</b>
- - [ ] <b>Update deal.II package in Ubuntu/Debian and generate PPA for Ubuntu LTS</b>
- - [ ] <b>Update deal.II package in Archlinux AUR</b>
- - [ ] <b>Update deal.II Virtualbox Images</b>
- - [ ] <b>Release announcements</b>
+ - [ ] <b>Generate MAC bundles and attach to current (pre-)release</b> (assigned:)
+ - [ ] <b>Update deal.II package in Spack</b> (assigned:)
+ - [ ] <b>Update deal.II package in Candi</b> (assigned:)
+ - [ ] <b>Update deal.II package in Gentoo</b> (assigned:)
+ - [ ] <b>Update deal.II package in Ubuntu/Debian and generate PPA for Ubuntu LTS</b> (assigned:)
+ - [ ] <b>Update deal.II package in Archlinux AUR</b> (assigned:)
+ - [ ] <b>Update deal.II Virtualbox Images</b> (assigned:)
+ - [ ] <b>Release announcements</b> (assigned: &mdash;)
    * [ ] on the user mailing list
    * [ ] on social media (facebook, twitter)
    * [ ] send a news item to NADigest
- - [ ] <b>Update wikipedia pages</b>
+ - [ ] <b>Update wikipedia pages</b> (assigned:)
    * https://en.wikipedia.org/wiki/Deal.II
    * https://en.wikipedia.org/wiki/List_of_finite_element_software_packages
