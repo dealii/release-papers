@@ -97,7 +97,7 @@ The following steps have to be done by a single developer (with admin privileges
      ```git checkout master```
      ```git checkout -b update_version```
    * Update the `VERSION` file from `9.5.0-pre` to `9.6.0-pre`.
-     ```echo 9.6.0-rc0 > VERSION```
+     ```echo 9.6.0-pre > VERSION```
      <b>Note:</b> Conservatively only increment the minor version even if the plan is to later release a major update &mdash; it is always possible to convert 9.4 into 10.0 later, but one can't easily back down any more.
    * ```git commit -a -m "Update VERSION"```
    * Make a pull request against main branch (`master`).
