@@ -318,15 +318,12 @@ time, then the library will fall back on a copy of \kokkos stored in
 the \texttt{bundled/} directory in the same way as we already
 interface with \boost.
 
-In the current release, \texttt{LinearAlgebra::distributed::Vector} and the \texttt{CUDAWrappers::MatrixFree} framework are using \kokkos. This allows them to work on
-all the architectures supported by \kokkos. The \kokkos backend used by \dealii is
-\texttt{Kokkos::DefaultExecutionSpace} which is the highest available in the hierarchy
-device, host-parallel, and host-serial.
-
-\todo[inline]{Are you saying that all three of these are used? If so,
-  maybe replace ``backend'' by ``backends''?}
-
-\todo[inline]{Would it be useful to add a paragraph about future plans?}
+In the current release, \texttt{LinearAlgebra::distributed::Vector} and the 
+\texttt{CUDAWrappers::MatrixFree} framework are using \kokkos. This allows them 
+to work on all the architectures supported by \kokkos. The \kokkos backend used 
+by \dealii is \texttt{Kokkos::DefaultExecutionSpace} which corresponds to the 
+highest available backend in the hierarchy device, host-parallel, and host-serial 
+at the time Kokkos was configured.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Updates and additions to the \petsc wrappers}\label{sec:petsc}
