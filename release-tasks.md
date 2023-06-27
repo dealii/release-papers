@@ -2,7 +2,7 @@ Copy and paste the following markdown list into a deal.II Issue:
 
 ## Pre-Release testing, QA and final code changes:
 
-The following is a list of ouststanding QA tests that should be checked before proceeding with a release. In order to duplicated efforts, add your a tag `@name` with your name after `assigned:` and link corresponding pull requests after `pr:`. finally, tick of the box when the task is done.
+The following is a list of ouststanding QA tests that should be checked before proceeding with a release. In order to avoid duplicated efforts, add your a tag `@name` with your name after `assigned:` and link corresponding pull requests after `pr:`. finally, tick of the box when the task is done.
 
  - [ ] <b>Update regression tester</b> (assigned:, pr: &mdash;)
    Check and (if necessary) update testing infrastructure so that at least one configuration runs with the latest versions of external dependencies and compilers.
@@ -77,7 +77,7 @@ The following is a list of ouststanding QA tests that should be checked before p
 
 ## Branching off the release branch:
 
-The following steps have to be done by a single developer (with admin privileges on the https://github.com/dealii/dealii repository)
+The following steps have to be done by a single developer (with admin privileges on the [repository](https://github.com/dealii/dealii))
 
  - [ ] <b>Create and push a release branch</b>
    * Verify that the local `master` branch is up to date and create local branch:
@@ -86,7 +86,7 @@ The following steps have to be done by a single developer (with admin privileges
      ```git checkout -b dealii-9.5``` (<b>Note:</b> exactly `dealii-9.5` to remain consistent!)
    * Update `VERSION` file from `9.5.0-pre` to `9.5.0-rc0`:
      ```echo 9.5.0-rc0 > VERSION```
-     <b>Note:</b> Please do not use `9.5.0`, or `9.5.0-rc1`, directly because the soname is derived from the current version number. Therefore, 9.5.0 chould only be used for the final, tagged and distributed code.
+     <b>Note:</b> Please do not use `9.5.0`, or `9.5.0-rc1`, directly because the soname is derived from the current version number. Therefore, 9.5.0 should only be used for the final, tagged and distributed code.
      ```git commit -a -m "update VERSION"```
      <b>Note:</b> This commit is done without a pull request! We use the `update VERSION` commits to tag releases and release candidates and therefore should be plain commits on the release branch.
    * Push the branch to github (assuming `origin` points to github):
@@ -104,7 +104,7 @@ The following steps have to be done by a single developer (with admin privileges
 
 ## Post-Branching tasks and cleanup:
 
-The following is a list of ouststanding tasks that have to happen on the release branch before we can tag a release (candidate). In order to duplicated efforts, add your a tag `@name` with your name after `assigned:` and link corresponding pull requests after `pr:`. finally, tick of the box when the task is done.
+The following is a list of ouststanding tasks that have to happen on the release branch before we can tag a release (candidate). In order to avoid duplicated efforts, add your a tag `@name` with your name after `assigned:` and link corresponding pull requests after `pr:`. finally, tick of the box when the task is done.
 
  - [ ] <b>Update `AUTHORS.md` and `LICENSE.md`</b> (assigned:, pr:)
    * Create an `AUTHORS.md` file in the top-level directory of the branch that contains a text-only copy of the authors.html file from the website. You can start from lynx -dump -nolist https://www.dealii.org/authors.html >AUTHORS and format it like this: https://github.com/dealii/dealii/blob/dealii-9.0/AUTHORS
@@ -140,3 +140,89 @@ The following is a list of ouststanding tasks that have to happen on the release
      ```make documentation```
      ```cd <install>/doc```
      ```for i in `find . | egrep '\.html$'` ; do perl <source>/doc/doxygen/scripts/validate-xrefs.pl $i ; done```
+
+
+## Create a release:
+
+The following steps have to be done by a single developer (with admin privileges on the [repository](https://github.com/dealii/dealii))
+
+ - [ ] <b>Push the button</b>
+   * Update `VERSION` file from `9.5.0-rc0` to `9.5.0-rc1` (or `9.5.0` for the final release):
+     ```echo 9.5.0-rc1 > VERSION```
+     ```git commit -a -m "update VERSION for release"```
+     <b>Note:</b> This commit is done without a pull request! We use the `update VERSION` commits to tag releases and release candidates and therefore should be plain commits on the release branch.
+   * Create a signed tag for the commit:
+     ```git tag -s -m "deal.II Pre-Release Version 9.5.0-rc1" v9.5.0-rc1```
+     or alternatively for a release:
+     ```git tag -s -m "deal.II Version 9.5.0" v9.5.0```
+     You need a working gnupg key for this. (You should have anyway :-P)
+   * Push the changes to github (assuming `origin` points to github):
+     ```git push origin dealii-9.5 v9.5.0-rc1```
+ - [ ] <b>Create and sign tar archive</b>
+   * Github automatically generates a source tarball from the current repository state, see https://github.com/dealii/dealii/releases
+   * Download the source tarball from github, verify that its contents is what we expect, e.g., by doing the following in a clean repository:
+     ```git checkout v9.5.0-rc1```
+     ```tar --strip-components=1 -xvf dealii-9.5.0-rc1.tar.gz```
+     ```git status```
+     Now, the last git status will only record some deleted files but must not show any modified file contents!
+   * Sign it:
+     ```gpg --detach-sign --armor dealii-9.5.0-rc1.tar.gz```
+ - [ ] <b>Create and sign documentation tar archive</b>
+   * Check out the code-gallery at the correct path
+   * Install MathJax locally and export the path, for example on Debian/Gentoo:
+     ```export MATHJAX_ROOT="/usr/share/mathjax"```
+   * Generate and install the documentation from a clean working directory containing the tagged release and configure with:
+     ```cmake -DDOCUMENTATION=ON -DDEAL_II_DOXYGEN_USE_MATHJAX=ON -DDEAL_II_DOXYGEN_USE_ONLINE_MATHJAX=OFF \```
+     ```      -DDEAL_II_COMPILE_EXAMPLES=OFF -DCMAKE_INSTALL_PREFIX=<install>```
+     ```make documentation```
+     ```make examples```
+   * Download images:
+     ```<install>/doc/doxygen/deal.II```
+     ```<source dir>/contrib/utilities/make_offline_doc.sh```
+   * (In the same directory) copy mathjax and fix includes:
+     ```cp -r "$MATHJAX_ROOT" mathjax```
+     ```sed -i -e "s#$MATHJAX_ROOT#mathjax#" **/*.html```
+   * Grep the documentation for "full path leaks", for example grep for your user name and the git repository location and fix up all remaining locations (in particular deal.tag)
+   * Create `dealii-9.5.0-rc1-offline_documentation.tar.gz`:
+     ```cd <install>```
+     ```tar --numeric-owner --owner=0 --group=0 -cvf dealii-9.5.0-rc1-offline_documentation.tar doc examples```
+     ```gzip dealii-9.2.0-offline_documentation.tar```
+   * And sign it:
+     ```gpg --detach-sign --armor dealii-9.5.0-rc1-offline_documentation.tar.gz```
+ - [ ] <b>Create a (pre-)release on github</b>
+   * Got to https://github.com/dealii/dealii/tags and select the just uploaded v9.5.0-rc1 tag and click on "add release notes". Use the following information:
+     ```Tag: v9.0.0-rc1 existing tag```
+     ```Release title: deal.II pre-release version 9.0.0-rc1```
+     ```Description: ""```
+     <b>Note:</b> For a release use:
+     ```Tag: dealii-9.5.0 existing tag```
+     ```Release title: deal.II version 9.5.0```
+     ```Description: [Short version of release notes as found in announce-9.5]```
+     ```A full list of changes can be found at```
+     ```https://www.dealii.org/developer/doxygen/deal.II/changes_between_9_4_0_and_9_5_0.html```
+   * Attach `dealii-9.5.0-rc1.tar.gz` (yes, once again), `dealii-9.5.0-rc1.tar.gz.asc`, `dealii-9.5.0-rc1-offline_documentation.tar.gz`, `dealii-9.5.0-rc1-offline_documentation.tar.gz.asc`.
+
+## Post (Pre-)release steps:
+
+The following is a list of ouststanding tasks that have to happen after we tagged a release (candidate). In order to avoid duplicated efforts, add your a tag `@name` with your name after `assigned:` and link corresponding pull requests after `pr:`. finally, tick of the box when the task is done.
+
+ - [ ] <b>Generate the documentation on the webserver</b>
+ - [ ] <b>Adjust `header.include` on the homepage</b>
+   Change links to the documentation of the most recent version; change the link to the changes_after_X_Y_Z.html file.
+ - [ ] <b>Adjust `news.html` on the homepage</b>
+   * add a new entry for the release using the link to the copied changes.h file from above
+   * also rotate the news entry in the short news blurbb on the fron page in `index.html`
+ - [ ] <b>Generate MAC bundles and attach to current (pre-)release</b>
+ - [ ] <b>Update deal.II package in Spack</b>
+ - [ ] <b>Update deal.II package in Candi</b>
+ - [ ] <b>Update deal.II package in Gentoo</b>
+ - [ ] <b>Update deal.II package in Ubuntu/Debian and generate PPA for Ubuntu LTS</b>
+ - [ ] <b>Update deal.II package in Archlinux AUR</b>
+ - [ ] <b>Update deal.II Virtualbox Images</b>
+ - [ ] <b>Release announcements</b>
+   * [ ] on the user mailing list
+   * [ ] on social media (facebook, twitter)
+   * [ ] send a news item to NADigest
+ - [ ] <b>Update wikipedia pages</b>
+   * https://en.wikipedia.org/wiki/Deal.II
+   * https://en.wikipedia.org/wiki/List_of_finite_element_software_packages
