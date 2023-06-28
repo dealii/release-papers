@@ -178,7 +178,7 @@ The following steps have to be done by a single developer (with admin privileges
      ```make examples```
    * Download images:
      ```<install>/doc/doxygen/deal.II```
-     ```<source dir>/contrib/utilities/make_offline_doc.sh```
+     ```<source dir>/contrib/utilities/makeofflinedoc.sh```
    * (In the same directory) copy mathjax and fix includes:
      ```cp -r "$MATHJAX_ROOT" mathjax```
      ```sed -i -e "s#$MATHJAX_ROOT#mathjax#" **/*.html```
