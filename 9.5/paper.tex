@@ -225,7 +225,7 @@ The major changes of this release are:
     includes, in particular, the integration of \kokkos (Section~\ref{sec:kokkos});
     additions and updates to the \petsc and \trilinos
     interfaces
-    (Sections~\ref{sec:petsc} and \ref{sec:trilinos}).
+    (Sections~\ref{sec:petsc} and \ref{sec:trilinos}, respectively).
   \item Uniform handling of nonlinear solver
   packages (Section~\ref{sec:nonlinear}) and a uniform
     way of defining callbacks used by external libraries (Section~\ref{sec:callbacks}).
@@ -319,7 +319,7 @@ the \texttt{bundled/} directory in the same way as we already
 interface with \boost.
 
 In the current release, \texttt{LinearAlgebra::distributed::Vector} and the 
-\texttt{CUDAWrappers::MatrixFree} framework are using \kokkos. This allows them 
+\texttt{CUDAWrappers::Matrix\allowbreak{}Free} framework are using \kokkos. This allows them 
 to work on all the architectures supported by \kokkos. The \kokkos backend used 
 by \dealii is \texttt{Kokkos::DefaultExecutionSpace} which corresponds to the 
 highest available backend in the hierarchy device, host-parallel, and host-serial 
@@ -342,8 +342,8 @@ The \texttt{BlockVector} and
 \texttt{BlockSparseMatrix} classes now internally use
 \petsc nested objects, i.e. \texttt{VECNEST} and  \texttt{MATNEST} respectively.
 We have added a new class \texttt{PETScWrappers::PreconditionShell} to support user-defined
-preconditioning that can be as simply customized as the following code
-snippet:
+preconditioning that can be simply customized as the following code
+snippet shows:
 \begin{c++}
 PETScWrappers::PreconditionShell preconditioner(/*...*/);
 
@@ -357,17 +357,17 @@ See \ref{sec:callbacks} for additional information on such kind of callbacks.
 The \petsc~\snes sub-package solves systems of nonlinear equations of the form $F(x) = 0$.
 The interface to \snes has been modeled on the already existing interface
 to the \kinsol solver from the \sundials package, and the nonlinear problem
-is specified with a set of callbacks that are used by the solver:
-\begin{c++}
-PETScWrappers::NonlinearSolver<VectorType> solver(/*...*/);
-
-solver.residual            = [&](const VectorType &x,
-                                 VectorType       &F) {/*...*/};
-solver.setup_jacobian      = [&](const VectorType &x) {/*...*/};
-solver.solve_with_jacobian = [&](const VectorType &rhs,
-                                 VectorType       &sol) {/*...*/};
-solver.solve(x);
-\end{c++}
+is specified with a set of callbacks that are used by the solver.
+%\begin{c++}
+%PETScWrappers::NonlinearSolver<VectorType> solver(/*...*/);
+%
+%solver.residual            = [&](const VectorType &x,
+%                                 VectorType       &F) {/*...*/};
+%solver.setup_jacobian      = [&](const VectorType &x) {/*...*/};
+%solver.solve_with_jacobian = [&](const VectorType &rhs,
+%                                 VectorType       &sol) {/*...*/};
+%solver.solve(x);
+%\end{c++}
 The default configuration is set up to use a Jacobian-free Newton-Krylov (JFNK)
 approach~\cite{knoll2004jacobian}, using \texttt{solve\_with\_jacobian} as linear solver.
 Numerous other solver configurations are possible and can be selected
@@ -455,25 +455,26 @@ Secondly, we have added a wrapper to \texttt{NOX}, a
 nonlinear solver library that is similar to both the \kinsol{} solver from
 the \sundials{} package to which we already had interfaces, and also
 to the \snes{} collections of functions from \petsc (see also
-Section~\ref{sec:petsc}). The interfaces to these three solvers are
-essentially the same and require setting function objects for
-computing the residual of the nonlinear problem, along with setting
-up, applying, and solving with the Jacobian matrix:
-\begin{c++}
-TrilinosWrappers::NOXSolver<VectorType> solver(/*...*/);
-
-solver.residual            = [ ](const VectorType &src,
-                                 VectorType       &dst) {/*...*/};
-solver.setup_jacobian      = [&](const VectorType &src) {/*...*/};
-solver.apply_jacobian      = [&](const VectorType &src,
-                                 VectorType       &dst) {/*...*/};
-solver.solve_with_jacobian = [&](const VectorType &src,
-                                 VectorType       &dst,
-                                 const double      tol) {/*...*/};
-
-solver.solve(solution);
-\end{c++}
-
+Section~\ref{sec:petsc}). 
+%The interfaces to these three solvers are
+%essentially the same and require setting function objects for
+%computing the residual of the nonlinear problem, along with setting
+%up, applying, and solving with the Jacobian matrix:
+%\begin{c++}
+%TrilinosWrappers::NOXSolver<VectorType> solver(/*...*/);
+%
+%solver.residual            = [ ](const VectorType &src,
+%                                 VectorType       &dst) {/*...*/};
+%solver.setup_jacobian      = [&](const VectorType &src) {/*...*/};
+%solver.apply_jacobian      = [&](const VectorType &src,
+%                                 VectorType       &dst) {/*...*/};
+%solver.solve_with_jacobian = [&](const VectorType &src,
+%                                 VectorType       &dst,
+%                                 const double      tol) {/*...*/};
+%
+%solver.solve(solution);
+%\end{c++}
+%
 We refer interested readers to our documentation for other more advanced
 functions of this wrapper which are related to the differences in features of these libraries.
 In particular, we have added the possibility to reuse the preconditioner between
@@ -489,7 +490,7 @@ unfortunately natively only  supported in the official \texttt{EPetra} implement
 With the current release, \dealii{} now supports solvers for nonlinear problems
 provided by several different external packages:
 (i) \kinsol{} (part of \sundials{}); (ii) \snes{} (part of \petsc{}, see Section~\ref{sec:petsc}); and (iii) \texttt{NOX} (part of \trilinos{}, see Section~\ref{sec:trilinos}).
-The wrappers are provided by the classes \texttt{PETScWrappers::NonlinearSolver<VectorType>}, \texttt{SUNDIALS::KINSOL<VectorType>}, and \texttt{TrilinosWrappers::NOXSolver<VectorType>}, respectively.
+The wrappers are provided by the classes \texttt{PETScWrappers::NonlinearSolver\allowbreak{}<VectorType>}, \texttt{SUNDIALS::KINSOL<VectorType>}, and \texttt{TrilinosWrappers::NOXSolver<Vector\allowbreak{}Type>}, respectively.
 
 All three of these classes have a very similar interface, except that they vary in the kind of
 algorithms and parameters offered. The new class \texttt{NonlinearSolverSelector<VectorType>} provides a wrapper on top of
@@ -497,36 +498,33 @@ the three external solvers with a unified interface. The user can either let
 \dealii{} decide which of the packages to use (depending on the current availability of
 the external packages) or specify it manually.
 
-Here is a complete example of an MPI parallel Newton solver that
-automatically chooses one of the available packages:
-\todo[inline]{The NOX example was nicely indented. Can we do the same
-  here? Perhaps if we call the variable \texttt{nl\_solver}?}
-\todo[inline]{But separately: Does the code snippet really provide any
-  additional value? It is for all practical purposes identical to the
-  NOX one, and the NOX one is already identical to the SNES one. Do we
-need to repeat things a third time, or could one just use one or two
-sentences to express the same?}
+The following code snippet shows a complete example using the new class for applying a Newton solver
+by automatically choosing one of the available packages:
 \begin{c++}
-    using NLSolver = NonlinearSolverSelector<LA::MPI::Vector>;
+using NLS = NonlinearSolverSelector<VectorType>;
 
-    NLSolver::AdditionalData additional_data(NLSolver::automatic,
-                                             NLSolver::newton);
-    NLSolver nonlinear_solver(additional_data, mpi_communicator);
+NLS::AdditionalData additional_data(
+  NLS::automatic, // other options: kinsol, nox, petsc_snes 
+  NLS::newton);
+  
+NLS nonlinear_solver(additional_data, mpi_communicator);
 
-    nonlinear_solver.reinit_vector = [&](LA::MPI::Vector &x)
-                                     {/*...*/};
-    nonlinear_solver.residual = [&](const LA::MPI::Vector &evaluation_point,
-                                    LA::MPI::Vector &      residual)
-                                {/*...*/};
-    nonlinear_solver.setup_jacobian = [&](const LA::MPI::Vector &current_u)
-                                      {/*...*/};
-    nonlinear_solver.solve_with_jacobian = [&](const LA::MPI::Vector &rhs,
-                                               LA::MPI::Vector &      dst,
-                                               const double tolerance)
-                                           {/*...*/};
+solver.reinit_vector       = [ ](VectorType &x) {/*...*/};    
+solver.residual            = [ ](const VectorType &src,
+                                 VectorType       &dst) {/*...*/};
+solver.setup_jacobian      = [&](const VectorType &src) {/*...*/};
+solver.apply_jacobian      = [&](const VectorType &src,
+                                 VectorType       &dst) {/*...*/};
+solver.solve_with_jacobian = [&](const VectorType &src,
+                                 VectorType       &dst,
+                                 const double      tol) {/*...*/};
 
-    nonlinear_solver.solve(current_solution);
+solver.solve(current_solution);    
 \end{c++}
+
+Not that while the selector class provides a unified interface and therefore allows to
+easily switch between backends, there are cases when users need to use the underlying
+wrapper classes, if, e.g., the functionality is only provided by one implementation.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Uniform error reporting in callbacks}\label{sec:callbacks}
@@ -710,7 +708,7 @@ presented in Figure~\ref{fig:nonnested}.
     \centering
     \includegraphics[width=\textwidth]{png/mesh_2.png}
   \end{subfigure}
-  \caption{\it Example of non-nested multigrid levels.}\label{fig:nonnested}
+  \caption{\it Example of non-nested multigrid levels.\todo[inline]{Make gap uniform!}}\label{fig:nonnested}
 \end{figure}
 
 The current implementation extends the existing global-coarsening infrastructure by
@@ -720,33 +718,29 @@ introducing, in addition to the (conformal) \texttt{MGTwoLevelTransfer},
 MGTwoLevelTransferNonNested two_level_transfer(/*...*/);
 
 two_level_transfer.reinit(dof_handler_fine, dof_handler_coarse,
-                          // the following parameters are optional
                           mapping_fine, mapping_coarse,
                           constraints_fine, constraints_coarse)
 \end{c++}
 The resulting object can be passed to \texttt{MGTransferGlobalCoarsening} (and
-\texttt{MGTransferBlockGlobalCoarsening}) in the usual way. The
+\texttt{MGTransferBlockGlobal\allowbreak{}Coarsening}) in the usual way. The
 interface of the new class is purposefully similar to
-\texttt{MGTwoLevelTransfer},
+\texttt{MGTwoLevel\allowbreak{}Transfer},
 with the difference that the former (i) also
 takes \texttt{Mapping} instances, and (ii) is not limited to the case
 that the coarser of the two \texttt{DoFHandler} instances can be generated by a coarsening step from the fine
 mesh.
 
-At the time of writing, the \texttt{MGTwoLevelTransferNonNested} operator provides a prolongation operator $\mathcal{P}^{(f,c)}$
-that prolongates a vector $x^{(c)}$ from the coarse space to the fine space:
-\begin{align*}
-x^{(f)} = \mathcal{P}^{(f, c)}  x^{(c)},
-\end{align*}
+At the time of writing, the \texttt{MGTwoLevelTransferNonNested} operator provides a prolongation operator
+that prolongates a vector from the coarse space to the fine space,
 by a pointwise interpolation (injection) from the coarse mesh to the support points of the fine mesh. This is done
 by looping over all coarse cells and interpolating to all (fine support) points that fall into the cell with
-\texttt{FEPointEvaluation}. The local result is scattered into $x^{(f)}$, which is finalized by a
+\texttt{FEPointEvaluation}. The local result is scattered into the fine vector, which is finalized by a
 communication and a weighting step that is necessary as multiple elements could add to the same global entry.
 
 
-The current implementation works for scalar and vectorial, continuous (\texttt{FE\_Q})
+The current implementation works for scalar, continuous (\texttt{FE\_Q})
 and discontinuous (\texttt{FE\_DGQ}) elements on hypercube-shaped cells. We plan to support
-simplex elements and to add support
+vectorial and simplex elements and to add support
 for projection, in addition to the pointwise interpolation outlined
 above. Furthermore, we envision providing utility tools to generate
 coarser
@@ -913,7 +907,7 @@ library contains some 300 of these \texttt{requires} clauses.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Build-system modernization}\label{sec:buildsystem}
 
-\todo[inline]{Matthias: Write}
+\todo[inline]{Matthias: Write?}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -961,12 +955,12 @@ may have been more widely used:
   \item
   The class \texttt{hp::DoFHandler} has been removed. The
   \texttt{DoFHandler} class now implements all $hp$-related
-  functionality, as it has for the past several releases.
+  functionality, as it has for the past two releases.
 
   \item
   We improved the type safety for active and future FE indices in the \texttt{DoFHandler} implementation by introducing a new data type \texttt{types::fe\textunderscore{}index}. Corresponding functions like \texttt{DoFCellAccessor::active\textunderscore{}fe\textunderscore{}index()} and \texttt{DoFHandler::get\textunderscore{}active\textunderscore{}fe\textunderscore{}indices()} have changed their interface.
 
-  \item
+%  \item
   This rework also affects the serialization process of active FE
   indices. You will need to recreate your serialized data \textit{if
     and only if} you work in $hp$-mode, but can continue to use
@@ -974,13 +968,9 @@ may have been more widely used:
   \texttt{parallel::distributed::Triangulation} when used with non-$hp$ data, it is sufficient to increase the version in the metadata file from ``4'' to ``5''.
 
 \item Several old interfaces to \texttt{MatrixFree} have been removed, e.g.,
-  initialization functions without \texttt{Mapping} argument, the query
-  to the number of cell batches, \texttt{DoFHandler} objects. In
+  initialization functions without \texttt{Mapping} argument and the query
+  to the number of cell batches. In
   each case, new interfaces are available.
-\todo[inline]{The sentence part ``e.g., initialization
-  functions...objects'' does not sound grammatically correct. Should
-  it have been ``and the functions querying \texttt{DoFHandler}
-  objects''? Please fix and remove this box.}
 \end{itemize}
 
 
