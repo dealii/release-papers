@@ -867,10 +867,10 @@ template arguments need to satisfy. This aids in situations such as
 with the
 following function:
 \begin{c++}
-  template <class MeshType>
-  std::vector<typename MeshType::active_cell_iterator>
-  find_cells_adjacent_to_vertex(const MeshType &   mesh,
-                                const unsigned int vertex);
+template <class MeshType>
+std::vector<typename MeshType::active_cell_iterator>
+find_cells_adjacent_to_vertex(const MeshType &   mesh,
+                              const unsigned int vertex);
 \end{c++}
 This function is intended to be called with either a
 \texttt{Triangulation} or \texttt{DoFHandler} object as first
@@ -885,11 +885,11 @@ the linker reports an undefined symbol.
 We have started to address this by annotating functions using
 C++20-style ``\texttt{requires}'' clauses:
 \begin{c++}
-  template <class MeshType>
-    requires (concepts::is_triangulation_or_dof_handler<MeshType>)
-  std::vector<typename MeshType::active_cell_iterator>
-  find_cells_adjacent_to_vertex(const MeshType &   mesh,
-                                const unsigned int vertex)
+template <class MeshType>
+  requires (concepts::is_triangulation_or_dof_handler<MeshType>)
+std::vector<typename MeshType::active_cell_iterator>
+find_cells_adjacent_to_vertex(const MeshType &   mesh,
+                              const unsigned int vertex)
 \end{c++}
 If the compiler supports C++20, then the added clause will cause the
 compiler to reject any call to the function for which the first
