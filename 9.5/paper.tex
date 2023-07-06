@@ -296,6 +296,37 @@ overhauling and extending these interfaces for the current release, as
 detailed in the following sub-sections.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Integration of \kokkos}\label{sec:kokkos}
+
+\kokkos \cite{trott2022} is a C++ library that enables the creation of
+performance portable applications for all major high-performance computing
+platforms. It implements a programming model that allows developers to write
+code that can efficiently run on diverse architectures. \kokkos provides
+abstractions for both parallel execution of code and data management. It
+supports a wide range of backend programming models, including CUDA, HIP, SYCL,
+HPX, OpenMP, and C++ threads, and continues to evolve with the development of
+new hardware and corresponding backend options.
+
+\dealii{} has, for several releases already, used CUDA to offload some
+operations onto GPUs. It has also had interfaces to CUDA-based linear
+algebra libraries. Yet, the diversification of GPU platforms away from
+a single vendor (Nvidia) has made it clear that we need a different
+strategy to support what users want. As a consequence, \kokkos has
+become a mandatory dependency of \dealii{} as part of the current
+release; if it is not found on a given system during configuration
+time, then the library will fall back on a copy of \kokkos stored in
+the \texttt{bundled/} directory in the same way as we already
+interface with \boost.
+
+In the current release, \texttt{LinearAlgebra::distributed::Vector} and the 
+\texttt{CUDAWrappers::Matrix\allowbreak{}Free} framework are using \kokkos. This allows them 
+to work on all the architectures supported by \kokkos. The \kokkos backend used 
+by \dealii is \texttt{Kokkos::DefaultExecutionSpace} which corresponds to the 
+highest available backend in the hierarchy device, host-parallel, and host-serial 
+at the time Kokkos was configured.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Uniform interface for nonlinear solvers}\label{sec:nonlinear}
 
 With the current release, \dealii{} now supports solvers for nonlinear problems
@@ -320,8 +351,8 @@ NLS::AdditionalData additional_data(
   
 NLS nonlinear_solver(additional_data, mpi_communicator);
 
-solver.reinit_vector       = [ ](VectorType &x) {/*...*/};    
-solver.residual            = [ ](const VectorType &src,
+solver.reinit_vector       = [&](VectorType &x) {/*...*/};    
+solver.residual            = [&](const VectorType &src,
                                  VectorType       &dst) {/*...*/};
 solver.setup_jacobian      = [&](const VectorType &src) {/*...*/};
 solver.apply_jacobian      = [&](const VectorType &src,
@@ -339,35 +370,6 @@ wrapper classes, if, e.g., the functionality is only provided by one implementat
 Details of each of the implementations are discussed in subsequent sections.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Integration of \kokkos}\label{sec:kokkos}
-
-\kokkos \cite{trott2022} is a C++ library that enables the creation of
-performance portable applications for all major high-performance computing
-platforms. It implements a programming model that allows developers to write
-code that can efficiently run on diverse architectures. \kokkos provides
-abstractions for both parallel execution of code and data management. It
-supports a wide range of backend programming models, including CUDA, HIP, SYCL,
-HPX, OpenMP, and C++ threads, and continues to evolve with the development of
-new hardware and corresponding backend options.
-
-\dealii{} has, for several releases already, used CUDA to offload some
-operations onto GPUs. It has also had interfaces to CUDA-based linear
-algebra libraries. Yet, the diversification of GPU platforms away from
-a single vendor (Nvidia) has made it clear that we need a different
-strategy to support what users want. As a consequence, \kokkos has
-become a mandatory dependency of \dealii{} as part of the current
-release; if it is not found on a given system during configuration
-time, then the library will fall back on a copy of \kokkos stored in
-the \texttt{bundled} directory in the same way as we already
-interface with \boost.
-
-In the current release, \texttt{LinearAlgebra::distributed::Vector} and the 
-\texttt{CUDAWrappers::Matrix\allowbreak{}Free} framework are using \kokkos. This allows them 
-to work on all the architectures supported by \kokkos. The \kokkos backend used 
-by \dealii is \texttt{Kokkos::DefaultExecutionSpace} which corresponds to the 
-highest available backend in the hierarchy device, host-parallel, and host-serial 
-at the time Kokkos was configured.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Updates and additions to the \petsc wrappers}\label{sec:petsc}
@@ -390,7 +392,6 @@ preconditioning that can be simply customized as the following code
 snippet shows:
 \begin{c++}
 PETScWrappers::PreconditionShell preconditioner(/*...*/);
-
 preconditioner.vmult = [&](const VectorType &src,
                            VectorType       &dst) {/*...*/};
 
@@ -399,9 +400,9 @@ The resulting object can be passed to \petsc and used within the nonlinear solve
 See Section~\ref{sec:callbacks} for additional information on such kind of callbacks.
 
 The \petsc~\snes sub-package solves systems of nonlinear equations of the form $F(x) = 0$.
-The interface to \snes has been modeled on the already existing interface
-to the \kinsol solver from the \sundials package, and the nonlinear problem
-is specified with a set of callbacks that are used by the solver.
+The interface to \snes in the class \texttt{PETScWrappers::NonlinearSolver} has been modeled on the already existing interface
+to the \kinsol solver from the \sundials package: the nonlinear problem
+is specified via a set of callbacks as shown above in Section~\ref{sec:nonlinear}.
 %\begin{c++}
 %PETScWrappers::NonlinearSolver<VectorType> solver(/*...*/);
 %
@@ -427,7 +428,7 @@ The \petsc~\ts sub-package solves ODEs in explicit or implicit form \cite{abhyan
 %\frac{\partial u}{\partial t} = G(t,u) &\text{explicit},\\
 %F(t,u,\frac{\partial u}{\partial t}) = 0 &\text{implicit}\\
 \dot{u} = G(t,u) &\text{(explicit)},\\
-F(t,u,\dot{u}) = 0 &\text{(implicit)}.\\
+F(t,u,\dot{u}) = 0 &\text{(implicit)}.
 \end{eqnarray*}
 The interface to \ts has been modeled on the already existing interfaces
 to the \ida and \arkode solvers from the \sundials package. Specifically:
@@ -519,30 +520,17 @@ Section~\ref{sec:petsc}).
 %solver.solve(solution);
 %\end{c++}
 %
-We refer interested readers to our documentation for other more advanced
-functions of this wrapper which are related to the differences in features of these libraries.
-In particular, we have added the possibility to reuse the preconditioner between
-nonlinear steps (also known as \textit{preconditioner lagging}), which is
-unfortunately natively only  supported in the official \texttt{EPetra} implementations.
+As for the \snes{} interface above, the \texttt{NOX} interface is
+drive by the callbacks shown in Section~\ref{sec:nonlinear}, and
+implemented in the \texttt{TrilinosWrappers::NOXSolver} class.
 
-\todo[inline]{I don't understand this last sentence. Can you
-  elaborate? At least in the \kinsol{} interfaces, you only update the
-  preconditioner whenever setup\_jacobian() is called.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Uniform error reporting in callbacks}\label{sec:callbacks}
 
 With the current release, \dealii{} has gained interfaces to several
 external packages that are largely driven via \textit{callbacks} --
-see for example the code example in Section~\ref{sec:trilinos} on how
-\texttt{NOX} gains information about the residual vector, how it indicates to
-user code that the Jacobian matrix needs to be rebuilt,
-and how to solve linearized systems of equations as the sub-steps of
-solving a nonlinear problem. Indeed, the interfaces to the nonlinear
-solver \kinsol{} (as part of \sundials{}) and \snes{} (as part of \petsc, see
-Section~\ref{sec:petsc} function in exactly the same way; the
-ODE solver interfaces to \arkode{} and \ida{} (also part of \sundials{}) and \ts{}
-(as part of \petsc{}) also use this style.
+see for example the code examples for nonlinear or ODE solvers in the previous sections.
 
 This substantially enlarged use of callbacks used by different backend
 libraries raises the issue that each underlying package has its own
@@ -552,7 +540,11 @@ success is indicated by a zero integer return value, whereas failure is
 indicated by a nonzero return value. On the other hand, the \sundials{}
 packages indicate success by a zero integer return value, a
 recoverable failure with a positive value, and an irrecoverable failure
-with a negative value. Neither of these conventions mesh well with C++
+with a negative value. Newer PETSc versions can deal with recoverable
+failures as well, in some cases by calling back into PETSc from a
+callback to set an error flag, in others by setting the elements of a
+returned vector to NaN.
+None of these conventions mesh well with C++
 where error codes are generally indicated via exceptions.
 It is conceivable that libraries we want to
 interface with in the future use yet other conventions.
@@ -584,13 +576,13 @@ The current release includes numerous updates to the matrix-free
 infrastructure, including:
 \begin{itemize}
 \item In release 9.3, we enabled parallel $hp$-operations in the matrix-free infrastructure.
-The infrastructure did not work properly in the case that certain cells
-did not get any degrees of freedom due to the usage of \texttt{FE\_Nothing}. This has been
+The infrastructure did not work properly for cells
+that do not have any degrees of freedom because they use \texttt{FE\_Nothing}. This has been
 fixed now. Furthermore, \texttt{FE\_Nothing} now also works together
 with discontinuous Lagrange elements (i.e., with the \texttt{FE\_DGQ} class). Due to the popularity of \texttt{FE\_Nothing} as a means to enable
 or disable cells, we have introduced the new class
 \texttt{ElementActivationAndDeactivationMatrixFree}, which wraps a \texttt{MatrixFree} object, only loops over all
-active cells and optionally interprets faces between active and deactivated cells
+active cells, and optionally interprets faces between active and deactivated cells
 as boundary faces. This functionality has enabled simulations in powder-bed-fusion additive
 manufacturing in~\cite{proell2023highly}.
 \item The matrix-free infrastructure allows interleaving cell loops with vector updates
@@ -857,7 +849,7 @@ vertex-star patch.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{C++ language modernization}\label{sec:language}
 
-\dealii{} currently uses C++14 as the language standard to which its
+This version of \dealii{} uses C++14 as the language standard to which its
 code base is written. It can also use the classes
 \texttt{std::optional} and \texttt{std::variant} if the compiler
 supports C++17, but falls back to implementations obtained via the
@@ -906,6 +898,8 @@ hundreds or thousands of locations that should be annotated with
 requirements on template arguments over time; for the moment, the
 library contains some 300 of these \texttt{requires} clauses.
 
+The next release of \dealii{} will build upon C++17.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Build-system modernization}\label{sec:buildsystem}
@@ -918,7 +912,7 @@ library contains some 300 of these \texttt{requires} clauses.
 \label{subsec:steps}
 
 While there are no new \dealii tutorial programs in this release, many
-were extensively revised: Around 145 of the more than 2100 (non-merge)
+were extensively revised: Around 145 of the more than 2200 (non-merge)
 commits that went into this release touched the tutorial, in some
 cases adding substantial amounts of text.
 
@@ -947,8 +941,7 @@ research rather than as teaching tools):
 
 The 9.5 release includes
 \href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_4_2_and_9_5_0.html}
-     {around XXX incompatible changes};
-\todo{Fix number before release}
+     {around 35 incompatible changes};
 see \cite{changes95}. Many of these
 incompatibilities change internal
 interfaces that are not usually used in external
