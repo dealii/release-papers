@@ -904,7 +904,29 @@ The next release of \dealii{} will build upon C++17.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Build-system modernization}\label{sec:buildsystem}
 
-\todo[inline]{Matthias: Write?}
+\dealii's CMake project configuration itself now exports three targets,
+\texttt{dealii::dealii\_debug}, \texttt{dealii::dealii\_release}, and
+\texttt{dealii::dealii}. Linking against one of the first two variants via
+\texttt{target\_link\_libraries()} populates the target with all necessary
+include directories and the full link interface necessary for \dealii. The
+third variant, \texttt{dealii::dealii}, automatically switches between
+debug and release interface depending on the build type set via
+\texttt{CMAKE\_BUILD\_TYPE}. The \texttt{dealii::dealii} third variant also
+populates compiler and linker options, whereas for the first two variants a
+client project has to ensure that the compiler and linker are properly set
+up. The new import targets make it now possible to configure a dependent
+project without the use of any \dealii specific macros:
+%
+\begin{anycode}
+cmake_minimum_required(VERSION 3.13.4)
+set(CMAKE_BUILD_TYPE Debug CACHE STRING "")
+project(step CXX)
+
+find_package(deal.II 9.5.0 REQUIRED)
+
+add_executable(step step.cc)
+target_link_libraries(step dealii::dealii)
+\end{anycode}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
