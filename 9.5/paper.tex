@@ -233,6 +233,7 @@ The major changes of this release are:
   \item Advances in non-matching support (see Section~\ref{sec:nonmatching}).
   \item New features related to linear algebra (see Section~\ref{sec:lac}).
   \item C++ language modernization (see Section~\ref{sec:language}).
+  \item Build-system modernization (see Section~\ref{sec:buildsystem}).
 \end{itemize}
 %
 
@@ -294,12 +295,55 @@ Section~\ref{sec:cite}. A substantial amount of work has gone into
 overhauling and extending these interfaces for the current release, as
 detailed in the following sub-sections.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Uniform interface for nonlinear solvers}\label{sec:nonlinear}
+
+With the current release, \dealii{} now supports solvers for nonlinear problems
+provided by several different external packages:
+(i) \kinsol{} (part of \sundials{}); (ii) \snes{} (part of \petsc{}, see Section~\ref{sec:petsc}); and (iii) \texttt{NOX} (part of \trilinos{}, see Section~\ref{sec:trilinos}).
+The wrappers are provided by the classes \texttt{PETScWrappers::NonlinearSolver\allowbreak{}<VectorType>}, \texttt{SUNDIALS::KINSOL<VectorType>}, and \texttt{TrilinosWrappers::NOXSolver<Vector\allowbreak{}Type>}, respectively.
+
+All three of these classes have a very similar interface, except that they vary in the kind of
+algorithms and parameters offered. The new class \texttt{NonlinearSolverSelector<VectorType>} provides a wrapper on top of
+the three external solvers with a unified interface. The user can either let
+\dealii{} decide which of the packages to use (depending on the current availability of
+the external packages) or specify it manually.
+
+The following code snippet shows a complete example using the new class for applying a Newton solver
+by automatically choosing one of the available packages:
+\begin{c++}
+using NLS = NonlinearSolverSelector<VectorType>;
+
+NLS::AdditionalData additional_data(
+  NLS::automatic, // other options: kinsol, nox, petsc_snes 
+  NLS::newton);
+  
+NLS nonlinear_solver(additional_data, mpi_communicator);
+
+solver.reinit_vector       = [ ](VectorType &x) {/*...*/};    
+solver.residual            = [ ](const VectorType &src,
+                                 VectorType       &dst) {/*...*/};
+solver.setup_jacobian      = [&](const VectorType &src) {/*...*/};
+solver.apply_jacobian      = [&](const VectorType &src,
+                                 VectorType       &dst) {/*...*/};
+solver.solve_with_jacobian = [&](const VectorType &src,
+                                 VectorType       &dst,
+                                 const double      tol) {/*...*/};
+
+solver.solve(current_solution);    
+\end{c++}
+
+Note that while the selector class provides a unified interface and therefore allows to
+easily switch between backends, there are cases when users need to use the underlying
+wrapper classes, if, e.g., the functionality is only provided by one implementation.
+Details of each of the implementations are discussed in subsequent sections.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Integration of \kokkos}\label{sec:kokkos}
 
 \kokkos \cite{trott2022} is a C++ library that enables the creation of
-performance portable applications for all major high-performance computing (HPC)
+performance portable applications for all major high-performance computing
 platforms. It implements a programming model that allows developers to write
 code that can efficiently run on diverse architectures. \kokkos provides
 abstractions for both parallel execution of code and data management. It
@@ -315,7 +359,7 @@ strategy to support what users want. As a consequence, \kokkos has
 become a mandatory dependency of \dealii{} as part of the current
 release; if it is not found on a given system during configuration
 time, then the library will fall back on a copy of \kokkos stored in
-the \texttt{bundled/} directory in the same way as we already
+the \texttt{bundled} directory in the same way as we already
 interface with \boost.
 
 In the current release, \texttt{LinearAlgebra::distributed::Vector} and the 
@@ -352,7 +396,7 @@ preconditioner.vmult = [&](const VectorType &src,
 
 \end{c++}
 The resulting object can be passed to \petsc and used within the nonlinear solver hierarchy.
-See \ref{sec:callbacks} for additional information on such kind of callbacks.
+See Section~\ref{sec:callbacks} for additional information on such kind of callbacks.
 
 The \petsc~\snes sub-package solves systems of nonlinear equations of the form $F(x) = 0$.
 The interface to \snes has been modeled on the already existing interface
@@ -485,47 +529,6 @@ unfortunately natively only  supported in the official \texttt{EPetra} implement
   elaborate? At least in the \kinsol{} interfaces, you only update the
   preconditioner whenever setup\_jacobian() is called.}
 
-\subsubsection{Uniform interface for nonlinear solvers}\label{sec:nonlinear}
-
-With the current release, \dealii{} now supports solvers for nonlinear problems
-provided by several different external packages:
-(i) \kinsol{} (part of \sundials{}); (ii) \snes{} (part of \petsc{}, see Section~\ref{sec:petsc}); and (iii) \texttt{NOX} (part of \trilinos{}, see Section~\ref{sec:trilinos}).
-The wrappers are provided by the classes \texttt{PETScWrappers::NonlinearSolver\allowbreak{}<VectorType>}, \texttt{SUNDIALS::KINSOL<VectorType>}, and \texttt{TrilinosWrappers::NOXSolver<Vector\allowbreak{}Type>}, respectively.
-
-All three of these classes have a very similar interface, except that they vary in the kind of
-algorithms and parameters offered. The new class \texttt{NonlinearSolverSelector<VectorType>} provides a wrapper on top of
-the three external solvers with a unified interface. The user can either let
-\dealii{} decide which of the packages to use (depending on the current availability of
-the external packages) or specify it manually.
-
-The following code snippet shows a complete example using the new class for applying a Newton solver
-by automatically choosing one of the available packages:
-\begin{c++}
-using NLS = NonlinearSolverSelector<VectorType>;
-
-NLS::AdditionalData additional_data(
-  NLS::automatic, // other options: kinsol, nox, petsc_snes 
-  NLS::newton);
-  
-NLS nonlinear_solver(additional_data, mpi_communicator);
-
-solver.reinit_vector       = [ ](VectorType &x) {/*...*/};    
-solver.residual            = [ ](const VectorType &src,
-                                 VectorType       &dst) {/*...*/};
-solver.setup_jacobian      = [&](const VectorType &src) {/*...*/};
-solver.apply_jacobian      = [&](const VectorType &src,
-                                 VectorType       &dst) {/*...*/};
-solver.solve_with_jacobian = [&](const VectorType &src,
-                                 VectorType       &dst,
-                                 const double      tol) {/*...*/};
-
-solver.solve(current_solution);    
-\end{c++}
-
-Not that while the selector class provides a unified interface and therefore allows to
-easily switch between backends, there are cases when users need to use the underlying
-wrapper classes, if, e.g., the functionality is only provided by one implementation.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Uniform error reporting in callbacks}\label{sec:callbacks}
 
@@ -654,17 +657,17 @@ in more detail.
 
 \subsubsection{Intersected meshes}
 In the current release, we added experimental support to compute intersections on \texttt{parallel::distributed::Triangulation} objects using \texttt{CGAL}~\cite{cgal-user-ref}.
-For this purpose, we introduced a free function \texttt{distributed\_compute\_intersection\_locations()} that computes intersections and relevant information for communication from \texttt{intersection\_requests}.
-\texttt{intersection\_requests} is a vector indicating entities of a given triangulation that intersections are computed upon.
+For this purpose, we introduced a free function \texttt{distributed\_compute\_intersection\_locations()} that computes intersections and relevant information for communication from \texttt{intersection\_re\-quests}.
+The data structure \texttt{intersection\_requests} is a vector indicating entities of a given triangulation that intersections are computed upon.
 Each entity (face or cell) is described by a vector of vertices.
-Currently, the function is placed in \texttt{GridTools::internal}, but the location and arguments of the function might still change in the future.
-To compute intersections between two geometric entities, the function internally uses the new function \texttt{CGALWrappers::compute\_intersection\_of\_cells()}.
+Currently, the function is placed in \texttt{GridTools::internal}, since the location and arguments of the function might still change in the future.
+To compute intersections between two geometric entities, the function internally uses the new function \texttt{CGALWrappers::compute\_intersec\-tion\_of\_cells()}.
 
 For the common case of Nitsche-type mortaring, quadrature points must be distributed on the intersections to evaluate the underlying physical coupling terms.
 The data structure returned by \texttt{distributed\_compute\_intersection\_locations()} can convert itself to a data structure that can be used to fill \texttt{RemotePointEvaluation}.
 This conversion is triggered by the member function~\texttt{convert\_to\_distributed\_compute\_point\_locations\_internal()}, given the number of quadrature points per intersection.
-The whole procedure is done communication-free.
-
+The whole procedure is done without communication.
+%
 This functionality is useful since \texttt{RemotePointEvaluation} can now be used to access quantities at quadrature points on intersections without further ado.
 To reduce the user's effort, we plan to add a wrapper that takes care of the described procedure and provides interfaces like \texttt{FEEvaluation} to access quantities easily, e.g., in a matrix-free loop.
 
