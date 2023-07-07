@@ -904,14 +904,14 @@ The next release of \dealii{} will build upon C++17.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Build-system modernization}\label{sec:buildsystem}
 
-\dealii's original CMake build system that was merged for the 8.0.0 release
-in 2013 was written for CMake 2.8.8, which, naturally, lacks many of the
-modern features introduced into CMake over the last couple of years. This
+\dealii's original CMake build system, merged for the 8.0.0 release
+in 2013, was written for CMake 2.8.8 and thus lacks many of the
+modern features introduced into CMake over the last several years. This
 created a particular issue with an increasing number of dependencies
 switching their CMake configuration to \emph{import targets}, where all
 necessary information for using an external resource, such as include
 directories and library link interfaces, are associated with an imported
-CMake targets rather than being provided with individual (and
+CMake target rather than being provided with individual (and
 inconsistently) named CMake variables. With the \dealii 9.5 release the
 handling of external dependencies has been rewritten entirely to support
 imported targets. The \trilinos and \kokkos interfaces have been
@@ -928,7 +928,7 @@ debug and release interface depending on the build type set via
 \texttt{CMAKE\_BUILD\_TYPE}. The \texttt{dealii::dealii} third variant also
 populates compiler and linker options, whereas for the first two variants a
 client project has to ensure that the compiler and linker are properly set
-up. The new import targets make it now possible to configure a dependent
+up. The new import targets now make it possible to configure a dependent
 project without the use of any \dealii specific macros:
 %
 \begin{anycode}
@@ -1209,7 +1209,7 @@ FA9550-23-1-0007.
 
 D.~Wells was supported by the NSF Award OAC-1931516.
 
-\todo[inline]{Stefano: Anything to add here?.}
+S. Zampini was supported by the KAUST Extreme Computing Research Center.
 
 
 
