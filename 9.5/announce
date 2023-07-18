@@ -1,25 +1,24 @@
-Version 9.4.0 of deal.II, the object-oriented finite element library awarded the
+Version 9.5.0 of deal.II, the object-oriented finite element library awarded the
 J. H. Wilkinson Prize for Numerical Software, has been released. It is
 available for free under an Open Source license from the deal.II homepage at
 
                    https://www.dealii.org/
 
 The major changes of this release are:
-
- - Advances in simplex- and mixed-mesh support
- - Repartitioning of distributed meshes
- - Advances in matrix-free infrastructure
- - Advances in multigrid infrastructure
- - CutFEM support
- - Experimental integration of the Computational Geometry Algorithms Library (CGAL)
- - Performance improvements in the particle infrastructure
- - Improvements to unstructured communication
- - Three new tutorial programs (steps 81, 82, and 85) and one new code gallery program
+  - Substantial updates and extensions to deal.II's interfaces to other
+    libraries. This includes, in particular, the integration of Kokkos
+    additions and updates to the PETSc and Trilinos interfaces.
+  - Improvements to the matrix-free infrastructure
+  - Better support for non-matching grids
+  - Faster or more robust linear solvers and preconditioners
+  - Many changes to the CMake configuration system, as well as more extensive
+    use of modern C++ features
+  - A large number of updates to the tutorials and other documentation.
 
 For more information see:
-  - The preprint at https://www.dealii.org/deal94-preprint.pdf
+  - The preprint at https://www.dealii.org/deal95-preprint.pdf
   - The list of changes at
-    https://www.dealii.org/developer/doxygen/deal.II/changes_between_9_3_3_and_9_4_0.html
+    https://www.dealii.org/developer/doxygen/deal.II/changes_between_9_4_0_and_9_5_0.html
 
 The main features of deal.II are:
   - Extensive documentation and 83 fully-functional example programs
@@ -30,8 +29,8 @@ The main features of deal.II are:
   - Fast linear algebra
   - Built-in support for shared memory and distributed parallel computing,
     scaling from laptops to clusters with 100,000+ processor cores
-  - Interfaces to Trilinos, PETSc, METIS, UMFPACK and other external software
+  - Interfaces to Trilinos, PETSc, SUNDIALS, UMFPACK and other external software
   - Output for a wide variety of visualization platforms.
 
-Matthias,
+Wolfgang,
 on behalf of the deal.II developer team and many contributors.
