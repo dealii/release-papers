@@ -24,6 +24,8 @@ The main features of deal.II are:
   - A zoo of different finite elements
   - Built-in support for shared memory and distributed parallel computing,
     scaling from laptops to clusters with 100,000+ of processor cores
-  - Interfaces to Trilinos, PETSc, SUNDIALS, UMFPACK and other external software
+  - Interfaces to Trilinos, PETSc, SUNDIALS, UMFPACK and many other external
+    software packages
+  - Input and output for a wide variety of meshing and visualization platforms.
 
 The deal.II developers
