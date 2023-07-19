@@ -319,9 +319,10 @@ interface with \boost.
 
 In the current release, \texttt{LinearAlgebra::distributed::Vector} and the 
 \texttt{CUDAWrappers::Matrix\allowbreak{}Free} framework are using \kokkos. This allows them 
-to work on all the architectures supported by \kokkos. The \kokkos backend used 
-by \dealii is \texttt{Kokkos::DefaultExecutionSpace} which corresponds to the 
-highest available backend in the hierarchy device, host-parallel, and host-serial 
+to work on all the architectures supported by \kokkos. In particular, the step-64 example
+can now also be run on the CPU and doesn't require a GPU anymore. \\
+The \kokkos backend used by \dealii is \texttt{Kokkos::DefaultExecutionSpace} which corresponds
+to the highest available backend in the hierarchy device, host-parallel, and host-serial 
 at the time Kokkos was configured.
 
 
