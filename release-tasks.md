@@ -221,6 +221,7 @@ The following is a list of ouststanding tasks that have to happen after we tagge
  - [ ] <b>Update deal.II Virtualbox Images</b> (assigned:)
  - [ ] <b>Release announcements</b> (assigned: &mdash;)
    * [ ] on the user mailing list
+   * [ ] send a separate mail with the list of contributors for this release
    * [ ] on social media (facebook, twitter)
    * [ ] send a news item to NADigest; web form breaks longer lines automatically, so keep them long to avoid awkward formatting
    * [ ] SIAM CS&E digest
