@@ -1,0 +1,31 @@
+Version 9.5.0 of deal.II, the object-oriented finite element library awarded
+the J. H. Wilkinson Prize for Numerical Software, has been released. It is
+available for free under an Open Source license from the deal.II homepage at
+https://www.dealii.org/
+
+The major changes of this release are:
+  - Substantial updates and extensions to deal.II's interfaces to other
+    libraries. This includes, in particular, the integration of Kokkos
+    additions and updates to the PETSc and Trilinos interfaces.
+  - Improvements to the matrix-free infrastructure
+  - Better support for non-matching grids
+  - Faster or more robust linear solvers and preconditioners
+  - Many changes to the CMake configuration system, as well as more extensive
+    use of modern C++ features
+  - A large number of updates to the tutorials and other documentation.
+
+More information about changes can be found in the release preprint at
+https://www.dealii.org/deal95-preprint.pdf.
+
+The main features of deal.II are:
+  - Extensive documentation and 83 working example programs
+  - Support for dimension-independent programming
+  - Locally refined adaptive meshes and multigrid support
+  - A zoo of different finite elements
+  - Built-in support for shared memory and distributed parallel computing,
+    scaling from laptops to clusters with 100,000+ of processor cores
+  - Interfaces to Trilinos, PETSc, SUNDIALS, UMFPACK and many other external
+    software packages
+  - Input and output for a wide variety of meshing and visualization platforms.
+
+The deal.II developers
