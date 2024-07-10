@@ -253,11 +253,15 @@ as part of this release. In addition, there are a number of new tutorial
 programs:
 \begin{itemize}
   \item
+    \texttt{step-83} if we can get it ready TODO  
+  \item
+    \texttt{step-86} if we can get it merged TODO  
+  \item
     \texttt{step-87} was contributed by Magdalena Schreter-Fleischhacker
     (Technical University of Munich) and Peter Munch
     (University of Augsburg/Uppsala University). It
-    presents the advanced point-evaluation functionalities of \dealii,
-    specifically useful for evaluating finite element solutions at
+    presents the advanced point-evaluation functionalities of \dealii
+    that are useful for evaluating finite element solutions at
     arbitrary points on finite element meshes that can be distributed among processes.
   \item
     \texttt{step-89} was contributed by Johannes Heinz (TU Wien),
@@ -268,14 +272,28 @@ programs:
   \item
     \texttt{step-90} was contributed by Vladimir Yushutin and Timo Heister (Clemson University).
     It implements the trace finite element method (TraceFEM). TraceFEM solves PDEs
-    posed on a possibly evolving $(dim-1)$-dimensional surface $\Gamma$ employing
+    posed on a, possibly evolving, $(dim-1)$-dimensional surface $\Gamma$ employing
     a fixed uniform background mesh of a $dim$-dimensional domain in which
     the surface is embedded. Such surface PDEs arise in problems involving
     material films with complex properties and in other situations in which
     a non-trivial condition is imposed on either a stationary or a moving interface.
-    Here we consider a steady, complex, non-trivial surface and the prototypical
+    The program considers a steady, complex, non-trivial surface and the prototypical
     Laplace-Beltrami equation which is a counterpart of
     the Poisson problem on flat domains.
+\end{itemize}
+
+In addition, there are three new programs in the code gallery (a collection of
+user-contributed programs that often solve more complicated problems
+than tutorial programs, and that are intended as starting points for further
+research rather than as teaching tools):
+UPDATE
+\begin{itemize}
+  \item \textit{``Crystal growth phase field model'''},
+    contributed by Umair Hussain;
+  \item \textit{``Nonlinear heat transfer problem''}, contributed by
+    Narasimhan Swaminathan;
+  \item \textit{``Traveling-wave solutions of a qualitative model for combustion waves''}, contributed by
+    Shamil Magomedov.
 \end{itemize}
 
 
