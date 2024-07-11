@@ -253,9 +253,26 @@ as part of this release. In addition, there are a number of new tutorial
 programs:
 \begin{itemize}
   \item
-    \texttt{step-83} if we can get it ready TODO  
+    \texttt{step-83} \todo{if we can get it merged}
+    demonstrates how one can implement
+    checkpoint/restart functionality in \dealii{}-based programs,
+    using the BOOST serialization functionality as a
+    foundation. step-83 was written by Pasquale Africa, Wolfgang
+    Bangerth, and Bruno Blais and uses step-19 as its basis.
   \item
-    \texttt{step-86} if we can get it merged TODO  
+    \texttt{step-86} \todo{if we can get it merged}
+    is a program that solves the heat equation using PETSc's TS (time
+    stepping) framework for the solution of ordinary differential
+    equations. Written by Wolfgang Bangerth (Colorado State
+    University), Luca Heltai (University of Pisa), and Stefano Zampini
+    (King Abdullah University of Science and Technology), it
+    illustrates how PDE solvers for time-dependent problems can be
+    integrated with existing ODE solver packages to use advanced ODE
+    solver concepts (such as higher-order time integration methods and
+    adaptive time step control), all without sacrificing the things
+    that have traditionally led code authors toward writing their own
+    time stepping routines (such as wanting to change the mesh every
+    once in a while, or having to deal with boundary conditions).
   \item
     \texttt{step-87} was contributed by Magdalena Schreter-Fleischhacker
     (Technical University of Munich) and Peter Munch
