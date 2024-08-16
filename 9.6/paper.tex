@@ -135,39 +135,45 @@ cross/.default={2pt}}
 \author[8]{Timo~Heister}
  \affil[8]{School of Mathematical and Statistical Sciences,
    Clemson University,
-   Clemson, SC, 29634, USA
+   Clemson, SC, 29634, USA.
    {\texttt{heister@clemson.edu}}}
 
 \author[9]{Luca~Heltai}
-\affil[9]{University of Pisa, Italy}
+\affil[9]{University of Pisa, Italy.}
 
- \author[10]{Martin~Kronbichler}
- \affil[10]{Ruhr University Bochum, Germany}
+ \author[10,11]{Martin~Kronbichler}
+ \affil[10]{Faculty of Mathematics, Ruhr University Bochum,
+   Universit\"atsstr.~150, 44780 Bochum, Germany.
+ {\texttt{martin.kronbichler@rub.de}}}
+ \affil[11]{Institute of Mathematics,
+   University of Augsburg,
+   Universit\"atsstr.~12a, 86159 Augsburg, Germany.
+   }
 
-\author[11]{Matthias~Maier}
-\affil[11]{Department of Mathematics,
+\author[12]{Matthias~Maier}
+\affil[12]{Department of Mathematics,
   Texas A\&M University,
   3368 TAMU,
   College Station, TX 77845, USA.
   {\texttt{maier@math.tamu.edu}}}
 
-\author[12]{Peter Munch}
- \affil[12]{Uppsala University, Sweden.
+\author[11,13]{Peter Munch}
+ \affil[13]{Uppsala University, Sweden.
   {\texttt{peter.munch@it.uu.se}}}
 
-\author[13]{Magdalena Schreter-Fleischhacker}
- \affil[13]{Institute for Computational Mechanics, Technical University of Munich, Boltzmannstraße 15, 85748 Garching, Germany.
+\author[14]{Magdalena Schreter-Fleischhacker}
+ \affil[14]{Institute for Computational Mechanics, Technical University of Munich, Boltzmannstraße 15, 85748 Garching, Germany.
   {\texttt{magdalena.schreter@tum.de}}}
 
-\author[14]{Jan Philipp Thiele}
- \affil[14]{Weierstrass Institute for Applied Analysis and Stochastics,\newline
+\author[15]{Jan Philipp Thiele}
+ \affil[15]{Weierstrass Institute for Applied Analysis and Stochastics,\newline
  Leibniz Institute in Forschungsverbund Berlin e.V.
   {\texttt{thiele@wias-berlin.de}}}
 
-\author[15]{Bruno~Turcksin}
+\author[16]{Bruno~Turcksin}
 
-\author[16]{David Wells}
-\affil[16]{Department of Mathematics, University of North Carolina,
+\author[17]{David Wells}
+\affil[17]{Department of Mathematics, University of North Carolina,
   Chapel Hill, NC 27516, USA.
   {\texttt{drwells@email.unc.edu}}}
 
@@ -230,8 +236,13 @@ are a number of other noteworthy changes in the current \dealii release,
 which we briefly outline in the remainder of this section:
 %
 \begin{itemize}
-  \item changes of interface of AffineConstraints
-  \item clean up: orientation
+\item changes of interface of AffineConstraints
+\item clean up: orientation
+\item various performance improvements throughout the library
+\item the \texttt{SolverGMRES} class now offers a third orthogonalization
+  method, the classical Gram--Schmidt method with delayed orthogonalization
+  \cite{Bielich2022}. Furthermore, the solver now specifies the maximal basis
+  size of the Arnoldi basis, rather than the number of auxiliary vectors.
 \end{itemize}
 %
 The changelog lists more than X other features and bugfixes.
@@ -270,6 +281,11 @@ can be found
 
 \begin{itemize}
 \item VectorizedArray for ARM Neon
+\item Improvement for evaluation of values and gradients for
+  $H$(div)-conforming Raviart--Thomas elements on non-Cartesian elements
+\item Improved internal data structures of the tensor-product evaluators as
+  well as the evaluators for simplex elements, which speed up the evaluation
+  in several scenarios, especially multi-component systems.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
