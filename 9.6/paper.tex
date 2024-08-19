@@ -371,6 +371,13 @@ UPDATE
     Shamil Magomedov.
 \end{itemize}
 
+Furthermore, we added an example to the \texttt{libCEED}
+library\footnote{\url{https://github.com/CEED/libCEED}}. \texttt{libCEED} is a library
+that provides matrix-free evaluation routines that work on different hardware. The
+examples show how to interface the \dealii data structures to the \texttt{libCEED} ones.
+The BP1-BP6 benchmarks (scalar/vector Laplace/mass matrix are solved with
+regular integration and over-integration) are solved.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Incompatible changes}\label{subsec:deprecated}
