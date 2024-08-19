@@ -218,7 +218,7 @@ cross/.default={2pt}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview}
 
-\dealii version 9.6.0 was released X X, 2024.
+\dealii version 9.6.0 was released August 11, 2024.
 This paper provides an
 overview of the new features of this release and serves as a citable
 reference for the \dealii software library version 9.6. \dealii is an
@@ -384,7 +384,7 @@ interfaces that are not usually used in external
 applications. That said, the following are worth mentioning since they
 may have been more widely used:
 \begin{itemize}
-  \item CUDAWrappers
+  \item CUDAWrappers, that enable the usage of cuSPARSE algorithms, have been deprecated and will be removed in the next release. Kokkos is now used for device-specific optimizations.
 \end{itemize}
 
 
