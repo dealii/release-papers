@@ -46,6 +46,8 @@
 \newcommand{\dealii}{{\specialword{deal.II}}\xspace}
 \newcommand{\pfrst}{{\specialword{p4est}}\xspace}
 \newcommand{\trilinos}{{\specialword{Trilinos}}\xspace}
+\newcommand{\epetra}{{\specialword{Epetra}}\xspace}
+\newcommand{\tpetra}{{\specialword{Tpetra}}\xspace}
 \newcommand{\aspect}{\specialword{Aspect}\xspace}
 \newcommand{\petsc}{\specialword{PETSc}\xspace}
 \newcommand{\snes}{{\specialword{SNES}}\xspace}
@@ -301,6 +303,17 @@ can be found
 \item FECouplingValues
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Interface to the \trilinos \tpetra stack}\label{sec:tpetra}
+
+\begin{itemize}
+  \item What is a \textit{stack}? [Thiele]
+  \item The \epetra stack is deprecated [Thiele]
+  \item Short overview capabilities of \epetra (MPI parallel, fixed types) [Thiele]
+  \item Short overview capabilities of \tpetra (MPI+X via Kokkos, auto diff types, Templated petra) [Thiele]
+  \item Current state of the interface (Tpertra based linear algebra, direct solver from Amesos2, preconditioners from Ifpack2) [Thiele \& Kinnewig]
+  \item User relevant changes from \epetra: incompatibilities, removed options, changes in the constructor. [Thiele \& Kinnewig]
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and improved tutorials and code gallery programs}
