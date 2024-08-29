@@ -46,8 +46,6 @@
 \newcommand{\dealii}{{\specialword{deal.II}}\xspace}
 \newcommand{\pfrst}{{\specialword{p4est}}\xspace}
 \newcommand{\trilinos}{{\specialword{Trilinos}}\xspace}
-\newcommand{\epetra}{{\specialword{Epetra}}\xspace}
-\newcommand{\tpetra}{{\specialword{Tpetra}}\xspace}
 \newcommand{\aspect}{\specialword{Aspect}\xspace}
 \newcommand{\petsc}{\specialword{PETSc}\xspace}
 \newcommand{\snes}{{\specialword{SNES}}\xspace}
@@ -55,12 +53,20 @@
 \newcommand{\petscsf}{{\specialword{SF}}\xspace}
 \newcommand{\cmake}{{\specialword{CMake}}\xspace}
 \newcommand{\candi}{{\specialword{candi}}\xspace}
+\newcommand{\MPI}{{\specialword{MPI}}\xspace}
+\newcommand{\MPIx}{{\specialword{MPI+X}}\xspace}
 \newcommand{\sundials}{{\specialword{SUNDIALS}}\xspace}
 \newcommand{\kinsol}{{\specialword{KINSOL}}\xspace}
 \newcommand{\ida}{{\specialword{IDA}}\xspace}
 \newcommand{\arkode}{{\specialword{ARKODE}}\xspace}
 \newcommand{\boost}{{\specialword{Boost}}\xspace}
 \newcommand{\kokkos}{{\specialword{Kokkos}}\xspace}
+
+%Trilinos Packages
+\newcommand{\epetra}{{\specialword{Epetra}}\xspace}
+\newcommand{\petra}{{\specialword{Petra}}\xspace}
+\newcommand{\teuchos}{{\specialword{Teuchos}}\xspace}
+\newcommand{\tpetra}{{\specialword{Tpetra}}\xspace}
 
 
 \usetikzlibrary{shapes.misc}
@@ -312,9 +318,33 @@ can be found
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Interface to the \trilinos \tpetra stack}\label{sec:tpetra}
 
+As a software project, \trilinos{} is designed as a stack of semi-independent
+packages building upon each other and working together. 
+As a foundation, \teuchos{} offers a set of basic tools,
+including parameter handling through XML files or command line interfaces 
+and the reference counted pointer \texttt{RCP} which predates 
+the smart pointer types introduced in \texttt{C++11}.
+The second layer in the stack is a package providing distributed linear algebra 
+classes for vectors and (sparse) matrices based on the \petra{}
+object model. The third layer is a set of interconnected packages
+providing preconditioners, various types of solvers 
+as well as more advanced techniques like automatic differentiation, 
+time integration and discretization.
+
+For now, there are two choices for the second layer 
+with \epetra{} providing \MPI{} only parallelism 
+and the newer \tpetra{} (templated Petra) providing additional shared memory 
+parallelism and GPU capabilities through \kokkos{}, referred to as \MPIx.
+Since the interface of \tpetra{} was overhauled and modernized 
+many of the packages in the third layer now have two generations as well.
+Therefore, the \MPI-only set of packages is also referred to as the 
+\epetra{} stack and the \MPIx{} packages form the \tpetra{} stack.
+As a consequence of the different interfaces, 
+a decision was made in the \trilinos{} project to deprecate the \epetra{} stack 
+and only provide basic maintenance until a full 
+removal from their repository in the course of 2025.
+
 \begin{itemize}
-  \item What is a \textit{stack}? [Thiele]
-  \item The \epetra stack is deprecated [Thiele]
   \item Short overview capabilities of \epetra (MPI parallel, fixed types) [Thiele]
   \item Short overview capabilities of \tpetra (MPI+X via Kokkos, auto diff types, Templated petra) [Thiele]
   \item Current state of the interface (Tpertra based linear algebra, direct solver from Amesos2, preconditioners from Ifpack2) [Thiele \& Kinnewig]
