@@ -87,7 +87,7 @@ cross/.default={2pt}}
     Wolfgang Bangerth,
     Bruno Blais,
     Marc Fehling,
-    Rene Gassm"{o}ller,
+    Rene Gassm\"{o}ller,
     Timo Heister,
     Luca Heltai,
     Martin Kronbichler,
@@ -138,7 +138,7 @@ cross/.default={2pt}}
     {\texttt{marc.fehling@matfyz.cuni.cz}}}
 
 
-\author[7]{Rene~Gassm"{o}ller}
+\author[7]{Rene~Gassm\"{o}ller}
 \affil[7]{GEOMAR Helmholtz Centre for Ocean Research Kiel, 24148 Kiel, Germany}
 
 \author[8]{Timo~Heister}
@@ -386,27 +386,31 @@ parallel vector, sparsity pattern, and sparse matrix classes -- in its
 parallelism. The \dealii{} interfaces to \trilinos{} are therefore all
 built using \epetra{}.
 However, several years ago, \trilinos also introduced the
-newer \tpetra{} (templated Petra) package that provides additional shared memory 
+newer \tpetra{} (``templated'' Petra) package that provides additional shared memory 
 parallelism and GPU capabilities by building on \kokkos{}. \tpetra{}
 is slated to eventually replace \epetra{}, and the latter is indeed
-now deprecated. As a consequence, we will eventually have to switch
-all of our \trilinos{} interfaces to \tpetra{} and \tpetra{}-based sub-packages.
+now deprecated with removal slated for 2025. As a consequence, we will
+eventually have to switch all of our \trilinos{} interfaces to
+\tpetra{}; the same is true for the need to switch to \tpetra{}-based
+sub-packages replacing existing \trilinos sub-packages (for example,
+Ifpack2 instead of Ifpack).
 
 In the current release, we have put substantial work into this switch.
-Since the interface of \tpetra{} was overhauled and modernized 
-many of the packages in the third layer now have two generations as well.
-Therefore, the \MPI-only set of packages is also referred to as the 
-\epetra{} stack and the \MPIx{} packages form the \tpetra{} stack.
-As a consequence of the different interfaces, 
-a decision was made in the \trilinos{} project to deprecate the \epetra{} stack 
-and only provide basic maintenance until a full 
-removal from their repository in the course of 2025.
+
+\todo[inline]{Sebastian \& Jan Philipp: Please complete}
+
 
 \begin{itemize}
   \item Short overview capabilities of \epetra (MPI parallel, fixed types) [Thiele]
   \item Short overview capabilities of \tpetra (MPI+X via Kokkos, auto diff types, Templated petra) [Thiele]
+    \todo[inline]{Keep discussion of the two items above as short as
+      you can -- we're describing the changes in deal.II, not some
+      other package. Perhaps roll what you want to say into the
+      paragraphs above?}
   \item Current state of the interface (Tpetra based linear algebra, direct solver from Amesos2, preconditioners from Ifpack2) [Thiele \& Kinnewig]
-  \item User relevant changes from \epetra: incompatibilities, removed options, changes in the constructor. [Thiele \& Kinnewig]
+  \item User relevant changes from \epetra: incompatibilities, removed
+    options, changes in the constructor. [Thiele \& Kinnewig]
+    \todo[inline]{These last two items are the important ones.}
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -676,7 +680,7 @@ Their contributions are much appreciated!
 \dealii and its developers are financially supported through a
 variety of funding sources:
 
-P.C.~Africa was partially supported by the consortium iNEST (Interconnected North-East Innovation Ecosystem),
+P.~C.~Africa was partially supported by the consortium iNEST (Interconnected North-East Innovation Ecosystem),
 Piano Nazionale di Ripresa e Resilienza (PNRR) - Missione 4 Componente 2, Investimento 1.5 - D.D. 1058 23/06/2022,
 ECS00000043, supported by the European Union's NextGenerationEU program.
 
@@ -691,14 +695,16 @@ program.
 W.~Bangerth and T.~Heister were partially
 supported by the Computational Infrastructure for Geodynamics initiative
 (CIG), through the National Science Foundation (NSF) under Award
-No.~EAR-1550901 and EAR-2149126 via The University of California -- Davis.
+No.~EAR-2149126 via The University of California -- Davis.
 
-W.~Bangerth was also partially supported by Awards DMS-1821210 and EAR-1925595.
+W.~Bangerth was also partially supported by Award EAR-1925595.
 
 B.~Blais was supported by the National Science and Engineering Research Council of Canada (NSERC)  through the RGPIN-2020-04510 Discovery Grant and the MMIAOW Canada Research Level 2 in Computer-Assisted Design and Scale-up of Alternative Energy Vectors for Sustainable Chemical Processes.
 
 M.~Fehling was also partially supported by the ERC-CZ grant LL2105
-CONTACT funded by the Czech Ministry of Education, Youth and Sports.
+CONTACT, funded by the Czech Ministry of Education, Youth and Sports.
+
+\todo[inline]{Rene: anything to list here?}
 
 T.~Heister and V.~Yushutin were also partiallty supported by NSF Awards OAC-2015848 and EAR-1925575.
 
@@ -707,6 +713,8 @@ T.~Heister was also partially supported by NSF OAC-2410848.
 L.~Heltai was partially supported by the Italian Ministry of
 University and Research (MUR), under the grant MUR PRIN 2022 No. 2022WKWZA8
 ``Immersed methods for multiscale and multiphysics problems (IMMEDIATE)''.
+
+\todo[inline]{Sebastian: Anything to list here?}
 
 M.~Kronbichler and P.~Munch were partially supported by the
 German Ministry of Education and Research, project
@@ -725,13 +733,19 @@ FA9550-23-1-0007.
 M.~Schreter-Fleischhacker was supported by the Austrian Science Fund (FWF) Schrödinger Fellowship (project number: J4577) and by the European Research Council
 through the ERC Starting Grant ExcelAM (project number: 101117579).
 
-D.~Wells was supported by the NSF Award OAC-1931516.
+\todo[inline]{Jan Philipp: Anything to list here?}
 
-Clemson University is acknowledged for generous allotment of compute time on Palmetto cluster.
+D.~Wells was supported by NSF Award OAC-1931516.
+
+Clemson University is acknowledged for generous allotment of compute
+time on the Palmetto cluster.
+
+\todo[inline]{Did anyone actually use TACC resources? Timo or Marc? If
+not, we need to delete the following sentence.}
 
 The authors acknowledge the Texas Advanced Computing Center (TACC) at The University of Texas at Austin for providing HPC resources that have contributed to the research results reported within this paper. \url{http://www.tacc.utexas.edu}
 
-\todo[inline]{Update the following to ACCESS, see https://access-ci.org/about/acknowledging-access/}
+\todo[inline]{Marc: Update the following to ACCESS, see https://access-ci.org/about/acknowledging-access/}
 
 This work used the Extreme Science and Engineering Discovery Environment (XSEDE), which is supported by National Science Foundation grant number ACI-1053575 access through the CIG Science Gateway and Community Codes for the Geodynamics Community MCA08X011 allocation.
 
