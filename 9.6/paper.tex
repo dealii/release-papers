@@ -285,7 +285,7 @@ which we briefly outline in the remainder of this section:
     implementation of the N\'ed\'elec element using the orientation
     scheme of \cite{Zag06} now supports the computation of hanging
     node constraints for locally refined meshes.
-    \todo[inline]{Sebastian: Is there anything more to say here? If
+    \todo[inline]{Sebastian: Is there anything more to say here, maybe some reference? If
       you want, we can also list this point in the list above, and add
       a whole section 2.x for it.}
   \item changes of interface of AffineConstraints
@@ -300,10 +300,7 @@ which we briefly outline in the remainder of this section:
   \cite{Bielich2022}. Furthermore, the solver now specifies the maximal basis
   size of the Arnoldi basis, rather than the number of auxiliary
   vectors. Some changes have also been made to the GMRES and F-GMRES
-  implementations to make them more similar.
-  \todo[inline]{Martin: Does this capture the relevant changes? Please
-    fix as appropriate, or if you'd like put them into a section of
-    its own.}
+  implementations, making them use the same underlying kernels as much as possible.
 \end{itemize}
 %
 The changelog lists more than 180 other features and bugfixes.
