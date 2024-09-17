@@ -248,7 +248,7 @@ The major changes of this release are:
     operators, including matrix-free based versions and versions for
     p-refinement (Section~\ref{sec:mf}).
   \item Different additions to the non-matching infrastructure (see
-    Section~\ref{sec:nonmatching}) In particular, the new class
+    Section~\ref{sec:nonmatching}). In particular, the new class
     FERemoteEvaluation provides support for evaluating
     finite element shape functions and solutions on parts of the
     domain stored by other MPI processes.
@@ -292,11 +292,16 @@ which we briefly outline in the remainder of this section:
       a whole section 2.x for it.}
   \item changes of interface of AffineConstraints
     \todo[inline]{Wolfgang to write}
-\item clean up: orientation
+\item We have clean up the orientation definition of faces in (2D and) 3D. Three
+    Booleans used to be used to define it for hexedras: \textit{orientation},
+    \textit{flip}, and \textit{rotation}. While introducing simplex and mixed
+     mesh support in \dealii, we merged these three into a single variable of type
+     char internally. Now, we also expose these to the outside, leading to
+     multiple incompatibilities, since the template type of different data
+     structures has changed and the number of input/output arguments have decreased.
   \todo[inline]{DavidW: Please describe some details here.}
-\item Various performance improvements throughout the library.
-  \todo[inline]{Everyone: This sentence would be more useful if we can
-    provide a few examples.}
+\item We have performed various performance improvements throughout the library,
+     which we detail in the following sections.
 \item The \texttt{SolverGMRES} class now offers a third orthogonalization
   method, the classical Gram--Schmidt method with delayed orthogonalization
   \cite{Bielich2022}. Furthermore, the solver now specifies the maximal basis
@@ -327,29 +332,58 @@ can be found
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Updates to multigrid and matrix-free algorithms}\label{sec:mf}
 
-\todo[inline]{Martin/Peter: The list in the introduction also mentions the two-level
-  operators. Is this the right place to also discuss these?}
-
+%\todo[inline]{Martin/Peter: The list in the introduction also mentions the two-level
+%  operators. Is this the right place to also discuss these?}
+  
+We made different updates to the matrix-free infrastructure in \dealii. These include:
 \begin{itemize}
-\item VectorizedArray for ARM Neon
-\item Improvement for evaluation of values and gradients for
-  $H$(div)-conforming Raviart--Thomas elements on non-Cartesian elements
-\item Improved internal data structures of the tensor-product evaluators as
-  well as the evaluators for simplex elements, which speed up the evaluation
-  in several scenarios, especially multi-component systems.
+\item Our own implementation of \texttt{std::simd} (\texttt{VectorizedArray}) now
+  also Arm Neon. Arm Neon is an architecture extension for
+  the Arm Cortex-A and Arm Cortex-R series of processors, commonly used in Apple
+  products. With these instructions 2 doubles or 4 floats can be processed in one
+  go. Since matrix-free infrastructure works directly with \texttt{VectorizedArray}
+  data structures, it automatically benefits from this extension.
+  
+\item We made some improvement for evaluation of values and gradients for
+  $H$(div)-conforming Raviart--Thomas elements on non-Cartesian elements.
+  
+\item We furthermore improved the internal data structures of the
+  tensor-product evaluators as well as the evaluators for simplex elements,
+  which speed up the evaluation in several scenarios, especially multi-component systems.
 \end{itemize}
+
+Furthermore, we performed substantial improvements to the global-coarsening
+multigrid infrastructure: \texttt{MGTransferMF} (previously:
+\texttt{MGTransferGlobalCoarsening}) and \texttt{MGTwoLevelTransfer}. They
+now allow to perform local smoothing, which is a key step towards unifying
+all transfer operators in \dealii. \texttt{MGTwoLevelTransfer} now also
+can be set up with an existing \texttt{MatrixFree} object in the case
+of $p$-multigrid, allowing to reduce the setup costs significantly.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Advances in non-matching support}\label{sec:nonmatching}
 
-\todo[inline]{All: If you contributed to this functionality, please
-  help flesh out this section.}
+%\todo[inline]{All: If you contributed to this functionality, please
+%  help flesh out this section.}
+  
+We made different advances to the non-matching infrastructure in \dealii. These include:
 
 \begin{itemize}
-\item non-nested multigrid: new features and performance improvement
-\item FERemoteEvaluation
+\item The performance of the non-nested multigrid infrastructure
+(\texttt{MGTwoLevelTransferNon\-Nested}) has been improved significantly by avoiding
+redundant copy operations. Furthermore, the support for simplex-shaped cells and
+multiple-component elements have been added.
+\item The new class \texttt{FERemoteEvaluation} has been added. 
+This is a class to access data
+in a distributed matrix-free loop for non-matching discretizations.
+Interfaces are named with \texttt{FEEvaluation} in mind. Key component is the
+underlying MPI communication, which is done via \texttt{RemotePointEvaluation}.
+Tutorial \texttt{step-89} has been added to present its usage
+in the context of an application to acoustic conservation equations~\cite{heinz2023high}.
 \item FECouplingValues
+
+\todo[inline]{Luca: Please complete}
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -719,6 +753,8 @@ multiphysics problems and non-matching grids''.
 M.~Maier was partially supported by NSF Award DMS-2045636 and and by the
 Air Force Office of Scientific Research under grant/contract number
 FA9550-23-1-0007.
+
+\todo[inline]{Peter: Anything to list here?}
 
 M.~Schreter-Fleischhacker was supported by the Austrian Science Fund (FWF) Schrödinger Fellowship (project number: J4577) and by the European Research Council
 through the ERC Starting Grant ExcelAM (project number: 101117579).
