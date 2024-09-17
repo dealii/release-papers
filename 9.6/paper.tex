@@ -247,9 +247,11 @@ The major changes of this release are:
   \item Substantial improvements to the multigrid two-level transfer
     operators, including matrix-free based versions and versions for
     p-refinement (Section~\ref{sec:mf}).
-  \item A class FERemoteEvaluation that provides support for evaluating
+  \item Different additions to the non-matching infrastructure (see
+    Section~\ref{sec:nonmatching}) In particular, the new class
+    FERemoteEvaluation provides support for evaluating
     finite element shape functions and solutions on parts of the
-    domain stored by other MPI processes (Section~\ref{sec:remote-eval}).
+    domain stored by other MPI processes.
   \item Much work has gone into writing wrappers for Trilinos' Tpetra
     stack of linear algebra classes. Tpetra is Trilinos' Kokkos-based
     replacement for the now-deprecated Epetra stack. See
@@ -336,15 +338,6 @@ can be found
   well as the evaluators for simplex elements, which speed up the evaluation
   in several scenarios, especially multi-component systems.
 \end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{The \texttt{FERemoteEvaluation} class}\label{sec:remote-eval}
-
-\todo[inline]{Peter/Martin/...: Would you be willing to describe this
-  class and its uses? Or, if you don't think it's important enough,
-  remove this section and move the part in the top list of major
-  changes to the bottom list?}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
