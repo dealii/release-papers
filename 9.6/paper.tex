@@ -244,9 +244,8 @@ GNU Lesser General Public License (LGPL). Downloads are available at
 The major changes of this release are:
 %
 \begin{itemize}
-  \item Substantial improvements to the multigrid two-level transfer
-    operators, including matrix-free based versions and versions for
-    p-refinement (Section~\ref{sec:mf}).
+  \item Substantial performance improvements to the matrix-free and multigrid
+   infrastructure (Section~\ref{sec:mf}).
   \item Different additions to the non-matching infrastructure (see
     Section~\ref{sec:nonmatching}). In particular, the new class
     FERemoteEvaluation provides support for evaluating
@@ -338,11 +337,11 @@ can be found
 We made different updates to the matrix-free infrastructure in \dealii. These include:
 \begin{itemize}
 \item Our own implementation of \texttt{std::simd} (\texttt{VectorizedArray}) now
-  also Arm Neon. Arm Neon is an architecture extension for
+  also supports Arm Neon. Arm Neon is an architecture extension for
   the Arm Cortex-A and Arm Cortex-R series of processors, commonly used in Apple
   products. With these instructions 2 doubles or 4 floats can be processed in one
   go. Since matrix-free infrastructure works directly with \texttt{VectorizedArray}
-  data structures, it automatically benefits from this extension.
+  data structures, it automatically benefits from this implementation extension.
   
 \item We made some improvement for evaluation of values and gradients for
   $H$(div)-conforming Raviart--Thomas elements on non-Cartesian elements.
