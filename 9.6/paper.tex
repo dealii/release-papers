@@ -465,7 +465,59 @@ In the current release, we have put substantial work into this switch.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{More support for advanced programming idioms}\label{sec:tools}
 
-\todo[inline]{Wolfgang to write. Mention Lazy and TaskResult.}
+Over the years, \dealii{} has accumulated many classes and functions
+that support modern programming idioms and make it easier to write
+code at higher levels of abstraction.
+
+In the current release, we have added two classes to the list of tools
+of this kind:
+\begin{itemize}
+  \item
+  \texttt{Lazy<T>} is a class that supports the lazy computation and
+  initialization of variables. Its intended use is for member
+  variables of classes that are \textit{sometimes} needed, but perhaps
+  not for all uses of an object. For example, all finite element classes
+  provide interpolation and restriction matrices to support multigrid
+  and other algorithms. One could (i) always compute and store these
+  matrices in the constructor of the class; or one could (ii) re-compute these
+  matrices every time they are requested. The first of these
+  approaches costs memory and compute time even though most places
+  where one creates a finite element object will not actually query
+  these matrices; the second of these approaches is costly in places
+  that \textit{do} query these matrices repeatedly because they are re-computed
+  every time. \texttt{Lazy<T>} provides a middle ground: It provides an
+  abstraction for an object that is initialized upon first use (that
+  is, the first time the value is requested), and then stores the
+  computed value for cheap use later on.
+
+  (C++ provides functionality via \texttt{std::async} with
+  launch policy \texttt{std::launch::deferred} that can achieve
+  similar outcomes. But this functionality is more difficult to use than
+  \texttt{Lazy<T>} because, among other reasons, the code generating the
+  object has to be specified at the place of construction of the
+  object holding the result, rather than at the place of use; and
+  because the holder object -- \texttt{std::future} -- can only be
+  asked once for its computed value.)
+
+  \item \texttt{TaskResult<T>} is a class that represents the outcome
+    of a task possibly evaluated on a separate thread. It can be
+    thought of as a ``deferred'' result of a computation in that one
+    wants to state ``This job needs to be done, do it when convenient,
+    and then put the result of the operation into this
+    variable''. Accessing the variable then waits for the operation to
+    complete, if it has not already. \texttt{TaskResult<T>} allows
+    classes to efficiently compute member variables in the background,
+    assuming that they may not be needed right away but only later on.
+
+    (Similar to above, the same effect as \texttt{TaskResult<T>} can
+    be achieved using \texttt{std::async}, this time using the
+    launch policy \texttt{std::launch::async}. This approach suffers
+    from the same issue that one can only query the resulting object
+    once. Moreover, \texttt{std::async} does not integrate with the
+    thread pool that underlies \dealii{}'s approach to parallel
+    processing on modern multi-core machines, whereas
+    \texttt{TaskResult<T>} does.)
+\end{itemize}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
