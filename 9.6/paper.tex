@@ -291,16 +291,22 @@ which we briefly outline in the remainder of this section:
       a whole section 2.x for it.}
   \item changes of interface of AffineConstraints
     \todo[inline]{Wolfgang to write}
-\item We have clean up the orientation definition of faces in (2D and) 3D. Three
-    Booleans used to be used to define it for hexedras: \textit{orientation},
-    \textit{flip}, and \textit{rotation}. While introducing simplex and mixed
-     mesh support in \dealii, we merged these three into a single variable of type
-     char internally. Now, we also expose these to the outside, leading to
-     multiple incompatibilities, since the template type of different data
-     structures has changed and the number of input/output arguments have decreased.
-  \todo[inline]{DavidW: Please describe some details here.}
-\item We have performed various performance improvements throughout the library,
-     which we detail in the following sections.
+  \item \dealii{} internally needs to keep track of the relative
+    orientations of the coordinate systems associated with neighboring
+    cells, as well as of the coordinate systems of faces and edges
+    within the coordinate system of the cells they are part
+    of. Historically, different places within the library that had to
+    do that had grown their own, independent ways of representating
+    this information, much of which was difficult to understand.
+    We have now cleaned up this area. Specifically, instead of using three
+    Booleans to define relative orientations for hexedra (\textit{orientation},
+    \textit{flip}, and \textit{rotation}), we have internally merged these three values into a single variable of type
+     \texttt{char} -- i.e., the smallest integer data type that has at
+     least three bits to represent the information. Because the way to represent
+     orientations is part of the public interface, the change causes
+     some incompatibilities in types and function signatures.
+  \todo[inline]{DavidW: Please describe some details here. -- When
+    done, please remove this comment.}
 \item The \texttt{SolverGMRES} class now offers a third orthogonalization
   method, the classical Gram--Schmidt method with delayed orthogonalization
   \cite{Bielich2022}. Furthermore, the solver now specifies the maximal basis
