@@ -289,8 +289,28 @@ which we briefly outline in the remainder of this section:
     \todo[inline]{Sebastian: Is there anything more to say here, maybe some reference? If
       you want, we can also list this point in the list above, and add
       a whole section 2.x for it.}
-  \item changes of interface of AffineConstraints
-    \todo[inline]{Wolfgang to write}
+  \item The \texttt{AffineConstraints} class stores and processes
+    constraints on degrees of freedom in \dealii{}. Such constraints
+    can be of the form $x_3 = \frac 12 x_{14} + \frac 12 x_{15}$ as is
+    common when using hanging node constraints (here, $x_3$ could
+    represent the value of the solution at a hanging node, and $x_{14}$
+    and $x_{15}$ are the values of the two adjacent degrees of freedom on
+    the parent edge that contains the hanging node); of they can be of
+    the form $x_{12}=42$ as is common when using Dirichlet boundary
+    conditions.
+
+    Since very early in the history of the library, the
+    \texttt{AffineConstraints} class interface required building such
+    constraints in multiple steps: First, one declared a degree of
+    freedom as constrained; then one added the dependencies one after
+    the other (e.g., by adding pairs $(\frac 12, 13)$ and $(\frac 12,
+    14)$ in the hanging node example above); then one added
+    inhomogeneities (by setting it to $42$ in the Dirichlet example
+    above). This piecemeal approach is cumbersome and prevents the
+    library from performing certain error checking steps because a
+    constraint is not known to be completely built at any given point. The new
+    \textt{add\_constraint()} function now allows defining a
+    constraint in one step.
   \item \dealii{} internally needs to keep track of the relative
     orientations of the coordinate systems associated with neighboring
     cells, as well as of the coordinate systems of faces and edges
