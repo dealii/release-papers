@@ -362,28 +362,36 @@ can be found
   
 We made different updates to the matrix-free infrastructure in \dealii. These include:
 \begin{itemize}
-\item Our own implementation of \texttt{std::simd} (\texttt{VectorizedArray}) now
-  also supports Arm Neon. Arm Neon is an architecture extension for
-  the Arm Cortex-A and Arm Cortex-R series of processors, commonly used in Apple
-  products. With these instructions 2 doubles or 4 floats can be processed in one
-  go. Since matrix-free infrastructure works directly with \texttt{VectorizedArray}
-  data structures, it automatically benefits from this implementation extension.
+\item Our own implementation of \texttt{std::simd}, called
+  \texttt{VectorizedArray}, now also supports Arm Neon. Arm Neon is an
+  architecture extension of the ARMv7, ARMv8 and ARMv9 architecture families,
+  used e.g.~for the Arm Cortex-A and Arm Cortex-R series of processors or in
+  the Apple 64-bit silicon series (A7--A18, M1--M4 as of 2024).
+  With these instructions, 2 doubles or 4 floats can be processed in one
+  go. Since the matrix-free infrastructure works directly with the \texttt{VectorizedArray}
+  abstraction as data structure, it automatically benefits from this new implementation.
   
-\item We made some improvement for evaluation of values and gradients for
-  $H$(div)-conforming Raviart--Thomas elements on non-Cartesian elements.
+\item The application of the Piola transformation for values and gradients of
+  $H$(div)-conforming Raviart--Thomas elements on non-Cartesian elements has
+  been rewritten for better performance. Together with additional changes in
+  the sum-factorization algorithms that are now more similar to the kernels
+  described in~\cite{KronbichlerKormann2019}, the matrix-free operator
+  evaluation is now three to five times faster in these cases.
   
-\item We furthermore improved the internal data structures of the
-  tensor-product evaluators as well as the evaluators for simplex elements,
-  which speed up the evaluation in several scenarios, especially multi-component systems.
+\item Furthermore, improved the internal data structures of the tensor-product
+  evaluators as well as the evaluators for simplex elements.  This speeds up
+  the operator-evaluation in several scenarios, especially for simplices
+  (around two times higher throughput for operator evaluation) and
+  multi-component systems.
 \end{itemize}
 
 Furthermore, we performed substantial improvements to the global-coarsening
 multigrid infrastructure: \texttt{MGTransferMF} (previously:
 \texttt{MGTransferGlobalCoarsening}) and \texttt{MGTwoLevelTransfer}. They
 now allow to perform local smoothing, which is a key step towards unifying
-all transfer operators in \dealii. \texttt{MGTwoLevelTransfer} now also
-can be set up with an existing \texttt{MatrixFree} object in the case
-of $p$-multigrid, allowing to reduce the setup costs significantly.
+all transfer operators in \dealii. Finally, \texttt{MGTwoLevelTransfer} can now
+be set up with an existing \texttt{MatrixFree} object in the case
+of $p$-multigrid, allowing to reduce the setup costs and memory consumption significantly.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -392,18 +400,23 @@ of $p$-multigrid, allowing to reduce the setup costs significantly.
 %\todo[inline]{All: If you contributed to this functionality, please
 %  help flesh out this section.}
   
-We made different advances to the non-matching infrastructure in \dealii. These include:
+For the non-matching infrastructure in \dealii, the following improvements were made:
 
 \begin{itemize}
 \item The performance of the non-nested multigrid infrastructure
 (\texttt{MGTwoLevelTransferNon\-Nested}) has been improved significantly by avoiding
-redundant copy operations. Furthermore, the support for simplex-shaped cells and
-multiple-component elements have been added.
+redundant copy operations. Furthermore, support for simplex-shaped cells and
+multiple-component elements has been added.
+\item Several minor performance improvements for \dealii's evaluator class on
+  sets of unstructured points, \texttt{FEPointEvaluation}, have been
+  made. This is particularly useful for evaluating several quantities on the
+  same set of points, which is enabled by \texttt{NonMatching::MappingInfo}.
 \item The new class \texttt{FERemoteEvaluation} has been added. 
 This is a class to access data
 in a distributed matrix-free loop for non-matching discretizations.
-Interfaces are named with \texttt{FEEvaluation} in mind. Key component is the
-underlying MPI communication, which is done via \texttt{RemotePointEvaluation}.
+Interfaces are named in analogy to \texttt{FEEvaluation}, in order to seamlessly switch
+local evaluator functionality at quadrature points of a computation. The key component is the
+underlying MPI communication infrastructure, which is done via \texttt{RemotePointEvaluation}.
 Tutorial \texttt{step-89} has been added to present its usage
 in the context of an application to acoustic conservation equations~\cite{heinz2023high}.
 \item FECouplingValues
@@ -432,8 +445,8 @@ time integration and discretization.
 Historically, \trilinos{} has implemented \petra{} objects -- such as
 parallel vector, sparsity pattern, and sparse matrix classes -- in its
 \epetra{} package that uses \MPI{} as its only source of
-parallelism. The \dealii{} interfaces to \trilinos{} are therefore all
-built using \epetra{}.
+parallelism. The \dealii{} interfaces to \trilinos{} have therefore traditionally all
+been built using \epetra{}.
 However, several years ago, \trilinos also introduced the
 newer \tpetra{} (``templated'' Petra) package that provides additional shared memory 
 parallelism and GPU capabilities by building on \kokkos{}. \tpetra{}
@@ -534,7 +547,7 @@ programs:
     checkpoint/restart functionality in \dealii{}-based programs,
     using the BOOST serialization functionality as a
     foundation. step-83 was written by Pasquale Africa, Wolfgang
-    Bangerth, and Bruno Blais and uses step-19 as its basis.
+    Bangerth, and Bruno Blais using step-19 as its basis.
   \item
     \texttt{step-86}
     is a program that solves the heat equation using PETSc's TS (time
@@ -823,9 +836,7 @@ German Ministry of Education and Research, project
 ``PDExa: Optimized software methods for solving partial differential
 equations on exascale supercomputers'' and the Bayerisches Kompetenznetzwerk
 f\"ur Technisch-Wissen\-schaft\-li\-ches Hoch- und H\"ochstleistungsrechnen
-(KONWIHR), projects ``High-order matrix-free finite
-element implementations with hybrid parallelization and improved data
-locality'' and ``Fast and scalable finite element algorithms for coupled
+(KONWIHR), project ``Fast and scalable finite element algorithms for coupled
 multiphysics problems and non-matching grids''.
 
 M.~Maier was partially supported by NSF Award DMS-2045636 and and by the
