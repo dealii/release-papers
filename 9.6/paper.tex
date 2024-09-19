@@ -151,8 +151,8 @@ cross/.default={2pt}}
 \affil[9]{University of Pisa, Italy.}
 
 \author[10]{Sebastian~Kinnewig}
-\affil[10]{Institute for Applied Mathematics, Scientific Computing, 
-           Leibniz University Hannover, 
+\affil[10]{Institute for Applied Mathematics, Scientific Computing,
+           Leibniz University Hannover,
            Welfengarten 1, 30167 Hannover, Germany
            {\texttt{kinnewig@ifam.uni-hannover.de}}}
 
@@ -359,7 +359,7 @@ can be found
 
 %\todo[inline]{Martin/Peter: The list in the introduction also mentions the two-level
 %  operators. Is this the right place to also discuss these?}
-  
+
 We made different updates to the matrix-free infrastructure in \dealii. These include:
 \begin{itemize}
 \item Our own implementation of \texttt{std::simd}, called
@@ -370,14 +370,14 @@ We made different updates to the matrix-free infrastructure in \dealii. These in
   With these instructions, 2 doubles or 4 floats can be processed in one
   go. Since the matrix-free infrastructure works directly with the \texttt{VectorizedArray}
   abstraction as data structure, it automatically benefits from this new implementation.
-  
+
 \item The application of the Piola transformation for values and gradients of
   $H$(div)-conforming Raviart--Thomas elements on non-Cartesian elements has
   been rewritten for better performance. Together with additional changes in
   the sum-factorization algorithms that are now more similar to the kernels
   described in~\cite{KronbichlerKormann2019}, the matrix-free operator
   evaluation is now three to five times faster in these cases.
-  
+
 \item Furthermore, improved the internal data structures of the tensor-product
   evaluators as well as the evaluators for simplex elements.  This speeds up
   the operator-evaluation in several scenarios, especially for simplices
@@ -399,7 +399,7 @@ of $p$-multigrid, allowing to reduce the setup costs and memory consumption sign
 
 %\todo[inline]{All: If you contributed to this functionality, please
 %  help flesh out this section.}
-  
+
 For the non-matching infrastructure in \dealii, the following improvements were made:
 
 \begin{itemize}
@@ -411,7 +411,7 @@ multiple-component elements has been added.
   sets of unstructured points, \texttt{FEPointEvaluation}, have been
   made. This is particularly useful for evaluating several quantities on the
   same set of points, which is enabled by \texttt{NonMatching::MappingInfo}.
-\item The new class \texttt{FERemoteEvaluation} has been added. 
+\item The new class \texttt{FERemoteEvaluation} has been added.
 This is a class to access data
 in a distributed matrix-free loop for non-matching discretizations.
 Interfaces are named in analogy to \texttt{FEEvaluation}, in order to seamlessly switch
@@ -430,13 +430,13 @@ in the context of an application to acoustic conservation equations~\cite{heinz2
 \dealii{}'s parallel linear algebra facilities (apart from matrix-free capabilities) are largely built on
 wrappers around functionality provided by the \petsc{} and \trilinos{} libraries.
 
-Historically, \trilinos{} has implemented distributed linear algebra 
+Historically, \trilinos{} has implemented distributed linear algebra
 -classes for vectors and (sparse) matrices in its
 \epetra{} package that uses \MPI{} as its only source of
 parallelism. The \dealii{} interfaces to \trilinos{} have therefore traditionally all
 been built using \epetra{}.
 However, several years ago, \trilinos also introduced the
-newer \tpetra{} (``templated'' Petra) package that provides additional shared memory 
+newer \tpetra{} (``templated'' Petra) package that provides additional shared memory
 parallelism and GPU capabilities by building on \kokkos{}. \tpetra{}
 is slated to eventually replace \epetra{}, and the latter is indeed
 now deprecated with removal slated for 2025. As a consequence, we will
@@ -530,7 +530,7 @@ as part of this release. In addition, there are a number of new tutorial
 programs:
 \begin{itemize}
   \item
-    \texttt{step-83} 
+    \texttt{step-83}
     demonstrates how one can implement
     checkpoint/restart functionality in \dealii{}-based programs,
     using the BOOST serialization functionality as a
