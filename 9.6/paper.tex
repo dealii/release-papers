@@ -311,22 +311,33 @@ which we briefly outline in the remainder of this section:
     constraint is not known to be completely built at any given point. The new
     \texttt{add\_constraint()} function now allows defining a
     constraint in one step.
-  \item \dealii{} internally needs to keep track of the relative
-    orientations of the coordinate systems associated with neighboring
-    cells, as well as of the coordinate systems of faces and edges
-    within the coordinate system of the cells they are part
-    of. Historically, different places within the library that had to
-    do that had grown their own, independent ways of representating
-    this information, much of which was difficult to understand.
-    We have now cleaned up this area. Specifically, instead of using three
-    Booleans to define relative orientations for hexedra (\textit{orientation},
-    \textit{flip}, and \textit{rotation}), we have internally merged these three values into a single variable of type
-     \texttt{char} -- i.e., the smallest integer data type that has at
-     least three bits to represent the information. Because the way to represent
-     orientations is part of the public interface, the change causes
-     some incompatibilities in types and function signatures.
-  \todo[inline]{DavidW: Please describe some details here. -- When
-    done, please remove this comment.}
+  \item We refactored the systems for managing relative line and face
+    orientations to significantly improve consistency across several library
+    modules, including finite element classes, periodicity, and the
+    \texttt{p4est} interface. \dealii{} has supported using unstructured
+    three-dimensional meshes for a long time. Features like discontinuous
+    Galerkin methods and higher-order elements require that lines and faces of
+    adjacent elements are consistently oriented. For example, consider a line
+    containing two degrees of freedom, which, in reference coordinates, are
+    located at $x_1 = \frac 1 3$ and $x_2 = \frac 2 3$. If the line is read from
+    left-to-right then we get points $(x_1, x_2)$ whereas if it is read from
+    right-to-left we get $(x_2, x_1)$. \dealii{} guarantees that this order will
+    be consistent across all cells sharing that line by storing a flag
+    indicating whether (relative to the vertex enumeration on the present cell)
+    that particular line is in the standard or reversed orientation. Faces in 3d
+    are treated in a similar way. The only significant difference between lines
+    and 3d faces is that, instead of two possible relative orientations,
+    triangular faces have six and quadrilateral faces have eight.
+
+    Historically, different places within the library implemented their own
+    ad-hoc orientation logic, data encodings, and default values. We cleaned up
+    this subsystem and instead of using three different booleans
+    (\emph{orientation}, \emph{rotation}, and \emph{flip}), bitsets, or several
+    other encodings, we use a single \texttt{unsigned char} which we named the
+    \emph{combined orientation}. Since the representation in some library
+    interfaces has changed, most of the old interfaces have been deprecated and
+    a few (such as the low-level interface to periodic boundary conditions) had
+    to be incompatibly altered or removed.
 \item The \texttt{SolverGMRES} class now offers a third orthogonalization
   method, the classical Gram--Schmidt method with delayed orthogonalization
   \cite{Bielich2022}. Furthermore, the solver now specifies the maximal basis
