@@ -456,7 +456,10 @@ eventually have to switch all of our \trilinos{} interfaces to
 sub-packages replacing existing \trilinos sub-packages (for example,
 Ifpack2 instead of Ifpack).
 
-In the current release, we have put substantial work into this switch. The following omits the \texttt{LinearAlgebra} prefix for readability.
+In the current release, we have put substantial work into this switch,
+as outlined below. In the following list, we omit the common namespace
+\texttt{LinearAlgebra::} prefix on all mentioned
+\texttt{TpetraWrappers} symbols for readability:
 \begin{itemize}
   \item The \texttt{TpetraWrappers::Vector} class has been overhauled to also allow specifying
     a memory space, and the \texttt{TpetraWrappers::BlockVector} class has been added.
