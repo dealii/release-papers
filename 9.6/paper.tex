@@ -104,7 +104,7 @@ cross/.default={2pt}}
 
 \title{The \dealii Library, Version 9.6}
 
- \author[1*]{Pasquale~Claudio~Africa}
+ \author[1]{Pasquale~Claudio~Africa}
  \affil[1]{SISSA International School for Advanced Studies,
    mathLab,
    Via Bonomea, 265,
@@ -185,14 +185,14 @@ cross/.default={2pt}}
  Leibniz Institute in Forschungsverbund Berlin e.V.
   {\texttt{thiele@wias-berlin.de}}}
 
-\author[2]{Bruno~Turcksin}
+\author[2*]{Bruno~Turcksin}
 
 \author[17]{David Wells}
 \affil[17]{Department of Mathematics, University of North Carolina,
   Chapel Hill, NC 27516, USA.
   {\texttt{drwells@email.unc.edu}}}
 
-\author[18,8]{Vladimir Yushutin}
+\author[8, 18]{Vladimir Yushutin}
 \affil[18]{Department of Mathematics, University of Tennessee at Knoxville,
 	 Knoxville TN 37996-1320, USA.
 {\texttt{vyushuti@utk.edu}}}
@@ -248,7 +248,7 @@ The major changes of this release are:
    infrastructure (Section~\ref{sec:mf}).
   \item Different additions to the non-matching infrastructure (see
     Section~\ref{sec:nonmatching}). In particular, the new class
-    FERemoteEvaluation provides support for evaluating
+    \texttt{FERemoteEvaluation} provides support for evaluating
     finite element shape functions and solutions on parts of the
     domain stored by other MPI processes.
   \item Much work has gone into writing wrappers for Trilinos' Tpetra
@@ -344,6 +344,9 @@ which we briefly outline in the remainder of this section:
   size of the Arnoldi basis, rather than the number of auxiliary
   vectors. Some changes have also been made to the GMRES and F-GMRES
   implementations, making them use the same underlying kernels as much as possible.
+\item The new class \texttt{FE\_Hermite} implements a Hermite interpolation basis of
+maximum regularity. These bases are always of odd polynomial degree $p$ and have
+regularity $r=(p-1)/2$.  
 \end{itemize}
 %
 The changelog lists more than 180 other features and bugfixes.
@@ -396,7 +399,7 @@ We made different updates to the matrix-free infrastructure in \dealii. These in
   multi-component systems.
 \end{itemize}
 
-Furthermore, we performed substantial improvements to the global-coarsening
+In addition, we performed substantial improvements to the global-coarsening
 multigrid infrastructure: \texttt{MGTransferMF} (previously:
 \texttt{MGTransferGlobalCoarsening}) and \texttt{MGTwoLevelTransfer}. They
 now allow to perform local smoothing, which is a key step towards unifying
@@ -605,9 +608,9 @@ UPDATE
 \end{itemize}
 
 Furthermore, we added an example to the \texttt{libCEED}
-library.\footnote{\url{https://github.com/CEED/libCEED}} \texttt{libCEED} is a library
+library~\cite{brown2021libceed}: \url{https://github.com/CEED/libCEED/tree/main/examples/deal.II}. \texttt{libCEED} is a library
 that provides matrix-free evaluation routines that work on different hardware. The
-examples show how to interface the \dealii data structures to the \texttt{libCEED} ones.
+example show how to interface the \dealii data structures to the \texttt{libCEED} ones.
 The example solves the BP1-BP6 benchmarks (scalar/vector Laplace/mass matrix with
 regular integration and over-integration).
 
