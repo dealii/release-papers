@@ -477,7 +477,7 @@ algebraic-multigrid preconditioner.
 
 The design goal was to introduce as few changes as possible for the user to allow for an easy transition to the 
 \texttt{TpetraWrappers} classes. 
-However, based on the difference between \epetra{} and \tpetra{}, the following changes where necessary:
+However, based on the difference between \epetra{} and \tpetra{}, the following changes were necessary:
 \begin{itemize}
   \item The constructor for the class \texttt{TrilinosWrappers::MPI::Vector} only required the \texttt{IndexSet locally\_owned}, 
     which describes the set of indices locally owned by the current rank. 
@@ -492,8 +492,7 @@ However, based on the difference between \epetra{} and \tpetra{}, the following 
 One other important change is that
 all the \texttt{TpetraWrappers} classes take \texttt{Number} and \texttt{MemorySpace} template arguments,
 which control the underlying number type and memory space. 
-By default, the number type is set to  \texttt{double}, and memory is allocated on the CPU, mirroring the 
-behavior of the \texttt{TrilinosWrappers}. 
+By default, the memory is allocated on the CPU, mirroring the behavior of the \texttt{TrilinosWrappers}. 
 The support for different number types also enables the usage of automatic differentiation-based tools in 
 \trilinos{}, such as \texttt{NOX}. 
 Additionally, the memory space type determines whether \tpetra{} can utilize GPUs if \kokkos{} is configured 
@@ -501,10 +500,7 @@ with a GPU backend.
 To make the automatic differentiation tools of \trilinos{} accessible through the \tpetra{} interface without 
 requiring users to have an in-depth understanding of \trilinos{}, additional wrappers for the corresponding 
 \trilinos{} packages will be added in future releases. 
-Furthermore, further work is needed to fully leverage the GPU backend and unlock its full potential for users.
-
-Moreover, the \tpetra{} interface allows access to more functionality and preconditioners, e.g., \texttt{FROSch}, 
-available in \trilinos{}, which will be made accessible through the \texttt{TpetraWrappers} in the future.
+Furthermore, to fully leverage the GPU backend and unlock its full potential for users will require further work.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{More support for advanced programming idioms}\label{sec:tools}
