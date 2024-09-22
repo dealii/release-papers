@@ -238,7 +238,7 @@ overview of the new features of this release and serves as a citable
 reference for the \dealii software library version 9.6. \dealii is an
 object-oriented finite element library used around the world in the
 development of finite element solvers. It is available for free under the
-GNU Lesser General Public License (LGPL). Downloads are available at
+GNU Lesser General Public License (LGPL). \todo{Update license} Downloads are available at
 \url{https://www.dealii.org/} and \url{https://github.com/dealii/dealii}.
 
 The major changes of this release are:
@@ -251,15 +251,15 @@ The major changes of this release are:
     \texttt{FERemoteEvaluation} provides support for evaluating
     finite element shape functions and solutions on parts of the
     domain stored by other MPI processes.
-  \item Much work has gone into writing wrappers for Trilinos' Tpetra
-    stack of linear algebra classes. Tpetra is Trilinos' Kokkos-based
-    replacement for the now-deprecated Epetra stack. See
+  \item Much work has gone into writing wrappers for \trilinos' \tpetra{}
+    stack of linear algebra classes. \tpetra{} is \trilinos' \kokkos-based
+    replacement for the now-deprecated \epetra{} stack. See
     Section~\ref{sec:tpetra} for more on this.
   \item Tool classes \texttt{TaskResult} and \texttt{Lazy} that provide ways to compute
     values on a separate thread or only when first accessed (Section~\ref{sec:tools}).
   \item There are six new tutorial programs, on checkpointing simulations
     (step-83), integrating time-dependent solvers with external time
-    stepping libraries (step-86, using PETSc's TS library), advanced
+    stepping libraries (step-86, using \petsc's \ts{} library), advanced
     point evaluation techniques (step-87), non-matching grids
     (step-89), and trace-based methods for PDEs on embedded surfaces
     (step-90). See Section~\ref{subsec:steps} for more details.
@@ -275,7 +275,7 @@ are a number of other noteworthy changes in the current \dealii release,
 which we briefly outline in the remainder of this section:
 %
 \begin{itemize}
-  \item deal.II now requires and uses of C++17.
+  \item \dealii{} now requires and makes use of the C++17 language standard.
   \item We have continued to make progress in supporting simplex and
     mixed meshes -- mesh types that \dealii{} has traditionally not
     supported at all. Specifically, the current release uses
@@ -314,7 +314,7 @@ which we briefly outline in the remainder of this section:
   \item We refactored the systems for managing relative line and face
     orientations to significantly improve consistency across several library
     modules, including finite element classes, periodicity, and the
-    \texttt{p4est} interface. \dealii{} has supported using unstructured
+    \pfrst{} interface. \dealii{} has supported using unstructured
     three-dimensional meshes for a long time. Features like discontinuous
     Galerkin methods and higher-order elements require that lines and faces of
     adjacent elements are consistently oriented. For example, consider a line
@@ -346,10 +346,9 @@ which we briefly outline in the remainder of this section:
   implementations, making them use the same underlying kernels as much as possible.
 \item The new class \texttt{FE\_Hermite} implements a Hermite interpolation basis of
 maximum regularity. These bases are always of odd polynomial degree $p$ and have
-regularity $r=(p-1)/2$.  
+regularity $r=(p-1)/2$.
 \end{itemize}
 %
-The changelog lists more than 180 other features and bugfixes.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -365,6 +364,7 @@ vast number of smaller changes and added functionality; the details of these
 can be found
 \href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_5_2_and_9_6_0.html}
 {in the file that lists all changes for this release}; see \cite{changes96}.
+The changelog lists more than 180 features and bugfixes.
 
 
 
@@ -394,15 +394,15 @@ We made different updates of the matrix-free infrastructure in \dealii. These in
   the operator evaluation in several scenarios, especially for simplices
   (around two times higher throughput for operator evaluation) and
   multi-component systems.
-\end{itemize}
 
-In addition, we performed substantial improvements to the global-coarsening
-multigrid infrastructure: \texttt{MGTransferMF} (previously:
-\texttt{MGTransferGlobalCoarsening}) and \texttt{MGTwoLevelTransfer}. They
-now allow to perform local smoothing, which is a key step towards unifying
-all transfer operators in \dealii. Finally, \texttt{MGTwoLevelTransfer} can now
-be set up with an existing \texttt{MatrixFree} object in the case
-of $p$-multigrid, allowing to reduce the setup costs and memory consumption significantly.
+\item In addition, we performed substantial improvements to the global-coarsening
+  multigrid infrastructure: \texttt{MGTransferMF} (previously:
+  \texttt{MGTransferGlobalCoarsening}) and \texttt{MGTwoLevel\-Transfer}. They
+  now allow to perform local smoothing, which is a key step towards unifying
+  all transfer operators in \dealii. Finally, \texttt{MGTwoLevelTransfer} can now
+  be set up with an existing \texttt{MatrixFree} object in the case
+  of $p$-multigrid, allowing to reduce the setup costs and memory consumption significantly.
+\end{itemize}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -428,7 +428,7 @@ in a distributed matrix-free loop for non-matching discretizations.
 Interfaces are named in analogy to \texttt{FEEvaluation}, in order to seamlessly switch the
 local evaluator functionality at quadrature points of a computation. The key component is the
 underlying MPI communication infrastructure, which is performed via \texttt{RemotePointEvaluation}.
-Tutorial \texttt{step-89} has been added to present its usage
+Tutorial step-89 has been added to present its usage
 in the context of the application to acoustic conservation equations~\cite{heinz2023high}.
 \item FECouplingValues
 
@@ -470,36 +470,36 @@ as outlined below. In the following list, we omit the common namespace
   \item \texttt{TpetraWrappers::SolverDirect} and \texttt{TpetraWrappers::SolverDirectKLU2}
     have been implemented as direct solvers.
 \end{itemize}
-The preconditioner available in the \texttt{TpetraWrappers::Precondition*} classes can be used along with the existing 
-iterative solvers, e.g., CG, GMRES, etc.; therefore, the interface is already usable. 
-Even if some functionality exists, the \texttt{TrilinosWrappers} classes are missing, most noticably a wrapper for an 
-algebraic-multigrid preconditioner. 
+The preconditioner available in the \texttt{TpetraWrappers::Precondition*} classes can be used along with the existing
+iterative solvers, e.g., CG, GMRES, etc.; therefore, the interface is already usable.
+However, some functionality in the \texttt{TrilinosWrappers} classes is still missing, most noticeably a wrapper for an
+algebraic-multigrid preconditioner.
 
-The design goal was to introduce as few changes as possible for the user to allow for an easy transition to the 
-\texttt{TpetraWrappers} classes. 
+The design goal was to introduce as few changes as possible for the user to allow for an easy transition to the
+\texttt{TpetraWrappers} classes.
 However, based on the difference between \epetra{} and \tpetra{}, the following changes were necessary:
 \begin{itemize}
-  \item The constructor for the class \texttt{TrilinosWrappers::MPI::Vector} only required the \texttt{IndexSet locally\_owned}, 
-    which describes the set of indices locally owned by the current rank. 
-    However, if one wants to create a vector that has read or write access to non-locally owned indices,  the constructor of the 
-    \texttt{TpetraWrappers::Vector} requires \texttt{IndexSet locally\_owned}, the \texttt{IndexSet locally\_relevat}, and 
+  \item The constructor for the class \texttt{TrilinosWrappers::MPI::Vector} only required the \texttt{IndexSet locally\_owned},
+    which describes the set of indices locally owned by the current rank.
+    However, if one wants to create a vector that has read or write access to non-locally owned indices,  the constructor of the
+    \texttt{TpetraWrappers::Vector} requires \texttt{IndexSet locally\_owned}, the \texttt{IndexSet locally\_relevant}, and
     a boolean flag, whether to initialize the vector in the read-only or the write-only state.
-  \item A vector created without providing a \texttt{IndexSet locally\_relevat} is purely local and cannot access non-local indices. 
-    Such a vector can not be copied to a vector that can access non-local indices, as the \texttt{IndexSet locally\_relevat} must 
+  \item A vector created without providing a \texttt{IndexSet locally\_relevant} is purely local and cannot access non-local indices.
+    Such a vector can not be copied to a vector that can access non-local indices, as the \texttt{IndexSet locally\_relevant} must
     be provided at creating the vector object.
 \end{itemize}
 
 One other important change is that
 all the \texttt{TpetraWrappers} classes take \texttt{Number} and \texttt{MemorySpace} template arguments,
-which control the underlying number type and memory space. 
-By default, the memory is allocated on the CPU, mirroring the behavior of the \texttt{TrilinosWrappers}. 
-The support for different number types also enables the usage of automatic differentiation-based tools in 
-\trilinos{}, such as \texttt{NOX}. 
-Additionally, the memory space type determines whether \tpetra{} can utilize GPUs if \kokkos{} is configured 
-with a GPU backend. 
-To make the automatic differentiation tools of \trilinos{} accessible through the \tpetra{} interface without 
-requiring users to have an in-depth understanding of \trilinos{}, additional wrappers for the corresponding 
-\trilinos{} packages will be added in future releases. 
+which control the underlying number type and memory space.
+By default, the memory is allocated on the CPU, mirroring the behavior of the \texttt{TrilinosWrappers}.
+The support for different number types also enables the usage of automatic differentiation-based tools in
+\trilinos{}, such as \texttt{NOX}.
+Additionally, the memory space type determines whether \tpetra{} can utilize GPUs if \kokkos{} is configured
+with a GPU backend.
+To make the automatic differentiation tools of \trilinos{} accessible through the \tpetra{} interface without
+requiring users to have an in-depth understanding of \trilinos{}, additional wrappers for the corresponding
+\trilinos{} packages will be added in future releases.
 Furthermore, to fully leverage the GPU backend and unlock its full potential for users will require further work.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -571,13 +571,14 @@ programs:
   \item
     \texttt{step-83}
     demonstrates how one can implement
-    checkpoint/restart functionality in \dealii{}-based programs,
-    using the BOOST serialization functionality as a
+    checkpoint/restart functionality in \dealii-based programs,
+    using the \boost{} serialization functionality as a
     foundation. step-83 was written by Pasquale Africa, Wolfgang
     Bangerth, and Bruno Blais using step-19 as its basis.
+    \todo{Also add affiliations like for the other tutorials?}
   \item
     \texttt{step-86}
-    is a program that solves the heat equation using PETSc's TS (time
+    is a program that solves the heat equation using \petsc's \ts{} (time
     stepping) framework for the solution of ordinary differential
     equations. Written by Wolfgang Bangerth (Colorado State
     University), Luca Heltai (University of Pisa), and Stefano Zampini
@@ -619,7 +620,7 @@ In addition, there are three new programs in the code gallery (a collection of
 user-contributed programs that often solve more complicated problems
 than tutorial programs, and that are intended as starting points for further
 research rather than as teaching tools):
-UPDATE
+\todo{UPDATE}
 \begin{itemize}
   \item \textit{``Crystal growth phase field model'''},
     contributed by Umair Hussain;
@@ -632,7 +633,7 @@ UPDATE
 Furthermore, we added an example to the \texttt{libCEED}
 library~\cite{brown2021libceed}: \url{https://github.com/CEED/libCEED/tree/main/examples/deal.II}. \texttt{libCEED} is a library
 that provides matrix-free evaluation routines for different hardware. The
-example shows how to interface the \dealii data structures with the \texttt{libCEED} ones
+example shows how to interface the \dealii{} data structures with the \texttt{libCEED} ones
 and solves the BP1-BP6 benchmarks (scalar/vector Laplace/mass matrix with
 regular integration and over-integration).
 
@@ -662,7 +663,7 @@ may have been more widely used:
   \item The \texttt{CUDAWrappers} namespace and its contents --
     notably things that enable the usage of cuSPARSE algorithms --
     have been deprecated and will be removed in the next
-    release. Kokkos is now used for device-specific optimizations.
+    release. \kokkos{} is now used for device-specific optimizations.
 \end{itemize}
 
 
