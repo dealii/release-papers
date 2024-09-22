@@ -470,12 +470,37 @@ as outlined below. In the following list, we omit the common namespace
   \item \texttt{TpetraWrappers::SolverDirect} and \texttt{TpetraWrappers::SolverDirectKLU2}
     have been implemented as direct solvers.
 \end{itemize}
-Most of the interfaces are usable at this point even if some functionality existing in the \texttt{TrilinosWrappers} classes
-is still missing, most noticably a wrapper for an algebraic-multigrid preconditioner.
+The preconditioner available in the \texttt{TpetraWrappers::Precondition*} classes can be used along with the existing 
+iterative solvers, e.g., CG, GMRES, etc.; therefore, the interface is already usable. 
+Even if some functionality exists, the \texttt{TrilinosWrappers} classes are missing, most noticably a wrapper for an 
+algebraic-multigrid preconditioner. 
 
-All the \texttt{TpetraWrappers} classes take \texttt{Number} and \texttt{MemorySpace} template arguments
-allowing to control the underlying number type and the memory space used for storing the data. Note that the memory space type
-also determines whether \tpetra{} takes advantage of GPUs if \texttt{Kokkos} has been configure with a GPU backend.
+The design goal was to introduce as few changes as possible for the user to allow for an easy transition to the 
+\texttt{TpetraWrappers} classes. 
+However, based on the difference between \epetra{} and \tpetra{}, the following changes were necessary:
+\begin{itemize}
+  \item The constructor for the class \texttt{TrilinosWrappers::MPI::Vector} only required the \texttt{IndexSet locally\_owned}, 
+    which describes the set of indices locally owned by the current rank. 
+    However, if one wants to create a vector that has read or write access to non-locally owned indices,  the constructor of the 
+    \texttt{TpetraWrappers::Vector} requires \texttt{IndexSet locally\_owned}, the \texttt{IndexSet locally\_relevat}, and 
+    a boolean flag, whether to initialize the vector in the read-only or the write-only state.
+  \item A vector created without providing a \texttt{IndexSet locally\_relevat} is purely local and cannot access non-local indices. 
+    Such a vector can not be copied to a vector that can access non-local indices, as the \texttt{IndexSet locally\_relevat} must 
+    be provided at creating the vector object.
+\end{itemize}
+
+One other important change is that
+all the \texttt{TpetraWrappers} classes take \texttt{Number} and \texttt{MemorySpace} template arguments,
+which control the underlying number type and memory space. 
+By default, the memory is allocated on the CPU, mirroring the behavior of the \texttt{TrilinosWrappers}. 
+The support for different number types also enables the usage of automatic differentiation-based tools in 
+\trilinos{}, such as \texttt{NOX}. 
+Additionally, the memory space type determines whether \tpetra{} can utilize GPUs if \kokkos{} is configured 
+with a GPU backend. 
+To make the automatic differentiation tools of \trilinos{} accessible through the \tpetra{} interface without 
+requiring users to have an in-depth understanding of \trilinos{}, additional wrappers for the corresponding 
+\trilinos{} packages will be added in future releases. 
+Furthermore, to fully leverage the GPU backend and unlock its full potential for users will require further work.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{More support for advanced programming idioms}\label{sec:tools}
