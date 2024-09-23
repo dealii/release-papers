@@ -62,6 +62,7 @@
 \newcommand{\boost}{{\specialword{Boost}}\xspace}
 \newcommand{\kokkos}{{\specialword{Kokkos}}\xspace}
 \newcommand{\llvm}{{\specialword{LLVM}}\xspace}
+\newcommand{\step}[1]{{\specialword{step-#1}}\xspace}
 
 %Trilinos Packages
 \newcommand{\epetra}{{\specialword{Epetra}}\xspace}
@@ -239,7 +240,7 @@ reference for the \dealii software library version 9.6. \dealii is an
 object-oriented finite element library used around the world in the
 development of finite element solvers. It is available for free under the
 terms of the \emph{GNU Lesser General Public License} (LGPL). The \dealii
-project is in the process of relicsensing the library under the terms of
+project is in the process of relicensing the library under the terms of
 the \emph{Apache License} 2.0 with \emph{LLVM Exception}. Downloads are
 available at \url{https://www.dealii.org/} and
 \url{https://github.com/dealii/dealii}.
@@ -267,10 +268,10 @@ The major changes of this release are:
     (Section~\ref{sec:tools}).
   \item
     There are six new tutorial programs, on checkpointing simulations
-    (step-83), integrating time-dependent solvers with external time
-    stepping libraries (step-86, using \petsc's \ts{} library), advanced
-    point evaluation techniques (step-87), non-matching grids (step-89),
-    and trace-based methods for PDEs on embedded surfaces (step-90). See
+    (\step{83}), integrating time-dependent solvers with external time
+    stepping libraries (\step{86}, using \petsc's \ts{} library), advanced
+    point evaluation techniques (\step{87}), non-matching grids (\step{89}),
+    and trace-based methods for PDEs on embedded surfaces (\step{90}). See
     Section~\ref{subsec:steps} for more details.
   \item
     In Section~\ref{sec:license} we summarize the motivation and approach
@@ -305,7 +306,7 @@ which we briefly outline in the remainder of this section:
     common when using hanging node constraints (here, $x_3$ could
     represent the value of the solution at a hanging node, and $x_{14}$
     and $x_{15}$ are the values of the two adjacent degrees of freedom on
-    the parent edge that contains the hanging node); of they can be of
+    the parent edge that contains the hanging node); or they can be of
     the form $x_{12}=42$ as is common when using Dirichlet boundary
     conditions.
 
@@ -313,8 +314,8 @@ which we briefly outline in the remainder of this section:
     \texttt{AffineConstraints} class interface required building such
     constraints in multiple steps: First, one declared a degree of
     freedom as constrained; then one added the dependencies one after
-    the other (e.g., by adding pairs $(\frac 12, 13)$ and $(\frac 12,
-    14)$ in the hanging node example above); then one added
+    the other (e.g., by adding pairs $(\frac 12, 14)$ and $(\frac 12,
+    15)$ in the hanging node example above); then one added
     inhomogeneities (by setting it to $42$ in the Dirichlet example
     above). This piecemeal approach is cumbersome and prevents the
     library from performing certain error checking steps because a
@@ -381,7 +382,7 @@ can be found
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Updates of multigrid and matrix-free algorithms}\label{sec:mf}
 
-We made different updates of the matrix-free infrastructure in \dealii. These include:
+We made different updates of the multigrid and matrix-free infrastructure in \dealii. These include:
 \begin{itemize}
 \item Our own implementation of \texttt{std::simd}, called
   \texttt{VectorizedArray}, now also supports Arm Neon. Arm Neon is an
@@ -438,7 +439,7 @@ in a distributed matrix-free loop for non-matching discretizations.
 Interfaces are named in analogy to \texttt{FEEvaluation}, in order to seamlessly switch the
 local evaluator functionality at quadrature points of a computation. The key component is the
 underlying MPI communication infrastructure, which is performed via \texttt{RemotePointEvaluation}.
-Tutorial step-89 has been added to present its usage
+Tutorial \step{89} has been added to present its usage
 in the context of the application to acoustic conservation equations~\cite{heinz2023high}.
 \item FECouplingValues
 
@@ -451,7 +452,7 @@ in the context of the application to acoustic conservation equations~\cite{heinz
 \dealii{}'s parallel linear algebra facilities (apart from matrix-free capabilities) are largely built on
 wrappers around functionality provided by the \petsc{} and \trilinos{} libraries.
 
-Historically, \trilinos{} has implemented distributed linear algebra-classes for vectors and (sparse) matrices in its
+Historically, \trilinos{} has implemented distributed linear algebra classes for vectors and (sparse) matrices in its
 \epetra{} package that uses \MPI{} as its only source of
 parallelism. Building on that, there are multiple interconnected \trilinos{} packages, e.g.\ for (non)-linear solvers 
 and preconditioners, commonly referred to as the 
@@ -469,7 +470,7 @@ As a consequence,
 we will eventually have to switch all of our \trilinos{} interfaces to \tpetra{}; 
 the same is true for the need to switch to \tpetra{}-based
 sub-packages replacing existing \trilinos{} sub-packages 
-(for example, Ifpack2 instead of Ifpack).
+(for example, \texttt{Ifpack2} instead of \texttt{Ifpack}).
 
 In the current release, we have put substantial work into this switch,
 as outlined below. As this is not yet finished, it is important to note that 
@@ -511,10 +512,10 @@ However, based on the difference between \epetra{} and \tpetra{}, the following 
   \item The constructor for the class \texttt{TrilinosWrappers::MPI::Vector} only required the \texttt{IndexSet locally\_owned},
     which describes the set of indices locally owned by the current rank.
     However, if one wants to create a vector that has read or write access to non-locally owned indices,  the constructor of the
-    \texttt{TpetraWrappers::Vector} requires \texttt{IndexSet locally\_owned}, the \texttt{IndexSet locally\_relevant}, and
+    \texttt{TpetraWrappers::Vector} requires the \texttt{IndexSet locally\_owned}, the \texttt{IndexSet locally\_relevant}, and
     a boolean flag, whether to initialize the vector in the read-only or the write-only state.
-  \item A vector created without providing a \texttt{IndexSet locally\_relevant} is purely local and cannot access non-local indices.
-    Such a vector can not be copied to a vector that can access non-local indices, as the \texttt{IndexSet locally\_relevant} must
+  \item A vector created without providing the \texttt{IndexSet locally\_relevant} is purely local and cannot access non-local indices.
+    Such a vector cannot be copied to a vector that can access non-local indices, as the \texttt{IndexSet locally\_relevant} must
     be provided at creating the vector object. 
   \item Some of solver and preconditioner parameters are not available in \tpetra{},
     such that the \texttt{AdditionalData} objects are not identical. 
@@ -613,15 +614,15 @@ as part of this release. In addition, there are a number of new tutorial
 programs:
 \begin{itemize}
   \item
-    \texttt{step-83}
+    \step{83}
     demonstrates how one can implement
     checkpoint/restart functionality in \dealii-based programs,
     using the \boost{} serialization functionality as a
-    foundation. step-83 was written by Pasquale Africa, Wolfgang
-    Bangerth, and Bruno Blais using step-19 as its basis.
+    foundation. \step{83} was written by Pasquale Africa, Wolfgang
+    Bangerth, and Bruno Blais using \step{19} as its basis.
     \todo{Also add affiliations like for the other tutorials?}
   \item
-    \texttt{step-86}
+    \step{86}
     is a program that solves the heat equation using \petsc's \ts{} (time
     stepping) framework for the solution of ordinary differential
     equations. Written by Wolfgang Bangerth (Colorado State
@@ -635,20 +636,20 @@ programs:
     time stepping routines (such as wanting to change the mesh every
     once in a while, or having to deal with boundary conditions).
   \item
-    \texttt{step-87} was contributed by Magdalena Schreter-Fleischhacker
+    \step{87}~\cite{schreter2023step87} was contributed by Magdalena Schreter-Fleischhacker
     (Technical University of Munich) and Peter Munch
     (University of Augsburg/Uppsala University). It
     presents the advanced point-evaluation functionalities of \dealii,
     which are useful for evaluating finite element solutions at
-    arbitrary points on meshes that can be distributed among processes.
+    arbitrary points on meshes that can be distributed among processes. The presented mini-examples are motivated by the application to two-phase-flow simulations and demonstrate, for example, the evaluation of solution quantities at a surface mesh embedded in a background mesh, as is the case in front-tracking.
   \item
-    \texttt{step-89} was contributed by Johannes Heinz (TU Wien),
+    \step{89} was contributed by Johannes Heinz (TU Wien),
     Maximilian Bergbauer (Technical University of Munich),
     Marco Feder (SISSA), and Peter Munch (University of Augsburg/Uppsala University).
     It shows a way how to apply non-matching and/or Chimera methods
     within matrix-free loops in \dealii.
   \item
-    \texttt{step-90} was contributed by Vladimir Yushutin and Timo Heister (Clemson University).
+    \step{90} was contributed by Vladimir Yushutin and Timo Heister (Clemson University).
     It implements the trace finite element method (TraceFEM). TraceFEM solves PDEs
     posed on a, possibly evolving, $(dim-1)$-dimensional surface $\Gamma$ employing
     a fixed uniform background mesh of a $dim$-dimensional domain in which
@@ -739,7 +740,7 @@ may have been more widely used:
   \item \dealii{} now requires compilers to support C++17, and has
     started to extensively use C++17 features.
   \item The \texttt{CUDAWrappers} namespace and its contents --
-    notably things that enable the usage of cuSPARSE algorithms --
+    notably things that enable the usage of \texttt{cuSPARSE} algorithms --
     have been deprecated and will be removed in the next
     release. \kokkos{} is now used for device-specific optimizations.
 \end{itemize}
@@ -935,7 +936,7 @@ L.~Heltai was partially supported by the Italian Ministry of
 University and Research (MUR), under the grant MUR PRIN 2022 No. 2022WKWZA8
 ``Immersed methods for multiscale and multiphysics problems (IMMEDIATE)''.
 
-Sebastian Kinnewig is supported by the Deutsche Forschungsgemeinschaft (DFG) under Germany’s Excellence
+S.~Kinnewig was supported by the Deutsche Forschungsgemeinschaft (DFG) under Germany’s Excellence
 Strategy within the Cluster of Excellence PhoenixD (EXC 2122, Project ID 390833453)
 
 M.~Kronbichler and P.~Munch were partially supported by the
