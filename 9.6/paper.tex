@@ -674,19 +674,34 @@ research rather than as teaching tools):
 \end{itemize}
 
 Furthermore, we added an example to the \texttt{libCEED}
-library~\cite{brown2021libceed}: \url{https://github.com/CEED/libCEED/tree/main/examples/deal.II}. \texttt{libCEED} is a library
-that provides matrix-free evaluation routines for different hardware. The
-example shows how to interface the \dealii{} data structures with the \texttt{libCEED} ones
-and solves the BP1-BP6 benchmarks (scalar/vector Laplace/mass matrix with
-regular integration and over-integration).
+library~\cite{brown2021libceed}:
+\url{https://github.com/CEED/libCEED/tree/main/examples/deal.II}.
+\texttt{libCEED} is a library that provides matrix-free evaluation routines
+for different hardware. The example shows how to interface the \dealii{}
+data structures with the \texttt{libCEED} ones and solves the BP1-BP6
+benchmarks (scalar/vector Laplace/mass matrix with regular integration and
+over-integration).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Relicensing to Apache 2.0}\label{sec:license}
+\subsection{Relicensing to Apache License 2.0 with LLVM exception}
+\label{sec:license}
 
-\todo[inline]{Matthias: Where are we with this, and what of it is
-  worth describing here?}
-
+\color{red}
+\begin{itemize}
+  \item
+    Motivation for license change, goals: make contributions from industry
+    possible / improve deal.II adoption. Mention reasons against LGPL 2.1,
+    Explaing why GPL-3/LGPL-3 is not a good fit. Explain why Apache 2.0
+    with LLVM exception.
+  \item
+    Successful examples LLVM and Kokkos (with same license)
+  \item
+    Status of external collaborators
+  \item
+    Approach: Require all new contributions to be dual licensed
+\end{itemize}
+\color{black}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
