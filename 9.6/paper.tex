@@ -252,7 +252,7 @@ The major changes of this release are:
     Substantial performance improvements to the matrix-free and multigrid
     infrastructure (Section~\ref{sec:mf}).
   \item
-    Different additions to the non-matching infrastructure (see
+    Additions to the non-matching infrastructure (see
     Section~\ref{sec:nonmatching}). In particular, the new class
     \texttt{FERemoteEvaluation} provides support for evaluating finite
     element shape functions and solutions on parts of the domain stored by
@@ -302,12 +302,13 @@ which we briefly outline in the remainder of this section:
       a whole section 2.x for it.}
   \item The \texttt{AffineConstraints} class stores and processes
     constraints on degrees of freedom in \dealii{}. Such constraints
-    can be of the form $x_3 = \frac 12 x_{14} + \frac 12 x_{15}$ as is
+    can be of the (homogeneous) form $x_3 = \frac 12 x_{14} + \frac 12 x_{15}$ as is
     common when using hanging node constraints (here, $x_3$ could
     represent the value of the solution at a hanging node, and $x_{14}$
     and $x_{15}$ are the values of the two adjacent degrees of freedom on
     the parent edge that contains the hanging node); or they can be of
     the form $x_{12}=42$ as is common when using Dirichlet boundary
+    the (inhomogeneous) form $x_{12}=42$ as is common when using Dirichlet boundary
     conditions.
 
     Since very early in the history of the library, the
@@ -338,13 +339,14 @@ which we briefly outline in the remainder of this section:
     that particular line is in the standard or reversed orientation. Faces in 3d
     are treated in a similar way. The only significant difference between lines
     and 3d faces is that, instead of two possible relative orientations,
-    triangular faces have six and quadrilateral faces have eight.
+    triangular faces have six and quadrilateral faces have eight
+    possible orientation.
 
     Historically, different places within the library implemented their own
     ad-hoc orientation logic, data encodings, and default values. We cleaned up
     this subsystem and instead of using three different booleans
     (\emph{orientation}, \emph{rotation}, and \emph{flip}), bitsets, or several
-    other encodings, we use a single \texttt{unsigned char} which we named the
+    other encodings, we now use a single \texttt{unsigned char} which we named the
     \emph{combined orientation}. Since the representation in some library
     interfaces has changed, most of the old interfaces have been deprecated and
     a few (such as the low-level interface to periodic boundary conditions) had
@@ -360,8 +362,10 @@ which we briefly outline in the remainder of this section:
   regularity $r=(p-1)/2$.
 \end{itemize}
 %
-The changelog lists more than 180 features and bugfixes.
-
+The
+\href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_5_2_and_9_6_0.html}{changelog}
+-- listing more than 180 features and bugfixes --
+contains a complete record of all changes; see \cite{changes96}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -371,20 +375,17 @@ The changelog lists more than 180 features and bugfixes.
 
 This release of \dealii contains a number of large and significant changes,
 which we will discuss in this section.
-It of course also includes a
-vast number of smaller changes and added functionality; the details of these
-can be found
-\href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_5_2_and_9_6_0.html}
-{in the file that lists all changes for this release}; see \cite{changes96}.
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Updates of multigrid and matrix-free algorithms}\label{sec:mf}
+\subsection{Updates to the multigrid and matrix-free algorithms}\label{sec:mf}
 
-We made different updates of the multigrid and matrix-free infrastructure in \dealii. These include:
+We updated a number of significant parts of the multigrid and matrix-free
+infrastructure in \dealii. These changes include:
 \begin{itemize}
-\item Our own implementation of \texttt{std::simd}, called
+\item Our own implementation of the \texttt{std::experimental::simd}
+  class proposed for inclusion into the C++ standard, called
   \texttt{VectorizedArray}, now also supports Arm Neon. Arm Neon is an
   architecture extension of the ARMv7, ARMv8 and ARMv9 architecture families,
   used, e.g., for the Arm Cortex-A and Arm Cortex-R series of processors or in
@@ -398,7 +399,7 @@ We made different updates of the multigrid and matrix-free infrastructure in \de
   been rewritten for better performance. Together with additional changes in
   the sum-factorization algorithms, which became more similar to the kernels
   described in~\cite{KronbichlerKormann2019}, the matrix-free operator
-  evaluation is now three to five times faster in these cases.
+  evaluation is now 3--5 times faster in these cases.
 
 \item Furthermore, we improved the internal data structures of the tensor-product
   evaluators as well as the evaluators for simplex elements.  This speeds up
@@ -409,10 +410,10 @@ We made different updates of the multigrid and matrix-free infrastructure in \de
 \item In addition, we performed substantial improvements to the global-coarsening
   multigrid infrastructure: \texttt{MGTransferMF} (previously:
   \texttt{MGTransferGlobalCoarsening}) and \texttt{MGTwoLevel\-Transfer}. They
-  now allow to perform local smoothing, which is a key step towards unifying
+  now allow performing local smoothing, which is a key step towards unifying
   all transfer operators in \dealii. Finally, \texttt{MGTwoLevelTransfer} can now
   be set up with an existing \texttt{MatrixFree} object in the case
-  of $p$-multigrid, allowing to reduce the setup costs and memory consumption significantly.
+  of $p$-multigrid, reducing the setup costs and memory consumption significantly.
 \end{itemize}
 
 
@@ -422,7 +423,7 @@ We made different updates of the multigrid and matrix-free infrastructure in \de
 %\todo[inline]{All: If you contributed to this functionality, please
 %  help flesh out this section.}
 
-In the non-matching infrastructure of \dealii, the following improvements were made:
+In the non-matching infrastructure of \dealii, we made the following improvements:
 
 \begin{itemize}
 \item The performance of the non-nested multigrid infrastructure
@@ -433,7 +434,7 @@ multiple-component elements has been added.
   sets of unstructured points, \texttt{FEPointEvaluation}, have been
   made. This is particularly useful for evaluating several quantities on the
   same set of points, which is enabled by \texttt{NonMatching::MappingInfo}.
-\item The new class \texttt{FERemoteEvaluation} has been added.
+\item We added the new class \texttt{FERemoteEvaluation}.
 This is a class to access data
 in a distributed matrix-free loop for non-matching discretizations.
 Interfaces are named in analogy to \texttt{FEEvaluation}, in order to seamlessly switch the
@@ -454,22 +455,22 @@ wrappers around functionality provided by the \petsc{} and \trilinos{} libraries
 
 Historically, \trilinos{} has implemented distributed linear algebra classes for vectors and (sparse) matrices in its
 \epetra{} package that uses \MPI{} as its only source of
-parallelism. Building on that, there are multiple interconnected \trilinos{} packages, e.g.\ for (non)-linear solvers 
+parallelism. Building on that, there are multiple interconnected \trilinos{} packages, e.g.\ for (non-)linear solvers 
 and preconditioners, commonly referred to as the 
-\epetra{} stack. For sake of brevity we will also refer to the whole stack as \epetra{} in the following.
-As \epetra{} was the first stack, \dealii{} interfaces to \trilinos{} have traditionally 
+``\epetra{} stack''. For sake of brevity we will also refer to the whole stack as \epetra{} in the following.
+\dealii{}'s interfaces to \trilinos{} have traditionally 
 been implemented to use it.
 
 However, several years ago, \trilinos{} also introduced the
 newer \tpetra{} (``templated'' Petra) package that provides additional shared memory
 parallelism and GPU capabilities, referred to as \MPIx, by building on \kokkos{}. 
-Since a few years, new features have only been implemented in \tpetra{} as 
+In recent years, new features have only been implemented in \tpetra{} as 
 it is slated to replace \epetra{}, and the latter is indeed
 now deprecated with removal slated for 2025. 
 As a consequence, 
 we will eventually have to switch all of our \trilinos{} interfaces to \tpetra{}; 
 the same is true for the need to switch to \tpetra{}-based
-sub-packages replacing existing \trilinos{} sub-packages 
+sub-packages (the ``Tpetra stack'') that are intended to replace existing \trilinos{} sub-packages 
 (for example, \texttt{Ifpack2} instead of \texttt{Ifpack}).
 
 In the current release, we have put substantial work into this switch,
@@ -490,15 +491,16 @@ In the following list, we omit the common namespace prefix
     mirroring the existing classes in \texttt{LinearAlgbera::TrilinosWrappers} as closely as possible.
   \item Two new preconditioner variants \texttt{TpetraWrappers::PreconditionL1Jacobi} and \\
     \texttt{TpetraWrappers::PreconditionL1GaussSeidel}, based on~\cite{BFKY2011}, have been added.
-  \item \texttt{TpetraWrappers::SolverDirectKLU2} has been wrapped as a direct solver.
+  \item \texttt{TpetraWrappers::SolverDirectKLU2} is now available as a direct solver.
 \end{itemize}
-Some functionality in the \texttt{TrilinosWrappers} classes is still missing, 
+Some functionality in these wrapper classes is still missing, 
 most noticeably wrappers for the algebraic-multigrid preconditioner \texttt{MueLu}
 and the iterative solvers from \texttt{Belos}.
 However, the wrapped \texttt{Ifpack2} preconditioners can already be used with the iterative solvers of \dealii{}.
 
 The solver and preconditioner classes mentioned above provide reasonable parameter subsets 
-through \texttt{AdditionalData} objects, as in \texttt{TrilinosWrappers}. 
+through \texttt{AdditionalData} objects, just as the existing
+\texttt{Epetra} wrappers. 
 Additionally, there are new generic classes \texttt{TpetraWrappers::SolverDirect} 
 and \texttt{TpetraWrappers::PreconditionIfpack} which expose the internal interface through
 a \texttt{Teuchos::ParameterList} and thereby offering the full set of parameters for 
@@ -517,8 +519,9 @@ However, based on the difference between \epetra{} and \tpetra{}, the following 
   \item A vector created without providing the \texttt{IndexSet locally\_relevant} is purely local and cannot access non-local indices.
     Such a vector cannot be copied to a vector that can access non-local indices, as the \texttt{IndexSet locally\_relevant} must
     be provided at creating the vector object. 
-  \item Some of solver and preconditioner parameters are not available in \tpetra{},
-    such that the \texttt{AdditionalData} objects are not identical. 
+  \item Some of parameters of existing solver and preconditioner are
+    not available in the \tpetra{} wrappers,
+    such that the corresponding \texttt{AdditionalData} objects are not identical. 
     Since there are many preconditioners we will not list each individual change but instead refer 
     to our Doxygen documentation. 
   \item The incomplete Cholesky (IC) factorization preconditioner is not available 
@@ -534,18 +537,19 @@ In fact, one of the authors has already used this to apply the domain decomposit
 \texttt{FROSch} to various problems discretized using \dealii{}.
 \todo[inline]{Kinnewig: Add citation to preprint?}
 
-One other important change is that
-all the \texttt{TpetraWrappers} classes take \texttt{Number} and \texttt{MemorySpace} template arguments,
-which control the underlying number type and memory space.
-By default, the memory is allocated on the CPU, mirroring the behavior of the \texttt{TrilinosWrappers}.
-The support for different number types also enables the usage of automatic differentiation-based tools in
-\trilinos{}, such as \texttt{NOX}.
-Additionally, the memory space type determines whether \tpetra{} can utilize GPUs if \kokkos{} is configured
+Finally,
+all \texttt{TpetraWrappers} classes take \texttt{Number} and \texttt{MemorySpace} template arguments,
+in order to control the underlying scalar type and memory space.
+By default, memory is allocated on the CPU, mirroring the behavior of
+the \texttt{TrilinosWrappers}, but choosing a different memory space
+also allows \tpetra{} to utilize GPUs if \kokkos{} is configured
 with a GPU backend.
+Furthermore, to fully leverage the GPU backend and unlock its full potential for users will require further work.
+The support for different number types in vector and matrix classes also enables the usage of automatic differentiation-based tools in
+\trilinos{}, such as \texttt{NOX}.
 To make the automatic differentiation tools of \trilinos{} accessible through the \tpetra{} interface without
 requiring users to have an in-depth understanding of \trilinos{}, additional wrappers for the corresponding
 \trilinos{} packages will be added in future releases.
-Furthermore, to fully leverage the GPU backend and unlock its full potential for users will require further work.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{More support for advanced programming idioms}\label{sec:tools}
@@ -582,7 +586,7 @@ of this kind:
   object has to be specified at the place of construction of the
   object holding the result, rather than at the place of use; and
   because the holder object -- \texttt{std::future} -- can only be
-  asked once for its computed value.)
+  asked \textit{once} for its computed value.)
 
   \item \texttt{TaskResult<T>} is a class that represents the outcome
     of a task possibly evaluated on a separate thread. It can be
@@ -610,7 +614,12 @@ of this kind:
 \label{subsec:steps}
 
 Many of the \dealii tutorial programs were revised in a variety of ways
-as part of this release. In addition, there are a number of new tutorial
+as part of this release: Around 190 of the more than 1900 (non-merge)
+commits that went into this release touched the tutorial.
+% data generated using these commands:
+% - tutorial: git log --since 2023/07/07 --until 2024/08/11 --no-merges examples | grep commit | wc -l
+% - total:    git log --since 2023/07/07 --until 2024/08/11 --no-merges | grep commit | wc -l
+In addition, there are a number of new tutorial
 programs:
 \begin{itemize}
   \item
@@ -620,36 +629,37 @@ programs:
     using the \boost{} serialization functionality as a
     foundation. \step{83} was written by Pasquale Africa, Wolfgang
     Bangerth, and Bruno Blais using \step{19} as its basis.
-    \todo{Also add affiliations like for the other tutorials?}
   \item
     \step{86}
     is a program that solves the heat equation using \petsc's \ts{} (time
     stepping) framework for the solution of ordinary differential
-    equations. Written by Wolfgang Bangerth (Colorado State
-    University), Luca Heltai (University of Pisa), and Stefano Zampini
+    equations. Written by Wolfgang Bangerth, Luca Heltai, and Stefano Zampini
     (King Abdullah University of Science and Technology), it
     illustrates how PDE solvers for time-dependent problems can be
     integrated with existing ODE solver packages to use advanced ODE
     solver concepts (such as higher-order time integration methods and
     adaptive time step control), all without sacrificing the things
     that have traditionally led code authors toward writing their own
-    time stepping routines (such as wanting to change the mesh every
+    time stepping routines (like wanting to change the mesh every
     once in a while, or having to deal with boundary conditions).
   \item
     \step{87}~\cite{schreter2023step87} was contributed by Magdalena Schreter-Fleischhacker
-    (Technical University of Munich) and Peter Munch
-    (University of Augsburg/Uppsala University). It
+    and Peter Munch. It
     presents the advanced point-evaluation functionalities of \dealii,
     which are useful for evaluating finite element solutions at
-    arbitrary points on meshes that can be distributed among processes. The presented mini-examples are motivated by the application to two-phase-flow simulations and demonstrate, for example, the evaluation of solution quantities at a surface mesh embedded in a background mesh, as is the case in front-tracking.
+    arbitrary points on meshes that can be distributed among
+    processes. The presented mini-examples are motivated by the
+    application to two-phase flow simulations and demonstrate, for
+    example, the evaluation of solution quantities at a surface mesh
+    embedded in a background mesh, as needed in the case in front-tracking.
   \item
     \step{89} was contributed by Johannes Heinz (TU Wien),
     Maximilian Bergbauer (Technical University of Munich),
-    Marco Feder (SISSA), and Peter Munch (University of Augsburg/Uppsala University).
-    It shows a way how to apply non-matching and/or Chimera methods
+    Marco Feder (SISSA), and Peter Munch.
+    It shows how to apply non-matching and/or Chimera methods
     within matrix-free loops in \dealii.
   \item
-    \step{90} was contributed by Vladimir Yushutin and Timo Heister (Clemson University).
+    \step{90} was contributed by Vladimir Yushutin (Clemson University) and Timo Heister.
     It implements the trace finite element method (TraceFEM). TraceFEM solves PDEs
     posed on a, possibly evolving, $(dim-1)$-dimensional surface $\Gamma$ employing
     a fixed uniform background mesh of a $dim$-dimensional domain in which
@@ -665,9 +675,11 @@ In addition, there are three new programs in the code gallery (a collection of
 user-contributed programs that often solve more complicated problems
 than tutorial programs, and that are intended as starting points for further
 research rather than as teaching tools):
-\todo{UPDATE}
+\todo[inline]{Marc Fehling: UPDATE ([W] Marc, you added this comment
+  -- what did you want to update here? Perhaps add the affiliations of
+the authors?)}
 \begin{itemize}
-  \item \textit{``Crystal growth phase field model'''},
+  \item \textit{``Crystal growth phase field model''},
     contributed by Umair Hussain;
   \item \textit{``Nonlinear heat transfer problem''}, contributed by
     Narasimhan Swaminathan;
@@ -704,23 +716,25 @@ their own license freely) this is not necessarily the case for LGPL v2.1
 due to the language used in the library. This makes potential industry
 partners that evaluate the use of deal.II for their own projects nervous.
 Secondly, our previous choice to use an open source license with strong
-copyleft was motivated by our desire to receive back code contributions
-from third parties, but it is our observation over the last 10 years that
-it hardly helps achieving this goal: Copyleft only applies when a derived
+copyleft was motivated by our hope that we receive back code contributions
+from third parties. In practice, however, our observation over the
+last 10 years is that
+our choice of license has not helped achieve this goal: Copyleft only applies when a derived
 software is sold or published. But almost all of our code contributions are
 voluntary and come from individual contributors with an academic
 background, where these considerations do not apply.
 
 We have thus decided to switch away from the LGPL v2.1 license towards a
 more permissible license. We settled on the Apache License 2.0 with
-LLVM-exception in large parts because it is (a) a permissible open source
-license with patent clause, (b) considered to be a verbose, well-written
-license, and (c) has been recently chosen by other large open source
-projects, notably \llvm{} and \kokkos{}.
+LLVM-exception in large parts because it is (a)~a permissible open source
+license with patent clause, (b)~considered to be a verbose, well-written
+license, and (c)~has been recently chosen by other large open source
+projects, notably \llvm{} and \kokkos{}. Our hope going forward is
+that the new license makes it easier for industry partners to use the library.
 
 As a first step we now require all new code contributions to be dual
-licensed under the old and new licenses. As a second step we are now in the
-process of contacting more than 200 contributors with copyrighted
+licensed under the old and new licenses. As a second step we are in the
+process of contacting the more than 200 past contributors with copyrighted
 contributions to the library. As of September 2024 roughly 80\% of the
 commits and 80\% of the 1.88 million source lines of code have been
 relicensed.
@@ -735,7 +749,7 @@ see \cite{changes96}. Many of these
 incompatibilities change internal
 interfaces that are not usually used in external
 applications. That said, the following are worth mentioning since they
-may have been more widely used:
+are more broadly visible:
 \begin{itemize}
   \item \dealii{} now requires compilers to support C++17, and has
     started to extensively use C++17 features.
