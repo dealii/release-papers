@@ -61,6 +61,7 @@
 \newcommand{\arkode}{{\specialword{ARKODE}}\xspace}
 \newcommand{\boost}{{\specialword{Boost}}\xspace}
 \newcommand{\kokkos}{{\specialword{Kokkos}}\xspace}
+\newcommand{\llvm}{{\specialword{LLVM}}\xspace}
 
 %Trilinos Packages
 \newcommand{\epetra}{{\specialword{Epetra}}\xspace}
@@ -687,22 +688,41 @@ over-integration).
 \subsection{Relicensing to Apache License 2.0 with LLVM exception}
 \label{sec:license}
 
-\color{red}
-\begin{itemize}
-  \item
-    Motivation for license change, goals: make contributions from industry
-    possible / improve deal.II adoption. Mention reasons against LGPL 2.1,
-    Explaing why GPL-3/LGPL-3 is not a good fit. Explain why Apache 2.0
-    with LLVM exception.
-  \item
-    Successful examples LLVM and Kokkos (with same license)
-  \item
-    Status of external collaborators
-  \item
-    Approach: Require all new contributions to be dual licensed
-\end{itemize}
-\color{black}
+The \dealii project is in the process of relicensing the library under the
+terms of the \emph{Apache License 2.0 with LLVM
+Exception} \cite{Apache-2.0,LLVM-Exception}. To this end we require all new
+code contributions to be dual licensed under the current license (GNU
+Lesser General Public License v2.1 \cite{LGPL-2.1}) and the new license
+(Apache-2.0 with LLVM-exception).
 
+We have chosen to pursue a relicensing effort for deal.II because of some
+long standing problems with the LGPL v2.1 license. Most notably, despite
+our clear intent that the strong copyleft principle should only apply to
+deal.II source code and not user projects (which should be free to choose
+their own license freely) this is not necessarily the case for LGPL v2.1
+due to the language used in the library. This makes potential industry
+partners that evaluate the use of deal.II for their own projects nervous.
+Secondly, our previous choice to use an open source license with strong
+copyleft was motivated by our desire to receive back code contributions
+from third parties, but it is our observation over the last 10 years that
+it hardly helps achieving this goal: Copyleft only applies when a derived
+software is sold or published. But almost all of our code contributions are
+voluntary and come from individual contributors with an academic
+background, where these considerations do not apply.
+
+We have thus decided to switch away from the LGPL v2.1 license towards a
+more permissible license. We settled on the Apache License 2.0 with
+LLVM-exception in large parts because it is (a) a permissible open source
+license with patent clause, (b) considered to be a verbose, well-written
+license, and (c) has been recently chosen by other large open source
+projects, notably \llvm{} and \kokkos{}.
+
+As a first step we now require all new code contributions to be dual
+licensed under the old and new licenses. As a second step we are now in the
+process of contacting more than 200 contributors with copyrighted
+contributions to the library. As of September 2024 roughly 80\% of the
+commits and 80\% of the 1.88 million source lines of code have been
+relicensed.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Incompatible changes}\label{subsec:deprecated}
