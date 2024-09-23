@@ -436,44 +436,63 @@ in the context of the application to acoustic conservation equations~\cite{heinz
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Interface to the \trilinos{} \tpetra stack}\label{sec:tpetra}
+\subsection{Interface to the \trilinos{} \tpetra{} stack}\label{sec:tpetra}
 
 \dealii{}'s parallel linear algebra facilities (apart from matrix-free capabilities) are largely built on
 wrappers around functionality provided by the \petsc{} and \trilinos{} libraries.
 
-Historically, \trilinos{} has implemented distributed linear algebra
--classes for vectors and (sparse) matrices in its
+Historically, \trilinos{} has implemented distributed linear algebra-classes for vectors and (sparse) matrices in its
 \epetra{} package that uses \MPI{} as its only source of
-parallelism. The \dealii{} interfaces to \trilinos{} have therefore traditionally all
-been built using \epetra{}.
-However, several years ago, \trilinos also introduced the
+parallelism. Building on that, there are multiple interconnected \trilinos{} packages, e.g.\ for (non)-linear solvers 
+and preconditioners, commonly referred to as the 
+\epetra{} stack. For sake of brevity we will also refer to the whole stack as \epetra{} in the following.
+As \epetra{} was the first stack, \dealii{} interfaces to \trilinos{} have traditionally 
+been implemented to use it.
+
+However, several years ago, \trilinos{} also introduced the
 newer \tpetra{} (``templated'' Petra) package that provides additional shared memory
-parallelism and GPU capabilities by building on \kokkos{}. \tpetra{}
-is slated to eventually replace \epetra{}, and the latter is indeed
-now deprecated with removal slated for 2025. As a consequence, we will
-eventually have to switch all of our \trilinos{} interfaces to
-\tpetra{}; the same is true for the need to switch to \tpetra{}-based
-sub-packages replacing existing \trilinos sub-packages (for example,
-Ifpack2 instead of Ifpack).
+parallelism and GPU capabilities, referred to as \MPIx, by building on \kokkos{}. 
+Since a few years, new features have only been implemented in \tpetra{} as 
+it is slated to replace \epetra{}, and the latter is indeed
+now deprecated with removal slated for 2025. 
+As a consequence, 
+we will eventually have to switch all of our \trilinos{} interfaces to \tpetra{}; 
+the same is true for the need to switch to \tpetra{}-based
+sub-packages replacing existing \trilinos{} sub-packages 
+(for example, Ifpack2 instead of Ifpack).
 
 In the current release, we have put substantial work into this switch,
-as outlined below. In the following list, we omit the common namespace
-\texttt{LinearAlgebra::} prefix on all mentioned
+as outlined below. As this is not yet finished, it is important to note that 
+all these features are optional and their individual availability
+depends on the installed \trilinos{} packages. 
+As an example, a \dealii{} build will pass with a \trilinos{} installation 
+without \texttt{Ifpack2}, but its preconditioners will not be included.
+In the following list, we omit the common namespace prefix
+\texttt{LinearAlgebra::} on all mentioned
 \texttt{TpetraWrappers} symbols for readability:
 \begin{itemize}
   \item The \texttt{TpetraWrappers::Vector} class has been overhauled to also allow specifying
     a memory space, and the \texttt{TpetraWrappers::BlockVector} class has been added.
   \item \texttt{TpetraWrappers::SparseMatrix} and \texttt{TpetraWrappers::SparsityPattern} have been implemented mirroring
     the functionality of the \texttt{TrilinosWrappers::SparseMatrix} \\ and \texttt{TrilinosWrappers::SparsityPattern} classes.
-  \item Various \texttt{TpetraWrappers::Precondition*} classes have been added largely
-    mirroring the exising preconditioners in the \texttt{LinearAlgbera::TrilinosWrappers} namespace.
-  \item \texttt{TpetraWrappers::SolverDirect} and \texttt{TpetraWrappers::SolverDirectKLU2}
-    have been implemented as direct solvers.
+  \item Various incomplete factorization and relaxation preconditioners (from \texttt{Ifpack2}) have been wrapped,
+    mirroring the existing classes in \texttt{LinearAlgbera::TrilinosWrappers} as closely as possible.
+  \item Two new preconditioner variants \texttt{TpetraWrappers::PreconditionL1Jacobi} and \\
+    \texttt{TpetraWrappers::PreconditionL1GaussSeidel}, based on~\cite{BFKY2011}, have been added.
+  \item \texttt{TpetraWrappers::SolverDirectKLU2} has been wrapped as a direct solver.
 \end{itemize}
-The preconditioner available in the \texttt{TpetraWrappers::Precondition*} classes can be used along with the existing
-iterative solvers, e.g., CG, GMRES, etc.; therefore, the interface is already usable.
-However, some functionality in the \texttt{TrilinosWrappers} classes is still missing, most noticeably a wrapper for an
-algebraic-multigrid preconditioner.
+Some functionality in the \texttt{TrilinosWrappers} classes is still missing, 
+most noticeably wrappers for the algebraic-multigrid preconditioner \texttt{MueLu}
+and the iterative solvers from \texttt{Belos}.
+However, the wrapped \texttt{Ifpack2} preconditioners can already be used with the iterative solvers of \dealii{}.
+
+The solver and preconditioner classes mentioned above provide reasonable parameter subsets 
+through \texttt{AdditionalData} objects, as in \texttt{TrilinosWrappers}. 
+Additionally, there are new generic classes \texttt{TpetraWrappers::SolverDirect} 
+and \texttt{TpetraWrappers::PreconditionIfpack} which expose the internal interface through
+a \texttt{Teuchos::ParameterList} and thereby offering the full set of parameters for 
+more experienced \trilinos{} users. This also allows the use of preconditioners or 
+solvers not (yet) wrapped, e.g.\ \texttt{SuperLU\_dist} or \texttt{MUMPS}.
 
 The design goal was to introduce as few changes as possible for the user to allow for an easy transition to the
 \texttt{TpetraWrappers} classes.
@@ -486,8 +505,23 @@ However, based on the difference between \epetra{} and \tpetra{}, the following 
     a boolean flag, whether to initialize the vector in the read-only or the write-only state.
   \item A vector created without providing a \texttt{IndexSet locally\_relevant} is purely local and cannot access non-local indices.
     Such a vector can not be copied to a vector that can access non-local indices, as the \texttt{IndexSet locally\_relevant} must
-    be provided at creating the vector object.
+    be provided at creating the vector object. 
+  \item Some of solver and preconditioner parameters are not available in \tpetra{},
+    such that the \texttt{AdditionalData} objects are not identical. 
+    Since there are many preconditioners we will not list each individual change but instead refer 
+    to our Doxygen documentation. 
+  \item The incomplete Cholesky (IC) factorization preconditioner is not available 
+   in \tpetra{}.
 \end{itemize}
+
+Another goal was increasing the interoperability of \dealii{} and \trilinos{},
+allowing users familiar with both to write `pure' \trilinos{} code within their 
+applications, e.g.\ to test or develop a new feature.
+Therefore, the internal data is stored as it would be in a \trilinos{} 
+application code (as \texttt{Teuchos::RCP}) and can be accessed through member functions. 
+In fact, one of the authors has already used this to apply the domain decomposition preconditioner
+\texttt{FROSch} to various problems discretized using \dealii{}.
+\todo[inline]{Kinnewig: Add citation to preprint?}
 
 One other important change is that
 all the \texttt{TpetraWrappers} classes take \texttt{Number} and \texttt{MemorySpace} template arguments,
