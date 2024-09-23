@@ -232,42 +232,51 @@ cross/.default={2pt}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview}
 
-\dealii version 9.6.0 was released August 11, 2024.
-This paper provides an
+\dealii version 9.6.0 was released August 11, 2024. This paper provides an
 overview of the new features of this release and serves as a citable
 reference for the \dealii software library version 9.6. \dealii is an
 object-oriented finite element library used around the world in the
 development of finite element solvers. It is available for free under the
-GNU Lesser General Public License (LGPL). \todo{Update license} Downloads are available at
-\url{https://www.dealii.org/} and \url{https://github.com/dealii/dealii}.
+terms of the \emph{GNU Lesser General Public License} (LGPL). The \dealii
+project is in the process of relicsensing the library under the terms of
+the \emph{Apache License} 2.0 with \emph{LLVM Exception}. Downloads are
+available at \url{https://www.dealii.org/} and
+\url{https://github.com/dealii/dealii}.
 
 The major changes of this release are:
 %
 \begin{itemize}
-  \item Substantial performance improvements to the matrix-free and multigrid
-   infrastructure (Section~\ref{sec:mf}).
-  \item Different additions to the non-matching infrastructure (see
+  \item
+    Substantial performance improvements to the matrix-free and multigrid
+    infrastructure (Section~\ref{sec:mf}).
+  \item
+    Different additions to the non-matching infrastructure (see
     Section~\ref{sec:nonmatching}). In particular, the new class
-    \texttt{FERemoteEvaluation} provides support for evaluating
-    finite element shape functions and solutions on parts of the
-    domain stored by other MPI processes.
-  \item Much work has gone into writing wrappers for \trilinos' \tpetra{}
-    stack of linear algebra classes. \tpetra{} is \trilinos' \kokkos-based
+    \texttt{FERemoteEvaluation} provides support for evaluating finite
+    element shape functions and solutions on parts of the domain stored by
+    other MPI processes.
+  \item
+    Much work has gone into writing wrappers for \trilinos' \tpetra{} stack
+    of linear algebra classes. \tpetra{} is \trilinos' \kokkos-based
     replacement for the now-deprecated \epetra{} stack. See
     Section~\ref{sec:tpetra} for more on this.
-  \item Tool classes \texttt{TaskResult} and \texttt{Lazy} that provide ways to compute
-    values on a separate thread or only when first accessed (Section~\ref{sec:tools}).
-  \item There are six new tutorial programs, on checkpointing simulations
+  \item
+    Tool classes \texttt{TaskResult} and \texttt{Lazy} that provide ways to
+    compute values on a separate thread or only when first accessed
+    (Section~\ref{sec:tools}).
+  \item
+    There are six new tutorial programs, on checkpointing simulations
     (step-83), integrating time-dependent solvers with external time
     stepping libraries (step-86, using \petsc's \ts{} library), advanced
-    point evaluation techniques (step-87), non-matching grids
-    (step-89), and trace-based methods for PDEs on embedded surfaces
-    (step-90). See Section~\ref{subsec:steps} for more details.
+    point evaluation techniques (step-87), non-matching grids (step-89),
+    and trace-based methods for PDEs on embedded surfaces (step-90). See
+    Section~\ref{subsec:steps} for more details.
+  \item
+    In Section~\ref{sec:license} we summarize the motivation and approach
+    behind our relicensing effort to make \dealii available under the terms
+    of the the Apache License 2.0 with LLVM Exception.
 \end{itemize}
 %
-
-\todo[inline]{If we keep the section on relicensing
-  (Section~\ref{sec:license}), mention it in the list above.}
 
 While all of these major changes are discussed in detail in
 Section~\ref{sec:major}, there
