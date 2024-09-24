@@ -293,14 +293,21 @@ which we briefly outline in the remainder of this section:
     better strategies for refinement of tetrahedra that result in
     better-shaped child cells. It also contains
     support for cubic finite elements on simplices.
-  \item The \texttt{FE\_NedelecSZ} class that contains our
-    implementation of the N\'ed\'elec element using the orientation
-    scheme of \cite{Zag06} now supports the computation of hanging
-    node constraints for locally refined meshes.
-    \todo[inline]{Sebastian: Is there anything more to say here, maybe some reference? If
-      you want, we can also list this point in the list above, and add
-      a whole section 2.x for it. If you think there is nothing more
-      that needs to be said, just delete this note.}
+   \item The \texttt{FE\_NedelecSZ} class that contains our 
+    implementation of the N\'ed\'elec element using the orientation 
+    scheme of \cite{Zag06} now supports the computation of hanging 
+    node constraints for locally refined meshes. 
+    Therefore, the sign-conflict that arises for hp quadrilateral and 
+    hexahedral N\'ed\'elec elements in the presence of hanging edges 
+    and hanging faces was addressed for the implementation details; 
+    we refer to \cite{Kinnewig2024}. 
+    The \texttt{FE\_NedelecSZ} class and the hanging node constraints 
+    automatically account for the presence of hanging edges and hanging 
+    faces; therefore, there is no difference for the user when using 
+    \texttt{FE\_NedelecSZ} as finite elements compared to other finite 
+    element classes when used on triangulations with hanging nodes. 
+    Note that the special case where, in 3D, more than four cells with 
+    different refinement levels share a common edge is not covered yet.
   \item The \texttt{AffineConstraints} class stores and processes
     constraints on degrees of freedom in \dealii{}. Such constraints
     can be of the (homogeneous) form $x_3 = \frac 12 x_{14} + \frac 12 x_{15}$ as is
