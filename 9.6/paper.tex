@@ -241,7 +241,7 @@ object-oriented finite element library used around the world in the
 development of finite element solvers. It is available for free under the
 terms of the \emph{GNU Lesser General Public License} (LGPL). The \dealii
 project is in the process of relicensing the library under the terms of
-the \emph{Apache License} 2.0 with \emph{LLVM Exception}. Downloads are
+the \emph{Apache License 2.0 with LLVM Exception}. Downloads are
 available at \url{https://www.dealii.org/} and
 \url{https://github.com/dealii/dealii}.
 
@@ -276,7 +276,7 @@ The major changes of this release are:
   \item
     In Section~\ref{sec:license} we summarize the motivation and approach
     behind our relicensing effort to make \dealii available under the terms
-    of the the Apache License 2.0 with LLVM Exception.
+    of the the \emph{Apache License 2.0 with LLVM Exception}.
 \end{itemize}
 %
 
@@ -296,7 +296,7 @@ which we briefly outline in the remainder of this section:
    \item The \texttt{FE\_NedelecSZ} class that contains our 
     implementation of the N\'ed\'elec element using the orientation 
     scheme of \cite{Zag06} now supports the computation of hanging 
-    node constraints for locally refined meshes. 
+    node constraints for locally refined \todo[inline]{hexahedral?} meshes. 
     Therefore, the sign-conflict that arises for hp quadrilateral and 
     hexahedral N\'ed\'elec elements in the presence of hanging edges 
     and hanging faces was addressed for the implementation details; 
@@ -315,7 +315,6 @@ which we briefly outline in the remainder of this section:
     represent the value of the solution at a hanging node, and $x_{14}$
     and $x_{15}$ are the values of the two adjacent degrees of freedom on
     the parent edge that contains the hanging node); or they can be of
-    the form $x_{12}=42$ as is common when using Dirichlet boundary
     the (inhomogeneous) form $x_{12}=42$ as is common when using Dirichlet boundary
     conditions.
 
@@ -598,7 +597,7 @@ of this kind:
   \item
   \texttt{Lazy<T>} is a class that supports the lazy computation and
   initialization of variables. Its intended use is for member
-  variables of classes that are \textit{sometimes} needed, but perhaps
+  variables of classes that are \emph{sometimes} needed, but perhaps
   not for all uses of an object. For example, all finite element classes
   provide interpolation and restriction matrices to support multigrid
   and other algorithms. One could (i) always compute and store these
@@ -607,7 +606,7 @@ of this kind:
   approaches costs memory and compute time even though most places
   where one creates a finite element object will not actually query
   these matrices; the second of these approaches is costly in places
-  that \textit{do} query these matrices repeatedly because they are re-computed
+  that \emph{do} query these matrices repeatedly because they are re-computed
   every time. \texttt{Lazy<T>} provides a middle ground: It provides an
   abstraction for an object that is initialized upon first use (that
   is, the first time the value is requested), and then stores the
@@ -620,7 +619,7 @@ of this kind:
   object has to be specified at the place of construction of the
   object holding the result, rather than at the place of use; and
   because the holder object -- \texttt{std::future} -- can only be
-  asked \textit{once} for its computed value.)
+  asked \emph{once} for its computed value.)
 
   \item \texttt{TaskResult<T>} is a class that represents the outcome
     of a task possibly evaluated on a separate thread. It can be
@@ -713,11 +712,11 @@ research rather than as teaching tools):
   -- what did you want to update here? Perhaps add the affiliations of
 the authors?)}
 \begin{itemize}
-  \item \textit{``Crystal growth phase field model''},
+  \item \emph{``Crystal growth phase field model''},
     contributed by Umair Hussain;
-  \item \textit{``Nonlinear heat transfer problem''}, contributed by
+  \item \emph{``Nonlinear heat transfer problem''}, contributed by
     Narasimhan Swaminathan;
-  \item \textit{``Traveling-wave solutions of a qualitative model for combustion waves''}, contributed by
+  \item \emph{``Traveling-wave solutions of a qualitative model for combustion waves''}, contributed by
     Shamil Magomedov.
 \end{itemize}
 
@@ -752,11 +751,10 @@ partners that evaluate the use of deal.II for their own projects nervous.
 Secondly, our previous choice to use an open source license with strong
 copyleft was motivated by our hope that we receive back code contributions
 from third parties. In practice, however, our observation over the
-last 10 years is that
-our choice of license has not helped achieve this goal: Copyleft only applies when a derived
-software is sold or published. But almost all of our code contributions are
-voluntary and come from individual contributors with an academic
-background, where these considerations do not apply.
+last 10 years is that our choice of license has not helped achieve this goal:
+Copyleft only applies when a derived software is sold or published. But almost
+all of our code contributions are voluntary and come from individual contributors
+with an academic background, where these considerations do not apply.
 
 We have thus decided to switch away from the LGPL v2.1 license towards a
 more permissible license. We settled on the Apache License 2.0 with
