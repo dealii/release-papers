@@ -296,17 +296,16 @@ which we briefly outline in the remainder of this section:
    \item The \texttt{FE\_NedelecSZ} class that contains our 
     implementation of the N\'ed\'elec element using the orientation 
     scheme of \cite{Zag06} now supports the computation of hanging 
-    node constraints for locally refined \todo[inline]{hexahedral?} meshes. 
-    Therefore, the sign-conflict that arises for hp quadrilateral and 
-    hexahedral N\'ed\'elec elements in the presence of hanging edges 
-    and hanging faces was addressed for the implementation details; 
-    we refer to \cite{Kinnewig2024}. 
-    The \texttt{FE\_NedelecSZ} class and the hanging node constraints 
-    automatically account for the presence of hanging edges and hanging 
-    faces; therefore, there is no difference for the user when using 
-    \texttt{FE\_NedelecSZ} as finite elements compared to other finite 
-    element classes when used on triangulations with hanging nodes. 
-    Note that the special case where, in 3D, more than four cells with 
+    node constraints for locally refined, hexahedral meshes. 
+    That is, the implementation of hanging node constraints now
+    correctly addresses the sign-conflict that arises for $hp$ quadrilateral and 
+    hexahedral N\'ed\'elec elements; 
+    see \cite{Kinnewig2024} for details. 
+    The other implementation of N\'ed\'elec elements, in the \texttt{FE\_NedelecSZ} class, already
+    implements hanging node constraints; therefore, there is no longer
+    a difference for the user between the two classes as far as
+    constraints are concerned. 
+    However, the special case where, in 3D, more than four cells with 
     different refinement levels share a common edge is not covered yet.
   \item The \texttt{AffineConstraints} class stores and processes
     constraints on degrees of freedom in \dealii{}. Such constraints
@@ -413,8 +412,8 @@ infrastructure in \dealii. These changes include:
   evaluators as well as the evaluators for simplex elements.  This speeds up
   the operator evaluation in several scenarios, especially for simplices
   (around two times higher throughput for operator evaluation) and
-  multi-component systems. The restructuring made to enable these optimizations
-  also reduces the compile times and the size of the generated code slightly.
+  multi-component systems. The restructuring that led to these optimizations
+  also reduced the compile times and the size of the generated code slightly.
 
 \item In addition, we performed substantial improvements to the global-coarsening
   multigrid infrastructure: \texttt{MGTransferMF} (previously:
@@ -428,9 +427,6 @@ infrastructure in \dealii. These changes include:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Advances in non-matching support}\label{sec:nonmatching}
-
-%\todo[inline]{All: If you contributed to this functionality, please
-%  help flesh out this section.}
 
 In the non-matching infrastructure of \dealii, we made the following improvements:
 
@@ -453,19 +449,21 @@ Tutorial \step{89} has been added to present its usage
 in the context of the application to acoustic conservation equations~\cite{heinz2023high}.
 
 \item The \texttt{FECouplingValues} class provides a powerful tool for
- integrating finite element data between two different objects, even if they
+ computing
+ integrals of functions that contain finite element fields defined on
+ different objects, for example if these fields
  live on separate grids or have different topological dimensions (e.g., cells,
  faces, edges). This is particularly useful in the following scenarios: 
  \begin{itemize}
-  \item Non-local Differential Operators: Evaluating fractional laplacian or
+  \item Non-local differential operators: Evaluating fractional Laplacian or
   boundary element methods.  
-  \item Non-matching Discretizations: Integrating data between two independent
-  discretization schemes that overlap on some areas. 
-  \item Bulk-surface Coupling: Combining data from a bulk discretization and
-  surface discretization.
+  \item Non-matching discretizations: Integrating data between two independent
+  discretization schemes that overlap in some areas. 
+  \item Bulk-surface coupling: Combining data from a bulk discretization and
+  a surface discretization.
  \end{itemize}
 
-This class enables the combination of degrees of freedom indices, shape
+The new class enables the combination of degrees of freedom indices, shape
 functions, and quadrature points from two existing \texttt{FEValuesBase}
 objects. The way this combination is performed is controlled by user-provided
 \texttt{DoFCouplingType} and \texttt{QuadratureCouplingType} objects, which
