@@ -406,7 +406,8 @@ infrastructure in \dealii. These changes include:
   evaluators as well as the evaluators for simplex elements.  This speeds up
   the operator evaluation in several scenarios, especially for simplices
   (around two times higher throughput for operator evaluation) and
-  multi-component systems.
+  multi-component systems. The restructuring made to enable these optimizations
+  also reduces the compile times and the size of the generated code slightly.
 
 \item In addition, we performed substantial improvements to the global-coarsening
   multigrid infrastructure: \texttt{MGTransferMF} (previously:
@@ -433,7 +434,7 @@ redundant copy operations. Furthermore, support for simplex-shaped cells and
 multiple-component elements has been added.
 \item Several minor performance improvements in \dealii's evaluator class on
   sets of unstructured points, \texttt{FEPointEvaluation}, have been
-  made. This is particularly useful for evaluating several quantities on the
+  made. The changes are particularly useful for evaluating several quantities on the
   same set of points, which is enabled by \texttt{NonMatching::MappingInfo}.
 \item We added the new class \texttt{FERemoteEvaluation}.
 This is a class to access data
@@ -517,6 +518,7 @@ However, based on the difference between \epetra{} and \tpetra{}, the following 
     However, if one wants to create a vector that has read or write access to non-locally owned indices,  the constructor of the
     \texttt{TpetraWrappers::Vector} requires the \texttt{IndexSet locally\_owned}, the \texttt{IndexSet locally\_relevant}, and
     a boolean flag, whether to initialize the vector in the read-only or the write-only state.
+    This interface is in fact close to the one of \dealii{}'s own parallel vector class.
   \item A vector created without providing the \texttt{IndexSet locally\_relevant} is purely local and cannot access non-local indices.
     Such a vector cannot be copied to a vector that can access non-local indices, as the \texttt{IndexSet locally\_relevant} must
     be provided at creating the vector object. 
