@@ -361,6 +361,7 @@ which we briefly outline in the remainder of this section:
 \item The new class \texttt{FE\_Hermite} implements a Hermite interpolation basis of
   maximum regularity. These bases are always of odd polynomial degree $p$ and have
   regularity $r=(p-1)/2$.
+
 \end{itemize}
 %
 The
@@ -444,9 +445,35 @@ local evaluator functionality at quadrature points of a computation. The key com
 underlying MPI communication infrastructure, which is performed via \texttt{RemotePointEvaluation}.
 Tutorial \step{89} has been added to present its usage
 in the context of the application to acoustic conservation equations~\cite{heinz2023high}.
-\item FECouplingValues
 
-\todo[inline]{Luca: Please complete}
+\item The \texttt{FECouplingValues} class provides a powerful tool for
+ integrating finite element data between two different objects, even if they
+ live on separate grids or have different topological dimensions (e.g., cells,
+ faces, edges). This is particularly useful in the following scenarios: 
+ \begin{itemize}
+  \item Non-local Differential Operators: Evaluating fractional laplacian or
+  boundary element methods.  
+  \item Non-matching Discretizations: Integrating data between two independent
+  discretization schemes that overlap on some areas. 
+  \item Bulk-surface Coupling: Combining data from a bulk discretization and
+  surface discretization.
+ \end{itemize}
+
+This class enables the combination of degrees of freedom indices, shape
+functions, and quadrature points from two existing \texttt{FEValuesBase}
+objects. The way this combination is performed is controlled by user-provided
+\texttt{DoFCouplingType} and \texttt{QuadratureCouplingType} objects, which
+define how the degrees of freedom and quadrature points are combined.
+
+The flexibility offered by these coupling types allows users to:
+
+\begin{itemize}
+ \item Rearrange quadrature points in a tensor product structure for double
+integration.
+\item Reorder quadrature points to easily access shape function values and
+gradients from two different finite element spaces located on the same point.
+\item Identify and integrate over a reordered subset of the quadrature points.
+\end{itemize}
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
