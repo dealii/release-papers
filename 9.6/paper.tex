@@ -302,6 +302,7 @@ which we briefly outline in the remainder of this section:
     hexahedral N\'ed\'elec elements; 
     see \cite{Kinnewig2024} for details. 
     The other implementation of N\'ed\'elec elements, in the \texttt{FE\_NedelecSZ} class, already
+    \todo[inline]{JPT: I think this should be \texttt{FE\_Nedelec}, without SZ?}
     implements hanging node constraints; therefore, there is no longer
     a difference for the user between the two classes as far as
     constraints are concerned. 
@@ -530,6 +531,8 @@ Some functionality in these wrapper classes is still missing,
 most noticeably wrappers for the algebraic-multigrid preconditioner \texttt{MueLu}
 and the iterative solvers from \texttt{Belos}.
 However, the wrapped \texttt{Ifpack2} preconditioners can already be used with the iterative solvers of \dealii{}.
+To do this you will need to explicitly specify the vector type parameter,
+e.g.\\ \texttt{SolverCG<LinearAlgebra::TpetraWrappers::Vector<double, MemorySpace::Default> >}
 
 The solver and preconditioner classes mentioned above provide reasonable parameter subsets 
 through \texttt{AdditionalData} objects, just as the existing
@@ -553,7 +556,7 @@ However, based on the difference between \epetra{} and \tpetra{}, the following 
   \item A vector created without providing the \texttt{IndexSet locally\_relevant} is purely local and cannot access non-local indices.
     Such a vector cannot be copied to a vector that can access non-local indices, as the \texttt{IndexSet locally\_relevant} must
     be provided at creating the vector object. 
-  \item Some of parameters of existing solver and preconditioner are
+  \item Some parameters of existing solver and preconditioner are
     not available in the \tpetra{} wrappers,
     such that the corresponding \texttt{AdditionalData} objects are not identical. 
     Since there are many preconditioners we will not list each individual change but instead refer 
@@ -906,7 +909,7 @@ Quang        Hoang,
 Vladimir     Ivannikov,
 Tao          Jin,
 Yimin        Jin,
-Sebastian    Kinnewig,
+%Sebastian    Kinnewig,
 Paras        Kumar,
 Sébastien    Loriot,
 Nils         Much,
@@ -1010,7 +1013,7 @@ The authors acknowledge the Texas Advanced Computing Center (TACC) at The Univer
 \todo[inline]{Marc: please insert allocation}
 
 This work used [resource-name] at [resource provider] through allocation [allocation number] from the Advanced Cyberinfrastructure Coordination Ecosystem: Services \& Support (ACCESS) program, which is supported by National Science Foundation grants \#2138259, \#2138286, \#2138307, \#2137603, and \#2138296. See \cite{Boerner2023}.
-
+\todo[inline]{Missing ACCESS information}
 
 This work used the Extreme Science and Engineering Discovery Environment (XSEDE), which is supported by National Science Foundation grant number ACI-1053575 access through the CIG Science Gateway and Community Codes for the Geodynamics Community MCA08X011 allocation.
 
