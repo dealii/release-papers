@@ -223,7 +223,7 @@ The following is a list of ouststanding tasks that have to happen after we tagge
    * [ ] on the user mailing list
    * [ ] send a separate mail with the list of contributors for this release
    * [ ] on social media (facebook, twitter)
-   * [ ] send a news item to NADigest; web form breaks longer lines automatically, so keep them long to avoid awkward formatting
+   * [ ] send a news item to NADigest; web form breaks longer lines automatically, so keep them long to avoid awkward formatting; https://na-digest.coecis.cornell.edu/submit/
    * [ ] SIAM CS&E digest
  - [ ] <b>Update wikipedia pages</b> (assigned:)
    * https://en.wikipedia.org/wiki/Deal.II
