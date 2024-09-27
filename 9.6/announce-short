@@ -5,9 +5,11 @@ https://www.dealii.org/
 
 The major changes of this release are:
   - Six new tutorial programs.  
-  - Much work on wrappers for Trilinos' Tpetra stack of linear algebra classes.
+  - Much work on wrappers for Trilinos' Tpetra stack of linear algebra
+    classes.
   - Improvements to the multigrid two-level transfer operators.
-  - Better orthogonalization strategies for the GMRES and F-GMRES implementations.
+  - Better orthogonalization strategies for the GMRES and F-GMRES
+    implementations.
   - deal.II now requires and uses of C++17.
 
 More information about changes can be found in the release preprint at
