@@ -1,0 +1,10 @@
+Dear Maxim Olshanskii,
+
+Attached please find a copy of our manuscript entitled "The deal.II Library, Version 9.6" for submission to the Journal of Numerical Mathematics. Thank you for considering this year's version for publication!
+
+Please note that the manuscriptcentral.com website only allows adding up to seven authors, so I was only able to add the first seven (out of 17). For that reason I was also unable to use the recommended latex template.
+
+Please let me know if you have any questions! 
+
+Thank you,
+Timo Heister
