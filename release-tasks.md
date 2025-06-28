@@ -35,7 +35,7 @@ The following is a list of ouststanding QA tests that should be checked before p
    Check that doxygen produces no errors when generating the documentation. Also check that the tutorial dot graph gets generated.
  - [ ] <b>Copyright years</b> (assigned:, pr:)
    Run the copyright script:
-   ```./contrib/utilities/update-copyright```
+   ```./contrib/utilities/update-copyright.sh```
    and make a pull request with a commit title "Update copyright years".
  - [ ] <b>Examples</b> (assigned:, pr:)
    Configure, build and run all examples by hand:
