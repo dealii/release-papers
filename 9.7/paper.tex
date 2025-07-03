@@ -259,6 +259,46 @@ which we will discuss in this section.
 
 \todo[inline]{Add sections}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Work towards C++20 modules}
+\label{subsec:modules}
+
+\dealii{} currently requires a compiler that understands C++17, but
+some additional features are enabled if a compiler supports the C++20
+standard. C++20 also introduces ``modules'', a way by which software
+packages can export their public interface without relying on the
+mechanism of textual inclusion of header files that C++ has inherited from C. The
+end goal of C++20 modules is that one can replace the use of long
+lists of statements such as\\
+\hspace*{1cm}\texttt{\#include <deal.II/grid/tria.h}\\
+by a simple\\
+\hspace*{1cm}\texttt{import dealii;}
+
+A lot of effort -- perhaps 6 weeks of full-time work, and around 150
+pull requests -- has gone into evaluating whether \dealii{} can be
+built using modules (in addition to header files, which will need to
+be provided for a long time to come for backward compatibility). A
+detailed accounting of this effort can be found in 
+\cite{bangerth2025experienceconvertinglargemathematical}. The majority
+of this work addressed features of the \dealii{} code base,
+accumulated over its more than 25 year history, that were acceptable
+in a header-based system but not in a module-based system. To name
+just one of many examples, there can be cycles of header files that mutually
+\texttt{\#include} each other, but this is not allowed for
+modules. Most of the pull requests for this project therefore simply
+cleaned up our code base, though without having to introduce any
+incompatibilities.
+
+As shown in \cite{bangerth2025experienceconvertinglargemathematical},
+the use of C++20 modules
+reduces compile times for the library itself, though the evidence is
+mixed for tutorial programs or applications that build on
+\dealii{}. Given that at the moment few systems have compilers, CMake
+versions, and build systems that are sufficiently new to support
+module builds, it will be several years before this feature will
+become widely available. However, the infrastructure for it is now
+largely in place.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and improved tutorials and code gallery programs}
@@ -275,14 +315,22 @@ programs:
 \begin{itemize}
   \item
     \step{93}
-    demonstrates how one can implement ...
-    \todo{Complete}
+    demonstrates how one can implement problems in which some of the
+    variables to be solved for are not degrees of freedom of a finite
+    element field (so-called ``non-local'' degrees of freedom, because
+    they have no associated node functional that is tied to a cell or
+    a patch of cells). Specifically, the program solves an
+    optimization problem in which some of the variables are scalars
+    that multiply certain source terms.
     \step{93} was written by Sam Scheuerman.
   \item
     \step{97}
-    is a program that solves ... curl-curl ...
-    \todo{Complete}
-    \step{93} was written by Siarhei Uzunbajakau.
+    is a program that solves a curl-curl problem from electromagnetics
+    -- more specifically, from magnetostatics. The program shows a
+    formulation in which two curl-curl problems are solved
+    consecutively to model the magnetic field that results from the
+    current in an electrically conducting coil.
+    \step{97} was written by Siarhei Uzunbajakau.
 \end{itemize}
 
 In addition, there is one new program in the code gallery (a collection of
@@ -433,6 +481,7 @@ Their contributions are much appreciated!
 \dealii and its developers are financially supported through a
 variety of funding sources:
 
+\todo[inline]{Everyone please update as appropriate.}
 D.~Arndt and B.~Turcksin: Research sponsored by the Laboratory Directed Research and
 Development Program of Oak Ridge National Laboratory, managed by UT-Battelle,
 LLC, for the U. S. Department of Energy.
