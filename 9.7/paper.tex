@@ -384,6 +384,16 @@ applications. That said, the following are worth mentioning since they
 are more broadly visible:
 \begin{itemize}
   \item \todo[inline]{Update}
+  \item We have continued to unify the various implementations of object
+    orientations in the library. While the three booleans orientation, rotation,
+    and flip have maintained their original meanings (i.e., they have default
+    values of \texttt{true}, \texttt{false}, and \texttt{false}), the default
+    value of the combined orientation (available via
+    \texttt{TriaAccessor::combined\_face\_orientation()} and
+    \texttt{TriaAccessor::line\_orientation()}) is now $0$ rather than $1$. In
+    addition, the return type of these functions is now
+    \texttt{types::geometric\_orientation}, which is a \texttt{typedef} for an
+    8-bit integral type.
 \end{itemize}
 
 
