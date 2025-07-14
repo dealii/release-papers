@@ -347,6 +347,20 @@ research rather than as teaching tools):
     Marc Fehling.
 \end{itemize}
 
+\subsection{The \texttt{MappingP1} class}
+\dealii has supported simplex and mixed meshes since the 9.3
+release~\cite{changes93}. That release included \texttt{MappingFE}, a
+\texttt{Mapping} class which works with a variety of different elements by
+delegating most computations to a provided \texttt{FiniteElement} class. This
+release includes a new \texttt{MappingP1} class, which contains an optimized
+implementation of the standard affine simplex mapping (i.e., the mapping from
+the unit to real cell with a constant Jacobian on each cell). This
+implementation is about six times faster than the generic one implemented in
+\texttt{MappingFE}. In addition, this \texttt{Mapping} is now the default linear
+mapping returned by \texttt{ReferenceCell::get\_default\_linear\_mapping()}, so
+all applications which use that function for obtaining a
+\texttt{ReferenceCell}-independent mapping will automatically use the more
+performant class.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
