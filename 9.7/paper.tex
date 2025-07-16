@@ -258,13 +258,25 @@ which we will discuss in this section.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The \texttt{MappingP1} class}
+
+Classes derived from the \texttt{Mapping} base class are used to
+represent the transformation from a reference cell (such as the unit
+square or reference triangle) to a concrete cell that is part of a mesh.
 \dealii has supported simplex and mixed meshes since the 9.3
 release~\cite{changes93}. That release included \texttt{MappingFE}, a
-\texttt{Mapping} class which works with a variety of different elements by
-delegating most computations to a provided \texttt{FiniteElement} class. This
-release includes a new \texttt{MappingP1} class, which contains an optimized
+\texttt{Mapping} class that uses the shape functions of a finite
+element to implement this transformation; many common mappings can be
+written in this way, and the class works with a variety of different elements by
+delegating most computations to a provided \texttt{FiniteElement}
+object. For example, the common bi-/trilinear mappings for quadrilaterals and
+hexahedra, as well as the linear mappings on triangles and simplices,
+can be implemented using \texttt{MappingFE} along with the
+\texttt{FE\_Q} or \texttt{FE\_SimplexP} classes.
+
+The current
+release now includes a new \texttt{MappingP1} class, which contains an optimized
 implementation of the standard affine simplex mapping (i.e., the mapping from
-the unit to real cell with a constant Jacobian on each cell). This
+the unit/reference cell to the real cell with a constant Jacobian on each cell). This
 implementation is about six times faster than the generic one implemented in
 \texttt{MappingFE}. In addition, this \texttt{Mapping} is now the default linear
 mapping returned by \texttt{ReferenceCell::get\_default\_linear\_mapping()}, so
@@ -273,12 +285,20 @@ all applications which use that function for obtaining a
 performant class.
 
 \subsection{The \texttt{SolutionTransfer} class}
-This release extends the \texttt{SolutionTransfer} class to support mesh
-adaptivity with all \texttt{Triangulation} classes which support refinement.
-Consequently, the \texttt{parallel::distributed::SolutionTransfer} class is no
-longer necessary to use and is deprecated. Some member functions, such as
+This release extends the \texttt{SolutionTransfer} class to facilitate
+the transfer of solution vectors from one mesh to another in an
+adaptive mesh refinement loop, now to
+all triangulation classes that support mesh refinement.
+Consequently, it has subsumed the functionality of the existing
+\texttt{parallel::distributed::SolutionTransfer} class, which is no
+longer necessary and is now deprecated.
+
+In the process of this update, we have also cleaned up these classes'
+interfaces. In particular, some member functions, such as
 \texttt{execute\_pure\_refinement()}, have been removed from the new
-implementation.
+implementation because they provided functionality for only rarely
+used cases, but substantially complicated the internal design of these
+classes.
 
 
 \subsection{Work towards C++20 modules}
