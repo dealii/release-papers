@@ -315,7 +315,7 @@ lists of statements such as\\
 by a simple\\
 \hspace*{1cm}\texttt{import dealii;}
 
-A lot of effort -- perhaps 6 weeks of full-time work, and around 150
+A lot of effort -- perhaps 6 weeks of full-time work, and nearly 200
 pull requests -- has gone into evaluating whether \dealii{} can be
 built using modules (in addition to header files, which will need to
 be provided for a long time to come for backward compatibility). A
@@ -324,10 +324,13 @@ detailed accounting of this effort can be found in
 of this work addressed features of the \dealii{} code base,
 accumulated over its more than 25 year history, that were acceptable
 in a header-based system but not in a module-based system. To name
-just one of many examples, there can be cycles of header files that mutually
+just two of many examples: (i) there can be cycles of header files that mutually
 \texttt{\#include} each other, but this is not allowed for
-modules. Most of the pull requests for this project therefore simply
-cleaned up our code base, though without having to introduce any
+modules; and (ii) it is allowed to declare functions in header files
+as \texttt{static} or in anonymous namespaces, but this no longer
+works with modules. In both cases, while allowed, the existing code
+was brittle, inefficient, or hard to understand. Most of the pull requests for this project therefore simply
+cleaned up our code base, without having to introduce any
 incompatibilities.
 
 As shown in \cite{bangerth2025experienceconvertinglargemathematical},
@@ -365,8 +368,10 @@ programs:
     that multiply certain source terms.
     \step{93} was written by Sam Scheuerman.
   \item
-    \step{95} ...
-    \todo[inline]{Complete}
+    \step{95} illustrates the use of matrix-free methods to solve
+    problems with embedded boundaries using the CutFEM method that was
+    previously already introduced in \step{85}. \step{95} was written
+    by Maximilian Bergbauer, with help by Martin Kronbichler and Peter Munch.
   \item
     \step{97}
     is a program that solves a curl-curl problem from electromagnetics
