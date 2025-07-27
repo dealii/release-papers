@@ -122,7 +122,7 @@ The following is a list of ouststanding tasks that have to happen on the release
    * Make a pull request against the release branch (`dealii-9.5`).
  - [ ] <b>Update deprecations</b> (assigned:, pr:)
    On the main branch, replace all occurrences of `DEAL_II_DEPRECATED_EARLY` by `DEAL_II_DEPRECATED` in the library.
-   <b>Note:</b> This is a time critical task so that we don't lose track what declarations have been deprecated (early) before or after this release.
+   <b>Note:</b> This is a time critical task that needs to happen before we merge patches that early-deprecate anything else for the next release.
  - [ ] <b>Update version dependencies</b> (assigned:, pr:)
    * On mainline, do something like this to require the current dev version for the tutorials and in the documentation:
      ```perl -pi -e 's/deal.II 9.5.0/deal.II 9.6.0/g;' examples/*/CMakeLists.txt```
