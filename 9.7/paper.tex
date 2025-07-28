@@ -232,10 +232,23 @@ which we briefly outline in the remainder of this section:
 \begin{itemize}
 \item MPGMRES and GMRES updates
   \todo[inline]{Matthias and Martin, please update (or make this point
-  into one or two subsections below).}
-\item FiniteElement::shape\_function\_belongs\_to()
-  \todo[inline]{Wolfgang to complete}
-  \item \todo[inline]{Add to this list other points that are not
+  into one or two subsections in Section 2 below).}
+\item A common operation in the finite element codes is to ask whether
+  a specific shape function belongs to a particular solution
+  variable. In the past, this was implemented by using the
+  \texttt{FiniteElement::system\_to\_component\_index()} function that
+  returns, among other information, which vector component a shape
+  function belongs to. One then had to test whether this is the vector
+  component (or one of the vector components) that corresponds to a
+  specific variable. The new
+  \texttt{FiniteElement::shape\_function\_belongs\_to()} makes this
+  easier: It takes as argument a \texttt{FiniteElementExtractor} that
+  corresponds to a scalar, vector-valued, or tensor-valued set of
+  solution variables, and directly returns \texttt{true} or
+  \texttt{false}.
+\item \todo[inline]{Perhaps mention the updated interfaces to ArborX
+  here? (Or in Section~\ref{subsec:external}?)}
+\item \todo[inline]{Add to this list other points that are not
     explicitly discussed below}
 \end{itemize}
 %
@@ -322,10 +335,58 @@ classes.
 \subsection{Updates of \dealii{}'s interfaces to external libraries}
 \label{subsec:external}
 
-\todo[inline]{Perhaps say something about new interfaces to MUMPS and
-  PSBLAS, and the updated interfaces to ArborX. We no longer bundle
-  TBB and by default build on Taskflow. More interfaces to CGAL. Now
+\dealii{} relies on external software packages for many operations
+that are not within the core functionality of a finite element package
+-- see Section~\ref{sec:cite} for a complete list. As in every
+release, we have continued to expand and revise these interfaces. The
+following sub-sections outline these updates.
+
+\subsubsection{Interfaces to the Threading Building Blocks and to
+  Taskflow}
+
+\todo[inline]{There is text about this elsewhere in this
+  document. Perhaps move here?}
+\cite{huang2021taskflow}
+\cite{reinders2007tbb}
+
+
+\subsubsection{Kokkos, a performance portability library}
+\label{subsec:external-kokkos}
+
+Kokkos is a C++ library that makes it easy to write codes that can
+portably run on CPUs and GPUs of different vendors, using their
+respectiv underlying programming models.
+The \dealii{} 9.5 release~\cite{dealII95} made \kokkos~\cite{trott2022} a required
+dependency. The current release removes the deprecated \texttt{CUDAWrappers} namespace as well
+as all \texttt{CUDA}-related macros in favor of Kokkos
+equivalents.
+
+\todo[inline]{Now
   bundling Kokkos 4.5.1; are we using something new from Kokkos? magic\_enum}
+
+\subsubsection{MUMPS, a multifrontal parallel direct solver}
+
+\todo[inline]{Luca, want to say something here? If not, please delete
+  the subsubsection.}
+
+\subsubsection{PSBLAS, a XXXXX}
+
+\todo[inline]{Complete section name}
+
+\todo[inline]{Luca, want to say something here? If not, please delete
+  the subsubsection.}
+
+\subsubsection{\texttt{magic\_enum}, a XXXXX}
+
+\todo[inline]{Complete section name}
+\todo[inline]{Luca, want to say something here? If not, please delete
+  the subsubsection.}
+
+\subsubsection{CGAL, a computational geometry engine}
+
+\todo[inline]{Do we want to say something here? If not, please delete
+  the subsubsection.}
+
 
 \subsection{Work towards C++20 modules}
 \label{subsec:modules}
@@ -459,14 +520,12 @@ are more broadly visible:
     \texttt{\#include} statement to the user program for the file that is necessary to
     access declarations the compiler now no longer sees.
 
-  \item The 9.5 release~\cite{dealII95} made \kokkos~\cite{trott2022} a required
-    dependency. Kokkos is a C++ library which provides tools for writing code
-    which can efficiently run on a diverse set of architectures and devices.
-    The current release removes the deprecated \texttt{CUDAWrappers} namespace as well
+  \item As already mentioned in
+    Section~\ref{subsec:external-kokkos}, the current release
+    removes the deprecated \texttt{CUDAWrappers} namespace as well 
     as all \texttt{CUDA}-related macros in favor of Kokkos
     equivalents.
-    \todo[inline]{Perhaps move to Section~\ref{subsec:external}?}
-
+   
   \item We have continued to unify the various implementations of object
     orientations in the library. While the three booleans orientation, rotation,
     and flip have maintained their original meanings (i.e., they have default
@@ -518,7 +577,8 @@ are more broadly visible:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{How to cite \dealii}\label{sec:cite}
+\section{How to cite \dealii}
+\label{sec:cite}
 
 In order to justify the work the developers of \dealii put into this
 software, we ask that papers using the library reference one of the
