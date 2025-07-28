@@ -344,10 +344,22 @@ following sub-sections outline these updates.
 \subsubsection{Interfaces to the Threading Building Blocks and to
   Taskflow}
 
-\todo[inline]{There is text about this elsewhere in this
-  document. Perhaps move here?}
-\cite{huang2021taskflow}
-\cite{reinders2007tbb}
+A large number of operations within \dealii{} are parallelized,
+including through mechanisms like WorkStream \cite{TKB16} that are
+also available to and useful in application codes. For more than
+15 years, since the 6.3 release, \dealii{} has used the Threading
+Building Blocks (TBB) \cite{reinders2007tbb} as the underlying library to
+provide task- and pipeline-based parallelism. However, the TBB has
+downsides that primarily follow from its use of assembler mnemonics
+and the resulting difficulties with supporting all platforms and
+compilers. As a consequence, starting with the current release,
+\dealii{} builds on the Taskflow library \cite{huang2021taskflow} that
+is entirely implemented in C++, is header-only, and provides an
+interface that matches well with current language standards. \dealii{}
+bundles the Taskflow 3.10 release, and now no longer bundles the TBB,
+though the TBB interfaces are still available if a TBB installation
+is found on a system.
+
 
 
 \subsubsection{Kokkos, a performance portability library}
