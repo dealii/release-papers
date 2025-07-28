@@ -233,8 +233,10 @@ which we briefly outline in the remainder of this section:
 \item MPGMRES and GMRES updates
   \todo[inline]{Matthias and Martin, please update (or make this point
   into one or two subsections below).}
-  \item FiniteElement::shape\_function\_belongs\_to() 
-\todo[inline]{Update list}
+\item FiniteElement::shape\_function\_belongs\_to()
+  \todo[inline]{Wolfgang to complete}
+  \item \todo[inline]{Add to this list other points that are not
+    explicitly discussed below}
 \end{itemize}
 %
 The
@@ -254,8 +256,6 @@ contains a complete record of all changes; see \cite{changes97}.
 This release of \dealii contains a number of large and significant changes,
 which we will discuss in this section.
 
-
-\todo[inline]{Add sections}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The \texttt{MappingP1} class}
@@ -302,6 +302,12 @@ used cases, but substantially complicated the internal design of these
 classes.
 
 
+\subsection{Matrix-free functionality}
+
+\todo[inline]{There are many entries in the changelog about
+  matrix-free stuff, but it will take someone with more knowledge of
+  the area to discuss them here -- or to remove this subsection.}
+
 \subsection{Support for simplex and mixed meshes}
 
 \todo[inline]{Perhaps talk about this point:
@@ -310,6 +316,7 @@ classes.
   tetrahedra. These anisotropic splits are useful in contexts where it
   is important to add as few new elements as possible.}
 
+\todo[inline]{Are there other noteworthy changes}
 
 
 \subsection{Updates of \dealii{}'s interfaces to external libraries}
@@ -430,8 +437,6 @@ interfaces that are not usually used in external
 applications. The following are worth mentioning since they
 are more broadly visible:
 \begin{itemize}
-  \item \todo[inline]{Update}
-
   \item The classes \texttt{Subscriptor} and \texttt{SmartPointer} have been
     renamed to \texttt{EnableObserverPointer} and \texttt{ObserverPointer}. Many
     core classes, such as \texttt{DoFHandler} and \texttt{Triangulation},
@@ -449,13 +454,18 @@ are more broadly visible:
     inclusions and other minor incompatibilities. For example,
     \texttt{grid/tria.h} no longer contains declarations of \texttt{CellData} or
     \texttt{SubCellData}. Those declarations have been moved to
-    \texttt{grid/cell\_data.h}.
+    \texttt{grid/cell\_data.h}. In cases where this leads to errors,
+    the situation is easily (and backward compatibly) fixed by adding an explicit 
+    \texttt{\#include} statement to the user program for the file that is necessary to
+    access declarations the compiler now no longer sees.
 
   \item The 9.5 release~\cite{dealII95} made \kokkos~\cite{trott2022} a required
     dependency. Kokkos is a C++ library which provides tools for writing code
     which can efficiently run on a diverse set of architectures and devices.
-    This release removes the deprecated \texttt{CUDAWrappers} namespace as well
-    as all \texttt{CUDA}-related macros in favor of Kokkos equivalents.
+    The current release removes the deprecated \texttt{CUDAWrappers} namespace as well
+    as all \texttt{CUDA}-related macros in favor of Kokkos
+    equivalents.
+    \todo[inline]{Perhaps move to Section~\ref{subsec:external}?}
 
   \item We have continued to unify the various implementations of object
     orientations in the library. While the three booleans orientation, rotation,
@@ -475,20 +485,14 @@ are more broadly visible:
     show the use of time stepping functionality in \dealii{}, but
     this functionality was rudimentary compared to what packages such
     as SUNDIALS or PETSc TS offer. As a consequence, \step{52} did
-    not show the advanced techniques we would like to promote, and it
+    not show the advanced techniques we would like to promote (e.g.,
+    time stepping error control and automatic time step size choice), and it
     is now superseded by \step{86} (which builds on PETSc TS).
   \item The \texttt{parallel::distributed::SolutionTransfer} class has
     been merged with the \texttt{SolutionTransfer} class, with the
     former now being deprecated. In the process of cleaning up the
     interface, we have also removed some rarely used member functions
     of the latter that prevented us from unifying the two classes.
-  \item The process of removing cycles between header files for the
-    modules project (see Section~\ref{subsec:modules}) has led to a
-    small number of cases where a \dealii{} header file was
-    transitively included into a user program, but now no longer
-    is. This is easily fixed by adding an explicit \texttt{\#include}
-    statement to the user program for the file that is necessary to
-    access declarations the compiler now no longer sees.
   \item The \texttt{MatrixOut} class, used to create graphical
     representations of matrices, now defaults to creating sparse
     output, only showing nonzero entries. This vastly increases the
@@ -561,7 +565,9 @@ following:
           \texttt{ParsedConvergenceTable} class:
           \cite{SartoriGiulianiBardelloni-2018-a};
     \item For uses of the particle functionality in \dealii:
-          \cite{GLHPB18}.
+      \cite{GLHPB18}.
+      \item For the design of the video lectures and how they can be
+        used in \dealii{}-based courses: \cite{Zarestky2022}.
           \vfill\null
   \end{itemize}
 \end{multicols}
@@ -718,16 +724,14 @@ Office of Science, Office of Advanced Scientific Computing Research,
 Next-Generation Scientific Software Technologies program, under contract
 number DE-AC05-00OR22725.
 
-W.~Bangerth was partially supported by Award OAC-1835673
-as part of the Cyberinfrastructure for Sustained Scientific Innovation (CSSI)
-program.
+W.~Bangerth was partially supported by the National Science Foundation
+under awards OAC-1835673, EAR-1925595, and OAC-2410847.
 
 W.~Bangerth, T.~Heister, and R.~Gassm\"{o}ller were partially
 supported by the Computational Infrastructure for Geodynamics initiative
 (CIG), through the National Science Foundation (NSF) under Award
 No.~EAR-2149126 via The University of California -- Davis.
 
-W.~Bangerth was also partially supported by Award EAR-1925595 and OAC-2410847.
 
 B.~Blais was supported by the National Science and Engineering Research Council of Canada (NSERC)  through the RGPIN-2020-04510 Discovery Grant and the MMIAOW Canada Research Level 2 in Computer-Assisted Design and Scale-up of Alternative Energy Vectors for Sustainable Chemical Processes.
 
