@@ -559,16 +559,12 @@ Collection of deal.II Manifold Wrappers for the OpenCASCADE Library}},
   howpublished = {\url{https://www.iso.org/standard/64029.html}},
   year =         2014}
 
-@Article{heroux2005trilinos,
-  author =       {M. A. Heroux and R. A. Bartlett and V. E. Howle and R. J. Hoekstra and J. J. Hu
-                  and T. G. Kolda and R. B. Lehoucq and K. R. Long and R. P. Pawlowski and
-                  E. T. Phipps and A. G. Salinger and H. K. Thornquist and R. S. Tuminaro and
-                  J. M. Willenbring and A. Williams and K. S. Stanley},
-  title =        {An overview of the {T}rilinos project},
-  journal =      {ACM Transactions on Mathematical Software},
-  year =         2005,
-  volume =       31,
-  pages =        {397--423}}
+@article{mayr2025trilinos,
+  title={Trilinos: Enabling Scientific Computing Across Diverse Hardware Architectures at Scale},
+  author={Mayr, Matthias and Heinlein, Alexander and Glusa, Christian and Rajamanickam, Siva and Arnst, Maarten and Bartlett, Roscoe and Berger-Vergiat, Luc and Boman, Erik and Devine, Karen and Harper, Graham and others},
+  journal={arXiv preprint arXiv:2503.08126},
+  year={2025}
+}
 
 See: https://trilinos.github.io/cite.html
 @Manual{trilinos-web-page,
@@ -595,15 +591,15 @@ See: https://petsc.org/release/#citing-petsc
 @techreport{petsc-user-ref,
   author = {Satish Balay and Shrirang Abhyankar and Mark~F. Adams and Steven Benson and Jed Brown
   and Peter Brune and Kris Buschelman and Emil Constantinescu and Lisandro Dalcin and Alp Dener
-  and Victor Eijkhout and William~D. Gropp and V\'{a}clav Hapla and Tobin Isaac and Pierre Jolivet
+  and Victor Eijkhout and Jacob Faibussowitsch and William~D. Gropp and V\'{a}clav Hapla and Tobin Isaac and Pierre Jolivet
   and Dmitry Karpeev and Dinesh Kaushik and Matthew~G. Knepley and Fande Kong and Scott Kruger
   and Dave~A. May and Lois Curfman McInnes and Richard Tran Mills and Lawrence Mitchell and Todd Munson
-  and Jose~E. Roman and Karl Rupp and Patrick Sanan and Jason Sarich and Barry~F. Smith
-  and Stefano Zampini and Hong Zhang and Hong Zhang and Junchao Zhang},
+  and Jose~E. Roman and Karl Rupp and Patrick Sanan and Jason Sarich and Barry~F. Smith``
+  and Hansol Suh and Stefano Zampini and Hong Zhang and Hong Zhang and Junchao Zhang},
   title       = {{PETSc/TAO} Users Manual},
   institution = {Argonne National Laboratory},
-  number      = {ANL-21/39 - Revision 3.17},
-  year        = {2022},
+  number      = {ANL-21/39 - Revision 3.23},
+  year        = {2025},
 }
 
 
@@ -732,6 +728,11 @@ See: https://ginkgo-project.github.io/ginkgo/doc/develop/citing_ginkgo.html
   title =        {{OpenCASCADE: Open CASCADE Technology, 3D modeling \& numerical simulation}},
   note =         {\url{http://www.opencascade.org/}}}
 
+@Misc{magic-enum-web-page,
+  key =          {magic_enum},
+  title =        {{Magic Enum C++}},
+  note =         {\url{https://github.com/Neargye/magic_enum}}}
+
 @Misc{muparser-web-page,
   key =          {muparser},
   title =        {{muparser: Fast Math Parser Library}},
@@ -753,6 +754,18 @@ See: http://portal.hdfgroup.org/display/knowledge/How+do+I+properly+cite+HDF5+in
     title = "{Hierarchical Data Format, version 5}",
     year = {2025},
     note = {\url{http://www.hdfgroup.org/HDF5/}}
+}
+
+@Misc{vtk-web-page,
+  key   = {vtk},
+  title = {{VTK}},
+  note  = {\url{https://vtk.org}}
+}
+
+@Misc{zlib-web-page,
+  key   = {zlib},
+  title = {{zlib}},
+  note  = {\url{https://zlib.net}}
 }
 
 @article{karypis1998metis,
@@ -787,6 +800,18 @@ See: http://portal.hdfgroup.org/display/knowledge/How+do+I+properly+cite+HDF5+in
    pages   = "351--362",
    year    = "2005"
 }
+
+@article{roman2023improvements,
+  title={Improvements to SLEPc in releases 3.14--3.18},
+  author={Roman, Jose E and Alvarruiz, Fernando and Campos, Carmen and Dalcin, Lisandro and Jolivet, Pierre and Lamas Davi{\~n}a, Alejandro},
+  journal={ACM Transactions on Mathematical Software},
+  volume={49},
+  number={3},
+  pages={1--11},
+  year={2023},
+  publisher={ACM New York, NY}
+}
+
 
 @article{Lachat1976,
 author = {Lachat, J. C. and Watson, J. O.},
@@ -941,6 +966,17 @@ See: https://www.gnu.org/software/gsl/#moreinfo
   pages={363--396},
   year={2005},
   publisher={ACM}
+}
+
+@article{gardner2022enabling,
+  title={Enabling new flexibility in the SUNDIALS suite of nonlinear and differential/algebraic equation solvers},
+  author={Gardner, David J and Reynolds, Daniel R and Woodward, Carol S and Balos, Cody J},
+  journal={ACM Transactions on Mathematical Software (TOMS)},
+  volume={48},
+  number={3},
+  pages={1--24},
+  year={2022},
+  publisher={ACM New York, NY}
 }
 
 @Misc{schulze2021assimp,
@@ -1313,17 +1349,15 @@ doi = {10.1504/IJCSE.2009.029164}
   year={2021}
 }
 
-@article{lebrun2020arborx,
-  title={{ArborX}: {A} Performance Portable Geometric Search Library},
-  author={Lebrun-Grandi{\'e}, Damien and Prokopenko, Andrey and Turcksin, Bruno and Slattery, Stuart R},
-  journal={ACM Transactions on Mathematical Software},
-  volume={47},
-  number={1},
-  pages={2/1--15},
-  year={2020},
-  publisher={ACM New York, NY, USA},
-  doi={10.1145/3412558}
-}
+@misc{prokopenko2025,
+  author       = {Prokopenko, Andrey and Lebrun-Grandié, Damien and Arndt, Daniel and Turcksin, Bruno},
+  title        = {ArborX 2.0},
+  doi          = {10.11578/ArborX/dc.20250416.4},
+  url          = {https://www.osti.gov/biblio/code-154205},
+  place        = {United States},
+  year         = {2025},
+  month        = {04}}
+
 
 @article{bungartz2016precice,
   title={preCICE--a fully parallel library for multi-physics surface coupling},
@@ -1468,15 +1502,14 @@ doi = {10.1504/IJCSE.2009.029164}
 }
 
 See: https://doc.cgal.org/latest/Manual/how_to_cite_cgal.html
-@book{cgal-user-ref,
+@book{cgal:eb-24b,
   title = {{CGAL} User and Reference Manual},
   author = {{The CGAL Project}},
   publisher = {{CGAL Editorial Board}},
-  edition = {{5.4.1}},
-  year = 2022,
-  note = {\url{https://doc.cgal.org/5.4.1/Manual/packages.html}}
+  edition = {{6.0.1}},
+  year = 2024,
+  url = {https://doc.cgal.org/6.0.1/Manual/packages.html}
 }
-
 
 @article{fehlingbangerth2023,
   title = {Algorithms for Parallel Generic $hp$-Adaptive Finite Element Software},
