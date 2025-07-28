@@ -220,7 +220,7 @@ The major changes of this release are:
 %
 \begin{itemize}
 \item
-  \todo[inline]{Update list}
+  \todo[inline]{Update list from the subsections below}
 \end{itemize}
 %
 
@@ -230,15 +230,16 @@ are a number of other noteworthy changes in the current \dealii release,
 which we briefly outline in the remainder of this section:
 %
 \begin{itemize}
-\item
+\item MPGMRES and GMRES updates
+  \todo[inline]{Matthias and Martin, please update (or make this point
+  into one or two subsections below).}
+  \item FiniteElement::shape\_function\_belongs\_to() 
 \todo[inline]{Update list}
 \end{itemize}
 %
 The
-\href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_5_2_and_9_6_0.html}{changelog}
-\todo{Update}
--- listing more than XXX
-\todo{Update}
+\href{https://dealii.org/current/doxygen/deal.II/changes_between_9_6_0_and_9_7_0.html}{changelog}
+-- listing more than 120
 features and bugfixes --
 contains a complete record of all changes; see \cite{changes97}.
 
@@ -301,6 +302,24 @@ used cases, but substantially complicated the internal design of these
 classes.
 
 
+\subsection{Support for simplex and mixed meshes}
+
+\todo[inline]{Perhaps talk about this point:
+  GridGenerator::convert\_hypercube\_to\_simplex\_mesh() can now split
+  quadrilaterals into two triangles and hexahedra into six
+  tetrahedra. These anisotropic splits are useful in contexts where it
+  is important to add as few new elements as possible.}
+
+
+
+\subsection{Updates of \dealii{}'s interfaces to external libraries}
+\label{subsec:external}
+
+\todo[inline]{Perhaps say something about new interfaces to MUMPS and
+  PSBLAS, and the updated interfaces to ArborX. We no longer bundle
+  TBB and by default build on Taskflow. More interfaces to CGAL. Now
+  bundling Kokkos 4.5.1; are we using something new from Kokkos? magic\_enum}
+
 \subsection{Work towards C++20 modules}
 \label{subsec:modules}
 
@@ -344,11 +363,6 @@ become widely available. However, the infrastructure for it is now
 largely in place.
 
 
-\subsection{Multithreading with Taskflow}
-\label{subsec:taskflow}
-
-
-\item \todo[inline]{Timo}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and improved tutorials and code gallery programs}
@@ -406,11 +420,14 @@ research rather than as teaching tools):
 
 The 9.7 release includes
 \href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_6_0_and_9_7_0.html}
-     {around 20 incompatible changes};
+     {around 25 incompatible changes};
 see \cite{changes97}. Many of these
-incompatibilities change internal
+incompatibilities remove previously deprecated functions or classes,
+or require now widely available but newer versions of external
+dependencies than previous \dealii{} versions. Others
+change internal
 interfaces that are not usually used in external
-applications. That said, the following are worth mentioning since they
+applications. The following are worth mentioning since they
 are more broadly visible:
 \begin{itemize}
   \item \todo[inline]{Update}
@@ -450,6 +467,46 @@ are more broadly visible:
     addition, the return type of these functions is now
     \texttt{types::geometric\_orientation}, which is a \texttt{typedef} for an
     8-bit integral type.
+  \todo[inline]{I didn't pay attention how the entry above came into
+    this paper. David: Is this an incompatibility for the current
+    release? If so, please just delete this note. Otherwise, please
+    remove the bullet point and this note.}
+  \item The \step{52} tutorial has been removed. This program used to
+    show the use of time stepping functionality in \dealii{}, but
+    this functionality was rudimentary compared to what packages such
+    as SUNDIALS or PETSc TS offer. As a consequence, \step{52} did
+    not show the advanced techniques we would like to promote, and it
+    is now superseded by \step{86} (which builds on PETSc TS).
+  \item The \texttt{parallel::distributed::SolutionTransfer} class has
+    been merged with the \texttt{SolutionTransfer} class, with the
+    former now being deprecated. In the process of cleaning up the
+    interface, we have also removed some rarely used member functions
+    of the latter that prevented us from unifying the two classes.
+  \item The process of removing cycles between header files for the
+    modules project (see Section~\ref{subsec:modules}) has led to a
+    small number of cases where a \dealii{} header file was
+    transitively included into a user program, but now no longer
+    is. This is easily fixed by adding an explicit \texttt{\#include}
+    statement to the user program for the file that is necessary to
+    access declarations the compiler now no longer sees.
+  \item The \texttt{MatrixOut} class, used to create graphical
+    representations of matrices, now defaults to creating sparse
+    output, only showing nonzero entries. This vastly increases the
+    size of matrices that can be visualized.
+  \item The \texttt{FiniteElement} class has a number of functions
+    that allow querying properties of implementations in derived
+    classes. These include asking whether a derived class is able to provide
+    ``(generalized) support points'', i.e., whether the element
+    defines its shape functions via nodal interpolation (or via
+    quadrature-based integrals) and can return an array of these
+    points. These functions returned \texttt{false} for the
+    \texttt{FE\_Nothing} element -- an element that has no degrees of
+    freedom and consequently no shape functions. This answer was not
+    wrong, but missed the point: Codes using these functions want to
+    know whether an element is able to provide arrays with these
+    support points, and for \texttt{FE\_Nothing} the answer should be
+    ``yes'' (i.e., \texttt{true}): The class \textit{can} provide such
+    an array, it will just be empty.
 \end{itemize}
 
 
