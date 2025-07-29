@@ -364,19 +364,16 @@ is found on a system.
 
 
 
-\subsubsection{Kokkos, a performance portability library}
+\subsubsection{\kokkos, a performance portability library}
 \label{subsec:external-kokkos}
 
-Kokkos is a C++ library that makes it easy to write codes that can
+\kokkos is a C++ library that makes it easy to write codes that can
 portably run on CPUs and GPUs of different vendors, using their
 respective underlying programming models.
 The \dealii{} 9.5 release~\cite{dealII95} made \kokkos~\cite{trott2022} a required
 dependency. The current release removes the deprecated \texttt{CUDAWrappers} namespace as well
-as all \texttt{CUDA}-related macros in favor of Kokkos
-equivalents.
-
-\todo[inline]{Now
-  bundling Kokkos 4.5.1; are we using something new from Kokkos?}
+as all \texttt{CUDA}-related macros in favor of \kokkos
+equivalents. The 9.7 release now bundles \kokkos 4.5.1 but the minimum version required is still 3.4.
 
 \subsubsection{MUMPS, a multifrontal parallel direct solver}
 
@@ -548,7 +545,7 @@ are more broadly visible:
   \item As already mentioned in
     Section~\ref{subsec:external-kokkos}, the current release
     removes the deprecated \texttt{CUDAWrappers} namespace as well 
-    as all \texttt{CUDA}-related macros in favor of Kokkos
+    as all \texttt{CUDA}-related macros in favor of \kokkos
     equivalents.
 
     % This is similar to a note in the 9.6 paper, but I (David) made more
