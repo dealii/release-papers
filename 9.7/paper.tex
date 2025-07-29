@@ -246,8 +246,6 @@ which we briefly outline in the remainder of this section:
   corresponds to a scalar, vector-valued, or tensor-valued set of
   solution variables, and directly returns \texttt{true} or
   \texttt{false}.
-\item \todo[inline]{Perhaps mention the updated interfaces to ArborX
-  here? (Or in Section~\ref{subsec:external}?)}
 \item \todo[inline]{Add to this list other points that are not
     explicitly discussed below}
 \end{itemize}
@@ -367,7 +365,7 @@ is found on a system.
 
 Kokkos is a C++ library that makes it easy to write codes that can
 portably run on CPUs and GPUs of different vendors, using their
-respectiv underlying programming models.
+respective underlying programming models.
 The \dealii{} 9.5 release~\cite{dealII95} made \kokkos~\cite{trott2022} a required
 dependency. The current release removes the deprecated \texttt{CUDAWrappers} namespace as well
 as all \texttt{CUDA}-related macros in favor of Kokkos
@@ -398,6 +396,17 @@ equivalents.
 
 \todo[inline]{Do we want to say something here? If not, please delete
   the subsubsection.}
+
+\subsubsection{ArborX, a performance-portable geometric search library}
+ArborX~\cite{prokopenko2025} is a library for geometric search on CPUs and GPUS.
+The new ArborX 2.X series is not backward compatible with the older 1.X series.
+Consequently, this incompatibility required an extensive rewrite of our wrappers to
+support ArborX 2.X. As part of the rewrite, the template parameters had to
+be changed. When using the wrappers with ArborX 1.X, \texttt{ArborX::BVH}
+and \texttt{ArborX::DistributedTree} are templated on both the dimension and
+the number types. When using the wrappers with ArborX 2.X, these classes are
+templated on the geometric objects used for the leaf nodes of the
+\texttt{ArborX::BVH}.
 
 
 \subsection{Work towards C++20 modules}
