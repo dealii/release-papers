@@ -143,7 +143,7 @@ cross/.default={2pt}}
    {\texttt{heister@clemson.edu}}}
 
 \author[8]{Luca~Heltai}
-\affil[8]{Department of Mathematics, University of Pisa, 
+\affil[8]{Department of Mathematics, University of Pisa,
 Via Buonarroti 1/c, 56127 Pisa, Italy.}
 
  \author[9]{Martin~Kronbichler}
@@ -428,7 +428,7 @@ A lot of effort -- perhaps 6 weeks of full-time work, and nearly 200
 pull requests -- has gone into evaluating whether \dealii{} can be
 built using modules (in addition to header files, which will need to
 be provided for a long time to come for backward compatibility). A
-detailed accounting of this effort can be found in 
+detailed accounting of this effort can be found in
 \cite{bangerth2025experienceconvertinglargemathematical}. The majority
 of this work addressed features of the \dealii{} code base,
 accumulated over its more than 25 year history, that were acceptable
@@ -538,13 +538,13 @@ are more broadly visible:
     \texttt{grid/tria.h} no longer contains declarations of \texttt{CellData} or
     \texttt{SubCellData}. Those declarations have been moved to
     \texttt{grid/cell\_data.h}. In cases where this leads to errors,
-    the situation is easily (and backward compatibly) fixed by adding an explicit 
+    the situation is easily (and backward compatibly) fixed by adding an explicit
     \texttt{\#include} statement to the user program for the file that is necessary to
     access declarations the compiler now no longer sees.
 
   \item As already mentioned in
     Section~\ref{subsec:external-kokkos}, the current release
-    removes the deprecated \texttt{CUDAWrappers} namespace as well 
+    removes the deprecated \texttt{CUDAWrappers} namespace as well
     as all \texttt{CUDA}-related macros in favor of \kokkos
     equivalents.
 
@@ -832,7 +832,7 @@ Istituto Nazionale di Alta Matematica (INdAM). LH was partially supported by
 the Italian Ministry of University and Research (MUR), under the grant MUR PRIN
 2022 No. 2022WKWZA8 ``Immersed methods for multiscale and multiphysics problems
 (IMMEDIATE)'', and acknowledges the MIUR Excellence Department Project awarded
-to the Department of Mathematics, University of Pisa, CUP I57G22000700001. 
+to the Department of Mathematics, University of Pisa, CUP I57G22000700001.
 
 M.~Kronbichler was partially supported by the
 German Federal Ministry of Research, Technology and Space, project
