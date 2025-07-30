@@ -246,6 +246,16 @@ which we briefly outline in the remainder of this section:
   corresponds to a scalar, vector-valued, or tensor-valued set of
   solution variables, and directly returns \texttt{true} or
   \texttt{false}.
+\item Most of the functions in the \texttt{GridGenerator} namespace correspond
+  to simple geometries (such as cubes and spheres) discretized with hypercubes.
+  The function \texttt{GridGenerator::convert\_hypercube\_to\_simplex\_mesh()}
+  converts such discretizations to instead use simplices. That function now
+  supports anisotropic splits, including splitting quadrilaterals into two
+  triangles and hexahedra into six tetrahedra, in addition to the standard
+  isotropic splits. These anisotropic splits significantly reduce the total
+  number of cells and are useful in contexts where it is important to add as few
+  new cells as possible.
+
 \item \todo[inline]{Add to this list other points that are not
     explicitly discussed below}
 \end{itemize}
@@ -344,11 +354,8 @@ been consolidated into a single new structure:
 
 \subsection{Support for simplex and mixed meshes}
 
-\todo[inline]{Perhaps talk about this point:
-  GridGenerator::convert\_hypercube\_to\_simplex\_mesh() can now split
-  quadrilaterals into two triangles and hexahedra into six
-  tetrahedra. These anisotropic splits are useful in contexts where it
-  is important to add as few new elements as possible.}
+\todo[inline]{I moved the `improved anisotropic split' change listed here to the
+  `other changes' section.}
 
 \todo[inline]{Are there other noteworthy changes}
 
