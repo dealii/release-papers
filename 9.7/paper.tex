@@ -255,7 +255,10 @@ which we briefly outline in the remainder of this section:
   isotropic splits. These anisotropic splits significantly reduce the total
   number of cells and are useful in contexts where it is important to add as few
   new cells as possible.
-
+\item The build system now supports interprocedural and link-time optimization
+  (LTO). This can be enabled with the CMake configuration option
+  \texttt{-DDEAL\_II\_WITH\_LTO=ON}. This option enables whole-program
+  optimization at link-time and can make executables significantly faster.
 \item \todo[inline]{Add to this list other points that are not
     explicitly discussed below}
 \end{itemize}
