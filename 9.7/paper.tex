@@ -319,9 +319,28 @@ classes.
   matrix-free stuff, but it will take someone with more knowledge of
   the area to discuss them here -- or to remove this subsection.}
 
-\todo[inline]{There were several changes in Portable::MatrixFree: support for
-multiple components, generalization to fe degree less than n q points 1d,
-support for DeviceVector and BlockVector}
+\subsection{Portable::Matrix-free}
+\texttt{Portable::MatrixFree} utilizes \kokkos to provide support for GPUs from
+Nvidia, AMD, and Intel. In this release, we have added support for finite
+elements with multiple components, i.e vector-values finite elements. We have
+also added support for finite elements where the degree is less than the number
+of quadrature points in one direction.
+
+We have also introduced two new classes: \texttt{Portable::DeviceVector} and
+\texttt{Portable::DeviceBlockVector}. \texttt{Portable::DeviceVector} is an
+alias for \texttt{Kokkos::View} that replaces the raw pointer previously used to
+access data on the GPU. \texttt{Portable::DeviceBlockVector} extends
+\texttt{Portable::DeviceVector} in a manner similar to the way
+\texttt{BlockVector} extends \texttt{Vector} on the CPU.
+
+Finally, we have streamlined the interface of the functor invoked by the GPU
+kernel. In the past, this interface included a cell index,
+\texttt{Portable::MatrixFree::Data}, which includes precomputed data such as
+quadrature points, shape functions, and other informations that needed to be
+transferred to the GPU, and \texttt{Portable::MatrixFree::SharedData} which
+contained scratch memory used for computation. Now, all this information has
+been consolidated into a single new structure:
+\texttt{Portable::MatrixFree::Data}, greatly simplifying the interface.
 
 \subsection{Support for simplex and mixed meshes}
 
