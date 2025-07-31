@@ -219,11 +219,21 @@ The following is a list of ouststanding tasks that have to happen after we tagge
  - [ ] <b>Update deal.II package in Ubuntu/Debian and generate PPA for Ubuntu LTS</b> (assigned:)
  - [ ] <b>Update deal.II package in Archlinux AUR</b> (assigned:)
  - [ ] <b>Update deal.II Virtualbox Images</b> (assigned:)
+ - [ ] <b>Release paper</b>
+   * [ ] Copy the directory from the previous release
+   * [ ] Strip all non-generic content
+   * [ ] Update the list of contributors
+   * [ ] Finish all sections
+   * [ ] Put the completed manuscript onto the website
+   * [ ] Submit to the journal we usually publish it in
+   * [ ] Put a link onto the publications page
+   * [ ] Once published, put the final link onto the publications page
  - [ ] <b>Release announcements</b> (assigned: &mdash;)
-   * [ ] on the user mailing list
-   * [ ] send a separate mail with the list of contributors for this release
-   * [ ] on social media (facebook, twitter)
-   * [ ] send a news item to NADigest; web form breaks longer lines automatically, so keep them long to avoid awkward formatting; https://na-digest.coecis.cornell.edu/submit/
+   * [ ] Write it, based on the examples that are in previous release paper directories
+   * [ ] Send it to the user mailing list
+   * [ ] Send a separate mail with the list of contributors for this release
+   * [ ] Post on social media (facebook, twitter)
+   * [ ] Send a news item to NADigest; web form breaks longer lines automatically, so keep them long to avoid awkward formatting; https://na-digest.coecis.cornell.edu/submit/
    * [ ] SIAM CS&E digest
  - [ ] <b>Update wikipedia pages</b> (assigned:)
    * https://en.wikipedia.org/wiki/Deal.II
