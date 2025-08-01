@@ -259,8 +259,13 @@ which we briefly outline in the remainder of this section:
   (LTO). This can be enabled with the CMake configuration option
   \texttt{-DDEAL\_II\_WITH\_LTO=ON}. This option enables whole-program
   optimization at link-time and can make executables significantly faster.
-\item \todo[inline]{Add to this list other points that are not
-    explicitly discussed below}
+\item MUMPS~\cite{amestoy2019mumps}, a parallel sparse direct solver library,
+  may now be used with the built-in \texttt{SparseMatrix} and \texttt{Vector} classes
+  via the \texttt{SparseDirectMUMPS} class, in addition to interfaces to MUMPS
+  provided by PETSc and Trilinos.
+\item \texttt{GridIn::read\_vtk()} now loads cell-centered data vectors stored
+  in the input file and makes them available via
+  \texttt{GridIn::get\_cell\_data()}.
 \end{itemize}
 %
 The
