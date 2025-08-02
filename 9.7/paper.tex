@@ -408,29 +408,27 @@ equivalents. The 9.7 release now bundles \kokkos 4.5.1 but the minimum version r
 
 \subsubsection{MUMPS, a multifrontal parallel direct solver}
 
-\todo[inline]{Luca, want to say something here? If not, please delete
-  the subsubsection.}
+MUMPS (MUltifrontal Massively Parallel sparse direct Solver) is a widely-used software library designed for solving large sparse systems of linear equations efficiently on parallel architectures~\cite{amestoy2001mumps}.
 
-\subsubsection{PSBLAS, a XXXXX}
+In the 9.7 release, we have significantly enhanced integration with MUMPS,
+without requiring it to be installed through PETSc or Trilinos. Improvements
+include a simplified user interface for direct solvers, mimicking the existing
+interface we provide for UMFPACK, and enhanced performance optimizations that
+leverage recent MUMPS capabilities. Specifically, the deal.II wrappers now
+transparently support parallel matrix factorization, out-of-core computations,
+Block Low-Rank approximations, and GPU support.
 
-\todo[inline]{Complete section name}
+\subsubsection{PSBLAS, a parallel sparse linear algebra library}
 
-\todo[inline]{Luca, want to say something here? If not, please delete
-  the subsubsection.}
-\todo[inline]{DRW: note that while we support configuring with PSBLAS we don't
-  actually implement any interfaces to it yet (i.e., we have one test but no
-  code in the library which uses \texttt{DEAL\_II\_WITH\_PSBLAS}).}
+PSBLAS is a parallel sparse linear algebra library that provides basic operations for sparse matrices and vectors~\cite{Filippone2000psblas}.
 
-\subsubsection{\texttt{magic\_enum}, a XXXXX}
+The library is specifically designed to leverage modern
+parallel computing architectures, including both CPU and GPU systems, making it well-suited for exascale
+computing environments. Release 9.7 includes preliminary support for configuring with PSBLAS, allowing users of both frameworks to take advantage of its capabilities for specific linear algebra tasks. This support is still in its early stages, and the library is not yet fully integrated into the \dealii{} ecosystem.
 
-\todo[inline]{Complete section name}
-\todo[inline]{Luca, want to say something here? If not, please delete
-  the subsubsection.}
+\subsubsection{\texttt{magic\_enum}, a static reflection library for enums}
 
-\subsubsection{CGAL, a computational geometry engine}
-
-\todo[inline]{Do we want to say something here? If not, please delete
-  the subsubsection.}
+\texttt{magic\_enum} is a modern, header-only C++17 library designed to provide static reflection capabilities for enums without the need for macros or additional boilerplate code. It greatly simplifies working with enum types by enabling conversions between enum values and strings, integer values, and various other operations. Version 9.7 uses \texttt{magic\_enum} to provide type safe and efficient conversions between enum values and their string representations in the \texttt{ParameterHandler} class.
 
 \subsubsection{ArborX, a performance-portable geometric search library}
 ArborX~\cite{prokopenko2025} is a library for geometric search on CPUs and GPUS.
@@ -454,7 +452,7 @@ packages can export their public interface without relying on the
 mechanism of textual inclusion of header files that C++ has inherited from C. The
 end goal of C++20 modules is that one can replace the use of long
 lists of statements such as\\
-\hspace*{1cm}\texttt{\#include <deal.II/grid/tria.h}\\
+\hspace*{1cm}\texttt{\#include <deal.II/grid/tria.h>}\\
 by a simple\\
 \hspace*{1cm}\texttt{import dealii;}
 
@@ -709,6 +707,7 @@ following:
     \item OpenCASCADE \cite{opencascade-web-page}
     \item p4est \cite{burstedde2011p4est}
     \item PETSc \cite{petsc-user-ref,petsc-web-page}
+    \item PSBLAS \cite{Filippone2000psblas}
     \item ROL \cite{ridzal2014rol}
     \item ScaLAPACK \cite{blackford1997scalapack}
     \item SLEPc \cite{roman2023improvements}
