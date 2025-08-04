@@ -282,8 +282,8 @@ which we will discuss in this section.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The \texttt{MappingP1} class}
 
-Classes derived from the \texttt{Mapping} base class are used to
-represent the transformation from a reference cell (such as the unit
+Classes derived from the \texttt{Mapping} base class implement
+the transformation from a reference cell (such as the unit
 square or reference triangle) to a concrete cell that is part of a mesh.
 \dealii has supported simplex and mixed meshes since the 9.3
 release~\cite{dealii93}. That release included \texttt{MappingFE}, a
@@ -297,7 +297,7 @@ can be implemented using \texttt{MappingFE} along with the
 \texttt{FE\_Q} or \texttt{FE\_SimplexP} classes.
 
 The current
-release now includes a new \texttt{MappingP1} class, which contains an optimized
+release includes a new \texttt{MappingP1} class, which contains an optimized
 implementation of the standard affine simplex mapping (i.e., the mapping from
 the unit/reference cell to the real cell with a constant Jacobian on each cell). This
 implementation is about six times faster than the generic one implemented in
@@ -574,9 +574,9 @@ are more broadly visible:
 
     % This is similar to a note in the 9.6 paper, but I (David) made more
     % orientation changes for 9.7. These were done in #17988 and #18333.
-  \item We have continued to unify the various implementations of object
+  \item We continued unifying the various implementations of object
     orientations in the library. While the three booleans orientation, rotation,
-    and flip have maintained their original meanings (i.e., they have default
+    and flip have maintained their original definitions (i.e., they have default
     values of \texttt{true}, \texttt{false}, and \texttt{false}), the default
     value of the combined orientation (available via
     \texttt{TriaAccessor::combined\_face\_orientation()} and
@@ -585,19 +585,19 @@ are more broadly visible:
     \texttt{types::geometric\_orientation}, which is a \texttt{typedef} for an
     8-bit integral type.
 
-  \item The \step{52} tutorial has been removed. This program used to
-    show the use of time stepping functionality in \dealii{}, but
+  \item The \step{52} tutorial was removed. This program showed
+    the use of time stepping functionality in \dealii{}, but
     this functionality was rudimentary compared to what packages such
     as SUNDIALS or PETSc TS offer. As a consequence, \step{52} did
     not show the advanced techniques we would like to promote (e.g.,
     time stepping error control and automatic time step size choice), and it
     is now superseded by \step{86} (which builds on PETSc TS).
-  \item The \texttt{parallel::distributed::SolutionTransfer} class has
-    been merged with the \texttt{SolutionTransfer} class, with the
+  \item The \texttt{parallel::distributed::SolutionTransfer} class is
+    now merged with the \texttt{SolutionTransfer} class, with the
     former now being deprecated. In the process of cleaning up the
     interface, we have also removed some rarely used member functions
     of the latter that prevented us from unifying the two classes.
-  \item The \texttt{MatrixOut} class, used to create graphical
+  \item The \texttt{MatrixOut} class, which creates graphical
     representations of matrices, now defaults to creating sparse
     output, only showing nonzero entries. This vastly increases the
     size of matrices that can be visualized.
