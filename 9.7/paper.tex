@@ -308,6 +308,7 @@ all applications which use that function for obtaining a
 performant class.
 
 \subsection{The \texttt{SolutionTransfer} class}
+\label{subsec:solutiontransfer}
 This release extends the \texttt{SolutionTransfer} class to facilitate
 the transfer of solution vectors from one mesh to another in an
 adaptive mesh refinement loop, now to
@@ -596,7 +597,8 @@ are more broadly visible:
     now merged with the \texttt{SolutionTransfer} class, with the
     former now being deprecated. In the process of cleaning up the
     interface, we have also removed some rarely used member functions
-    of the latter that prevented us from unifying the two classes.
+    of the latter that prevented us from unifying the two classes. For more
+    information see Section~\ref{subsec:solutiontransfer}.
   \item The \texttt{MatrixOut} class, which creates graphical
     representations of matrices, now defaults to creating sparse
     output, only showing nonzero entries. This vastly increases the
