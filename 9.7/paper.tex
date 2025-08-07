@@ -227,9 +227,28 @@ are a number of other noteworthy changes in the current \dealii release,
 which we briefly outline in the remainder of this section:
 %
 \begin{itemize}
-\item MPGMRES and GMRES updates
-  \todo[inline]{Matthias and Martin, please update (or make this point
-  into one or two subsections in Section 2 below).}
+\item An implementation of the iterative linear solver, named
+  \texttt{SolverMPGMRES}, has been added. The MPGMRES solver is variant of the
+  widely used generalized minimal residual method (GMRES)
+  \cite{Saad1986gmres}, distinguished by the support of $N$ different
+  preconditioners during the course of the solution process
+  \cite{Greif2016gmres}. Multiple Krylov spaces are constructed by
+  $N$-variate, non-commuting polynomials of the preconditioners and the system
+  matrix applied to a residual of fixed degree. The implementation in \dealii
+  supports two strategies, a full variant that constructs all possible
+  combinations of preconditioner application to the initial residual $r$,
+  which for two preconditioners $P_1, P_2$ looks as
+  \[
+    r, P_1r, P_2r, P_1AP_1r, P_2AP_1r, P_1AP_2r, P_2AP_2r, P_1AP_1AP_1r,
+   P_2AP_1AP_1r, \ldots, P_2AP_2AP_2r, \ldots,
+ \]
+ and a truncated version where no combinations of preconditioners are made, e.g.
+ \[
+    r, P_1r, P_2r, P_1AP_1r, P_2AP_2r, P_1AP_1AP_1r,
+   P_2AP_2AP_2r, \ldots.
+ \]
+ The new solver is beneficial when two different preconditioners can help to
+ more quickly span the space where the solution is expected.
 \item A common operation in the finite element codes is to ask whether
   a specific shape function belongs to a particular solution
   variable. In the past, this was implemented by using the
@@ -327,21 +346,46 @@ classes.
 
 \subsection{Matrix-free functionality}
 
-\todo[inline]{There are many entries in the changelog about
-  matrix-free stuff, but it will take someone with more knowledge of
-  the area to discuss them here -- or to remove this subsection.}
+In this release, several extensions, major bug fixes and optimizations of the
+matrix-free infrastructure and related multigrid functionality, such as
+matrix-free geometric and polynomial coarsening, in \dealii have been
+made. The most significant advances were made for the \kokkos-based
+``portable'' infrastructure described below. In addition, improvements where
+made to several areas:
+\begin{itemize}
+\item the \texttt{MatrixFreeTools::compute\_matrix()} and
+  \texttt{MatrixFreeTools::compute\_diagonal()} functions to compute the
+  matrix or only its diagonal from a matrix-free operator were enhanced
+  towards multi-component systems,
+\item support for additional ghost cells in the matrix-free setup was added to
+  support vector access to a wider range operations, such as MPI
+  parallelization of multigrid smoothers based on vertex
+  patches~\cite{Wichrowski2025smoothers},
+\item functionality for identifying degrees of freedom in lexicographic
+  ordering on patches of cells,
+\item support for additional matrices in the
+  \texttt{TensorProductMatrixCreator} for support in fast
+  diagonalization-based inverses.
+\end{itemize}
 
-\subsection{Portable::Matrix-free}
+\subsubsection{Portable::Matrix-free}
 \texttt{Portable::MatrixFree} utilizes \kokkos to provide support for GPUs from
 Nvidia, AMD, and Intel. In this release, we have added support for finite
 elements with multiple components, i.e vector-values finite elements. We have
-also added support for finite elements where the degree is less than the number
-of quadrature points in one direction.
+also added support for finite elements where the number
+of quadrature points per direction is different from the size of the
+one-dimensional basis (i.e., polynomial degree plus one), thus supporting more
+cases of evaluation. In addition to the extended functionality, several
+performance optimizations to the evaluation routines have been made, which are
+particularly visible on recent Nvidia GPUs.
 
-We have also introduced two new classes: \texttt{Portable::DeviceVector} and
-\texttt{Portable::DeviceBlockVector}. \texttt{Portable::DeviceVector} is an
-alias for \texttt{Kokkos::View} that replaces the raw pointer previously used to
-access data on the GPU. \texttt{Portable::DeviceBlockVector} extends
+To ensure more uniform handling of temporary data structures necessary for
+storing temporary results in matrix-free evaluations, such as
+sum-factorization algorithms, we have introduced two new classes:
+\texttt{Portable::DeviceVector} and
+\texttt{Portable::DeviceBlockVector}. The class \texttt{Portable::DeviceVector} is an
+alias for \texttt{Kokkos::View} that replaces the raw pointer previously used
+to access data on the GPU. The class \texttt{Portable::DeviceBlockVector} extends
 \texttt{Portable::DeviceVector} in a manner similar to the way
 \texttt{BlockVector} extends \texttt{Vector} on the CPU.
 
@@ -593,8 +637,8 @@ are more broadly visible:
     not show the advanced techniques we would like to promote (e.g.,
     time stepping error control and automatic time step size choice), and it
     is now superseded by \step{86} (which builds on PETSc TS).
-  \item The \texttt{parallel::distributed::SolutionTransfer} class is
-    now merged with the \texttt{SolutionTransfer} class, with the
+  \item The \texttt{parallel::distributed::SolutionTransfer} class has been
+    merged with the class \texttt{SolutionTransfer}, with the
     former now being deprecated. In the process of cleaning up the
     interface, we have also removed some rarely used member functions
     of the latter that prevented us from unifying the two classes. For more
