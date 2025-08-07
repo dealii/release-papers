@@ -263,14 +263,15 @@ which we briefly outline in the remainder of this section:
   solution variables, and directly returns \texttt{true} or
   \texttt{false}.
 \item Most of the functions in the \texttt{GridGenerator} namespace correspond
-  to simple geometries (such as cubes and spheres) discretized with hypercubes.
-  The function \texttt{GridGenerator::convert\_hypercube\_to\_simplex\_mesh()}
-  converts such discretizations to instead use simplices. That function now
-  supports anisotropic splits, including splitting quadrilaterals into two
-  triangles and hexahedra into six tetrahedra, in addition to the standard
-  isotropic splits. These anisotropic splits significantly reduce the total
-  number of cells and are useful in contexts where it is important to add as few
-  new cells as possible.
+  to simple geometries (such as cubes, spheres, and other shapes with analytical
+  formulas) discretized with hypercubes. The function
+  \texttt{GridGenerator::convert\_hypercube\_to\_simplex\_mesh()} converts such
+  discretizations to instead use simplices. That function now supports
+  anisotropic splits, including splitting quadrilaterals into two triangles and
+  hexahedra into six tetrahedra, in addition to the standard isotropic splits.
+  These anisotropic splits significantly reduce the total number of cells and
+  are useful in contexts where it is important to add as few new cells as
+  possible.
 \item The build system now supports interprocedural and link-time optimization
   (LTO). This can be enabled with the CMake configuration option
   \texttt{-DDEAL\_II\_WITH\_LTO=ON}. This option enables whole-program
