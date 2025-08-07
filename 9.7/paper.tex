@@ -215,9 +215,27 @@ The major changes of this release are:
 %
 \begin{itemize}
 \item
-  \todo[inline]{Update list from the subsections of Section 2
-    below. Like in the previous release papers, we here basically give
-  a 1-3 sentence summary of the subsections 2.x, with a link to that section.}
+\todo[inline]{Keep this list of major changes up-to-date - the formatting is the
+  same as the 9.6 paper.}
+
+\item \texttt{MappingP1}, a more efficient mapping for simplex elements
+  (Section~\ref{subsec:mappingp1})
+
+\item Improved support for transfering solution vectors during mesh refinement
+  (Section~\ref{subsec:solutiontransfer})
+
+\item Improved matrix-free support for multi-component systems as well as
+  improved portability between GPUs via \texttt{Portable::MatrixFree}
+  (Section~\ref{subsec:matrixfree})
+
+\item Improved support for threading via TaskFlow, as well as support for
+  several new external libraries and improved support for Kokkos and ArborX
+  (Section~\ref{subsec:external})
+
+\item Support for C++20 modules (Section~\ref{subsec:modules})
+
+\item Three new tutorial programs and a new code gallery program
+  (Section~\ref{subsec:steps})
 \end{itemize}
 %
 
@@ -301,6 +319,7 @@ which we will discuss in this section.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The \texttt{MappingP1} class}
+\label{subsec:mappingp1}
 
 Classes derived from the \texttt{Mapping} base class implement
 the transformation from a reference cell (such as the unit
@@ -346,6 +365,7 @@ classes.
 
 
 \subsection{Matrix-free functionality}
+\label{subsec:matrixfree}
 
 In this release, several extensions, major bug fixes and optimizations of the
 matrix-free infrastructure and related multigrid functionality, such as
