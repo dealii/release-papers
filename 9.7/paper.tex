@@ -155,8 +155,8 @@ Via Buonarroti 1/c, 56127 Pisa, Italy.}
   {\texttt{maier@math.tamu.edu}}}
 
 \author[11]{Peter Munch}
- \affil[11]{Uppsala University, Sweden.
-  {\texttt{peter.munch@it.uu.se}}}
+ \affil[11]{Institute of Mathematics, Technical University of Berlin, Germany.
+  {\texttt{muench@math.tu-berlin.de}}}
 
 \author[1*]{Bruno~Turcksin}
 
@@ -377,7 +377,8 @@ made to several areas:
 \item the \texttt{MatrixFreeTools::compute\_matrix()} and
   \texttt{MatrixFreeTools::compute\_diagonal()} functions to compute the
   matrix or only its diagonal from a matrix-free operator were enhanced
-  towards multi-component systems,
+  towards multi-component systems, the DG context (and, in general, to operators
+  with face integrals), and mixed elements,
 \item support for additional ghost cells in the matrix-free setup was added to
   support vector access to a wider range operations, such as MPI
   parallelization of multigrid smoothers based on vertex
@@ -490,6 +491,9 @@ computing environments. Release 9.7 includes preliminary support for configuring
 
 \texttt{magic\_enum} is a modern, header-only C++17 library designed to provide static reflection capabilities for enums without the need for macros or additional boilerplate code. It greatly simplifies working with enum types by enabling conversions between enum values and strings, integer values, and various other operations. Version 9.7 uses \texttt{magic\_enum} to provide type safe and efficient conversions between enum values and their string representations in the \texttt{ParameterHandler} class.
 
+
+\todo[inline]{Peter @ Luca: I think a code snippet would be great here! }
+
 \subsubsection{ArborX, a performance-portable geometric search library}
 ArborX~\cite{prokopenko2025} is a library for geometric search on CPUs and GPUs.
 The new ArborX 2.X series is not backward compatible with the older 1.X series.
@@ -570,9 +574,8 @@ programs:
     that multiply certain source terms.
     \step{93} was written by Sam Scheuerman.
   \item
-    \step{95} illustrates the use of matrix-free methods to solve
-    problems with embedded boundaries using the CutFEM method that was
-    previously already introduced in \step{85}. \step{95} was written
+    \step{95} extends \step{85} and illustrates the use of matrix-free methods to solve
+    problems with embedded boundaries using the CutFEM method~\cite{bergbauer2025high}. \step{95} was written
     by Maximilian Bergbauer, with help by Martin Kronbichler and Peter Munch.
   \item
     \step{97}
@@ -594,6 +597,8 @@ research rather than as teaching tools):
     Chandrasekhar Annavarapu,
     Wolfgang Bangerth, and
     Marc Fehling.
+
+\todo[inline]{Peter: A short description would be great here!}
 \end{itemize}
 
 
@@ -944,8 +949,6 @@ programme (call HORIZON-EUROHPC-JU-2023-COE-03, grant agreement No. 101172493
 M.~Maier was partially supported by NSF Award DMS-2045636 and by the
 Air Force Office of Scientific Research under grant/contract number
 FA9550-23-1-0007.
-
-P.~Munch acknowledges the funding by the Swedish Research Council (VR) under grant 2021-04620 and the strategic funding from the IT department of Uppsala University.
 
 D.~Wells was supported by NSF Award OAC-1931516.
 
