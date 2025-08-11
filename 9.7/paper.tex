@@ -111,7 +111,7 @@ cross/.default={2pt}}
 
  \author[2,3]{Wolfgang~Bangerth}
  \affil[2]{Department of Mathematics, Colorado State University, Fort
-   Collins, CO 80523-1874, USA.
+   Collins, CO 80523, USA.
    \texttt{bangerth@colostate.edu}}
  \affil[3]{Department of Geosciences, Colorado State University, Fort
    Collins, CO 80523, USA.}
@@ -214,30 +214,29 @@ available at \url{https://www.dealii.org/} and
 The major changes of this release are:
 %
 \begin{itemize}
-\item
-\todo[inline]{Keep this list of major changes up-to-date - the formatting is the
-  same as the 9.6 paper.}
-
 \item \texttt{MappingP1}, a more efficient mapping for simplex elements
-  (Section~\ref{subsec:mappingp1})
+  (Section~\ref{subsec:mappingp1});
 
-\item Improved support for transferring solution vectors during mesh refinement
-  (Section~\ref{subsec:solutiontransfer})
+\item Updated support for transferring solution vectors during mesh refinement
+  (Section~\ref{subsec:solutiontransfer});
 
 \item Improved matrix-free support for multi-component systems as well as
   improved portability between GPUs via \texttt{Portable::MatrixFree}
-  (Section~\ref{subsec:matrixfree})
+  (Section~\ref{subsec:matrixfree});
 
-\item Improved support for threading via TaskFlow, as well as support for
+\item Support for threading via TaskFlow, as well as support for
   several new external libraries and improved support for Kokkos and ArborX
-  (Section~\ref{subsec:external})
+  (Section~\ref{subsec:external});
 
-\item Support for C++20 modules (Section~\ref{subsec:modules})
+\item \dealii{} can now build C++20 modules (Section~\ref{subsec:modules});
 
 \item Three new tutorial programs and a new code gallery program
-  (Section~\ref{subsec:steps})
+  (Section~\ref{subsec:steps}).
 \end{itemize}
 %
+\todo[inline]{Update the list above if we add subsections to section 2.}
+
+
 
 While all of these major changes are discussed in detail in
 Section~\ref{sec:major}, there
@@ -245,29 +244,30 @@ are a number of other noteworthy changes in the current \dealii release,
 which we briefly outline in the remainder of this section:
 %
 \begin{itemize}
-\item An implementation of the iterative linear solver, named
-  \texttt{SolverMPGMRES}, has been added. The MPGMRES solver is variant of the
+\item MPGMRES is a variant of the
   widely used generalized minimal residual method (GMRES)
-  \cite{Saad1986gmres}, distinguished by the support of $N$ different
-  preconditioners during the course of the solution process
-  \cite{Greif2016gmres}. Multiple Krylov spaces are constructed by
+  \cite{Saad1986gmres}, distinguished by the support for multiple
+  preconditioners (thus, \textit{MP}GMRES)  during the course of the solution process
+  \cite{Greif2016gmres}. In our implementation in the
+  \texttt{SolverMPGMRES} class, the use of $N$ preconditioners leads
+  to the construction of multiple Krylov spaces via
   $N$-variate, non-commuting polynomials of the preconditioners and the system
-  matrix applied to a residual of fixed degree. The implementation in \dealii
-  supports two strategies, a full variant that constructs all possible
+  matrix applied to a residual vector. \texttt{SolverMPGMRES}
+  supports two strategies: (i) a full variant that constructs all possible
   combinations of preconditioner application to the initial residual $r$,
   which for two preconditioners $P_1, P_2$ looks as
   \[
     r, P_1r, P_2r, P_1AP_1r, P_2AP_1r, P_1AP_2r, P_2AP_2r, P_1AP_1AP_1r,
-   P_2AP_1AP_1r, \ldots, P_2AP_2AP_2r, \ldots,
+   P_2AP_1AP_1r, \ldots, P_2AP_2AP_2r, \ldots;
  \]
- and a truncated version where no combinations of preconditioners are made, e.g.
+ and (ii) a truncated version where no combinations of preconditioners are considered, i.e.
  \[
     r, P_1r, P_2r, P_1AP_1r, P_2AP_2r, P_1AP_1AP_1r,
    P_2AP_2AP_2r, \ldots.
  \]
  The new solver is beneficial when two different preconditioners can help to
- more quickly span the space where the solution is expected.
-\item A common operation in the finite element codes is to ask whether
+ more quickly span the space in which the solution is expected.
+\item A common operation in finite element codes is to ask whether
   a specific shape function belongs to a particular solution
   variable. In the past, this was implemented by using the
   \texttt{FiniteElement::system\_to\_component\_index()} function that
@@ -288,7 +288,7 @@ which we briefly outline in the remainder of this section:
   anisotropic splits, including splitting quadrilaterals into two triangles and
   hexahedra into six tetrahedra, in addition to the standard isotropic splits.
   These anisotropic splits significantly reduce the total number of cells and
-  are useful in contexts where it is important to add as few new cells as
+  are useful in contexts where one would like to use as few cells as
   possible.
 \item The build system now supports interprocedural and link-time optimization
   (LTO). This can be enabled with the CMake configuration option
@@ -329,7 +329,7 @@ release~\cite{dealii93}. That release included \texttt{MappingFE}, a
 \texttt{Mapping} class that uses the shape functions of a finite
 element to implement this transformation; many common mappings can be
 written in this way, and the class works with a variety of different elements by
-delegating most computations to a provided \texttt{FiniteElement}
+delegating most computations to a \texttt{FiniteElement}
 object. For example, the common bi-/trilinear mappings for quadrilaterals and
 hexahedra, as well as the linear mappings on triangles and simplices,
 can be implemented using \texttt{MappingFE} along with the
@@ -346,7 +346,7 @@ all applications which use that function for obtaining a
 \texttt{ReferenceCell}-independent mapping will automatically use the more
 performant class.
 
-\subsection{The \texttt{SolutionTransfer} class}
+\subsection{Updates to the \texttt{SolutionTransfer} class}
 \label{subsec:solutiontransfer}
 This release extends the \texttt{SolutionTransfer} class to facilitate
 the transfer of solution vectors from one mesh to another in an
@@ -367,45 +367,44 @@ classes.
 \subsection{Matrix-free functionality}
 \label{subsec:matrixfree}
 
-In this release, several extensions, major bug fixes and optimizations of the
+The current release includes several extensions, major bug fixes, and optimizations of the
 matrix-free infrastructure and related multigrid functionality, such as
-matrix-free geometric and polynomial coarsening, in \dealii have been
-made. The most significant advances were made for the \kokkos-based
+matrix-free geometric and polynomial coarsening. The most significant advances were made for the \kokkos-based
 ``portable'' infrastructure described below. In addition, improvements where
 made to several areas:
 \begin{itemize}
-\item the \texttt{MatrixFreeTools::compute\_matrix()} and
+\item The \texttt{MatrixFreeTools::compute\_matrix()} and
   \texttt{MatrixFreeTools::compute\_diagonal()} functions to compute the
-  matrix or only its diagonal from a matrix-free operator were enhanced
+  matrix or only its diagonal from a matrix-free operator were extended
   towards multi-component systems, the DG context (and, in general, to operators
-  with face integrals), and mixed elements,
-\item support for additional ghost cells in the matrix-free setup was added to
-  support vector access to a wider range operations, such as MPI
+  with face integrals), and mixed elements.
+\item We added support for additional ghost cells in the matrix-free setup to
+  support vector access to a wider range of operations, such as MPI
   parallelization of multigrid smoothers based on vertex
-  patches~\cite{Wichrowski2025smoothers},
-\item functionality for identifying degrees of freedom in lexicographic
-  ordering on patches of cells,
-\item support for additional matrices in the
-  \texttt{TensorProductMatrixCreator} for support in fast
-  diagonalization-based inverses.
+  patches~\cite{Wichrowski2025smoothers}.
+\item We implemented functionality for identifying degrees of freedom in lexicographic
+  ordering on patches of cells.
+\item Support for additional matrices in the
+  \texttt{TensorProductMatrixCreator} class, supporting fast
+  diagonalization-based inverses, was added.
 \end{itemize}
 
-\subsubsection{Portable::Matrix-free}
-\texttt{Portable::MatrixFree} utilizes \kokkos to provide support for GPUs from
+In a broader context, the
+\texttt{Portable::MatrixFree} class utilizes \kokkos to provide support for GPUs from
 Nvidia, AMD, and Intel. In this release, we have added support for finite
-elements with multiple components, i.e vector-values finite elements. We have
+elements with multiple components, i.e., ``vector-valued'' finite elements. We have
 also added support for finite elements where the number
 of quadrature points per direction is different from the size of the
-one-dimensional basis (i.e., polynomial degree plus one), thus supporting more
+one-dimensional basis (e.g., polynomial degree plus one), thus supporting more
 cases of evaluation. In addition to the extended functionality, several
 performance optimizations to the evaluation routines have been made, which are
 particularly visible on recent Nvidia GPUs.
 
-To ensure more uniform handling of temporary data structures necessary for
+To ensure more uniform handling of data structures necessary for
 storing temporary results in matrix-free evaluations, such as
 sum-factorization algorithms, we have introduced two new classes:
 \texttt{Portable::DeviceVector} and
-\texttt{Portable::DeviceBlockVector}. The class \texttt{Portable::DeviceVector} is an
+\texttt{Portable::DeviceBlockVector}. The first of these is an
 alias for \texttt{Kokkos::View} that replaces the raw pointer previously used
 to access data on the GPU. The class \texttt{Portable::DeviceBlockVector} extends
 \texttt{Portable::DeviceVector} in a manner similar to the way
@@ -413,11 +412,11 @@ to access data on the GPU. The class \texttt{Portable::DeviceBlockVector} extend
 
 Finally, we have streamlined the interface of the functor invoked by the GPU
 kernel. In the past, this interface included a cell index,
-\texttt{Portable::MatrixFree::Data}, which includes precomputed data such as
-quadrature points, shape functions, and other informations that needed to be
-transferred to the GPU, and \texttt{Portable::MatrixFree::SharedData} which
-contained scratch memory used for computation. Now, all this information has
-been consolidated into a single new structure:
+\texttt{Portable::MatrixFree::Data} (which includes precomputed data such as
+quadrature points, shape functions, and other informations that needs to be
+transferred to the GPU), and \texttt{Portable::MatrixFree::SharedData} (which
+contained scratch memory used for computation). Now, all this information has
+been consolidated into a single new class
 \texttt{Portable::MatrixFree::Data}, greatly simplifying the interface.
 
 %% The major simplex additions are the changes to
@@ -447,7 +446,7 @@ and the resulting difficulties with supporting all platforms and
 compilers. As a consequence, starting with the current release,
 \dealii{} builds on the Taskflow library \cite{huang2021taskflow} that
 is entirely implemented in C++, is header-only, and provides an
-interface that matches well with current language standards. \dealii{}
+interface that matches well with current C++ language standards. \dealii{}
 bundles the Taskflow 3.10 release, and now no longer bundles the TBB,
 though the TBB interfaces are still available if a TBB installation
 is found on a system.
@@ -459,17 +458,18 @@ is found on a system.
 \subsubsection{\kokkos, a performance portability library}
 \label{subsec:external-kokkos}
 
-\kokkos is a C++ library that makes it easy to write codes that can
+\kokkos~\cite{trott2022} is a C++ library that makes it easy to write codes that can
 portably run on CPUs and GPUs of different vendors, using their
 respective underlying programming models.
-The \dealii{} 9.5 release~\cite{dealII95} made \kokkos~\cite{trott2022} a required
+The \dealii{} 9.5 release~\cite{dealII95} made \kokkos a required
 dependency. The current release removes the deprecated \texttt{CUDAWrappers} namespace as well
 as all \texttt{CUDA}-related macros in favor of \kokkos
 equivalents. The 9.7 release now bundles \kokkos 4.5.1 but the minimum version required is still 3.4.
 
 \subsubsection{MUMPS, a multifrontal parallel direct solver}
 
-MUMPS (MUltifrontal Massively Parallel sparse direct Solver) is a widely-used software library designed for solving large sparse systems of linear equations efficiently on parallel architectures~\cite{amestoy2001mumps}.
+MUMPS (MUltifrontal Massively Parallel sparse direct Solver) is a
+widely-used software library designed for efficiently solving large sparse linear systems on parallel architectures~\cite{amestoy2001mumps}.
 
 In the 9.7 release, we have significantly enhanced integration with MUMPS,
 without requiring it to be installed through PETSc or Trilinos. Improvements
@@ -477,7 +477,7 @@ include a simplified user interface for direct solvers, mimicking the existing
 interface we provide for UMFPACK, and enhanced performance optimizations that
 leverage recent MUMPS capabilities. Specifically, the deal.II wrappers now
 transparently support parallel matrix factorization, out-of-core computations,
-Block Low-Rank approximations, and GPU support.
+block low-rank approximations, and GPU support.
 
 \subsubsection{PSBLAS, a parallel sparse linear algebra library}
 
@@ -485,7 +485,7 @@ PSBLAS is a parallel sparse linear algebra library that provides basic operation
 
 The library is specifically designed to leverage modern
 parallel computing architectures, including both CPU and GPU systems, making it well-suited for exascale
-computing environments. Release 9.7 includes preliminary support for configuring with PSBLAS, allowing users of both frameworks to take advantage of its capabilities for specific linear algebra tasks. This support is still in its early stages, and the library is not yet fully integrated into the \dealii{} ecosystem.
+computing environments. Release 9.7 includes preliminary support for configuring with PSBLAS, allowing users to take advantage of its capabilities for specific linear algebra tasks. This support is still in its early stages, and the library is not yet fully integrated into the \dealii{} ecosystem.
 
 \subsubsection{\texttt{magic\_enum}, a static reflection library for enums}
 
