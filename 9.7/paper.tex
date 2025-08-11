@@ -490,9 +490,9 @@ The library is specifically designed to leverage modern
 parallel computing architectures, including both CPU and GPU systems, making it well-suited for exascale
 computing environments. Release 9.7 includes preliminary support for configuring with PSBLAS, allowing users to take advantage of its capabilities for specific linear algebra tasks. This support is still in its early stages, and the library is not yet fully integrated into the \dealii{} ecosystem.
 
-\subsubsection{\texttt{magic\_enum}, a static reflection library for enums}
+\subsubsection{Magic Enum, a static reflection library for enums}
 
-\texttt{magic\_enum} is a modern, header-only C++17 library designed to provide static reflection capabilities for enums without the need for macros or additional boilerplate code. It greatly simplifies working with enum types by enabling conversions between enum values and strings, integer values, and various other operations. Version 9.7 uses \texttt{magic\_enum} to provide type safe and efficient conversions between enum values and their string representations in the \texttt{ParameterHandler} class.
+Magic Enum (alternatively known via its in-code spelling \texttt{magic\_enum}) is a modern, header-only C++17 library designed to provide static reflection capabilities for enums without the need for macros or additional boilerplate code. It greatly simplifies working with enum types by enabling conversions between enum values and strings, integer values, and various other operations. Version 9.7 uses \texttt{magic\_enum} to provide type safe and efficient conversions between enum values and their string representations in the \texttt{ParameterHandler} class.
 
 
 \todo[inline]{Peter @ Luca: I think a code snippet would be great here! }
@@ -504,9 +504,9 @@ Consequently, this incompatibility required an extensive rewrite of our wrappers
 support ArborX 2.X. As part of the rewrite, the template parameters had to
 be changed. When using the wrappers with ArborX 1.X, \texttt{ArborX::BVH}
 and \texttt{ArborX::DistributedTree} are templated on both the dimension and
-the number types. When using the wrappers with ArborX 2.X, these classes are
+the number type. When using the wrappers with ArborX 2.X, these classes are
 templated on the geometric objects used for the leaf nodes of the
-\texttt{ArborX::BVH}.
+\texttt{ArborX::BVH} type.
 
 
 \subsection{Work towards C++20 modules}
@@ -548,8 +548,9 @@ mixed for tutorial programs or applications that build on
 \dealii{}. Given that at the moment few systems have compilers, CMake
 versions, and build systems that are sufficiently new to support
 module builds, it will be several years before this feature will
-become widely available. However, the infrastructure for it is now
-largely in place.
+become widely usable. However, the infrastructure for it is now
+in place, and one can build the current release into a C++20 module by
+providing CMake with the flag \texttt{-DDEAL\_II\_WITH\_CXX20\_MODULE=ON}.
 
 
 
@@ -570,7 +571,7 @@ programs:
     \step{93}
     demonstrates how one can implement problems in which some of the
     variables to be solved for are not degrees of freedom of a finite
-    element field (so-called ``non-local'' degrees of freedom, because
+    element field (i.e., they are ``non-local'' degrees of freedom, because
     they have no associated node functional that is tied to a cell or
     a patch of cells). Specifically, the program solves an
     optimization problem in which some of the variables are scalars
@@ -599,9 +600,10 @@ research rather than as teaching tools):
     contributed by Wasim Niyaz Munshi,
     Chandrasekhar Annavarapu,
     Wolfgang Bangerth, and
-    Marc Fehling.
-
-\todo[inline]{Peter: A short description would be great here!}
+    Marc Fehling. The program solves a formulation for fracture
+    propagation in which one uses a separate field that tracks the
+    ``damage'' to the material that has resulted from deformation,
+    with the damage weakening the elastic properties of the deforming solid.
 \end{itemize}
 
 
@@ -625,9 +627,11 @@ are more broadly visible:
     core classes, such as \texttt{DoFHandler} and \texttt{Triangulation},
     inherit from \texttt{EnableObserverPointer} to enable other classes to store
     \texttt{ObserverPointer}s pointing to them which, if dereferenced after the
-    pointed-to object goes out of scope, will signal an error. This
+    pointed-to object goes out of scope, will signal an error that the
+    pointer is now ``dangling''. This
     functionality has been in \dealii since 1998. Since ``smart pointers''
-    nowadays means \texttt{std::unique\_ptr} or \texttt{std::shared\_ptr}, these
+    nowadays typically refer to the \texttt{std::unique\_ptr} or
+    \texttt{std::shared\_ptr} classes, these
     names were updated to avoid this conflict in terminology. The new names are
     based on the proposal for \texttt{std::observer\_ptr}~\cite{Brown2014} and
     \texttt{std::enable\_shared\_from\_this}.
@@ -635,14 +639,14 @@ are more broadly visible:
   \item In order to support modules (see Section~\ref{subsec:modules}), a
     significant number of headers had to be split up to prevent circular
     inclusions and other minor incompatibilities. For example,
-    \texttt{grid/tria.h} no longer contains declarations of \texttt{CellData} or
-    \texttt{SubCellData}. Those declarations have been moved to
-    \texttt{grid/cell\_data.h}. In cases where this leads to errors,
+    \texttt{deal.II/grid/tria.h} no longer contains declarations of \texttt{CellData} or
+    \texttt{SubCellData}. Those declarations have instead been moved to
+    \texttt{deal.II/grid/cell\_data.h}. In cases where this leads to errors,
     the situation is easily (and backward compatibly) fixed by adding an explicit
     \texttt{\#include} statement to the user program for the file that is necessary to
     access declarations the compiler now no longer sees.
 
-  \item As already mentioned in
+  \item As mentioned in
     Section~\ref{subsec:external-kokkos}, the current release
     removes the deprecated \texttt{CUDAWrappers} namespace as well
     as all \texttt{CUDA}-related macros in favor of \kokkos
@@ -650,9 +654,10 @@ are more broadly visible:
 
     % This is similar to a note in the 9.6 paper, but I (David) made more
     % orientation changes for 9.7. These were done in #17988 and #18333.
-  \item We continued unifying the various implementations of object
-    orientations in the library. While the three booleans orientation, rotation,
-    and flip have maintained their original definitions (i.e., they have default
+  \item We have continued unifying the various implementations of object
+    orientations in the library, i.e., the description of how cells,
+    faces, or edges are oriented relative to other such objects. While the three booleans `orientation', `rotation',
+    and `flip' have maintained their original definitions (i.e., they have default
     values of \texttt{true}, \texttt{false}, and \texttt{false}), the default
     value of the combined orientation (available via
     \texttt{TriaAccessor::combined\_face\_orientation()} and
@@ -677,7 +682,9 @@ are more broadly visible:
   \item The \texttt{MatrixOut} class, which creates graphical
     representations of matrices, now defaults to creating sparse
     output, only showing nonzero entries. This vastly increases the
-    size of matrices that can be visualized.
+    size of matrices that can be visualized. Creating dense output
+    remains possible through a flag in the class's
+    \texttt{AdditionalData} structure.
   \item The \texttt{FiniteElement} class has a number of functions
     that allow querying properties of implementations in derived
     classes. These include asking whether a derived class is able to provide
@@ -749,19 +756,19 @@ following:
     \item For uses of the particle functionality in \dealii:
       \cite{GLHPB18}.
       \item For the design of the video lectures and how they can be
-        used in \dealii{}-based courses: \cite{Zarestky2022}.
+        used in teaching: \cite{Zarestky2022}.
           \vfill\null
   \end{itemize}
 \end{multicols}
 
 \dealii can interface with many other libraries:
-\begin{multicols}{3}
+\begin{multicols}{4}
   \begin{itemize}[leftmargin=4mm]
     \item ADOL-C \cite{griewank1996adolc}
     \item ArborX \cite{prokopenko2025}
     \item ARPACK \cite{lehoucq1998arpack}
     \item Assimp \cite{schulze2021assimp}
-    \item BLAS and LAPACK \cite{anderson1999lapack}
+    \item BLAS, LAPACK \cite{anderson1999lapack}
     \item Boost \cite{boost-web-page}
     \item CGAL \cite{cgal:eb-24b}
     \item Gmsh \cite{geuzaine2009gmsh}
@@ -803,6 +810,9 @@ The two previous releases of \dealii can be cited as
 globe. Other than the authors of this paper, the following people
 contributed code to this release:\\
 
+\todo[inline]{Remove all who we promoted to authors of this paper from
+  the following list.}
+
 \begin{quote}
 %  authors removed:
 %  Daniel       Arndt,
@@ -814,7 +824,7 @@ contributed code to this release:\\
 %  Luca         Heltai,
 %  Martin       Kronbichler,
 %  Matthias     Maier,
-%  Peter        Muench,
+%  Peter        Munch,
 %  Jean-Paul    Pelteret,
 %  Bruno        Turcksin,
 %  David        Wells,
@@ -859,7 +869,6 @@ Oreste       Marquis,
 Ryan         Moulday,
 Nils         Much,
 Tileuzhan    Mukhamet,
-Peter        Munch,
 Wasim~Niyaz  Munshi,
 Natalia      Nebulishvili,
 Luz          Paz,
@@ -891,7 +900,8 @@ Michał       Wichrowski,
 Simon        Wiesheier,
 Yi-Yung      Yang,
 \end{quote}
-Their contributions are much appreciated!
+Their contributions are much appreciated -- this project lives by its
+community of users and contributors!
 
 This release contains patches written in and contributed from
 Antarctica. As a consequence, \dealii{} now consists of work written
