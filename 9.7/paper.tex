@@ -416,7 +416,7 @@ to access data on the GPU. The class \texttt{Portable::DeviceBlockVector} extend
 Finally, we have streamlined the interface of the functor invoked by the GPU
 kernel. In the past, this interface included a cell index,
 \texttt{Portable::MatrixFree::Data} (which includes precomputed data such as
-quadrature points, shape functions, and other informations that needs to be
+quadrature points, shape functions, and other information that needs to be
 transferred to the GPU), and \texttt{Portable::MatrixFree::SharedData} (which
 contained scratch memory used for computation). Now, all this information has
 been consolidated into a single new class
@@ -630,7 +630,7 @@ are more broadly visible:
     pointed-to object goes out of scope, will signal an error that the
     pointer is now ``dangling''. This
     functionality has been in \dealii since 1998. Since ``smart pointers''
-    nowadays typically refer to the \texttt{std::unique\_ptr} or
+    nowadays typically refers to the \texttt{std::unique\_ptr} or
     \texttt{std::shared\_ptr} classes, these
     names were updated to avoid this conflict in terminology. The new names are
     based on the proposal for \texttt{std::observer\_ptr}~\cite{Brown2014} and
