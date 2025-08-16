@@ -441,7 +441,7 @@ following sub-sections outline these updates.
 A large number of operations within \dealii{} are parallelized,
 including through mechanisms like WorkStream \cite{TKB16} that are
 also available to and useful in application codes. For more than
-15 years, since the 6.3 release, \dealii{} has used the Threading
+15 years, since the 6.3 release, \dealii{} has used the Intel Threading
 Building Blocks (TBB) \cite{reinders2007tbb} as the underlying library to
 provide task- and pipeline-based parallelism. However, the TBB has
 downsides that primarily follow from its use of assembler mnemonics
@@ -454,8 +454,24 @@ bundles the Taskflow 3.10 release, and now no longer bundles the TBB,
 though the TBB interfaces are still available if a TBB installation
 is found on a system.
 
-\todo[inline]{Timo: Perhaps add the figures from the WorkStream paper
-  updated for TBB vs Taskflow.}
+In Figure~\ref{fig:tbb-vs-taskflow} we compare the time for assembling
+the temperature matrix and temperature right-hand side in the step-32
+tutorial program, like it was done in \cite{TKB16}. The test was performed
+on a 3d mesh with 393,216 cells and 3,195,010 temperature degrees of freedom
+using a $Q_2$ element. The tests are run
+on AMD EPYC 9654P with 96 cores (and 192 threads). One can clearly see that
+running all copy operations sequentially limits parallel scalability (to less than 10
+threads on the left, where the copy operation is more expensive than the right),
+while using graph coloring (denoted as ``colored'') eliminates this bottleneck.
+It is clearly visible that the Taskflow implementation is better or the same
+in all situations.
+
+\begin{figure}[hb]
+\label{fig:tbb-vs-taskflow}
+\includegraphics{kokkos-vs-tbb/plots-figure1.pdf}\hfill
+\includegraphics{kokkos-vs-tbb/plots-figure2.pdf}
+\caption{Assembly times in a modified step-32 (left: temperature matrix assembly, right: temperature right-hand side assembly) comparing TBB and Taskflow with and without coloring.}
+\end{figure}
 
 
 \subsubsection{\kokkos, a performance portability library}
