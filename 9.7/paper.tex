@@ -465,15 +465,20 @@ on a 3d mesh with 393,216 cells and 3,195,010 temperature degrees of freedom
 using a $Q_2$ element. The tests are run
 on AMD EPYC 9654P with 96 cores (and 192 threads). One can clearly see that
 running all copy operations sequentially limits parallel scalability (to less than 10
-threads on the left, where the copy operation is more expensive than the right),
-while using graph coloring (denoted as ``colored'') eliminates this bottleneck.
+threads on the left, where the copy operation is more expensive than
+the right), regardless of whether one uses the TBB or Taskflow. On the
+other hand, first ``coloring'' all cells to avoid conflicts in
+the copy operation (labeled as ``colored'' in the figure) eliminates this bottleneck.
 It is clearly visible that the Taskflow implementation is better or the same
 in all situations.
 
 \begin{figure}[hb]
 \includegraphics{kokkos-vs-tbb/plots-figure1.pdf}\hfill
 \includegraphics{kokkos-vs-tbb/plots-figure2.pdf}
-\caption{Assembly times in a modified step-32 (left: temperature matrix assembly, right: temperature right-hand side assembly) comparing TBB and Taskflow with and without coloring.}
+\caption{Assembly times in a modified step-32 (left: temperature
+  matrix assembly, right: temperature right-hand side assembly)
+  comparing TBB and Taskflow with and without coloring (corresponding
+  to ``Implementation 2'' and ``Implementation 3'' in \cite{TKB16}).}
 \label{fig:tbb-vs-taskflow}
 \end{figure}
 
