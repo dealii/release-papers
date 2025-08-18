@@ -517,10 +517,55 @@ computing environments. Release 9.7 includes preliminary support for configuring
 
 \subsubsection{Magic Enum, a static reflection library for enums}
 
-Magic Enum (alternatively known via its in-code spelling \texttt{magic\_enum}) is a modern, header-only C++17 library designed to provide static reflection capabilities for enums without the need for macros or additional boilerplate code. It greatly simplifies working with enum types by enabling conversions between enum values and strings, integer values, and various other operations. Version 9.7 uses \texttt{magic\_enum} to provide type safe and efficient conversions between enum values and their string representations in the \texttt{ParameterHandler} class.
+Magic Enum (alternatively known via its in-code spelling \texttt{magic\_enum}) is a modern, header-only C++17 library designed to provide static reflection capabilities for enums without the need for macros or additional boilerplate code. It greatly simplifies working with enum types by enabling conversions between enum values and strings, integer values, and various other operations. Version 9.7 uses \texttt{magic\_enum} to provide type safe and efficient conversions between enum values and their string representations in the \texttt{ParameterHandler} class. An example usage of this class would be:
 
+\begin{c++}
+  #include <deal.II/base/parameter_handler.prm>
 
-\todo[inline]{Peter @ Luca: I think a code snippet would be great here! }
+  enum class SolverType {
+    DirectUMFPACK,
+    DirectMUMPS,
+    Iterative
+  };
+
+  SolverType solver_type = SolverType::DirectUMFPACK;
+  ParameterHandler prm;
+  prm.add_parameter("solver_type", solver_type);
+  prm.parse_input("input.prm");
+\end{c++}
+
+This allows the user to specify in the parameter file \verb|input.prm|, e.g., the type of solver to use:
+\begin{verbatim}
+  set solver_type = DirectUMFPACK
+\end{verbatim}
+
+The library also understands boolean operations between enums, allowing the user to specify, for example:
+\begin{c++}
+  #include <deal.II/base/patterns.h>
+  #include <deal.II/fe/fe_values.h>
+
+  // This is one of the deal.II enums used for the FEValues class
+  UpdateFlags flags = update_values;
+
+  // The following will output "update_values"
+  std::cout << Patterns::Tools::to_string(flags)
+            << std::endl;
+
+  // While the following is equivalent to writing 
+  // flags = update_values|update_gradients;
+  flags = Patterns::Tools::to_value<UpdateFlags>(
+    "update_values|update_gradients");
+
+  // Allowing one to use
+  ParameterHandler prm;
+  prm.add_parameter("update_flags", flags);
+  prm.parse_input("input.prm");
+\end{c++}
+
+In this case, the user can specify in the parameter file \verb|input.prm| the flags to pass to an \verb|FEValues| object: 
+\begin{verbatim}
+  set update_flags = update_values|update_gradients
+\end{verbatim}
 
 \subsubsection{ArborX, a performance-portable geometric search library}
 ArborX~\cite{prokopenko2025} is a library for geometric search on CPUs and GPUs.
