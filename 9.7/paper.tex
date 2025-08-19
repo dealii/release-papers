@@ -96,6 +96,7 @@ cross/.default={2pt}}
     Peter Munch,
     Bruno Turcksin,
     David Wells,
+    Michał Wichrowski,
   },
   pdftitle={The deal.II Library, Version 9.7, 2025},
 }
@@ -164,6 +165,10 @@ Via Buonarroti 1/c, 56127 Pisa, Italy.}
 \affil[12]{Department of Mathematics, University of North Carolina,
   Chapel Hill, NC 27516, USA.
   {\texttt{drwells@email.unc.edu}}}
+
+  \author[13]{Michał Wichrowski}
+\affil[13]{Interdisciplinary Center for Scientific Computing, Heidelberg University, Heidelberg, Germany.
+  {\texttt{mt.wichrowsk@uw.edu.pl}}}
 
 \renewcommand{\labelitemi}{--}
 
@@ -301,6 +306,13 @@ which we briefly outline in the remainder of this section:
   now correctly reflect the inherited sparsity on each cell, making the usage of
   this element usable as a preconditioner for a higher order problems (this is known
   as low order rediscretization, see also \cite{pazner2023low}).
+  \item The assembly of ghost penalty stabilization matrices, which appear in CutFEM, can now be done 
+    via \texttt{TensorProductMatrixCreator::create\_1d\_ghost\_penalty\_matrix}. For Cartesian cells, the local penalty matrix can be constructed by exploiting the tensor-product structure   
+    of the basis functions. The ghost penalty operator is expressed as 
+    a Kronecker product of precomputed one-dimensional mass and penalty matrices,
+    which avoids the evaluation of high-order derivatives~\cite{wichrowski2025matrix}.
+    The new functionality also handles the necessary lexicographical renumbering 
+    of degrees of freedom across adjacent cells via \texttt{FETools::cell\_to\_face\_patch}.
 \end{itemize}
 %
 The
@@ -968,7 +980,7 @@ Siarhei      Uzunbajakau,
 Mikael       Vaillant,
 Vinayak      Vijay,
 Stephan      Voss,
-Michał       Wichrowski,
+% Michał       Wichrowski,
 Simon        Wiesheier,
 Yi-Yung      Yang,
 \end{quote}
