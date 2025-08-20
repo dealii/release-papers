@@ -86,6 +86,7 @@ cross/.default={2pt}}
   pdfauthor={
     Daniel Arndt,
     Wolfgang Bangerth,
+    Maximilian Bergbauer,
     Bruno Blais,
     Marc Fehling,
     Rene Gassm\"{o}ller,
@@ -117,62 +118,67 @@ cross/.default={2pt}}
  \affil[3]{Department of Geosciences, Colorado State University, Fort
    Collins, CO 80523, USA.}
 
-\author[4]{Bruno Blais}
-\affil[4]{Chemical Engineering High-performance Analysis, Optimization and Simulation (CHAOS) laboratory, Department of Chemical Engineering,
+\author[4]{Maximilian~Bergbauer}
+\affil[4]{Institute for Computational Mechanics, Technical University of
+  Munich, Boltzmannstr. 15, 85748 Garching bei München, Germany.
+  {\texttt{maximilian.bergbauer@tum.de}}}
+
+\author[5]{Bruno Blais}
+\affil[5]{Chemical Engineering High-performance Analysis, Optimization and Simulation (CHAOS) laboratory, Department of Chemical Engineering,
              Polytechnique Montréal,
              PO Box 6079, Stn Centre-Ville, Montréal, Québec, Canada, H3C 3A7.
              {\texttt{bruno.blais@polymtl.ca}}}
 
-\author[5]{Marc~Fehling}
- \affil[5]{Department of Mathematical Analysis,
+\author[6]{Marc~Fehling}
+\affil[6]{Department of Mathematical Analysis,
     Faculty of Mathematics and Physics, Charles University,
     Sokolovsk{\'a} 49/83, 186\,75 Prague 8, Czech Republic.
     {\texttt{marc.fehling@matfyz.cuni.cz}}}
 
 
-\author[6]{Rene~Gassm\"{o}ller}
-\affil[6]{GEOMAR Helmholtz Centre for Ocean Research Kiel, 24148 Kiel, Germany}
+\author[7]{Rene~Gassm\"{o}ller}
+\affil[7]{GEOMAR Helmholtz Centre for Ocean Research Kiel, 24148 Kiel, Germany}
 
-\author[7]{Timo~Heister}
- \affil[7]{School of Mathematical and Statistical Sciences,
+\author[8]{Timo~Heister}
+\affil[8]{School of Mathematical and Statistical Sciences,
    Clemson University,
    Clemson, SC, 29634, USA.
    {\texttt{heister@clemson.edu}}}
 
-\author[8]{Luca~Heltai}
-\affil[8]{Department of Mathematics, University of Pisa,
+\author[9]{Luca~Heltai}
+\affil[9]{Department of Mathematics, University of Pisa,
 Via Buonarroti 1/c, 56127 Pisa, Italy.}
 
- \author[9]{Martin~Kronbichler}
- \affil[9]{Faculty of Mathematics, Ruhr University Bochum,
+\author[10]{Martin~Kronbichler}
+\affil[10]{Faculty of Mathematics, Ruhr University Bochum,
    Universit\"atsstr.~150, 44780 Bochum, Germany.
  {\texttt{martin.kronbichler@rub.de}}}
 
-\author[10]{Matthias~Maier}
-\affil[10]{Department of Mathematics,
+\author[11]{Matthias~Maier}
+\affil[11]{Department of Mathematics,
   Texas A\&M University,
   3368 TAMU,
   College Station, TX 77845, USA.
   {\texttt{maier@math.tamu.edu}}}
 
-\author[11]{Peter Munch}
- \affil[11]{Institute of Mathematics, Technical University of Berlin, Germany.
+\author[12]{Peter Munch}
+\affil[12]{Institute of Mathematics, Technical University of Berlin, Germany.
   {\texttt{muench@math.tu-berlin.de}}}
 
 \author[1*]{Bruno~Turcksin}
 
-\author[12]{Siarhei Uzunbajakau}
-\affil[12]{CEM Books,
+\author[13]{Siarhei Uzunbajakau}
+\affil[13]{CEM Books,
   Rotterdam, The Netherlands.
   {\texttt{info@cembooks.nl}}}
 
-\author[13]{David Wells}
-\affil[13]{Department of Mathematics, University of North Carolina,
+\author[14]{David Wells}
+\affil[14]{Department of Mathematics, University of North Carolina,
   Chapel Hill, NC 27516, USA.
   {\texttt{drwells@email.unc.edu}}}
 
-  \author[14]{Michał Wichrowski}
-\affil[14]{Interdisciplinary Center for Scientific Computing, Heidelberg University, Heidelberg, Germany.
+\author[15]{Michał Wichrowski}
+\affil[15]{Interdisciplinary Center for Scientific Computing, Heidelberg University, Heidelberg, Germany.
   {\texttt{mt.wichrowsk@uw.edu.pl}}}
 
 \renewcommand{\labelitemi}{--}
@@ -669,8 +675,13 @@ programs:
     \step{93} was written by Sam Scheuerman.
   \item
     \step{95} extends \step{85} and illustrates the use of matrix-free methods to solve
-    problems with embedded boundaries using the CutFEM method~\cite{bergbauer2025high}. \step{95} was written
-    by Maximilian Bergbauer, with help by Martin Kronbichler and Peter Munch.
+    problems with embedded boundaries using the CutFEM method~\cite{bergbauer2025high}. 
+    It shows the interplay between the matrix-free infrastructure for standard quadrature rules 
+    (\texttt{FEEvaluation} / \texttt{MatrixFree}) and the infrastructure for unstructured
+     quadrature (\texttt{FEPointEvaluation} / \texttt{NonMatching::MappingInfo}) while using explicit 
+     \texttt{SIMD} vectorization. The tutorial implements both continuous and discontinuous Galerkin 
+     methods in 2D and 3D.
+    \step{95} was written by Maximilian Bergbauer, with help by Martin Kronbichler and Peter Munch.
   \item
     \step{97}
     is a program that solves a curl-curl problem from electromagnetics
@@ -1018,6 +1029,10 @@ supported by the Computational Infrastructure for Geodynamics initiative
 (CIG), through the National Science Foundation (NSF) under Award
 No.~EAR-2149126 via The University of California -- Davis.
 
+M.~Bergbauer was supported by the German Research Foundation (DFG) under the
+project ``High-Performance Cut Discontinuous Galerkin Methods for Flow
+Problems and Surface-Coupled Multiphysics Problems'' Grant Agreement
+No.~456365667.
 
 B.~Blais was supported by the National Science and Engineering Research Council of Canada (NSERC)  through the RGPIN-2020-04510 Discovery Grant and the MMIAOW Canada Research Level 2 in Computer-Assisted Design and Scale-up of Alternative Energy Vectors for Sustainable Chemical Processes.
 
