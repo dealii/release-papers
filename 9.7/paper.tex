@@ -286,9 +286,11 @@ which we briefly outline in the remainder of this section:
  \]
  The new solver is beneficial when two different preconditioners can help to
  more quickly span the space in which the solution is expected.
-\item A common operation in finite element codes is to ask whether
-  a specific shape function belongs to a particular solution
-  variable. In the past, this was implemented by using the
+\item A common operation in codes implementing finite element problems with
+  several solution variables is to ask whether
+  a specific shape function belongs to a particular
+  variable, for example the pressure in a Stokes problem. In the past, this was
+  implemented by using the
   \texttt{FiniteElement::system\_to\_component\_index()} function that
   returns, among other information, which vector component a shape
   function belongs to. One then had to test whether this is the vector
