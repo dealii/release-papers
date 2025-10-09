@@ -218,6 +218,7 @@ The following is a list of ouststanding tasks that have to happen after we tagge
  - [ ] <b>Update deal.II package in Gentoo</b> (assigned:)
  - [ ] <b>Update deal.II package in Ubuntu/Debian and generate PPA for Ubuntu LTS</b> (assigned:)
  - [ ] <b>Update deal.II package in Archlinux AUR</b> (assigned:)
+ - [ ] <b>Update deal.II Docker Images</b> (assigned:)
  - [ ] <b>Update deal.II Virtualbox Images</b> (assigned:)
  - [ ] <b>Release paper</b>
    * [ ] Copy the directory from the previous release
