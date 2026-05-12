@@ -44,7 +44,7 @@ The following is a list of ouststanding QA tests that should be checked before p
    This step will require looking at the output and checking whether
    anything untoward is happening.
  - [ ] <b>Code Gallery</b> (assigned:, pr: &mdash;)
-   Do the same for the code gallery examples: They should at the very least compile. If possible, also run them to make sure they don't trip up any exceptions.
+   Do the same for the code gallery examples: They should at the very least compile. If possible, also run them to make sure they don't trip up any exceptions. When done, move the milestone on https://github.com/dealii/dealii/issues/15073 forward to the next release.
  - [ ] <b>Update `.gitattributes`</b> (assigned:, pr:)
        Check that `.gitattributes` is up to date by using `git archive` and checking that the contents is meaningful. In particular, do `quicktests` still run?
  - [ ] <b>Update authors</b> (assigned:, pr: &mdash;)
