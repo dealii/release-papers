@@ -306,14 +306,14 @@ commits that went into this release touched the tutorial.
 In addition, there are a number of new tutorial
 programs:
 \begin{itemize}
-  \item
-    \step{98}...
-    
+\item
+  \step{98} shows how to solve two-dimensional magnetostatic curl-curl
+  problems.
     \step{98} was written by ...
-  \item
-    \step{100} ...
-    \step{95} was written by ....
-    \todo[inline]{Complete}
+    \todo[inline]{Expand and Complete}
+  \item \step{100} applies a discontinuous Petrov-Galerkin method to the time-harmonic Helmholtz equation.
+    \step{100} was written by ....
+    \todo[inline]{Expand and Complete}
 \end{itemize}
 
 In addition, there is one new program in the code gallery (a collection of
@@ -321,8 +321,33 @@ user-contributed programs that often solve more complicated problems
 than tutorial programs, and that are intended as starting points for further
 research rather than as teaching tools):
 \begin{itemize}
-\item ...
-  \todo[inline]{We have many more. complete}
+\item ``\textit{Parallel implementation of heat equation}'' is a transient heat
+  equation solver with adaptive mesh refinement and a parallel solver;
+  this program was written by XXX.
+\item
+  ``\textit{L-BFGS phasefield solver}'' is a limited-memory BFGS
+  monolithic solver for phase-field crack simulations; it was written
+  by XXX.
+\item
+  ``\textit{Agglomeration-based solver for the Poisson problem}'' is a
+  discontinuous Galerkin solver for the Poisson problem on general
+  polytopal meshes generated through mesh agglomeration;
+\item
+  ``\textit{An ALE approach for large-deformation thermoplasticity}''
+  is an implementation of a large-deformation arbitrary
+  Lagrangian-Eulerian finite-strain thermoplasticity solver;
+\item
+  ``\textit{Parallel flow routing}'' is a parallel solver for
+  determining how much water is available at every point of a
+  landscape; the program was contributed by Wolfgang Bangerth.
+\item
+  ``\textit{Parallel Vibroacoustic Solver} is a parallel
+  frequency-domain vibroacoustic solver calculating the sound
+  transmission loss of a concrete wall;
+\item
+  ``\textit{Multilevel Monte Carlo for random Darcy flow}'' is an implementation of a multilevel Monte Carlo method for random Darcy flow.
+  \todo[inline]{Cross-check the exact name of these programs. Also
+    list their authors.}
 \end{itemize}
 
 
