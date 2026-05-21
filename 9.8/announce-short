@@ -1,0 +1,26 @@
+Version 9.8.0 of deal.II, the object-oriented finite element library
+awarded the J. H. Wilkinson Prize for Numerical Software and the
+SIAM/ACM Prize in Computational Science and Engineering, has been
+released. It is available for free under an Open Source license from
+the deal.II homepage at
+
+                   https://www.dealii.org/
+
+The major changes of this release are:
+  - ...
+
+More information about changes can be found in the release preprint at
+https://www.dealii.org/deal98-preprint.pdf.
+
+The main features of deal.II are:
+  - Extensive documentation and 88 working example programs
+  - Support for dimension-independent programming
+  - Locally refined adaptive meshes and multigrid support
+  - A zoo of different finite elements
+  - Built-in support for shared memory and distributed parallel computing,
+    scaling from laptops to clusters with 300,000+ of processor cores
+  - Interfaces to Trilinos, PETSc, SUNDIALS, UMFPACK and many other external
+    software packages
+  - Input and output for a wide variety of meshing and visualization platforms.
+
+The deal.II developers
