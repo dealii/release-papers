@@ -289,13 +289,49 @@ which we will discuss in this section.
 \subsection{Reducing dynamic memory allocations}
 \label{subsec:memory}
 
-\todo[inline]{describe @drwell's work towards reducing dynamic memory allocations}
+\todo[inline]{describe @drwell's work towards reducing dynamic memory
+  allocations; mention the inplace vector with a reference to the Section~\ref{subsec:cxx}.}
 
 
 \subsection{Work towards more modern C++ standards}
 \label{subsec:cxx}
 
-\todo[inline]{static vector, more modules work}
+As in most previous releases, we have spent substantial work on
+evolving our code base to keep track with developments in C++ and the
+standards that define C++.
+
+Specifically, we have continued our work on building C++20-style
+modules (see the discussion in the previous release paper
+\cite{dealii97} and the preprint
+\cite{bangerth2025experienceconvertinglargemathematical}). Recent
+compiler versions have become stricter at enforcing requirements
+spelled out in the standard for how the sources for modules have to be
+structured, and the scripts we use to convert the \dealii{} source
+files to a module structure have correspondingly evolved. We have also
+substantially expanded the module wrappers for the external projects
+we interface with. Note that \dealii{} continues to only require
+C++17, but can build C++20-style modules if so instructed and if the
+compiler supports it.
+
+Over the past year, the standardization committee has also released
+the C++26 specifications. Among its additions is a class
+\texttt{std::inplace\_vector<T,N>} that has a size that can vary at
+runtime, but can not exceed \texttt{N}, allowing for efficient
+allocation of such objects on the stack. In contrast, the widely used
+class \texttt{std::vector<T>} has to allocate memory on the heap
+dynamically, whereas \texttt{std::array<T,N>} has a fixed size
+\texttt{N}. The new class is useful in contexts where the actual size
+of the object is not known at compile time, but where it is known that
+the size can not exceed a certain number; an example is the number of
+faces per cell that depends on what kind of cell we have (say, a
+tetrahedron or a hexahedron) but that in no case can exceed six.
+
+We have written a fallback version of this class that we can use even
+if the compiler in use does not support C++26. We have started to use
+it in many places where the maximal size of a array is known at
+compile time, and this has dramatically reduced the number of dynamic
+memory allocations in many cases -- see also the discussion in
+Section~\ref{subsec:memory}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -322,7 +358,7 @@ programs:
     \todo[inline]{Expand and Complete}
 \end{itemize}
 
-In addition, there is one new program in the code gallery (a collection of
+There are also several new programs in the code gallery (a collection of
 user-contributed programs that often solve more complicated problems
 than tutorial programs, and that are intended as starting points for further
 research rather than as teaching tools):
@@ -363,6 +399,7 @@ research rather than as teaching tools):
 The 9.8 release includes
 \href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_7_0_and_9_8_0.html}
      {around 25 incompatible changes};
+     \todo{Update this number}
 see \cite{changes98}. Many of these
 incompatibilities remove previously deprecated functions or classes,
 or require now widely available but newer versions of external
@@ -439,6 +476,7 @@ following:
 \end{multicols}
 
 \dealii can interface with many other libraries:
+\todo{Do we need to update/add anything here?}
 \begin{multicols}{4}
   \begin{itemize}[leftmargin=4mm]
     \item ADOL-C \cite{griewank1996adolc}
