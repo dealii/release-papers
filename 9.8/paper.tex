@@ -267,6 +267,17 @@ which we will discuss in this section.
 \label{subsec:tpetra}
 
 \todo[inline]{Write}
+\texttt{Trilinos} has been talking about their \texttt{Epetra}-based solver stack in favor of \texttt{Tpetra}-based solver stack for a long time.
+Where support for different number types and \texttt{Kokkos} execution spaces has been the main driver. Nevertheless, the \texttt{Epetra}-based stack
+has only been removed in the recent \texttt{Trilinos} 17 release. 
+While \texttt{TpetraWrappers::Vector} has already been implemented in the 9.1.0 \dealii release, the development for a full \texttt{Tpetra} has been slow since.
+A basic implementation for \texttt{TpetraWrappers::SparsityPattern} and \texttt{TpetraWrappers::SparseMatrix} was included in the 9.6.0 \dealii release.
+The release of the \texttt{Trilinos} 17 helped with making significant progress within this release cycle.
+With this release, \texttt{Trilinos} support in \dealii only requires the Epetra-based stack or the Tpetra-based stack to be configured which in particular allows
+support for Trilinos 17. In case \texttt{Epetra} is available, the \texttt{TrilinosWrappers} namespace continues to use \texttt{Epetra} but will use \texttt{Tpetra}
+if only \texttt{Tpetra} is available. The \texttt{TpetraWrappers} namespace while always use \texttt{Tpetra}. While we generally expect the \texttt{Tpetra}
+stack to work, not all functionality from the \texttt{TrilinosWrappers} namespace is (yet) available in the \texttt{TpetraWrappers} namespace. 
+
 
 
 \subsection{VTK interfaces}
