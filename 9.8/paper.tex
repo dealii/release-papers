@@ -262,6 +262,22 @@ which we will discuss in this section.
 \todo[inline]{Write about all of the stuff that extends
   pyramid/wedges/simplex support}
 
+\subsection{Performance Portable GPU support}
+\label{subsec:gpu}
+
+\todo[inline]{Write Timo/Ryan, reference step-99 (if merged) and step-104}
+
+\begin{itemize}
+ \item Portable::MatrixFree: support for system of equations
+ \item improved interface (for each quad point, DeviceVector, DeviceBlockVector)
+ \item multi-threaded setup()
+ \item improved documentation
+ \item peformance improvements (reduced number of fences etc)
+ \item support for asserts, error checks
+ \item tensor and symmetric tensor support
+ \item require Kokkos 4.0 for device support
+
+\end{itemize}
 
 \subsection{Trilinos and Tpetra interfaces}
 \label{subsec:tpetra}
