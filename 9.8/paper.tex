@@ -345,25 +345,32 @@ we interface with. Note that \dealii{} continues to only require
 C++17, but can build C++20-style modules if so instructed and if the
 compiler supports it.
 
-Over the past year, the standardization committee has also released
-the C++26 specifications. Among its additions is a class
-\texttt{std::inplace\_vector<T,N>} that has a size that can vary at
-runtime, but can not exceed \texttt{N}, allowing for efficient
-allocation of such objects on the stack. In contrast, the widely used
-class \texttt{std::vector<T>} has to allocate memory on the heap
-dynamically, whereas \texttt{std::array<T,N>} has a fixed size
-\texttt{N}. The new class is useful in contexts where the actual size
-of the object is not known at compile time, but where it is known that
-the size can not exceed a certain number; an example is the number of
-faces per cell that depends on what kind of cell we have (say, a
-tetrahedron or a hexahedron) but that in no case can exceed six.
+The C++26 standard was released in March 2026~\cite{pusz2026standard}
+Among its additions is a class \texttt{std::inplace\_vector<T,N>} that
+has a size that can vary at runtime, but can not exceed \texttt{N},
+allowing for efficient allocation of such objects either on the stack or
+inside another container. In contrast, the widely used class
+\texttt{std::vector<T>} has to allocate memory on the heap dynamically,
+whereas \texttt{std::array<T,N>} has a fixed size \texttt{N}. The new
+class is useful in contexts where the actual size of the object is not
+known at compile time, but where it is known that the size can not
+exceed a certain number. For example, during construction of a
+\texttt{Triangulation} \dealii creates a \texttt{CellData} object for
+every cell on the coarsest level. The primary information these objects
+store is the vertices which define the cell. In 3d, the number of
+vertices must be between $4$ (for tetrahedra) and $8$ (for hexahedra),
+so by storing the vertices in a
+\texttt{std::inplace\_vector<unsigned int, 8>}
+we avoid separate heap allocations for each cell and instead
+store all data contiguously in memory.
 
-We have written a fallback version of this class that we can use even
-if the compiler in use does not support C++26. We have started to use
-it in many places where the maximal size of a array is known at
-compile time, and this has dramatically reduced the number of dynamic
-memory allocations in many cases -- see also the discussion in
-Section~\ref{subsec:memory}.
+We have written a fallback version of this class which is compatible
+with C++17 and only omits the small number of features which require
+newer language support (such as support for ranges and more
+\texttt{constexpr} support). We have started to use it in many places
+where the maximal size of a array is known at compile time, and this has
+dramatically reduced the number of dynamic memory allocations in many
+cases -- see also the discussion in Section~\ref{subsec:memory}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
