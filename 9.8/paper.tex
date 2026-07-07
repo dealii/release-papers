@@ -310,7 +310,9 @@ stack to work, not all functionality from the \texttt{TrilinosWrappers} namespac
 \subsection{Interfaces to SUNDIALS' ARKode package}
 \label{subsec:arkode}
 
-\todo[inline]{Write}
+The interface to the \texttt{SUNDIALS} \texttt{ARKODE} package has been substantially reorganized. The \texttt{SUNDIALS::ARKode} class now acts as a common driver for time integration, while stepper-specific setup and callbacks have been moved into a new \texttt{ARKodeStepper} hierarchy. This mirrors the modular structure of ARKODE itself and removes the previous assumption that all time integration is performed through \texttt{ARKODE}'s \texttt{ARKStep} module. The existing implicit-explicit functionality is now provided by \texttt{ARKStepper}. To smooth the migration to the new class hierarchy, deprecated compatibility wrappers have been introduced that preserve the old interface.
+
+This restructuring made it possible to add wrappers for further \texttt{ARKODE} modules. The new \texttt{ERKStepper} exposes the explicit \texttt{ERKStep} module for non-stiff problems. The \texttt{LSRKStepperSTS} and \texttt{LSRKStepperSSP} classes expose the low-storage Runge--Kutta \texttt{LSRKStep} module for stabilized explicit integration of mildly stiff parabolic problems and strong-stability-preserving integration of hyperbolic or advection-dominated problems, respectively.
 
 
 \subsection{xxx}
