@@ -321,9 +321,51 @@ stack to work, not all functionality from the \texttt{TrilinosWrappers} namespac
 \subsection{Reducing dynamic memory allocations}
 \label{subsec:memory}
 
-\todo[inline]{describe @drwell's work towards reducing dynamic memory
-  allocations; mention the inplace vector with a reference to the Section~\ref{subsec:cxx}.}
+We made a significant effort to reduce both the memory usage and number
+of memory allocations done by \dealii. We used
+heaptrack~\cite{wolff2026heaptrack} to detect and measure the number of
+dynamic allocations. Significant improvements include
+\begin{itemize}
+  \item Lowered memory consumption of purely tetrahedral
+    \texttt{Triangulation}s by 20\% by using
+    \texttt{ReferenceCell}-dependent strides for its internal data
+    structures
 
+  \item Lowered the time to construct a \texttt{DynamicSparsityPattern}
+    for \texttt{DoFHandler}'s with a single component by 15\%
+
+  \item Moved all internal allocation functions in
+    \texttt{Triangulation} to internal helper classes, which also
+    eliminated some duplicated loops over allocated cells
+\end{itemize}
+
+\begin{figure}
+  \begin{tabular}{| l | l | l | l |}
+    \hline
+    tutorial & allocations in 9.7  & allocations in 9.8 & description                            \\
+    \hline
+    step-23 & 2,871k   & 623k    & adaptive wave equation solver              \\
+    \hline
+    step-32 & 26,847k  & 11,791k & adaptive time-dependent Stokes flow solver \\
+    \hline
+    step-35 & 4,408k   & 975k    & projection solver for Navier-Stokes        \\
+    \hline
+    step-40 & 5,265k   & 2,028k  & adaptive Laplace solver                    \\
+    \hline
+  \end{tabular}
+
+  \caption{Total number of allocations performed (with one MPI process
+    and one thread) by several tutorial programs in 9.7.1 and 9.8.0. For
+    step-32 the program was run to $1/100$th of its default final time:
+    all other time-dependent problems were run to $1/10$th of their
+    default final times.}
+\end{figure}
+
+We achieved these reductions by preferring flat data structures such as
+\texttt{Table} over \texttt{std::map}, moving temporary arrays into
+higher scopes, using \texttt{boost::container::small\_vector} instead of
+\texttt{std::vector}, and eliminating temporaries by combining
+intermediate steps.
 
 \subsection{Work towards more modern C++ standards}
 \label{subsec:cxx}
