@@ -95,6 +95,7 @@ cross/.default={2pt}}
     Martin Kronbichler,
     Matthias Maier,
     Peter Munch,
+    Dominik Still,
     Bruno Turcksin,
     David Wells
   },
@@ -163,6 +164,12 @@ Max-Planck-Stra{\ss}e 1, 21502 Geesthacht, Germany. {\texttt{vladimir.ivannikov@
 \author[13]{Peter Munch}
 \affil[13]{Institute of Mathematics, Technical University of Berlin, Germany.
   {\texttt{muench@math.tu-berlin.de}}}
+
+\author[14]{Dominik Still}
+\affil[14]{Institute for Computational Mechanics, TUM School of Engineering and Design, Technical
+University of Munich, Germany.
+  {\texttt{dominik.still@tum.de}}}
+
 
 \author[1*]{Bruno~Turcksin}
 
@@ -266,6 +273,24 @@ which we will discuss in this section.
 
 \todo[inline]{Write about all of the stuff that extends
   pyramid/wedges/simplex support}
+
+The pyramid finite elements \texttt{FE\_PyramidP} and \texttt{FE\_PyramidDGP} now support quadratic and cubic shape functions, extending the mixed-mesh capabilities introduced in release 9.3~\cite{dealII93} to higher orders.
+The underlying approximation space is constructed by transforming the orthogonal basis of \cite{Bergot2010} into a nodal Lagrange basis.
+Analogous constructions are implemented for simplices and wedges.
+The orthogonal basis functions are expressed in terms of (homogenized) Jacobi polynomials and evaluated using recurrence relations rather than explicit polynomial expressions.
+Derivatives are evaluated using the same recurrence-based approach, avoiding computations at singularities while improving numerical stability.
+The pyramid basis functions form an exception, as their approximation space is spanned of rational rather than polynomial functions.
+
+To preserve continuity in conforming finite element spaces, the \textit{hp}-infrastructure, which distributes degrees of freedom on heterogeneous meshes, has been extended to account for the different face topologies on pyramid and wedge entities.
+
+Stroud quadrature rules for simplices, wedges, and pyramids provide integration formulas of arbitrary order and serve as a fallback whenever no alternative quadrature rule of the required accuracy is available.
+
+The class \texttt{FEInterfaceValues} now supports interfaces between heterogeneous element types.
+Different finite elements, mappings, and quadrature rules can be used on either side of a face or subface, enabling consistent evaluation across interfaces on adaptively refined mixed meshes in two dimensions.
+
+The function \texttt{GridGenerator::convert\_simplex\_to\_hypercube\_mesh} converts simplex meshes into hypercube meshes.
+In two dimensions, each triangle is subdivided into three quadrilaterals by inserting a vertex at the barycenter and connecting it to the edge midpoints.
+In three dimensions, the conversion of a tetrahedron into four hexahedra follows by applying the triangular subdivision on every face and placing an additional vertex at the barycenter of the tetrahedron.
 
 \subsection{Performance Portable GPU support}
 \label{subsec:gpu}
@@ -628,6 +653,7 @@ contributed code to this release:\\
 %  Peter        Munch,
 %  Jean-Paul    Pelteret,
 %  Sam          Scheuerman,
+%  Dominik      Still,
 %  Bruno        Turcksin,
 %  Siarhei      Uzunbajakau,
 %  David        Wells,
@@ -690,7 +716,6 @@ Marc         Secanell,
 Qingyuan     Shi,
 Wyatt        Smith,
 Simon        Sticko,
-Dominik      Still,
 Edward       Terrell,
 Jan~Philipp  Thiele,
 Xiaochuan    Tian,
@@ -760,6 +785,13 @@ programme (call HORIZON-EUROHPC-JU-2023-COE-03, grant agreement No. 101172493
 M.~Maier was partially supported by NSF Award DMS-2045636 and by the
 Air Force Office of Scientific Research under grant/contract number
 FA9550-23-1-0007.
+
+D.~Still was partially supported by the
+German Federal Ministry of Research, Technology and Space, project
+``PDExa: Optimized software methods for solving partial differential
+equations on exascale supercomputers'', grant agreement No. 16ME0638
+and the European Union – NextGenerationEU
+and by BREATHE, an ERC-2020-ADG Project, Grant Agreement ID 101021526.
 
 D.~Wells was supported by NSF Award OAC-1931516.
 
