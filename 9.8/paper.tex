@@ -274,23 +274,25 @@ which we will discuss in this section.
 \todo[inline]{Write about all of the stuff that extends
   pyramid/wedges/simplex support}
 
-The pyramid finite elements \texttt{FE\_PyramidP} and \texttt{FE\_PyramidDGP} now support quadratic and cubic shape functions, extending the mixed-mesh capabilities introduced in release 9.3~\cite{dealII93} to higher orders.
-The underlying approximation space is constructed by transforming the orthogonal basis of \cite{Bergot2010} into a nodal Lagrange basis.
+The pyramid finite elements \texttt{FE\_PyramidP} and \texttt{FE\_PyramidDGP} now support quadratic and cubic shape functions, extending the mixed-mesh capabilities introduced in release 9.3~\cite{dealII93} to higher polynomial orders.
+The underlying approximation space is constructed by transforming the orthogonal basis of Bergot~ et al.\cite{Bergot2010} into a nodal Lagrange basis.
 Analogous constructions are implemented for simplices and wedges.
 The orthogonal basis functions are expressed in terms of (homogenized) Jacobi polynomials and evaluated using recurrence relations rather than explicit polynomial expressions.
 Derivatives are evaluated using the same recurrence-based approach, avoiding computations at singularities while improving numerical stability.
-The pyramid basis functions form an exception, as their approximation space is spanned of rational rather than polynomial functions.
+The pyramid basis functions form an exception, as their approximation space is spanned by rational rather than polynomial functions.
 
-To preserve continuity in conforming finite element spaces, the \textit{hp}-infrastructure, which distributes degrees of freedom on heterogeneous meshes, has been extended to account for the different face topologies on pyramid and wedge entities.
+The introduction of second- and third-order nodal pyramid elements requires support of degrees of freedom located on edges and faces for mixed element types.
+To ensure a consistent distribution of the DoFs across interfaces, the \textit{hp}-infrastructure has been extended to account for the different face topologies on transitional elements, thereby preserving continuity on conforming meshes.
+To enable the evaluation of finite element fields across these interfaces, the class \texttt{FEInterfaceValues} now supports heterogeneous element types.
+The two sides of a face or subface may use different finite elements, mappings, and quadrature rules, even allowing for adaptively refined mixed meshes in two dimensions.
 
-Stroud quadrature rules for simplices, wedges, and pyramids provide integration formulas of arbitrary order and serve as a fallback whenever no alternative quadrature rule of the required accuracy is available.
+Increasing the polynomial degree of the shape functions also requires quadrature rules of sufficiently high order to consistently evaluate weak-form integrals, particularly in the presence of non-linear terms or curvilinear mappings.
+To this end, mixed-mesh computations are supported by Stroud quadrature rules.
+These rules provide integration formulas of arbitrary order and serve as a fallback whenever no alternative quadrature rule of sufficient accuracy is available.
 
-The class \texttt{FEInterfaceValues} now supports interfaces between heterogeneous element types.
-Different finite elements, mappings, and quadrature rules can be used on either side of a face or subface, enabling consistent evaluation across interfaces on adaptively refined mixed meshes in two dimensions.
-
-The function \texttt{GridGenerator::convert\_simplex\_to\_hypercube\_mesh} converts simplex meshes into hypercube meshes.
+As an alternative to working directly with simplex meshes, \dealii provides the functionality \texttt{GridGenerator::convert\_simplex\_to\_hypercube\_mesh}, which converts simplex meshes into pure hypercube meshes.
 In two dimensions, each triangle is subdivided into three quadrilaterals by inserting a vertex at the barycenter and connecting it to the edge midpoints.
-In three dimensions, the conversion of a tetrahedron into four hexahedra follows by applying the triangular subdivision on every face and placing an additional vertex at the barycenter of the tetrahedron.
+In three dimensions, each tetrahedron is decomposed into four hexahedra by applying the same subdivision to every face and adding a vertex at the tetrahedron's barycenter.
 
 \subsection{Performance Portable GPU support}
 \label{subsec:gpu}
