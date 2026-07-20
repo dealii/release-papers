@@ -463,9 +463,20 @@ programs:
   problems.
     \step{98} was written by ...
     \todo[inline]{Expand and Complete}
-  \item \step{100} applies a discontinuous Petrov-Galerkin method to the time-harmonic Helmholtz equation.
-    \step{100} was written by ....
-    \todo[inline]{Expand and Complete}
+  \item \step{100} introduces the Discontinuous Petrov–Galerkin (DPG) method, 
+a finite element framework in which the test space differs from the trial space.
+Using broken (discontinuous) test spaces, optimal test functions are computed element-by-element
+so that the discrete problem inherits the inf-sup stability of the continuous one 
+(see \cite{Demkowicz2010,Demkowicz2011,Demkowicz2012} for a full description of the method).
+We apply the method to the time-harmonic Helmholtz equation, a problem for which standard Galerkin
+discretizations lose stability at high wavenumbers, whereas DPG remains robust 
+independently of the wavenumber-mesh regime. Because DPG is equivalent to a residual minimization in a dual norm,
+the resulting linear system is Hermitian positive definite despite the indefiniteness of the Helmholtz operator,
+and can therefore be solved with a conjugate gradient solver. Furthermore, the residual provides a built-in
+a posteriori error estimator that can be used to drive adaptive mesh refinement. This comes at the cost of additional
+interface unknowns (traces and face elements) and local condensation at the element level to obtain a global
+system in which only the trace degrees of freedom are present.
+    \step{100} was written by Oreste Marquis, with help and guidance from Bruno Blais and Matthias Maier.
   \item \step{104} solves the Stokes problem on GPUs
     \step{104} was written by Quang and Timo
     \todo[inline]{Expand and Complete}
@@ -756,7 +767,11 @@ supported by the Computational Infrastructure for Geodynamics initiative
 (CIG), through the National Science Foundation (NSF) under Award
 No.~EAR-2149126 via The University of California -- Davis.
 
-B.~Blais was supported by the National Science and Engineering Research Council of Canada (NSERC)  through the RGPIN-2020-04510 Discovery Grant and the MMIAOW Canada Research Level 2 in Computer-Assisted Design and Scale-up of Alternative Energy Vectors for Sustainable Chemical Processes.
+B.~Blais was supported by the National Science and Engineering Research 
+Council of Canada (NSERC) through the RGPIN-2020-04510 Discovery Grant
+and the MMIAOW Canada Research Chair Level 2 in Computer-Assisted Design
+and Scale-up of Alternative Energy Vectors for Sustainable Chemical Processes
+(CRC-2022-00340).
 
 M.~Fehling was supported by the ERC-CZ grant LL2105 CONTACT and
 the P~JAC grant CZ.02.01.01/00/22\_008/0004591 FerrMion, both funded
