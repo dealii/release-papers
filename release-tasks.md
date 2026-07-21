@@ -26,7 +26,7 @@ The following is a list of ouststanding QA tests that should be checked before p
  - [ ] <b>doxygen reflinks</b> (assigned:, pr:)
    Check doxygen commands and reflinks:
    ```cd include```
-   ```find . -iname "*h" -exec ../contrib/utilities/wrapcomments.py {} \; > /dev/null```
+   ```find . -iname "*.h" -exec ../contrib/utilities/wrapcomments.py {} \; > /dev/null```
    Also check:
    ```grep -l '@ref[^"]*"[^"]*$' **/*.h```
    ```grep -l '@ref$' **/*.h```
