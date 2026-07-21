@@ -48,8 +48,8 @@ The following is a list of ouststanding QA tests that should be checked before p
  - [ ] <b>Update `.gitattributes`</b> (assigned:, pr:)
        Check that `.gitattributes` is up to date by using `git archive` and checking that the contents is meaningful. In particular, do `quicktests` still run?
  - [ ] <b>Update authors</b> (assigned:, pr: &mdash;)
-   Update the authors list on the homepage authors.html by cross-referencing `doc/news/changes.h` and the git commit history:
-   ```egrep '[0-9]+/[0-9]+/[0-9]+' doc/news/changes/*/* | perl -p -e 's/^.*\(//g; s#, *[0-9/]+\)##g; s/, */\n/g;' | sort | uniq```
+   Update the authors list on the homepage authors.html by cross-referencing `doc/news/changes/...` and the git commit history:
+   ```egrep '[0-9]+/[0-9]+/[0-9]+' doc/news/changes/*/* | perl -p -e 's/^.*\(//g; s#, *[0-9/]+\)##g; s/, */\n/g;' | sort | uniq | perl -p -e 's/^(.*) (.+)$/\2, \1/g;' | sort | uniq | perl -p -e 's/^(.*), (.+)$/\2 \1/g;'```
    Compare with the git commit history between the last release and current master:
    ```git log --date=short --format="%an %aE" v9.4.0..HEAD | grep -v 'dependabot\[bot\]' | sort | uniq```
    The list of contributors to the current release should also be copied to the end of the release paper.
