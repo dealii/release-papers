@@ -113,13 +113,6 @@ The following is a list of ouststanding tasks that have to happen on the release
    * ```git add AUTHORS.md LICENSE.md```
      ```git commit -a -m "update AUTHORS.md and LICENSE.md"```
    * Make a pull request against release branch (`dealii-9.5`).
- - [ ] <b>Remove unfinished tutorial programs.</b> (assigned:, pr:)
-   * Delete directories on the release branch:
-     ```cd examples```
-     ```git rm -r step-... ...```
-   * These steps should also not be listed on the branch in `doc/doxygen/tutorial/tutorial.h.in`
-   * ```git commit -a -m "remove unfinished example steps"```
-   * Make a pull request against the release branch (`dealii-9.5`).
  - [ ] <b>Update deprecations</b> (assigned:, pr:)
    On the main branch, replace all occurrences of `DEAL_II_DEPRECATED_EARLY` by `DEAL_II_DEPRECATED` in the library.
    <b>Note:</b> This is a time critical task that needs to happen before we merge patches that early-deprecate anything else for the next release.
