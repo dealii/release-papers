@@ -190,7 +190,7 @@ The following steps have to be done by a single developer (with admin privileges
    * And sign it:
      ```gpg --detach-sign --armor dealii-9.5.0-rc1-offline_documentation.tar.gz```
  - [ ] <b>Create a (pre-)release on github</b>
-   * Got to https://github.com/dealii/dealii/tags and select the just uploaded v9.5.0-rc1 tag and click on "add release notes". Use the following information:
+   * Go to https://github.com/dealii/dealii/tags and select the just uploaded v9.5.0-rc1 tag and click on "add release notes". Use the following information:
      ```Tag: v9.0.0-rc1 existing tag```
      ```Release title: deal.II pre-release version 9.0.0-rc1```
      ```Description: ""```
