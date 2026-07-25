@@ -270,11 +270,15 @@ which we will discuss in this section.
 \subsection{Support for meshes with non-hypercube cells}
 \label{subsec:non-hypercube}
 
-\todo[inline]{Write about all of the stuff that extends
-  pyramid/wedges/simplex support}
+We have continued \dealii{}'s transition from a library that only
+supported hypercube cells to one that also supports triangular (in
+2d), tetrahedral, pyramidal, and wedge-shaped (in 3d) meshes, as well
+as mixed meshes. In particular, we have put substantial effort into
+supporting more element types on these meshes.
 
 The pyramid finite elements \texttt{FE\_PyramidP} and \texttt{FE\_PyramidDGP} now support quadratic and cubic shape functions, extending the mixed-mesh capabilities introduced in release 9.3~\cite{dealII93} to higher polynomial orders.
-The underlying approximation space is constructed by transforming the orthogonal basis of Bergot~ et al.\cite{Bergot2010} into a nodal Lagrange basis.
+The underlying approximation space is constructed by transforming the
+orthogonal basis of Bergot et al.~\cite{Bergot2010} into a nodal Lagrange basis.
 Analogous constructions are implemented for simplices and wedges.
 The orthogonal basis functions are expressed in terms of (homogenized) Jacobi polynomials and evaluated using recurrence relations rather than explicit polynomial expressions.
 Derivatives are evaluated using the same recurrence-based approach, avoiding computations at singularities while improving numerical stability.
@@ -282,16 +286,21 @@ The pyramid basis functions form an exception, as their approximation space is s
 
 The introduction of second- and third-order nodal pyramid elements requires support of degrees of freedom located on edges and faces for mixed element types.
 To ensure a consistent distribution of the DoFs across interfaces, the \textit{hp}-infrastructure has been extended to account for the different face topologies on transitional elements, thereby preserving continuity on conforming meshes.
-To enable the evaluation of finite element fields across these interfaces, the class \texttt{FEInterfaceValues} now supports heterogeneous element types.
-The two sides of a face or subface may use different finite elements, mappings, and quadrature rules, even allowing for adaptively refined mixed meshes in two dimensions.
 
 Increasing the polynomial degree of the shape functions also requires quadrature rules of sufficiently high order to consistently evaluate weak-form integrals, particularly in the presence of non-linear terms or curvilinear mappings.
 To this end, mixed-mesh computations are supported by Stroud quadrature rules.
 These rules provide integration formulas of arbitrary order and serve as a fallback whenever no alternative quadrature rule of sufficient accuracy is available.
 
-As an alternative to working directly with simplex meshes, \dealii provides the functionality \texttt{GridGenerator::convert\_simplex\_to\_hypercube\_mesh}, which converts simplex meshes into pure hypercube meshes.
+As an alternative to working directly with simplex meshes, \dealii now
+provides the function
+\texttt{GridGenerator::convert\_simplex\_to\_hypercube\_mesh()}, which
+converts a simplex mesh into a pure hypercube mesh.
 In two dimensions, each triangle is subdivided into three quadrilaterals by inserting a vertex at the barycenter and connecting it to the edge midpoints.
 In three dimensions, each tetrahedron is decomposed into four hexahedra by applying the same subdivision to every face and adding a vertex at the tetrahedron's barycenter.
+
+To enable the evaluation of finite element fields across interfaces in
+mixed meshes, the class \texttt{FEInterfaceValues} now supports heterogeneous element types.
+The two sides of a face or subface may use different finite elements, mappings, and quadrature rules, even allowing for adaptively refined mixed meshes in two dimensions.
 
 \subsection{Performance Portable GPU support}
 \label{subsec:gpu}
@@ -313,38 +322,60 @@ In three dimensions, each tetrahedron is decomposed into four hexahedra by apply
 \subsection{Trilinos and Tpetra interfaces}
 \label{subsec:tpetra}
 
-\todo[inline]{Write}
-\texttt{Trilinos} has been talking about their \texttt{Epetra}-based solver stack in favor of \texttt{Tpetra}-based solver stack for a long time.
-Where support for different number types and \texttt{Kokkos} execution spaces has been the main driver. Nevertheless, the \texttt{Epetra}-based stack
-has only been removed in the recent \texttt{Trilinos} 17 release. 
-While \texttt{TpetraWrappers::Vector} has already been implemented in the 9.1.0 \dealii release, the development for a full \texttt{Tpetra} has been slow since.
-A basic implementation for \texttt{TpetraWrappers::SparsityPattern} and \texttt{TpetraWrappers::SparseMatrix} was included in the 9.6.0 \dealii release.
-The release of the \texttt{Trilinos} 17 helped with making significant progress within this release cycle.
-With this release, \texttt{Trilinos} support in \dealii only requires the Epetra-based stack or the Tpetra-based stack to be configured which in particular allows
-support for Trilinos 17. In case \texttt{Epetra} is available, the \texttt{TrilinosWrappers} namespace continues to use \texttt{Epetra} but will use \texttt{Tpetra}
-if only \texttt{Tpetra} is available. The \texttt{TpetraWrappers} namespace while always use \texttt{Tpetra}. While we generally expect the \texttt{Tpetra}
-stack to work, not all functionality from the \texttt{TrilinosWrappers} namespace is (yet) available in the \texttt{TpetraWrappers} namespace. 
+Trilinos is an important dependency for \dealii{}, providing one way
+to parallel linear algebra classes as well as numerous other pieces of
+functionality. Historically, Trilinos has provided parallel linear
+algebra functionality through its \texttt{Epetra}
+sub-packaged. However, the \texttt{Trilinos} project has long intended
+to replace their \texttt{Epetra}-based solver stack in favor of
+\texttt{Tpetra}-based solvers, where support for different number
+types and \texttt{Kokkos} execution spaces has been the main
+driver. The \texttt{Epetra}-based stack was finally removed 
+in the recent \texttt{Trilinos} 17 release. Because \dealii{}'s
+Trilinos wrappers were all based on \texttt{Epetra}, this
+has required us to complete the \texttt{Tpetra} wrappers we had
+started to write in recent years; for example, the
+\texttt{TpetraWrappers::Vector} class has been available since \dealii{}
+9.1, and a basic implementation for
+\texttt{TpetraWrappers::SparsityPattern} and
+\texttt{TpetraWrappers::SparseMatrix} was included in the 9.6.0
+\dealii release.
+
+With the current release, we can now support \texttt{Trilinos}
+versions that include the Epetra-based stack, the Tpetra-based stack,
+or both; in particular, this includes
+Trilinos 17. In case \texttt{Epetra} is available, the \texttt{TrilinosWrappers} namespace continues to use \texttt{Epetra} but will use \texttt{Tpetra}
+if only \texttt{Tpetra} is available. The \texttt{TpetraWrappers}
+namespace while always use \texttt{Tpetra}.
+
+While we generally expect the \texttt{Tpetra}
+stack to work, not all functionality from the
+\texttt{TrilinosWrappers} namespace is (yet) available in the
+\texttt{TpetraWrappers} namespace. In practice, we have managed to
+build very large packages with the \texttt{Tpetra} wrappers,
+indicating that all \textit{major} functionality is available. On the
+other hand, a substantial number of Trilinos wrapper tests fail when
+run against the \texttt{Tpetra} wrappers, suggesting that many
+functions that are available in the \texttt{Epetra} wrappers are not
+yet implemented in the \texttt{Tpetra} wrappers.
 
 
 
 \subsection{VTK interfaces}
 \label{subsec:vtk}
 
-\todo[inline]{Write}
+\todo[inline]{Luca: Write}
 
 
 \subsection{Interfaces to SUNDIALS' ARKode package}
 \label{subsec:arkode}
 
-The interface to the \texttt{SUNDIALS} \texttt{ARKODE} package has been substantially reorganized. The \texttt{SUNDIALS::ARKode} class now acts as a common driver for time integration, while stepper-specific setup and callbacks have been moved into a new \texttt{ARKodeStepper} hierarchy. This mirrors the modular structure of ARKODE itself and removes the previous assumption that all time integration is performed through \texttt{ARKODE}'s \texttt{ARKStep} module. The existing implicit-explicit functionality is now provided by \texttt{ARKStepper}. To smooth the migration to the new class hierarchy, deprecated compatibility wrappers have been introduced that preserve the old interface.
+The interfaces to the \texttt{SUNDIALS} \texttt{ARKODE} package have
+been substantially reorganized, now matching the internal organization
+of \texttt{ARKODE}. The \texttt{SUNDIALS::ARKode} class now acts as a common driver for time integration, while stepper-specific setup and callbacks have been moved into a new \texttt{ARKodeStepper} hierarchy. This mirrors the modular structure of ARKODE itself and removes the previous assumption that all time integration is performed through \texttt{ARKODE}'s \texttt{ARKStep} module. The existing implicit-explicit functionality is now provided by \texttt{ARKStepper}. To smooth the migration to the new class hierarchy, deprecated compatibility wrappers have been introduced that preserve the old interface.
 
 This restructuring made it possible to add wrappers for further \texttt{ARKODE} modules. The new \texttt{ERKStepper} exposes the explicit \texttt{ERKStep} module for non-stiff problems. The \texttt{LSRKStepperSTS} and \texttt{LSRKStepperSSP} classes expose the low-storage Runge--Kutta \texttt{LSRKStep} module for stabilized explicit integration of mildly stiff parabolic problems and strong-stability-preserving integration of hyperbolic or advection-dominated problems, respectively.
 
-
-\subsection{xxx}
-\label{subsec:xxx}
-
-\todo[inline]{Add more sections}
 
 \subsection{Reducing dynamic memory allocations}
 \label{subsec:memory}
@@ -352,7 +383,7 @@ This restructuring made it possible to add wrappers for further \texttt{ARKODE} 
 We made a significant effort to reduce both the memory usage and number
 of memory allocations done by \dealii. We used
 heaptrack~\cite{wolff2026heaptrack} to detect and measure the number of
-dynamic allocations. Significant improvements include
+dynamic allocations. Significant improvements include:
 \begin{itemize}
   \item Lowered memory consumption of purely tetrahedral
     \texttt{Triangulation}s by 20\% by using
@@ -360,7 +391,7 @@ dynamic allocations. Significant improvements include
     structures
 
   \item Lowered the time to construct a \texttt{DynamicSparsityPattern}
-    for \texttt{DoFHandler}'s with a single component by 15\%
+    for \texttt{DoFHandler}s with a single component by 15\%
 
   \item Moved all internal allocation functions in
     \texttt{Triangulation} to internal helper classes, which also
@@ -395,6 +426,7 @@ higher scopes, using \texttt{boost::container::small\_vector} instead of
 \texttt{std::vector}, and eliminating temporaries by combining
 intermediate steps.
 
+
 \subsection{Work towards more modern C++ standards}
 \label{subsec:cxx}
 
@@ -415,8 +447,10 @@ we interface with. Note that \dealii{} continues to only require
 C++17, but can build C++20-style modules if so instructed and if the
 compiler supports it.
 
-The C++26 standard was released in March 2026~\cite{pusz2026standard}
-Among its additions is a class \texttt{std::inplace\_vector<T,N>} that
+The C++26 standard was released in March 2026~\cite{pusz2026standard}.
+\todo{Reference the *actual* standard if it has come out by the time
+  this paper goes out.}
+Among its many additions is a class \texttt{std::inplace\_vector<T,N>} that
 has a size that can vary at runtime, but can not exceed \texttt{N},
 allowing for efficient allocation of such objects either on the stack or
 inside another container. In contrast, the widely used class
@@ -425,7 +459,7 @@ whereas \texttt{std::array<T,N>} has a fixed size \texttt{N}. The new
 class is useful in contexts where the actual size of the object is not
 known at compile time, but where it is known that the size can not
 exceed a certain number. For example, during construction of a
-\texttt{Triangulation} \dealii creates a \texttt{CellData} object for
+\texttt{Triangulation}, \dealii creates a \texttt{CellData} object for
 every cell on the coarsest level. The primary information these objects
 store is the vertices which define the cell. In 3d, the number of
 vertices must be between $4$ (for tetrahedra) and $8$ (for hexahedra),
@@ -438,9 +472,15 @@ We have written a fallback version of this class which is compatible
 with C++17 and only omits the small number of features which require
 newer language support (such as support for ranges and more
 \texttt{constexpr} support). We have started to use it in many places
-where the maximal size of a array is known at compile time, and this has
+where the maximal size of an array is known at compile time, and this has
 dramatically reduced the number of dynamic memory allocations in many
 cases -- see also the discussion in Section~\ref{subsec:memory}.
+
+\subsection{xxx}
+\label{subsec:xxx}
+
+\todo[inline]{Add more sections}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -448,20 +488,20 @@ cases -- see also the discussion in Section~\ref{subsec:memory}.
 \label{subsec:steps}
 
 Many of the \dealii tutorial programs were revised in a variety of ways
-as part of this release: Around 125 of the more than 1500 (non-merge)
+as part of this release: Nearly 100 of the more than 1500 (non-merge)
 commits that went into this release touched the tutorial.
 % data generated using these commands:
-% - tutorial: git log --since 2024/08/11 --until 2025/07/19 --no-merges examples | grep commit | wc -l
-% - total:    git log --since 2024/08/11 --until 2025/07/19 --no-merges | grep commit | wc -l
-\todo[inline]{Update numbers}
+% - tutorial: git log --since 2025/07/19 --until 2026/07/26 --no-merges examples | grep commit | wc -l
+% - total:    git log --since 2025/07/19 --until 2026/07/26 --no-merges | grep commit | wc -l
 In addition, there are a number of new tutorial
 programs:
 \begin{itemize}
 \item
   \step{98} shows how to solve two-dimensional magnetostatic curl-curl
-  problems.
-    \step{98} was written by ...
-    \todo[inline]{Expand and Complete}
+  problems. In complements \step{97}, which considers similar problems
+  in 3d, but \step{98} puts specific emphasis on the interpretation of
+  the meaning of vectors, the curl, and other operations in 2d settings.
+    \step{98} was written by Siarhei Uzunbajakau
   \item \step{100} introduces the Discontinuous Petrov–Galerkin (DPG) method, 
 a finite element framework in which the test space differs from the trial space.
 Using broken (discontinuous) test spaces, optimal test functions are computed element-by-element
@@ -473,12 +513,12 @@ independently of the wavenumber-mesh regime. Because DPG is equivalent to a resi
 the resulting linear system is Hermitian positive definite despite the indefiniteness of the Helmholtz operator,
 and can therefore be solved with a conjugate gradient solver. Furthermore, the residual provides a built-in
 a posteriori error estimator that can be used to drive adaptive mesh refinement. This comes at the cost of additional
-interface unknowns (traces and face elements) and local condensation at the element level to obtain a global
+interface unknowns (traces and face elements); the program uses local condensation at the element level to obtain a global
 system in which only the trace degrees of freedom are present.
     \step{100} was written by Oreste Marquis, with help and guidance from Bruno Blais and Matthias Maier.
-  \item \step{104} solves the Stokes problem on GPUs
-    \step{104} was written by Quang and Timo
-    \todo[inline]{Expand and Complete}
+  \item \step{104} solves the Stokes problem on GPUs.
+    \todo[inline]{Timo: Expand and Complete}
+    \step{104} was written by Quang Hoang and Timo Heister.
 \end{itemize}
 
 There are also several new programs in the code gallery (a collection of
@@ -487,32 +527,38 @@ than tutorial programs, and that are intended as starting points for further
 research rather than as teaching tools):
 \begin{itemize}
 \item ``\textit{Parallel implementation of heat equation}'' is a transient heat
-  equation solver with adaptive mesh refinement and a parallel solver;
-  this program was written by XXX.
+  equation solver with adaptive mesh refinement and a parallel solver.
+  This program was written by Wasim Niyaz Munshi,
+  Chandrasekhar Annavarapu, and Wolfgang Bangerth.
 \item
   ``\textit{L-BFGS phasefield solver}'' is a limited-memory BFGS
-  monolithic solver for phase-field crack simulations; it was written
-  by XXX.
+  monolithic solver for phase-field crack simulations. This program was written
+  by Tao Jin.
 \item
   ``\textit{Agglomeration-based solver for the Poisson problem}'' is a
   discontinuous Galerkin solver for the Poisson problem on general
-  polytopal meshes generated through mesh agglomeration;
+  polytopal meshes generated through mesh agglomeration. This program
+  was written by Marco Feder, Pasquale Claudio Africa, Xinping Gui, and
+  Andrea Cangiani.
 \item
   ``\textit{An ALE approach for large-deformation thermoplasticity}''
   is an implementation of a large-deformation arbitrary
-  Lagrangian-Eulerian finite-strain thermoplasticity solver;
-\item
-  ``\textit{Parallel flow routing}'' is a parallel solver for
-  determining how much water is available at every point of a
-  landscape; the program was contributed by Wolfgang Bangerth.
+  Lagrangian-Eulerian finite-strain thermoplasticity solver. This
+  program was written by Maien Hamed.
 \item
   ``\textit{Parallel Vibroacoustic Solver} is a parallel
   frequency-domain vibroacoustic solver calculating the sound
-  transmission loss of a concrete wall;
+  transmission loss of a concrete wall. This program was written by
+  Andreas Hegend{\"o}rfer.
 \item
-  ``\textit{Multilevel Monte Carlo for random Darcy flow}'' is an implementation of a multilevel Monte Carlo method for random Darcy flow.
-  \todo[inline]{Cross-check the exact name of these programs. Also
-    list their authors.}
+  ``\textit{Multilevel Monte Carlo for random Darcy flow}'' is an
+  implementation of a multilevel Monte Carlo method for random Darcy
+  flow. This program was written by Jonas Plank.
+\item
+  ``\textit{Parallel flow routing}'' solves the problem of determining
+  how much water is where in a landscape given by a digital elevation
+  model, using massively parallel algorithms. This program was written
+  by Wolfgang Bangerth.
 \end{itemize}
 
 
@@ -520,9 +566,8 @@ research rather than as teaching tools):
 \subsection{Incompatible changes}\label{subsec:deprecated}
 
 The 9.8 release includes
-\href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_7_0_and_9_8_0.html}
-     {around 25 incompatible changes};
-     \todo{Update this number}
+\href{https://dealii.org/developer/doxygen/deal.II/changes_between_9_7_1_and_9_8_0.html}
+     {around 20 incompatible changes};
 see \cite{changes98}. Many of these
 incompatibilities remove previously deprecated functions or classes,
 or require now widely available but newer versions of external
