@@ -577,7 +577,35 @@ interfaces that are not usually used in external
 applications. The following are worth mentioning since they
 are more broadly visible:
 \begin{itemize}
-\item ...
+\item Several of the classes used in the construction of
+  triangulations, specifically \texttt{CellData} and
+  \texttt{TriangulationDescription::CellData} use the new
+  \texttt{std\_cxx26::inplace\_vector} class (see
+  Section~\ref{subsec:cxx}) for member variables to reduce the number
+  of memory allocations. In practice, because both this and the
+  previously used \texttt{std::vector} class use array syntax, few
+  codes will notice the difference in type.
+\item The \texttt{FESubfaceValues} class -- used to integrate over the
+  children of a face of a cell -- used to do just that: Consider a
+  part of a face that corresponds to a subdivision of that face due to
+  refinement. It did not actually check consistently whether the face
+  was refined (i.e., whether the neighboring cell was refined). It
+  will now generate an error if one tries to integrate over a face
+  that is not actually refined. In practice, there should not be any
+  reasons why one would integrate over sub-faces that are not in fact
+  refined.
+\item  In three space dimensions, the curl of a vector field is
+  unambiguously a three-dimensional vector. In two space dimensions,
+  it is typically defined as a scalar, interpreted as the magnitude of
+  a vector aligned with the $z$-axis that results from taking the curl
+  of a vector field that lives in the $x$−$y$ plane. For historical
+  reasons, deal.II used to represent this scalar as a
+  \texttt{Tensor<1,1>} (i.e., a tensor of rank one -– a tensor with
+  one index -– for which the only possible value of the index is
+  zero). This is, of course, entirely equivalent to it being a scalar,
+  but it is semantically wrong: The data type should have been a
+  scalar, not a vector of length one. This is now fixed: The data type defined by \texttt{FEValuesViews::Vector::curl\_type} used for curls is not simply a scalar value for \texttt{dim==2}. For \texttt{dim==3}, it is unchanged from what it was before.
+  
   \todo[inline]{Complete and update numbers above. also check links}
 \end{itemize}
 
