@@ -1,4 +1,5 @@
 \documentclass{ansarticle-preprint}
+\PassOptionsToPackage{loadshadow}{todonotes}
 %\usepackage{ucs}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
@@ -35,7 +36,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
-\usepackage{todonotes}
+\setlength{\marginparwidth}{2cm}
 
 \pgfplotsset{compat=1.9}
 \definecolor{gnuplot@lightblue}{RGB}{87,181,232}
@@ -71,7 +72,7 @@
 \newcommand{\tpetra}{{\specialword{Tpetra}}\xspace}
 
 
-\usetikzlibrary{shapes.misc}
+\usetikzlibrary{shapes.misc,shadows}
 \tikzset{cross/.style={cross out, draw=black, minimum size=2*(#1-\pgflinewidth), inner sep=0pt, outer sep=0pt},
 %default radius will be 1pt.
 cross/.default={2pt}}
@@ -364,7 +365,38 @@ yet implemented in the \texttt{Tpetra} wrappers.
 \subsection{VTK interfaces}
 \label{subsec:vtk}
 
-\todo[inline]{Luca: Write}
+The interfaces in the \texttt{VTKWrappers} namespace have been
+substantially extended.  The new functionality provides a bidirectional
+bridge between VTK data sets and the mesh, finite-element, and vector
+abstractions used by \dealii.  In particular, VTK files can now be read in
+stages: \texttt{read\_tria()} constructs a \texttt{Triangulation}, while
+\texttt{read\_cell\_data()} and \texttt{read\_vertex\_data()} expose data
+associated with cells and vertices, respectively.  The corresponding
+\texttt{read\_all\_data()} utility collects all data arrays into a single
+serial vector, and \texttt{read\_vtk()} provides a combined interface for
+loading a VTK file and its associated finite-element data.
+
+The description of the data in a VTK file can also be translated into a
+compatible deal.II finite-element object with
+\texttt{vtk\_to\_finite\_element()}.  This makes it possible to preserve
+the number and location of the degrees of freedom represented in the file
+without imposing an interpretation on multi-component arrays.  Once a
+\texttt{DoFHandler} has been constructed, \texttt{data\_to\_dealii\_vector()}
+maps the VTK data onto a deal.II vector, including distributed vectors on a
+parallel triangulation.  The supporting
+\texttt{GridTools::parallel\_to\_serial\_vertex\_indices()} utility supplies
+the vertex-numbering correspondence required when data are read on a
+serial mesh and then transferred to a distributed one.
+
+Finally, the VTK interface now supports two-way conversion between a
+\texttt{Triangulation} and a \texttt{vtkUnstructuredGrid}.  This allows
+meshes to be exchanged with VTK-based visualization and meshing tools in
+both directions, including meshes with non-hypercube reference-cell
+types supported by the library.  The conversion optionally transfers 
+manifold, boundary, and material identifiers associated with the deal.II
+mesh.  Together, these additions make it possible to use VTK files as input for restarting or
+preprocessing computations while retaining the topology and metadata
+needed by a finite-element program.
 
 
 \subsection{Interfaces to SUNDIALS' ARKode package}
@@ -620,7 +652,7 @@ the result into the ghosted vector.
   unambiguously a three-dimensional vector. In two space dimensions,
   it is typically defined as a scalar, interpreted as the magnitude of
   a vector aligned with the $z$-axis that results from taking the curl
-  of a vector field that lives in the $x$−$y$ plane. For historical
+  of a vector field that lives in the $x$-$y$ plane. For historical
   reasons, deal.II used to represent this scalar as a
   \texttt{Tensor<1,1>} (i.e., a tensor of rank one -– a tensor with
   one index -– for which the only possible value of the index is
@@ -860,12 +892,7 @@ and EAR-2054605.
 
 T.~Heister was also partially supported by NSF Awards OAC-2015848, EAR-1925575, and OAC-2410848.
 
-L.~Heltai is a member of Gruppo Nazionale per il Calcolo Scientifico (GNCS) of
-Istituto Nazionale di Alta Matematica (INdAM). LH was partially supported by
-the Italian Ministry of University and Research (MUR), under the grant MUR PRIN
-2022 No. 2022WKWZA8 ``Immersed methods for multiscale and multiphysics problems
-(IMMEDIATE)'', and acknowledges the MIUR Excellence Department Project awarded
-to the Department of Mathematics, University of Pisa, CUP I57G22000700001.
+L. Heltai acknowledges the MIUR Excellence Department Project awarded to the Department of Mathematics, University of Pisa, CUP I57G22000700001, and partial support by King Abdullah University of Science and Technology Research Funding (KRF) under Award No. ORFS-2025-CRG13-6911.3. L. Heltai is also member of Gruppo Nazionale per il Calcolo Scientifico (GNCS) of Istituto Nazionale di Alta Matematica (INdAM).
 
 M.~Kronbichler was partially supported by the
 German Federal Ministry of Research, Technology and Space, project
@@ -897,7 +924,7 @@ expressed in this article do not necessarily represent the views of
 NSF or the United States government.
 \todo[inline]{Timo: update as necessary}
 
-\bibliography{paper}{}
 \bibliographystyle{abbrv}
+\bibliography{paper}
 
 \end{document}
