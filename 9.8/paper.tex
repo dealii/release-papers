@@ -96,6 +96,7 @@ cross/.default={2pt}}
     Martin Kronbichler,
     Matthias Maier,
     Peter Munch,
+    Andreas Steger,
     Dominik Still,
     Bruno Turcksin,
     David Wells
@@ -166,16 +167,19 @@ Max-Planck-Stra{\ss}e 1, 21502 Geesthacht, Germany. {\texttt{vladimir.ivannikov@
 \affil[13]{Institute of Mathematics, Technical University of Berlin, Germany.
   {\texttt{muench@math.tu-berlin.de}}}
 
-\author[14]{Dominik Still}
-\affil[14]{Institute for Computational Mechanics, TUM School of Engineering and Design, Technical
+\author[14]{Andreas Steger}
+\affil[14]{TUM School of Engineering and Design, Technical University of Munich, Germany.
+  {\texttt{andreas.steger@tum.de}}}
+
+\author[15]{Dominik Still}
+\affil[15]{Institute for Computational Mechanics, TUM School of Engineering and Design, Technical
 University of Munich, Germany.
   {\texttt{dominik.still@tum.de}}}
 
-
 \author[1*]{Bruno~Turcksin}
 
-\author[15]{David Wells}
-\affil[15]{Department of Mathematics, University of North Carolina,
+\author[16]{David Wells}
+\affil[16]{Department of Mathematics, University of North Carolina,
   Chapel Hill, NC 27516, USA.
   {\texttt{drwells@email.unc.edu}}}
 
@@ -291,6 +295,8 @@ To ensure a consistent distribution of the DoFs across interfaces, the \textit{h
 Increasing the polynomial degree of the shape functions also requires quadrature rules of sufficiently high order to consistently evaluate weak-form integrals, particularly in the presence of non-linear terms or curvilinear mappings.
 To this end, mixed-mesh computations are supported by Stroud quadrature rules.
 These rules provide integration formulas of arbitrary order and serve as a fallback whenever no alternative quadrature rule of sufficient accuracy is available.
+
+Additionally, isotropic refinement is now supported for pyramids and wedges. The underlying algorithms employ a midpoint refinement strategy similar to the one used for hexahedra and tetrahedra. It recursively subdivides a cell's constituent lower-dimensional entities--from lines to faces, and finally to the element itself. This hierarchical approach ensures mesh conformity across neighboring elements. Under this scheme, an isotropic refinement step partitions a pyramid into ten and a wedge into eight children.
 
 As an alternative to working directly with simplex meshes, \dealii now
 provides the function
@@ -788,6 +794,7 @@ contributed code to this release:\\
 %Martin Kronbichler,
 %Matthias Maier,
 %Peter Munch,
+%Andreas Steger,
 %Dominik Still,
 %David Wells,
 Daniel Abele
@@ -832,7 +839,6 @@ Richard Schussnig,
 Gordan Segon,
 Qingyuan Shi,
 Wyatt Smith,
-Andreas Steger,
 Simon Sticko,
 Jan Philipp Thiele,
 Pasquale Tricarico,
