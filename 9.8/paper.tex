@@ -357,7 +357,7 @@ namespace while always use \texttt{Tpetra}.
 
 While we generally expect the \texttt{Tpetra}
 stack to work, not all functionality from the
-\texttt{TrilinosWrappers} namespace is (yet) available in the
+\texttt{TrilinosWrap\allowbreak{}pers} namespace is (yet) available in the
 \texttt{TpetraWrappers} namespace. In practice, we have managed to
 build very large packages with the \texttt{Tpetra} wrappers,
 indicating that all \textit{major} functionality is available. On the
@@ -423,17 +423,17 @@ of memory allocations done by \dealii. We used
 heaptrack~\cite{wolff2026heaptrack} to detect and measure the number of
 dynamic allocations. Significant improvements include:
 \begin{itemize}
-  \item Lowered memory consumption of purely tetrahedral
+  \item lowered memory consumption of purely tetrahedral
     \texttt{Triangulation}s by 20\% by using
     \texttt{ReferenceCell}-dependent strides for its internal data
-    structures
+    structures,
 
-  \item Lowered the time to construct a \texttt{DynamicSparsityPattern}
-    for \texttt{DoFHandler}s with a single component by 15\%
+  \item lowered the time to construct a \texttt{DynamicSparsityPattern}
+    for \texttt{DoFHandler}s with a single component by 15\%,
 
-  \item Moved all internal allocation functions in
+  \item moved all internal allocation functions in
     \texttt{Triangulation} to internal helper classes, which also
-    eliminated some duplicated loops over allocated cells
+    eliminated some duplicated loops over allocated cells.
 \end{itemize}
 
 \begin{figure}
@@ -455,7 +455,7 @@ dynamic allocations. Significant improvements include:
     and one thread) by several tutorial programs in 9.7.1 and 9.8.0. For
     step-32 the program was run to $1/100$th of its default final time:
     all other time-dependent problems were run to $1/10$th of their
-    default final times.}
+    default final times. \todo[inline]{Figure is not refereed.}}
 \end{figure}
 
 We achieved these reductions by preferring flat data structures such as
@@ -628,7 +628,7 @@ are more broadly visible:
   some failed to do so, such as \texttt{operator+=()},
   \texttt{operator-=()}, \texttt{operator*=()}, and
   \texttt{operator/=()} functions of the
-  \texttt{TrilinosWrappers::MPI::Vector} class, and the corresponding functions in the Epetra and Tpetra wrappers, along with an assortment of other non-\texttt{const} functions in these classes that include assigning a scalar to all elements of a vector, and writing into (or adding, or multiplying/dividing) a single vector entry.
+  \texttt{TrilinosWrappers::\allowbreak{}MPI::\allowbreak{}Vector} class, and the corresponding functions in the Epetra and Tpetra wrappers, along with an assortment of other non-\texttt{const} functions in these classes that include assigning a scalar to all elements of a vector, and writing into (or adding, or multiplying/dividing) a single vector entry.
 
 This oversight has now been fixed. We know that some of these
 functions are used in parallel contexts in application codes that will
