@@ -405,7 +405,7 @@ preprocessing computations while retaining the topology and metadata
 needed by a finite-element program.
 
 
-\subsection{Interfaces to SUNDIALS' ARKode package}
+\subsection{Interfaces to the SUNDIALS ARKODE package}
 \label{subsec:arkode}
 
 The interfaces to the \texttt{SUNDIALS} \texttt{ARKODE} package have
@@ -414,6 +414,7 @@ of \texttt{ARKODE}. The \texttt{SUNDIALS::ARKode} class now acts as a common dri
 
 This restructuring made it possible to add wrappers for further \texttt{ARKODE} modules. The new \texttt{ERKStepper} exposes the explicit \texttt{ERKStep} module for non-stiff problems. The \texttt{LSRKStepperSTS} and \texttt{LSRKStepperSSP} classes expose the low-storage Runge--Kutta \texttt{LSRKStep} module for stabilized explicit integration of mildly stiff parabolic problems and strong-stability-preserving integration of hyperbolic or advection-dominated problems, respectively.
 
+The \texttt{LSRKStepperSTS} stepper requires an estimator for the dominant (largest-magnitude) eigenvalue of the Jacobian of the ODE right-hand side to determine the number of polynomial stages to be used. By default, the power iteration method implemented in the \texttt{SUNDomEigEstimator\_Power} module of \texttt{ARKODE} is employed to compute an estimate of the dominant eigenvalue. Users can replace this estimator with one of their choice.
 
 \subsection{Reducing dynamic memory allocations}
 \label{subsec:memory}
