@@ -331,9 +331,8 @@ Similar to the \texttt{MatrixFree} framework that only runs on CPUs,
 throughput for operator evaluation increases with polynomial degree. This is in contrast to matrix-vector products using assembled matrices, that get slower the higher the finite element degree, as more entries per row are nonzero. As GPUs are highly parallel devices, a significant number of unknowns per GPU are required to reach peak performance. See Figure~\ref{fig:step-104}.
 
 \begin{figure}[ht]
- \caption{Stokes operator throughput and time to solve the system for different devices. Results from step-104. Note,
- the CPU results are also using the \texttt{Portable::MatrixFree} framework and 32 MPI ranks. As SIMD vectorization
- is not used, performance of the CPU-only \texttt{MatrixFree} framework is likely much higher.}
+ \caption{Stokes operator throughput and time to solve the system for different devices. PMF denotes the new
+ \texttt{Portable::MatrixFree} implementation optimized for GPUs and MF denotes the CPU-based \texttt{MatrixFree} framework leveraging SIMD. Results from step-104.}
  \label{fig:step-104b}
 
 \begin{tabular}{l|rrr|rr}
@@ -343,7 +342,8 @@ Name & FP64 & VRAM & Bandwidth & Operator & Solve Time \\
 AMD W7800 & 1.41 & 32 & 0.6 & 482 & 32 \\
 NVIDIA RTX 6000 & 1.97 & 96 & 1.8 & 1{,}746 & 11 \\
 NVIDIA H100 & 25.6 & 80 & 3.4 & 1{,}457 & 9 \\
-32 core 5975WX CPU & 1.4 & -- & 0.05 & 72 & 220 \\
+5975WX CPU PMF & 1.4 & -- & 0.05 & 72 & 220 \\
+5975WX CPU MF& 1.4 & -- & 0.05 & 203 & 5 \\
 \end{tabular}
 
 \end{figure}
