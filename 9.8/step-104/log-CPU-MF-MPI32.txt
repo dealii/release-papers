@@ -1,0 +1,89 @@
+Running on 32 MPI ranks (with 2 threads each) in RELEASE mode
+CPU-based MatrixFree with vectorization over 4 doubles = 256 bits (AVX), VECTORIZATION_LEVEL=2
+
+dim: 3
+Element: Q2-Q1
+
+refinement: 0, n_dofs: 2312 = 2187 + 125
+Stokes operator: 8.8386e-05 s, DoFs/s: 26157988.82
+GMG velocity block smoothers:
+    level: 1 n_dofs: 375, eigenvalue spectrum: [ 0.3748094237, 1.432009386 ]
+    level: 2 n_dofs: 2187, eigenvalue spectrum: [ 0.09606982461, 1.534153946 ]
+Solver converged in 10 iterations in 0.003394556 seconds
+Velocity block GMG timings:
+    smoother: 0.001034606 s
+    transfer: 0.0006465 s
+    coarse  : 6.2651e-05 s
+    residual: 0.000142368 s
+velocity error: 0.04512777801 pressure error: 0.1489693932
+
+refinement: 1, n_dofs: 15468 = 14739 + 729
+Stokes operator: 6.6395e-05 s, DoFs/s: 232969350.1
+GMG velocity block smoothers:
+    level: 2 n_dofs: 2187, eigenvalue spectrum: [ 0.09606982458, 1.538632983 ]
+    level: 3 n_dofs: 14739, eigenvalue spectrum: [ 0.02701368613, 1.586314951 ]
+Solver converged in 20 iterations in 0.010998507 seconds
+Velocity block GMG timings:
+    smoother: 0.00283314 s
+    transfer: 0.00129314 s
+    coarse  : 0.003045931 s
+    residual: 0.000420834 s
+velocity error: 0.006038672321 pressure error: 0.01232937922
+
+refinement: 2, n_dofs: 112724 = 107811 + 4913
+Stokes operator: 0.000478343 s, DoFs/s: 235655167.9
+GMG velocity block smoothers:
+    level: 3 n_dofs: 14739, eigenvalue spectrum: [ 0.02408155175, 1.599778739 ]
+    level: 4 n_dofs: 107811, eigenvalue spectrum: [ 0.02041148113, 1.598852655 ]
+Solver converged in 22 iterations in 0.037745386 seconds
+Velocity block GMG timings:
+    smoother: 0.012425447 s
+    transfer: 0.002264135 s
+    coarse  : 0.012506584 s
+    residual: 0.001713747 s
+velocity error: 0.0007646180236 pressure error: 0.00123729532
+
+refinement: 3, n_dofs: 859812 = 823875 + 35937
+Stokes operator: 0.003945396 s, DoFs/s: 217927934.2
+GMG velocity block smoothers:
+    level: 3 n_dofs: 14739, eigenvalue spectrum: [ 0.02408155175, 1.599778739 ]
+    level: 4 n_dofs: 107811, eigenvalue spectrum: [ 0.02041148113, 1.598852655 ]
+    level: 5 n_dofs: 823875, eigenvalue spectrum: [ 0.02349752445, 1.600952671 ]
+Solver converged in 23 iterations in 0.319072221 seconds
+Velocity block GMG timings:
+    smoother: 0.124172022 s
+    transfer: 0.020119412 s
+    coarse  : 0.012368992 s
+    residual: 0.014702456 s
+velocity error: 9.585442953e-05 pressure error: 0.0002302779529
+
+refinement: 4, n_dofs: 6714692 = 6440067 + 274625
+Stokes operator: 0.004878427 s, DoFs/s: 1376405140
+GMG velocity block smoothers:
+    level: 3 n_dofs: 14739, eigenvalue spectrum: [ 0.02408155175, 1.599778739 ]
+    level: 4 n_dofs: 107811, eigenvalue spectrum: [ 0.02041148113, 1.598852655 ]
+    level: 5 n_dofs: 823875, eigenvalue spectrum: [ 0.02349752445, 1.600952671 ]
+    level: 6 n_dofs: 6440067, eigenvalue spectrum: [ 0.02697080019, 1.600649059 ]
+Solver converged in 23 iterations in 5.008882106 seconds
+Velocity block GMG timings:
+    smoother: 2.786818199 s
+    transfer: 0.267001316 s
+    coarse  : 0.014172017 s
+    residual: 0.271943908 s
+velocity error: 1.199008157e-05 pressure error: 5.600557921e-05
+
+refinement: 5, n_dofs: 53070468 = 50923779 + 2146689
+Stokes operator: 0.261395841 s, DoFs/s: 203027208.8
+GMG velocity block smoothers:
+    level: 3 n_dofs: 14739, eigenvalue spectrum: [ 0.02408155175, 1.599778739 ]
+    level: 4 n_dofs: 107811, eigenvalue spectrum: [ 0.02041148113, 1.598852655 ]
+    level: 5 n_dofs: 823875, eigenvalue spectrum: [ 0.02349752445, 1.600952671 ]
+    level: 6 n_dofs: 6440067, eigenvalue spectrum: [ 0.02697080019, 1.600649059 ]
+    level: 7 n_dofs: 50923779, eigenvalue spectrum: [ 0.0277461573, 1.60030079 ]
+Solver converged in 24 iterations in 51.45834993 seconds
+Velocity block GMG timings:
+    smoother: 29.76170032 s
+    transfer: 2.724660782 s
+    coarse  : 0.014043905 s
+    residual: 2.717147239 s
+velocity error: 1.499034513e-06 pressure error: 1.449483989e-05

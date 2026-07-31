@@ -1,0 +1,91 @@
+Running on 32 MPI ranks (with 1 threads each) in RELEASE mode
+Kokkos execution space: Serial
+dim: 3
+Element: Q2-Q1
+
+refinement: 0, n_dofs: 2312 = 2187 + 125
+Stokes operator: 0.000168057 s, DoFs/s: 13757237.13
+GMG velocity block smoothers:
+    level: 1 n_dofs: 375, eigenvalue spectrum: [ 0.3748094237, 1.432009386 ]
+    level: 2 n_dofs: 2187, eigenvalue spectrum: [ 0.09606982461, 1.534153946 ]
+Solver converged in 10 iterations in 0.015277412 seconds
+Velocity block GMG timings:
+    smoother: 0.006587641 s
+    transfer: 0.003089011 s
+    coarse  : 8.8788e-05 s
+    residual: 0.00099907 s
+velocity error: 0.04512777801 pressure error: 0.1489693932
+
+refinement: 1, n_dofs: 15468 = 14739 + 729
+Stokes operator: 0.00029104 s, DoFs/s: 53147333.7
+GMG velocity block smoothers:
+    level: 2 n_dofs: 2187, eigenvalue spectrum: [ 0.09606982458, 1.538632983 ]
+    level: 3 n_dofs: 14739, eigenvalue spectrum: [ 0.02701368613, 1.586314951 ]
+Solver converged in 20 iterations in 0.075072228 seconds
+Velocity block GMG timings:
+    smoother: 0.028780996 s
+    transfer: 0.002885424 s
+    coarse  : 0.02272555 s
+    residual: 0.004175882 s
+velocity error: 0.006038672321 pressure error: 0.01232937922
+
+refinement: 2, n_dofs: 112724 = 107811 + 4913
+Stokes operator: 0.001512147 s, DoFs/s: 74545662.56
+GMG velocity block smoothers:
+    level: 3 n_dofs: 14739, eigenvalue spectrum: [ 0.02408155175, 1.599778739 ]
+    level: 4 n_dofs: 107811, eigenvalue spectrum: [ 0.02041148113, 1.598852655 ]
+Solver converged in 22 iterations in 0.41401368 seconds
+Velocity block GMG timings:
+    smoother: 0.188542026 s
+    transfer: 0.007833406 s
+    coarse  : 0.121125968 s
+    residual: 0.026824083 s
+velocity error: 0.0007646180236 pressure error: 0.00123729532
+
+refinement: 3, n_dofs: 859812 = 823875 + 35937
+Stokes operator: 0.011133011 s, DoFs/s: 77230858.75
+GMG velocity block smoothers:
+    level: 3 n_dofs: 14739, eigenvalue spectrum: [ 0.02408155175, 1.599778739 ]
+    level: 4 n_dofs: 107811, eigenvalue spectrum: [ 0.02041148113, 1.598852655 ]
+    level: 5 n_dofs: 823875, eigenvalue spectrum: [ 0.02349752445, 1.600952671 ]
+Solver converged in 23 iterations in 2.365387356 seconds
+Velocity block GMG timings:
+    smoother: 1.441453591 s
+    transfer: 0.094673098 s
+    coarse  : 0.095970706 s
+    residual: 0.20632048 s
+velocity error: 9.585442953e-05 pressure error: 0.0002302779529
+
+refinement: 4, n_dofs: 6714692 = 6440067 + 274625
+Stokes operator: 0.102745657 s, DoFs/s: 65352562.79
+GMG velocity block smoothers:
+    level: 3 n_dofs: 14739, eigenvalue spectrum: [ 0.02408155175, 1.599778739 ]
+    level: 4 n_dofs: 107811, eigenvalue spectrum: [ 0.02041148113, 1.598852655 ]
+    level: 5 n_dofs: 823875, eigenvalue spectrum: [ 0.02349752445, 1.600952671 ]
+    level: 6 n_dofs: 6440067, eigenvalue spectrum: [ 0.02697080019, 1.600649059 ]
+Solver converged in 23 iterations in 23.2535959 seconds
+Velocity block GMG timings:
+    smoother: 14.14576305 s
+    transfer: 1.189901684 s
+    coarse  : 0.10276659 s
+    residual: 1.936323406 s
+velocity error: 1.199008157e-05 pressure error: 5.600557921e-05
+
+refinement: 5, n_dofs: 53070468 = 50923779 + 2146689
+Stokes operator: 0.56010938 s, DoFs/s: 94750186.12
+GMG velocity block smoothers:
+    level: 3 n_dofs: 14739, eigenvalue spectrum: [ 0.02408155175, 1.599778739 ]
+    level: 4 n_dofs: 107811, eigenvalue spectrum: [ 0.02041148113, 1.598852655 ]
+    level: 5 n_dofs: 823875, eigenvalue spectrum: [ 0.02349752445, 1.600952671 ]
+    level: 6 n_dofs: 6440067, eigenvalue spectrum: [ 0.02697080019, 1.600649059 ]
+    level: 7 n_dofs: 50923779, eigenvalue spectrum: [ 0.0277461573, 1.60030079 ]
+Solver converged in 24 iterations in 226.1180164 seconds
+Velocity block GMG timings:
+    smoother: 133.5765341 s
+    transfer: 9.487379037 s
+    coarse  : 0.110775524 s
+    residual: 17.44909692 s
+velocity error: 1.499034513e-06 pressure error: 1.449483989e-05
+
+refinement: 6, n_dofs: 421991684 = 405017091 + 16974593
+Stokes operator: 5.324115327 s, DoFs/s: 79260432.59
