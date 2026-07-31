@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\usetikzlibrary{external}
+\tikzexternalize
+
+\usepackage{geometry}
+\geometry{margin=1in}
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.6\textwidth,
+    height=0.4\textwidth,
+    xmode=log,
+    log basis x=10,
+    xlabel={DoFs},
+    ylabel={Throughput (MDoFs/s)},
+    grid=major,
+    major grid style={gray!30},
+    minor grid style={gray!15},
+    legend pos=south east,
+    legend cell align={left},
+]
+
+\addplot+[thick, mark=*, color=blue]
+  table[x=dofs, y=Q2Q1-ts32] {op.q2q1};
+\addlegendentry{Q$_2$-Q$_1$}
+
+\addplot+[thick, mark=square*, color=red]
+  table[x=dofs, y=Q3Q2-ts32] {op.q3q2};
+\addlegendentry{Q$_3$-Q$_2$}
+
+\addplot+[thick, mark=triangle*, color=green!60!black]
+  table[x=dofs, y=Q4Q3] {op.q4q3};
+\addlegendentry{Q$_4$-Q$_3$}
+
+\addplot+[thick, mark=diamond*, color=orange!85!black]
+  table[x=dofs, y=Q5Q4] {op.q5q4};
+\addlegendentry{Q$_5$-Q$_4$}
+
+\end{axis}
+\end{tikzpicture}
+\end{figure}
+
+\end{document}

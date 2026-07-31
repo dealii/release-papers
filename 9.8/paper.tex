@@ -312,19 +312,72 @@ The two sides of a face or subface may use different finite elements, mappings, 
 \subsection{Performance Portable GPU support}
 \label{subsec:gpu}
 
-\todo[inline]{Write Timo/Ryan, reference step-99 (if merged) and step-104}
+This release comes with numerous new features, fixes, and performance improvements for running on GPUs, making GPUs
+usable in practice to speed up computations.
 
-\begin{itemize}
- \item Portable::MatrixFree: support for system of equations
- \item improved interface (for each quad point, DeviceVector, DeviceBlockVector)
- \item multi-threaded setup()
- \item improved documentation
- \item peformance improvements (reduced number of fences etc)
- \item support for asserts, error checks
- \item tensor and symmetric tensor support
- \item require Kokkos 4.0 for device support
+We build on Kokkos\cite{trott2022} for performance portability
+meaning a code written based on the \texttt{Portable::MatrixFree}classes can run on current GPUs from NVIDIA, AMD, and Intel without
+any vendor-specific code visible in the user code. Importantly,
+all functionality is also available if deal.II is configured without
+GPU support.
 
-\end{itemize}
+A great example is the new step-104 tutorial, that solves the
+Stokes equation using a block preconditioner and an inner geometric
+multigrid v-cycle. The operator evaluation and multigrid
+cycle is running without assemblying any matrices. Performance
+results for some different GPUs are presented in Figure~\ref{fig:step-104b}.
+
+Similar to the \texttt{MatrixFree} framework that only runs on CPUs,
+throughput for operator evaluation increases with polynomial degree. This is in contrast to matrix-vector products using assembled matrices, that get slower the higher the finite element degree, as more entries per row are nonzero. As GPUs are highly parallel devices, a significant number of unknowns per GPU are required to reach peak performance. See Figure~\ref{fig:step-104}.
+
+\begin{figure}[ht]
+ \caption{Stokes operator throughput and time to solve the system for different devices. Results from step-104. Note,
+ the CPU results are also using the \texttt{Portable::MatrixFree} framework and 32 MPI ranks. As SIMD vectorization
+ is not used, performance of the CPU-only \texttt{MatrixFree} framework is likely much higher.}
+ \label{fig:step-104b}
+
+\begin{tabular}{l|rrr|rr}
+Name & FP64 & VRAM & Bandwidth & Operator & Solve Time \\
+ & [TFLOPS] & [GB] & [TB/s] & [MDoFs/s] & [s] \\
+\hline
+AMD W7800 & 1.41 & 32 & 0.6 & 482 & 32 \\
+NVIDIA RTX 6000 & 1.97 & 96 & 1.8 & 1{,}746 & 11 \\
+NVIDIA H100 & 25.6 & 80 & 3.4 & 1{,}457 & 9 \\
+32 core 5975WX CPU & 1.4 & -- & 0.05 & 72 & 220 \\
+\end{tabular}
+
+\end{figure}
+
+\begin{figure}
+ \caption{Throughput of a Stokes Operator application for different problem sizes and finite element degrees on an NVIDIA RTX 6000 Blackwell Max-Q. See step-104 for a detailed description and more performance data.}
+ \label{fig:step-104}
+ %
+ \includegraphics{step-104/plots-figure0.pdf}
+\end{figure}
+
+
+
+
+The new tutorial showcases various new features of deal.II:
+First, \texttt{Portable::MatrixFree} now supports systems of
+equations by allowing you to use more than one \texttt{Portable::FEEvaluation} object within an operator. In
+step-104, this is used to define the Stokes operator with a
+velocity and pressure evaluation object using the same quadrature
+rule.
+
+Secondly, we overhauled the interface by providing \texttt{DeviceVector} and \texttt{DeviceBlockVector} classes
+within the matrix-free GPU kernels instead of exposing raw C-style
+pointers.
+
+Thirdly, the complete geometric multigrid cycle including multigrid
+transfer for $h$ and $p$ coarsening runs on device without copying solution data between host and GPU, even when running with multiple GPUs. This is achieved using device-aware MPI support.
+
+Fourth, performance has been significantly improved by code optimizations, reducing the number
+of GPU fences, and by using multithreading for setup steps that run on the CPU.
+
+Finally, usability improved with various additional error checks throughout the interface, improved API documentation, and other new features. Taken together, the work over the last twelve months makes the portable matrix-free framework a competitive solution for
+performance critical deal.II applications.
+
 
 \subsection{Trilinos and Tpetra interfaces}
 \label{subsec:tpetra}
@@ -555,8 +608,7 @@ a posteriori error estimator that can be used to drive adaptive mesh refinement.
 interface unknowns (traces and face elements); the program uses local condensation at the element level to obtain a global
 system in which only the trace degrees of freedom are present.
     \step{100} was written by Oreste Marquis, with help and guidance from Bruno Blais and Matthias Maier.
-  \item \step{104} solves the Stokes problem on GPUs.
-    \todo[inline]{Timo: Expand and Complete}
+  \item \step{104} solves the Stokes problem on GPUs using a block preconditioner and a matrix-free geometric multigrid preconditioner. See Section~\ref{subsec:gpu} for more details.
     \step{104} was written by Quang Hoang and Timo Heister.
 \end{itemize}
 
