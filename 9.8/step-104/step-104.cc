@@ -1231,6 +1231,9 @@ namespace Step104
     additional_data.mapping_update_flags = update_values | update_gradients;
 #ifdef STEP104_USE_PORTABLE_MATRIX_FREE
     additional_data.team_size = team_size;
+#ifdef DEAL_II_MPI_WITH_DEVICE_SUPPORT
+    additional_data.overlap_communication_computation = true;
+#endif
 #endif
     mf_data->reinit(mapping, dof_handlers, constraints, quad, additional_data);
 
@@ -1337,6 +1340,9 @@ namespace Step104
           update_JxW_values | update_gradients;
 #ifdef STEP104_USE_PORTABLE_MATRIX_FREE
         additional_data.team_size = team_size;
+#ifdef DEAL_II_MPI_WITH_DEVICE_SUPPORT
+        additional_data.overlap_communication_computation = true;
+#endif
 #endif
 
         if (level == max_level)
