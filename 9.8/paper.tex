@@ -332,7 +332,7 @@ throughput for operator evaluation increases with polynomial degree. This is in 
 
 \begin{figure}[ht]
  \caption{Stokes operator throughput and time to solve the system for different devices. PMF denotes the new
- \texttt{Portable::MatrixFree} implementation optimized for GPUs and MF denotes the CPU-based \texttt{MatrixFree} framework leveraging SIMD. Results from step-104.}
+ \texttt{Portable::MatrixFree} implementation optimized for GPUs and MF denotes the CPU-based \texttt{MatrixFree} framework leveraging SIMD. Results from step-104, 53m DoFs in 3D.}
  \label{fig:step-104b}
 
 \begin{tabular}{l|rrr|rr}
@@ -344,6 +344,8 @@ NVIDIA RTX 6000 & 1.97 & 96 & 1.8 & 1{,}746 & 11 \\
 NVIDIA H100 & 25.6 & 80 & 3.4 & 1{,}457 & 9 \\
 5975WX CPU PMF & 1.4 & -- & 0.05 & 72 & 220 \\
 5975WX CPU MF& 1.4 & -- & 0.05 & 203 & 51 \\
+5975WX CPU MF (*)& 1.4 & -- & 0.05 & 102 & 212 \\
+
 \end{tabular}
 
 \end{figure}
