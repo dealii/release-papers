@@ -13,6 +13,7 @@
 
 // CPU or GPU?
 // #define STEP104_USE_PORTABLE_MATRIX_FREE
+#define DEFORMED_GEOMETRY
 
 // teamsize = 32 is better than auto=-1 for degree <Q4Q3
 unsigned int team_size = -1;
@@ -1270,9 +1271,12 @@ namespace Step104
     mf_data->initialize_dof_vector(solution);
 
     {
+      MPI_Barrier(MPI_COMM_WORLD);
       dealii::Timer t(tria.get_mpi_communicator());
-      stokes_operator.vmult(solution, rhs);
-      const double time          = t.wall_time();
+      constexpr unsigned int n_repetitions = 100;
+      for (unsigned int t = 0; t < n_repetitions; ++t)
+        stokes_operator.vmult(solution, rhs);
+      const double time          = t.wall_time() / n_repetitions;
       const double dofs_p_second = static_cast<double>(solution.size()) / time;
       pcout << "Stokes operator: " << time << " s, DoFs/s: " << dofs_p_second
             << std::endl;
@@ -1610,6 +1614,12 @@ namespace Step104
         if (i == 0)
           {
             GridGenerator::hyper_cube(tria);
+#ifdef DEFORMED_GEOMETRY
+            Point<dim> shift;
+            for (unsigned int d = 0; d < dim; ++d)
+              shift[d] = 1e-6;
+            tria.begin()->vertex(0) += shift;
+#endif
             tria.refine_global(2);
           }
         else
