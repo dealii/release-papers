@@ -218,7 +218,7 @@ University of Munich, Germany.
 \section{Overview}
 
 \dealii version 9.8.0 was released XXX.
-\todo{Complete}
+\todo{All: Fill in release date once known}
 This paper provides an
 overview of the new features of this release and serves as a citable
 reference for the \dealii software library version 9.8. \dealii is an
@@ -227,7 +227,7 @@ development of finite element solvers. It is available for free under the
 terms of the \emph{GNU Lesser General Public License} (LGPL). The \dealii
 project is in the process of relicensing the library under the terms of
 the \emph{Apache License 2.0 with LLVM Exception}.
-\todo[inline]{Do we need to update the license blurb?}
+\todo[inline]{Matthias: Do we need to update the license blurb?}
 Downloads are
 available at \url{https://www.dealii.org/} and
 \url{https://github.com/dealii/dealii}.
@@ -235,8 +235,23 @@ available at \url{https://www.dealii.org/} and
 The major changes of this release are:
 %
 \begin{itemize}
-\item ...
-  \todo[inline]{Complete}
+\item Substantially extended support for meshes that contain
+  triangles, tetrahedra, wedges, and pyramids (see
+  Section~\ref{subsec:non-hypercube}).
+\item Improved support for and performance on GPUs (see
+  Section~\ref{subsec:gpu}).
+\item Support for newer versions of Trilinos that build on its newer
+  Tpetra, rather than the older Epetra, foundation (see
+  Section~\ref{subsec:tpetra}).
+\item Much extended interfaces to the VTK library (see
+  Section~\ref{subsec:vtk}) and the SUNDIALS library (see
+  Section~\ref{subsec:arkode}).
+\item A lot of work on reducing memory allocations to improve
+  performance (see Section~\ref{subsec:memory}).
+\item Continued evolution alongside newer C++ standards (see
+  Section~\ref{subsec:cxx}).
+\item A substantial number of new tutorial and code gallery programs
+  (see Section~\ref{subsec:steps}).
 \end{itemize}
 %
 
@@ -249,7 +264,7 @@ which we briefly outline in the remainder of this section:
 %
 \begin{itemize}
 \item ...
-  \todo[inline]{Complete}
+  \todo[inline]{Wolfgang: Complete}
 \end{itemize}
 %
 The
@@ -267,7 +282,7 @@ contains a complete record of all changes; see \cite{changes98}.
 \label{sec:major}
 
 This release of \dealii contains a number of large and significant changes,
-which we will discuss in this section.
+which we will discuss in the following.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -275,11 +290,12 @@ which we will discuss in this section.
 \subsection{Support for meshes with non-hypercube cells}
 \label{subsec:non-hypercube}
 
-We have continued \dealii{}'s transition from a library that only
+We have continued \dealii{}'s transition from a library that
+historically only
 supported hypercube cells to one that also supports triangular (in
-2d), tetrahedral, pyramidal, and wedge-shaped (in 3d) meshes, as well
+2d), tetrahedral, pyramidal, and wedge-shaped cells (in 3d) meshes, as well
 as mixed meshes. In particular, we have put substantial effort into
-supporting more element types on these meshes.
+supporting more finite element types on these meshes.
 
 The pyramid finite elements \texttt{FE\_PyramidP} and \texttt{FE\_PyramidDGP} now support quadratic and cubic shape functions, extending the mixed-mesh capabilities introduced in release 9.3~\cite{dealII93} to higher polynomial orders.
 The underlying approximation space is constructed by transforming the
@@ -289,14 +305,18 @@ The orthogonal basis functions are expressed in terms of (homogenized) Jacobi po
 Derivatives are evaluated using the same recurrence-based approach, avoiding computations at singularities while improving numerical stability.
 The pyramid basis functions form an exception, as their approximation space is spanned by rational rather than polynomial functions.
 
-The introduction of second- and third-order nodal pyramid elements requires support of degrees of freedom located on edges and faces for mixed element types.
+The introduction of second- and third-order nodal pyramid elements requires support for degrees of freedom located on edges and faces for mixed element types.
 To ensure a consistent distribution of the DoFs across interfaces, the \textit{hp}-infrastructure has been extended to account for the different face topologies on transitional elements, thereby preserving continuity on conforming meshes.
 
 Increasing the polynomial degree of the shape functions also requires quadrature rules of sufficiently high order to consistently evaluate weak-form integrals, particularly in the presence of non-linear terms or curvilinear mappings.
 To this end, mixed-mesh computations are supported by Stroud quadrature rules.
 These rules provide integration formulas of arbitrary order and serve as a fallback whenever no alternative quadrature rule of sufficient accuracy is available.
 
-Additionally, isotropic refinement is now supported for pyramids and wedges. The underlying algorithms employ a midpoint refinement strategy similar to the one used for hexahedra and tetrahedra. It recursively subdivides a cell's constituent lower-dimensional entities--from lines to faces, and finally to the element itself. This hierarchical approach ensures mesh conformity across neighboring elements. Under this scheme, an isotropic refinement step partitions a pyramid into ten and a wedge into eight children.
+Additionally, isotropic refinement is now supported for pyramids and
+wedges. The underlying algorithms employ a midpoint refinement
+strategy similar to the one used for hexahedra and tetrahedra. It
+recursively subdivides a cell's constituent lower-dimensional entities
+-- from lines to faces, and finally to the element itself. This hierarchical approach ensures mesh conformity across neighboring elements. Under this scheme, an isotropic refinement step partitions a pyramid into ten and a wedge into eight children.
 
 As an alternative to working directly with simplex meshes, \dealii now
 provides the function
@@ -315,24 +335,29 @@ The two sides of a face or subface may use different finite elements, mappings, 
 This release comes with numerous new features, fixes, and performance improvements for running on GPUs, making GPUs
 usable in practice to speed up computations.
 
-We build on Kokkos\cite{trott2022} for performance portability
+We build on Kokkos \cite{trott2022} for performance portability,
 meaning a code written based on the \texttt{Portable::MatrixFree} classes can run on current GPUs from NVIDIA, AMD, and Intel without
 any vendor-specific code visible in the user code. Importantly,
-all functionality is also available if deal.II is configured without
+all functionality is also available on the CPU if \dealii{} is configured without
 GPU support.
 
-A great example is the new step-104 tutorial, that solves the
+A representative use case is the new \step{104} tutorial program (see
+also Section~\ref{subsec:steps}), that solves the
 Stokes equation using a block preconditioner and an inner geometric
-multigrid v-cycle. The operator evaluation and multigrid
-cycle is running without assemblying any matrices. Performance
-results for some different GPUs are presented in Figure~\ref{fig:step-104b}.
+multigrid V-cycle. The operator evaluation and multigrid
+cycle is running without assemblying any matrices (i.e., ``matrix-free''). Performance
+results for a variety of GPUs are presented in Table~\ref{fig:step-104b}.
 
-Similar to the \texttt{MatrixFree} framework that only runs on CPUs,
-throughput for operator evaluation increases with polynomial degree. This is in contrast to matrix-vector products using assembled matrices, that get slower the higher the finite element degree, as more entries per row are nonzero. As GPUs are highly parallel devices, a significant number of unknowns per GPU are required to reach peak performance. See Figure~\ref{fig:step-104}.
+\todo[inline]{Timo: You say ``a variety of GPUs'' here, but aren't the
+  last 3 lines of the table CPUs?}
 
-\begin{figure}[ht]
- \caption{Stokes operator throughput and time to solve the system for different devices. PMF denotes the new
- \texttt{Portable::MatrixFree} implementation optimized for GPUs and MF denotes the CPU-based \texttt{MatrixFree} framework leveraging SIMD. Results from step-104, 53m DoFs in 3D.}
+\begin{table}[tbp]
+ \caption{\it Stokes operator throughput and time to solve the system
+   for different devices. PMF denotes the new
+   \texttt{Portable::MatrixFree} implementation optimized for GPUs and
+   MF denotes the CPU-based \texttt{MatrixFree} framework leveraging
+   SIMD. Results from step-104, on a problem with 53 million degrees
+   of freedom, in 3D.}
  \label{fig:step-104b}
 
 \centering
@@ -346,41 +371,63 @@ NVIDIA H100 & 25.6 & 80 & 3.4 & 1{,}457 & 9 \\
 5975WX CPU PMF & 1.4 & -- & 0.05 & 72 & 220 \\
 5975WX CPU MF& 1.4 & -- & 0.05 & 203 & 51 \\
 5975WX CPU MF (*)& 1.4 & -- & 0.05 & 102 & 212 \\
-
 \end{tabular}
 
-\end{figure}
+\todo[inline]{Timo: What does the asterisk in the last row after MF mean?}
 
-\begin{figure}
- \caption{Throughput of a Stokes Operator application for different problem sizes and finite element degrees on an NVIDIA RTX 6000 Blackwell Max-Q. See step-104 for a detailed description and more performance data.}
- \label{fig:step-104}
- %
+\todo[inline]{Timo: For those of us not in the know, are all six of
+  these GPUs? Also the last three? Perhaps we could prefix these six
+  names with ``GPU:'' and ``CPU:''.
+
+  Separately, for the last three, can you mention the maker (Intel?)?}
+\end{table}
+
+Similar to the \texttt{MatrixFree} framework that only runs on CPUs,
+throughput for operator evaluation increases with polynomial
+degree. This is in contrast to matrix-vector products using assembled
+matrices that get slower the higher the finite element degree, as more
+entries per row are nonzero. As GPUs are highly parallel devices, a
+significant number of unknowns per GPU are required to reach peak
+performance, as is clear from Figure~\ref{fig:step-104}.
+
+
+
+
+
+\begin{figure}[tbp]
  \centering
  \includegraphics{step-104/plots-figure0.pdf}
+ %
+ \caption{\it Throughput of a Stokes operator application for
+   different problem sizes and finite element degrees on an NVIDIA RTX
+   6000 Blackwell Max-Q GPU. The \step{104} program provides a
+   detailed description and more performance data.}
+ \label{fig:step-104}
 \end{figure}
-
 
 
 
 The new tutorial showcases various new features of deal.II:
 First, \texttt{Portable::MatrixFree} now supports systems of
-equations by allowing you to use more than one \texttt{Portable::FEEvaluation} object within an operator. In
-step-104, this is used to define the Stokes operator with a
+equations by allowing for the use of more than one \texttt{Portable::FEEvaluation} object within an operator. In
+\step{104}, this is used to define the Stokes operator with a
 velocity and pressure evaluation object using the same quadrature
 rule.
-
 Secondly, we overhauled the interface by providing \texttt{DeviceVector} and \texttt{DeviceBlockVector} classes
 within the matrix-free GPU kernels instead of exposing raw C-style
 pointers.
-
 Thirdly, the complete geometric multigrid cycle including multigrid
 transfer for $h$ and $p$ coarsening runs on device without copying solution data between host and GPU, even when running with multiple GPUs. This is achieved using device-aware MPI support.
-
 Fourth, performance has been significantly improved by code optimizations, reducing the number
 of GPU fences, and by using multithreading for setup steps that run on the CPU.
 
 Finally, usability improved with various additional error checks throughout the interface, improved API documentation, and other new features. Taken together, the work over the last twelve months makes the portable matrix-free framework a competitive solution for
 performance critical deal.II applications.
+
+\todo[inline]{Timo/Martin: Comparing the 4th and 5th rows of the
+  table, it seems like PMF is still slower than MF by a factor of
+  3-4. Do you want to write a paragraph that discusses this
+  discrepancy and/or outline future plans to address it?}
 
 
 \subsection{Trilinos and Tpetra interfaces}
@@ -394,7 +441,8 @@ sub-packaged. However, the \texttt{Trilinos} project has long intended
 to replace their \texttt{Epetra}-based solver stack in favor of
 \texttt{Tpetra}-based solvers, where support for different number
 types and \texttt{Kokkos} execution spaces has been the main
-driver. The \texttt{Epetra}-based stack was finally removed 
+driver, the latter also enabling support for GPUs or other
+acceleration devices. The \texttt{Epetra}-based stack was finally removed 
 in the recent \texttt{Trilinos} 17 release. Because \dealii{}'s
 Trilinos wrappers were all based on \texttt{Epetra}, this
 has required us to complete the \texttt{Tpetra} wrappers we had
@@ -408,14 +456,14 @@ started to write in recent years; for example, the
 With the current release, we can now support \texttt{Trilinos}
 versions that include the Epetra-based stack, the Tpetra-based stack,
 or both; in particular, this includes
-Trilinos 17. In case \texttt{Epetra} is available, the \texttt{TrilinosWrappers} namespace continues to use \texttt{Epetra} but will use \texttt{Tpetra}
+Trilinos' latest release 17 that no longer has Epetra support. In case \texttt{Epetra} is available, the \texttt{TrilinosWrappers} namespace continues to use \texttt{Epetra} but will use \texttt{Tpetra}
 if only \texttt{Tpetra} is available. The \texttt{TpetraWrappers}
-namespace while always use \texttt{Tpetra}.
+namespace will always use \texttt{Tpetra}.
 
 While we generally expect the \texttt{Tpetra}
-stack to work, not all functionality from the
-\texttt{TrilinosWrap\allowbreak{}pers} namespace is (yet) available in the
-\texttt{TpetraWrappers} namespace. In practice, we have managed to
+stack to work, not all functionality from namespace
+\texttt{TrilinosWrap\allowbreak{}pers} is available in the
+\texttt{TpetraWrappers} namespace at this time. However, in practice, we have managed to
 build very large packages with the \texttt{Tpetra} wrappers,
 indicating that all \textit{major} functionality is available. On the
 other hand, a substantial number of Trilinos wrapper tests fail when
@@ -469,7 +517,7 @@ The interfaces to the \texttt{SUNDIALS} \texttt{ARKODE} package have
 been substantially reorganized, now matching the internal organization
 of \texttt{ARKODE}. The \texttt{SUNDIALS::ARKode} class now acts as a common driver for time integration, while stepper-specific setup and callbacks have been moved into a new \texttt{ARKodeStepper} hierarchy. This mirrors the modular structure of ARKODE itself and removes the previous assumption that all time integration is performed through \texttt{ARKODE}'s \texttt{ARKStep} module. The existing implicit-explicit functionality is now provided by \texttt{ARKStepper}. To smooth the migration to the new class hierarchy, deprecated compatibility wrappers have been introduced that preserve the old interface.
 
-This restructuring made it possible to add wrappers for further \texttt{ARKODE} modules. The new \texttt{ERKStepper} exposes the explicit \texttt{ERKStep} module for non-stiff problems. The \texttt{LSRKStepperSTS} and \texttt{LSRKStepperSSP} classes expose the low-storage Runge--Kutta \texttt{LSRKStep} module for stabilized explicit integration of mildly stiff parabolic problems and strong-stability-preserving integration of hyperbolic or advection-dominated problems, respectively.
+This restructuring made it possible to add wrappers for further \texttt{ARKODE} modules. The new \texttt{ERKStepper} exposes the explicit \texttt{ERKStep} module for non-stiff problems. The \texttt{LSRKStepperSTS} and \texttt{LSRKStepperSSP} classes expose the low-storage Runge--Kutta \texttt{LSRKStep} module for stabilized explicit integration of mildly stiff parabolic problems, and strong-stability-preserving integration of hyperbolic or advection-dominated problems, respectively.
 
 The \texttt{LSRKStepperSTS} stepper requires an estimator for the dominant (largest-magnitude) eigenvalue of the Jacobian of the ODE right-hand side to determine the number of polynomial stages to be used. By default, the power iteration method implemented in the \texttt{SUNDomEigEstimator\_Power} module of \texttt{ARKODE} is employed to compute an estimate of the dominant eigenvalue. Users can replace this estimator with one of their choice.
 
@@ -486,35 +534,40 @@ dynamic allocations. Significant improvements include:
     \texttt{ReferenceCell}-dependent strides for its internal data
     structures,
 
-  \item lowered the time to construct a \texttt{DynamicSparsityPattern}
+  \item lowered run time to construct a \texttt{DynamicSparsityPattern}
     for \texttt{DoFHandler}s with a single component by 15\%,
 
-  \item moved all internal allocation functions in
+  \item movement of all internal allocation functions in
     \texttt{Triangulation} to internal helper classes, which also
     eliminated some duplicated loops over allocated cells.
 \end{itemize}
 
-\begin{figure}
+\begin{table}
+
+  \caption{\it Total number of allocations performed (with one MPI process
+    and one thread) by several tutorial programs in 9.7.1 and 9.8.0. For
+    \step{32} the program was run to $1/100$th of its default final time;
+    all other time-dependent problems were run to $1/10$th of their
+    default final times.}
+
+    \todo[inline]{David: This table is not referenced in the text.}
   \begin{tabular}{| l | l | l | l |}
     \hline
-    tutorial & allocations in 9.7  & allocations in 9.8 & description                            \\
+    Tutorial & Allocations in 9.7  & Allocations in 9.8 & Description                            \\
+    \hline\hline
+    \step{23} & 2,871k   & 623k    & adaptive wave equation solver              \\
     \hline
-    step-23 & 2,871k   & 623k    & adaptive wave equation solver              \\
+    \step{32} & 26,847k  & 11,791k & adaptive time-dependent Stokes flow solver \\
     \hline
-    step-32 & 26,847k  & 11,791k & adaptive time-dependent Stokes flow solver \\
+    \step{35} & 4,408k   & 975k    & projection solver for Navier-Stokes        \\
     \hline
-    step-35 & 4,408k   & 975k    & projection solver for Navier-Stokes        \\
-    \hline
-    step-40 & 5,265k   & 2,028k  & adaptive Laplace solver                    \\
+    \step{40} & 5,265k   & 2,028k  & adaptive Laplace solver                    \\
     \hline
   \end{tabular}
-
-  \caption{Total number of allocations performed (with one MPI process
-    and one thread) by several tutorial programs in 9.7.1 and 9.8.0. For
-    step-32 the program was run to $1/100$th of its default final time:
-    all other time-dependent problems were run to $1/10$th of their
-    default final times. \todo[inline]{Figure is not refereed.}}
-\end{figure}
+  \todo[inline]{David: The description of what a program does should
+    follow the number -- these two things go together.}
+  \todo[inline]{David: Perhaps also add a ``reduction percentage'' column?}
+\end{table}
 
 We achieved these reductions by preferring flat data structures such as
 \texttt{Table} over \texttt{std::map}, moving temporary arrays into
@@ -544,12 +597,12 @@ C++17, but can build C++20-style modules if so instructed and if the
 compiler supports it.
 
 The C++26 standard was released in March 2026~\cite{pusz2026standard}.
-\todo{Reference the *actual* standard if it has come out by the time
+\todo{Wolfgang: Reference the *actual* standard if it has come out by the time
   this paper goes out.}
 Among its many additions is a class \texttt{std::inplace\_vector<T,N>} that
 has a size that can vary at runtime, but can not exceed \texttt{N},
 allowing for efficient allocation of such objects either on the stack or
-inside another container. In contrast, the widely used class
+inside another class. In contrast, the widely used class
 \texttt{std::vector<T>} has to allocate memory on the heap dynamically,
 whereas \texttt{std::array<T,N>} has a fixed size \texttt{N}. The new
 class is useful in contexts where the actual size of the object is not
@@ -572,12 +625,6 @@ where the maximal size of an array is known at compile time, and this has
 dramatically reduced the number of dynamic memory allocations in many
 cases -- see also the discussion in Section~\ref{subsec:memory}.
 
-\subsection{xxx}
-\label{subsec:xxx}
-
-\todo[inline]{Add more sections}
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{New and improved tutorials and code gallery programs}
@@ -594,9 +641,9 @@ programs:
 \begin{itemize}
 \item
   \step{98} shows how to solve two-dimensional magnetostatic curl-curl
-  problems. In complements \step{97}, which considers similar problems
-  in 3d, but \step{98} puts specific emphasis on the interpretation of
-  the meaning of vectors, the curl, and other operations in 2d settings.
+  problems. It complements \step{97}, which considers similar problems
+  in 3d, but \step{98} puts specific emphasis on the interpretation
+  vectors, the curl, and other operations in 2d settings.
     \step{98} was written by Siarhei Uzunbajakau
   \item \step{100} introduces the Discontinuous Petrov–Galerkin (DPG) method, 
 a finite element framework in which the test space differs from the trial space.
@@ -612,7 +659,9 @@ a posteriori error estimator that can be used to drive adaptive mesh refinement.
 interface unknowns (traces and face elements); the program uses local condensation at the element level to obtain a global
 system in which only the trace degrees of freedom are present.
     \step{100} was written by Oreste Marquis, with help and guidance from Bruno Blais and Matthias Maier.
-  \item \step{104} solves the Stokes problem on GPUs using a block preconditioner and a matrix-free geometric multigrid preconditioner. See Section~\ref{subsec:gpu} for more details.
+  \item \step{104} solves the Stokes problem on GPUs using a block
+    preconditioner and a matrix-free geometric multigrid
+    preconditioner; see Section~\ref{subsec:gpu} for more details.
     \step{104} was written by Quang Hoang and Timo Heister.
 \end{itemize}
 
@@ -675,12 +724,12 @@ are more broadly visible:
 \item  Most of the parallel vector classes (in particular those
   wrapping the functionality in the PETSc, Trilinos Epetra, and
   Trilinos Tpetra packages) observe semantics whereby vectors that
-  have ghost elements need to be treated as unchangeable. This is
+  have ghost elements are treated as unchangeable. This is
   because whenever you change a locally-owned element of such a
   vector, this change is not propagated to those processes that store
   this element among their ghost elements; these processes' view of the vector is now no longer in sync with the view on that process that owns the element, and that is a common source of very hard to find bugs.
 
-  As a consequence, many functions inside these vector classes that
+  As a consequence, many vector class member functions that
   modify the vector check that the vector has no ghost elements. But
   some failed to do so, such as \texttt{operator+=()},
   \texttt{operator-=()}, \texttt{operator*=()}, and
@@ -690,7 +739,7 @@ are more broadly visible:
 This oversight has now been fixed. We know that some of these
 functions are used in parallel contexts in application codes that will
 now no longer work and will need to be fixed. For this, you will want
-to perform the modifying operations on full-distributed vectors (i.e.,
+to perform the modifying operations on fully-distributed vectors (i.e.,
 vectors of the same type that store no ghost elements) and then copy
 the result into the ghosted vector.
 
@@ -706,7 +755,7 @@ the result into the ghosted vector.
   children of a face of a cell -- used to do just that: Consider a
   part of a face that corresponds to a subdivision of that face due to
   refinement. It did not actually check consistently whether the face
-  was refined (i.e., whether the neighboring cell was refined). It
+  \textit{was} indeed refined (i.e., whether the neighboring \textit{cell} was refined). It
   will now generate an error if one tries to integrate over a face
   that is not actually refined. In practice, there should not be any
   reasons why one would integrate over sub-faces that are not in fact
@@ -721,7 +770,7 @@ the result into the ghosted vector.
   one index -– for which the only possible value of the index is
   zero). This is, of course, entirely equivalent to it being a scalar,
   but it is semantically wrong: The data type should have been a
-  scalar, not a vector of length one. This is now fixed: The data type defined by \texttt{FEValuesViews::Vector::curl\_type} used for curls is not simply a scalar value for \texttt{dim==2}. For \texttt{dim==3}, it is unchanged from what it was before.
+  scalar, not a vector of length one. This is now fixed: The data type defined by \texttt{FEValuesViews::Vector::curl\_type} used for curls is now simply a scalar value for \texttt{dim==2}. For \texttt{dim==3}, it is unchanged from what it was before.
 \end{itemize}
 
 
@@ -731,8 +780,6 @@ the result into the ghosted vector.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{How to cite \dealii}
 \label{sec:cite}
-
-\todo[inline]{Double check this section}
 
 In order to justify the work the developers of \dealii put into this
 software, we ask that papers using the library reference one of the
@@ -787,7 +834,7 @@ following:
 \end{multicols}
 
 \dealii can interface with many other libraries:
-\todo{Do we need to update/add anything here?}
+\todo{All: Do we need to update/add anything here?}
 \begin{multicols}{4}
   \begin{itemize}[leftmargin=4mm]
     \item ADOL-C \cite{griewank1996adolc}
@@ -834,10 +881,7 @@ The two previous releases of \dealii can be cited as
 
 \dealii is a worldwide project with dozens of contributors around the
 globe. Other than the authors of this paper, the following people
-contributed code to this release:\\
-
-%\todo[inline]{Create list and update text below.}
-
+contributed code to this release:
 \begin{quote}
   %  authors removed:
 %Daniel Arndt,
@@ -854,7 +898,7 @@ contributed code to this release:\\
 %Andreas Steger,
 %Dominik Still,
 %David Wells,
-Daniel Abele
+Daniel Abele,
 Mathias Anselmann,
 Kyle Arnold,
 Zdeněk Bonaventura,
@@ -908,20 +952,20 @@ Michał Wichrowski,
 Jiaqi Zhang,
 Ran Zhang.
 \end{quote}
-\marginpar[inline]{Check whether this is a record and if so, say so.}
+\todo[inline]{Wolfgang: Check whether this is a record and if so, say so.}
 Their contributions are much appreciated -- this project lives by its
 community of users and contributors!
-
-This release contains patches written in and contributed from
-Antarctica. As a consequence, \dealii{} now consists of work written
-on all seven continents.
 
 \bigskip
 
 \dealii and its developers are financially supported through a
 variety of funding sources:
 
-\todo[inline]{Update as appropriate}
+\todo[inline]{All: Update as appropriate}
+\todo[inline]{Vladimir: Do you have anything to add here? If not, just
+delete this note.}
+\todo[inline]{Andreas: Do you have anything to add here? If not, just
+delete this note.}
 
 D.~Arndt and B.~Turcksin: Research sponsored by the Laboratory Directed Research and
 Development Program of Oak Ridge National Laboratory, managed by UT-Battelle,
@@ -931,7 +975,7 @@ Next-Generation Scientific Software Technologies program, under contract
 number DE-AC05-00OR22725.
 
 W.~Bangerth was partially supported by the National Science Foundation
-under awards OAC-1835673, EAR-1925595, and OAC-2410847.
+under awards EAR-1925595 and OAC-2410847.
 
 W.~Bangerth, T.~Heister, and R.~Gassm\"{o}ller were partially
 supported by the Computational Infrastructure for Geodynamics initiative
