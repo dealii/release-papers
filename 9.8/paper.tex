@@ -263,8 +263,22 @@ are a number of other noteworthy changes in the current \dealii release,
 which we briefly outline in the remainder of this section:
 %
 \begin{itemize}
-\item ...
-  \todo[inline]{Wolfgang: Complete}
+\item Major parts of the \texttt{MeshWorker} framework are now
+  deprecated. When originally written, more than 20 years ago,
+  \texttt{MeshWorker} was an attempt at automatizing many parts of
+  what a finite element code does. It succeeds at making easy things
+  easier, but makes it very difficult to transition, for example, from a
+  discretization of a simply PDE without coefficients to a real
+  problem with nonlinearities, spatially variable coefficients, and
+  similar things. It was also never well documented or tested, and
+  only \step{39} still relied on it. \step{39} has now been rewritten,
+  and all of the classes it used are now deprecated. The only piece
+  within the \texttt{MeshWorker} namespace that will survive in the
+  long run is the \texttt{MeshWorker::mesh\_loop()} function and its
+  dependencies.
+\item Our wrappers of PETSc's linear algebra classes now support multi-threaded assembly into and reading from vectors ghost.
+\item We have extended the matrix-free infrastructure for the
+  evaluation and integration of N{\'e}d{\'e}lec elements.
 \end{itemize}
 %
 The
