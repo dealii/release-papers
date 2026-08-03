@@ -316,7 +316,7 @@ This release comes with numerous new features, fixes, and performance improvemen
 usable in practice to speed up computations.
 
 We build on Kokkos\cite{trott2022} for performance portability
-meaning a code written based on the \texttt{Portable::MatrixFree}classes can run on current GPUs from NVIDIA, AMD, and Intel without
+meaning a code written based on the \texttt{Portable::MatrixFree} classes can run on current GPUs from NVIDIA, AMD, and Intel without
 any vendor-specific code visible in the user code. Importantly,
 all functionality is also available if deal.II is configured without
 GPU support.
@@ -335,6 +335,7 @@ throughput for operator evaluation increases with polynomial degree. This is in 
  \texttt{Portable::MatrixFree} implementation optimized for GPUs and MF denotes the CPU-based \texttt{MatrixFree} framework leveraging SIMD. Results from step-104, 53m DoFs in 3D.}
  \label{fig:step-104b}
 
+\centering
 \begin{tabular}{l|rrr|rr}
 Name & FP64 & VRAM & Bandwidth & Operator & Solve Time \\
  & [TFLOPS] & [GB] & [TB/s] & [MDoFs/s] & [s] \\
@@ -354,6 +355,7 @@ NVIDIA H100 & 25.6 & 80 & 3.4 & 1{,}457 & 9 \\
  \caption{Throughput of a Stokes Operator application for different problem sizes and finite element degrees on an NVIDIA RTX 6000 Blackwell Max-Q. See step-104 for a detailed description and more performance data.}
  \label{fig:step-104}
  %
+ \centering
  \includegraphics{step-104/plots-figure0.pdf}
 \end{figure}
 
