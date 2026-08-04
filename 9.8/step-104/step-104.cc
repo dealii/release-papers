@@ -1309,9 +1309,10 @@ namespace Step104
       VectorTools::interpolate_boundary_values(
         dof_u, 0, Functions::ZeroFunction<dim, Number>(dim), constraints_u);
       constraints_u.close();
-      typename MatrixFreeData<dim, Number>::AdditionalData ad_data;
+      typename dealii::MatrixFree<dim, Number>::AdditionalData ad_data;
       DoFRenumbering::matrix_free_data_locality(dof_u, constraints_u, ad_data);
     }
+
     const IndexSet &owned_set_u = dof_u.locally_owned_dofs();
     const IndexSet  relevant_set_u =
       DoFTools::extract_locally_relevant_dofs(dof_u);
@@ -1444,7 +1445,7 @@ namespace Step104
         DoFTools::make_zero_boundary_constraints(dof_handler, constraint);
         constraint.close();
 
-        typename MatrixFreeData<dim, Number>::AdditionalData ad_data;
+        typename dealii::MatrixFree<dim, Number>::AdditionalData ad_data;
         DoFRenumbering::matrix_free_data_locality(dof_handler, constraint, ad_data);
         constraint.reinit(dof_handler.locally_owned_dofs(),
                           DoFTools::extract_locally_relevant_dofs(dof_handler));
