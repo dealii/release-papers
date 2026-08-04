@@ -279,6 +279,10 @@ which we briefly outline in the remainder of this section:
 \item Our wrappers of PETSc's linear algebra classes now support multi-threaded assembly into and reading from vectors ghost.
 \item We have extended the matrix-free infrastructure for the
   evaluation and integration of N{\'e}d{\'e}lec elements.
+\item The internal representation of imposing Dirichlet boundary conditions in
+  the matrix-free infrastructure was reworked and made more similar between
+  the GPU and CPU implementations, leading to faster execution on most CPU
+  systems.
 \end{itemize}
 %
 The
@@ -396,7 +400,7 @@ NVIDIA H100 & 25.6 & 80 & 3.4 & 1{,}457 & 9 \\
   Separately, for the last three, can you mention the maker (Intel?)?}
 \end{table}
 
-Similar to the \texttt{MatrixFree} framework that only runs on CPUs,
+Similar to the \texttt{MatrixFree} framework designed for CPUs,
 throughput for operator evaluation increases with polynomial
 degree. This is in contrast to matrix-vector products using assembled
 matrices that get slower the higher the finite element degree, as more
@@ -443,6 +447,14 @@ performance critical deal.II applications.
   3-4. Do you want to write a paragraph that discusses this
   discrepancy and/or outline future plans to address it?}
 
+\todo[inline]{Short reply by Martin: I do not think we can close the gap
+  between PMF and MF in the near future, because the abstractions of PMF are
+  not well-suited for CPUs (we are trying hard to make them work well for
+  GPUs, and by the work of several people, we have made good progress already
+  and will make more). So indeed, we should describe these differences, and
+  maybe point to higher-level plans I have to encapsulate such cases more
+  abstractly into global operators. Timo, if you agree I will write such a
+  paragraph, and you can fill the parts I'm missing.}
 
 \subsection{Trilinos and Tpetra interfaces}
 \label{subsec:tpetra}
@@ -481,8 +493,8 @@ stack to work, not all functionality from namespace
 build very large packages with the \texttt{Tpetra} wrappers,
 indicating that all \textit{major} functionality is available. On the
 other hand, a substantial number of Trilinos wrapper tests fail when
-run against the \texttt{Tpetra} wrappers, suggesting that many
-functions that are available in the \texttt{Epetra} wrappers are not
+run against the \texttt{Tpetra} wrappers, suggesting that several
+functions available in the \texttt{Epetra} wrappers are not
 yet implemented in the \texttt{Tpetra} wrappers.
 
 
@@ -656,7 +668,7 @@ programs:
   problems. It complements \step{97}, which considers similar problems
   in 3d, but \step{98} puts specific emphasis on the interpretation
   vectors, the curl, and other operations in 2d settings.
-    \step{98} was written by Siarhei Uzunbajakau
+    \step{98} was written by Siarhei Uzunbajakau.
   \item \step{100} introduces the Discontinuous Petrov–Galerkin (DPG) method, 
 a finite element framework in which the test space differs from the trial space.
 Using broken (discontinuous) test spaces, optimal test functions are computed element-by-element
