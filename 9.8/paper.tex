@@ -354,51 +354,57 @@ The two sides of a face or subface may use different finite elements, mappings, 
 This release comes with numerous new features, fixes, and performance improvements for running on GPUs, making GPUs
 usable in practice to speed up computations.
 
-We build on Kokkos \cite{trott2022} for performance portability,
-meaning a code written based on the \texttt{Portable::MatrixFree} classes can run on current GPUs from NVIDIA, AMD, and Intel without
-any vendor-specific code visible in the user code. Importantly,
-all functionality is also available on the CPU if \dealii{} is configured without
-GPU support.
+We build on Kokkos \cite{trott2022} for performance portability, meaning a
+code written based on the \texttt{Portable::MatrixFree} classes can run on
+current GPUs from NVIDIA, AMD, and Intel without any vendor-specific code
+visible in the user code. Importantly, all functionality is also available
+on the CPU if \dealii{} is configured without GPU support.
 
-A representative use case is the new \step{104} tutorial program (see
-also Section~\ref{subsec:steps}), that solves the
-Stokes equation using a block preconditioner and an inner geometric
-multigrid V-cycle. The operator evaluation and multigrid
-cycle is running without assemblying any matrices (i.e., ``matrix-free''). Performance
-results for a variety of GPUs are presented in Table~\ref{fig:step-104b}.
-
-\todo[inline]{Timo: You say ``a variety of GPUs'' here, but aren't the
-  last 3 lines of the table CPUs?}
+A representative use case is the new \step{104} tutorial program (see also
+Section~\ref{subsec:steps}), that solves the Stokes equation using a block
+preconditioner and an inner geometric multigrid V-cycle. The operator
+evaluation and multigrid cycle is running without assemblying any matrices
+(i.e., ``matrix-free''). Performance results for a variety of GPUs and CPUs
+are presented in Table~\ref{fig:step-104b}.
 
 \begin{table}[tbp]
  \caption{\it Stokes operator throughput and time to solve the system
-   for different devices. PMF denotes the new
-   \texttt{Portable::MatrixFree} implementation optimized for GPUs and
-   MF denotes the CPU-based \texttt{MatrixFree} framework leveraging
-   SIMD. Results from step-104, on a problem with 53 million degrees
-   of freedom, in 3D.}
+   for different devices. PMF denotes the new \texttt{Portable::MatrixFree}
+   implementation optimized for GPUs, and MF denotes the CPU-based
+   \texttt{MatrixFree} framework leveraging SIMD. MF$_{\text{ir}}$ is a
+   less optimized variant of MF that runs on distorted meshes. Results from
+   step-104, on a problem with 53 million degrees of freedom, in 3D.}
  \label{fig:step-104b}
 
 \centering
-\begin{tabular}{l|rrr|rr}
-Name & FP64 & VRAM & Bandwidth & Operator & Solve Time \\
- & [TFLOPS] & [GB] & [TB/s] & [MDoFs/s] & [s] \\
-\hline
-AMD W7800 & 1.41 & 32 & 0.6 & 482 & 32 \\
-NVIDIA RTX 6000 & 1.97 & 96 & 1.8 & 1{,}746 & 11 \\
-NVIDIA H100 & 25.6 & 80 & 3.4 & 1{,}457 & 9 \\
-5975WX CPU PMF & 1.4 & -- & 0.05 & 72 & 220 \\
-5975WX CPU MF& 1.4 & -- & 0.05 & 203 & 51 \\
-5975WX CPU MF (*)& 1.4 & -- & 0.05 & 102 & 212 \\
-\end{tabular}
-
-\todo[inline]{Timo: What does the asterisk in the last row after MF mean?}
-
-\todo[inline]{Timo: For those of us not in the know, are all six of
-  these GPUs? Also the last three? Perhaps we could prefix these six
-  names with ``GPU:'' and ``CPU:''.
-
-  Separately, for the last three, can you mention the maker (Intel?)?}
+  \begin{tabular}{lllrrrrr}
+    \toprule
+    \bfseries Name & & & \bfseries FP64 & \bfseries VRAM & \bfseries BW & \bfseries Operator & \bfseries Solve Time \\
+    & & & [TFLOPS] & [GB] & [TB/s] & [MDoFs/s] & [s]
+    \\[0.5em]
+    AMD W7800       & GPU & PMF              & 1.41 & 32 & 0.6 & 482 & 32     \\
+    NVIDIA RTX 6000 & GPU & PMF              & 1.97 & 96 & 1.8 & 1{,}746 & 11 \\
+    NVIDIA H100     & GPU & PMF              & 25.6 & 80 & 3.4 & 1{,}457 & 9
+    \\[0.25em]
+    % single processor setup:
+    AMD 5975WX      & CPU & PMF              & 1.4 & -- & 0.05 & 72 & 220 \\
+    AMD 5975WX      & CPU & MF               & 1.4 & -- & 0.05 & 203 & 51 \\
+    AMD 5975WX      & CPU & MF$_{\text{ir}}$ & 1.4 & -- & 0.05 & 102 & 212
+    \\[0.25em]
+    % dual processor setup:
+    % 12.7 TFLOPs is theoretical max, 11.9 TFLOPs seem to be observed in the wild
+    % 0.92TB/s theoretical memory bandwidth, 0.78TB/s seems to be observed in the wild
+    AMD EPYC 9754$^\ast$   & CPU & PMF              & 12.7 & -- & 0.92 &      654 & 26 \\ % 25.74s
+    AMD EPYC 9754$^\ast$   & CPU & MF               & 12.7 & -- & 0.92 & 12{,}129 & 3  \\ % 2.846s
+    AMD EPYC 9754$^\ast$   & CPU & MF$_{\text{ir}}$ & 12.7 & -- & 0.92 &  4{,}885 & 5  \\ % 4.933s
+    \bottomrule
+  \end{tabular}
+  \\[0.25em]
+  \hfill$^\ast$ two processor configuration
+  \todo[inline]{Timo: I think your performance numbers for the AMD 5975WX
+    are a bit off:it should be a memory bandwidth of four times the number
+    you report, 0.2TB/s. The number 0.05TB/s is per "CCD" and the TFLOPs
+    should be 1.8-2.0 depending on calculation.}
 \end{table}
 
 Similar to the \texttt{MatrixFree} framework designed for CPUs,
