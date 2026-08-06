@@ -96,6 +96,7 @@ cross/.default={2pt}}
     Martin Kronbichler,
     Matthias Maier,
     Peter Munch,
+    Qingyuan Shi,
     Andreas Steger,
     Dominik Still,
     Bruno Turcksin,
@@ -167,19 +168,23 @@ Max-Planck-Stra{\ss}e 1, 21502 Geesthacht, Germany. {\texttt{vladimir.ivannikov@
 \affil[13]{Institute of Mathematics, Technical University of Berlin, Germany.
   {\texttt{muench@math.tu-berlin.de}}}
 
-\author[14]{Andreas Steger}
-\affil[14]{TUM School of Engineering and Design, Technical University of Munich, Germany.
+\author[14]{Qingyuan~Shi}
+\affil[14]{Department of Mathematics, National University of Singapore, Singapore.
+  {\texttt{QY.Shi.2026@gmail.com}}}
+
+\author[15]{Andreas Steger}
+\affil[15]{TUM School of Engineering and Design, Technical University of Munich, Germany.
   {\texttt{andreas.steger@tum.de}}}
 
-\author[15]{Dominik Still}
-\affil[15]{Institute for Computational Mechanics, TUM School of Engineering and Design, Technical
+\author[16]{Dominik Still}
+\affil[16]{Institute for Computational Mechanics, TUM School of Engineering and Design, Technical
 University of Munich, Germany.
   {\texttt{dominik.still@tum.de}}}
 
 \author[1*]{Bruno~Turcksin}
 
-\author[16]{David Wells}
-\affil[16]{Department of Mathematics, University of North Carolina,
+\author[17]{David Wells}
+\affil[17]{Department of Mathematics, University of North Carolina,
   Chapel Hill, NC 27516, USA.
   {\texttt{drwells@email.unc.edu}}}
 
@@ -617,6 +622,59 @@ higher scopes, using \texttt{boost::container::small\_vector} instead of
 intermediate steps.
 
 
+\subsection{Performance of colored \texttt{WorkStream} with Taskflow}
+\label{subsec:workstream-taskflow}
+
+The \texttt{WorkStream} framework of \dealii{} supports shared-memory parallel
+finite element assembly~\cite{TKB16}.
+Version 9.7 changed its default backend from the Threading Building
+Blocks (TBB) to Taskflow~\cite{huang2021taskflow}. The benchmark in the
+9.7 release paper~\cite{dealii97} found comparable or better performance
+with Taskflow for a modified step-32 with a three-dimensional $Q_2$
+discretization, where cell assembly is expensive enough so that scheduling
+overhead is negligible. Tests with cheaper cell operations later exposed
+limited scalability in the colored Taskflow implementation, whose task
+graph grew with the number of cells and was constructed sequentially.
+
+For version 9.8, this implementation was rewritten around a single task
+graph spanning all colors, using \texttt{for\_each\_by\_index()} with a
+guided partitioner. The graph now holds one task per color, and cells are
+assigned to workers during execution, independently of the size of the
+mesh.
+
+We benchmarked the assembly of a Poisson-like stiffness matrix and
+right-hand side in \dealii{} 9.6.2 with TBB and in versions 9.7.1 and
+9.8.0 with Taskflow. The tests were run on a dual-socket AMD EPYC
+7543 system (64 cores and 128 hardware threads), keeping the chunk size at its
+default of eight. In both dimensions the mesh has 262,144 cells; the
+runs used $Q_1$ through $Q_4$ elements in two dimensions and $Q_1$
+through $Q_3$ in three dimensions. Each data point is the average wall
+time of ten \texttt{WorkStream::run()} calls.
+
+Figure~\ref{fig:workstream-benchmark} shows that version 9.8.0
+substantially improves scalability relative to version 9.7.1 and
+matches or outperforms version 9.6.2 with TBB. The improvement
+is largest for low-order elements at high thread counts. At two to four
+threads, however, the $Q_1$ cases still show limited speedup, indicating
+that scheduling overhead for inexpensive cell operations remains a target
+for further work.
+As the polynomial degree increases, cell-local assembly accounts for a
+larger share of the run time, and the differences among the three versions
+decrease.
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=0.49\textwidth]
+    {workstream-benchmark/workstream_assembly_compare_2d.pdf}
+  \hfill
+  \includegraphics[width=0.49\textwidth]
+    {workstream-benchmark/workstream_assembly_compare_3d.pdf}
+  \caption{Wall times for colored \texttt{WorkStream} assembly in two
+  dimensions (left) and three dimensions (right), both with 262,144 cells.}
+  \label{fig:workstream-benchmark}
+\end{figure}
+
+
 \subsection{Work towards more modern C++ standards}
 \label{subsec:cxx}
 
@@ -934,6 +992,7 @@ contributed code to this release:
 %Martin Kronbichler,
 %Matthias Maier,
 %Peter Munch,
+%Qingyuan Shi,
 %Andreas Steger,
 %Dominik Still,
 %David Wells,
@@ -977,7 +1036,6 @@ Magdalena Schreter-Fleischhacker,
 Florian Schulze,
 Richard Schussnig,
 Gordan Segon,
-Qingyuan Shi,
 Wyatt Smith,
 Simon Sticko,
 Jan Philipp Thiele,

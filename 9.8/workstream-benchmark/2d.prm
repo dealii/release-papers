@@ -1,0 +1,10 @@
+set Dimension           = 2
+set WorkStream mode     = colored
+set Thread counts       = 1, 2, 4, 8, 16, 32, 64, 128
+set FE degrees          = 1, 2, 3, 4
+set Global refinements  = 9
+set Warm-up repetitions = 2
+set Timed repetitions   = 10
+set Cooldown seconds    = 5
+set Chunk sizes         = 8
+set Output prefix       = server-2d
