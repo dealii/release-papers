@@ -466,44 +466,52 @@ performance critical deal.II applications.
 \subsection{Trilinos and Tpetra interfaces}
 \label{subsec:tpetra}
 
-Trilinos is an important dependency for \dealii{}, providing one way
+The \trilinos{} project is an important
+dependency for \dealii{}, providing one way
 to parallel linear algebra classes as well as numerous other pieces of
-functionality. Historically, Trilinos has provided parallel linear
-algebra functionality through its \texttt{Epetra}
-sub-packaged. However, the \texttt{Trilinos} project has long intended
-to replace their \texttt{Epetra}-based solver stack in favor of
-\texttt{Tpetra}-based solvers, where support for different number
+functionality like solvers and preconditioners. Historically, Trilinos has
+provided parallel linear algebra functionality through its \epetra{}
+sub-packages. However, the \trilinos{} project has long intended
+to replace their \epetra{}-based solver stack in favor of
+\tpetra{}-based solvers. Support for different number
 types and \texttt{Kokkos} execution spaces has been the main
-driver, the latter also enabling support for GPUs or other
-acceleration devices. The \texttt{Epetra}-based stack was finally removed 
-in the recent \texttt{Trilinos} 17 release. Because \dealii{}'s
-Trilinos wrappers were all based on \texttt{Epetra}, this
-has required us to complete the \texttt{Tpetra} wrappers we had
+driver of this transition, the latter also enabling support for GPUs or other
+acceleration devices. The \epetra{}-based stack was finally removed
+in the recent \trilinos{} 17 release. Because \dealii{}'s
+Trilinos wrappers were all based on \epetra{}, this
+has required us to complete the \tpetra{} wrappers we had
 started to write in recent years; for example, the
 \texttt{TpetraWrappers::Vector} class has been available since \dealii{}
 9.1, and a basic implementation for
 \texttt{TpetraWrappers::SparsityPattern} and
-\texttt{TpetraWrappers::SparseMatrix} was included in the 9.6.0
-\dealii release.
+\texttt{TpetraWrappers::SparseMatrix} was included in the 9.6
+\dealii release. However, much functionality was still missing,
+and in particular \dealii would not configure
+and compile with \trilinos{} if the \epetra{} stack was not present.
 
-With the current release, we can now support \texttt{Trilinos}
-versions that include the Epetra-based stack, the Tpetra-based stack,
+With \dealii 9.8 \tpetra{} support was expanded
+significantly, while simultaneously improving the compatibility between \tpetra{} and
+\epetra based wrapper classes. We now support \trilinos{}
+versions that include the \epetra{}-based stack, the \tpetra{}-based stack,
 or both; in particular, this includes
-Trilinos' latest release 17 that no longer has Epetra support. In case \texttt{Epetra} is available, the \texttt{TrilinosWrappers} namespace continues to use \texttt{Epetra} but will use \texttt{Tpetra}
-if only \texttt{Tpetra} is available. The \texttt{TpetraWrappers}
-namespace will always use \texttt{Tpetra}.
+\trilinos{}' latest release 17 that no longer has \epetra{} support.
+In case \epetra{} is available, the \texttt{TrilinosWrappers} namespace
+continues to use \epetra{} but will use \tpetra{}
+if only \tpetra{} is available. The \texttt{TpetraWrappers}
+namespace will always use \tpetra{} and is only available if
+\trilinos{} was configured with \tpetra{}.
 
-While we generally expect the \texttt{Tpetra}
+While we generally expect the \tpetra{}
 stack to work, not all functionality from namespace
 \texttt{TrilinosWrap\allowbreak{}pers} is available in the
-\texttt{TpetraWrappers} namespace at this time. However, in practice, we have managed to
-build very large packages with the \texttt{Tpetra} wrappers,
+\texttt{TpetraWrappers} namespace at this time. However, in practice we
+built very large packages with the \tpetra{} wrappers,
 indicating that all \textit{major} functionality is available. On the
-other hand, a substantial number of Trilinos wrapper tests fail when
-run against the \texttt{Tpetra} wrappers, suggesting that several
-functions available in the \texttt{Epetra} wrappers are not
-yet implemented in the \texttt{Tpetra} wrappers.
-
+other hand, a substantial number of our Trilinos wrapper tests and
+several of \dealii{}'s example programs fail when
+run against the \tpetra{} wrappers, suggesting that some
+functionality available in our \epetra{} wrappers are not
+yet implemented in the \tpetra{} wrappers.
 
 
 \subsection{VTK interfaces}
