@@ -269,10 +269,10 @@ which we briefly outline in the remainder of this section:
   \texttt{MeshWorker} was an attempt at automatizing many parts of
   what a finite element code does. It succeeds at making easy things
   easier, but makes it very difficult to transition, for example, from a
-  discretization of a simply PDE without coefficients to a real
+  discretization of a simple PDE without coefficients to a real
   problem with nonlinearities, spatially variable coefficients, and
   similar things. It was also never well documented or tested, and
-  only \step{39} still relied on it. \step{39} has now been rewritten,
+  only \step{39} heavily relied on it. \step{39} has now been rewritten,
   and all of the classes it used are now deprecated. The only piece
   within the \texttt{MeshWorker} namespace that will survive in the
   long run is the \texttt{MeshWorker::mesh\_loop()} function and its
