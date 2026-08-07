@@ -382,29 +382,24 @@ are presented in Table~\ref{fig:step-104b}.
     \bfseries Name & & & \bfseries FP64 & \bfseries VRAM & \bfseries BW & \bfseries Operator & \bfseries Solve Time \\
     & & & [TFLOPS] & [GB] & [TB/s] & [MDoFs/s] & [s]
     \\[0.5em]
-    AMD W7800       & GPU & PMF              & 1.41 & 32 & 0.6 & 482 & 32     \\
+    AMD W7800       & GPU & PMF              & 1.41 & 32 & 0.6 & 469 & 31     \\
     NVIDIA RTX 6000 & GPU & PMF              & 1.97 & 96 & 1.8 & 1{,}746 & 11 \\
     NVIDIA H100     & GPU & PMF              & 25.6 & 80 & 3.4 & 1{,}457 & 9
     \\[0.25em]
     % single processor setup:
-    AMD 5975WX      & CPU & PMF              & 1.4 & -- & 0.05 & 72 & 220 \\
-    AMD 5975WX      & CPU & MF               & 1.4 & -- & 0.05 & 203 & 51 \\
-    AMD 5975WX      & CPU & MF$_{\text{ir}}$ & 1.4 & -- & 0.05 & 102 & 212
+    AMD 5975WX      & CPU & PMF              & 2.0 & -- & 0.2 & 113 & 135 \\
+    AMD 5975WX      & CPU & MF               & 2.0 & -- & 0.2 & 1,873 & 13 \\
+    AMD 5975WX      & CPU & MF$_{\text{ir}}$ & 2.0 & -- & 0.2 & 995 & 21
     \\[0.25em]
     % dual processor setup:
     % 12.7 TFLOPs is theoretical max, 11.9 TFLOPs seem to be observed in the wild
     % 0.92TB/s theoretical memory bandwidth, 0.78TB/s seems to be observed in the wild
-    AMD EPYC 9754$^\ast$   & CPU & PMF              & 12.7 & -- & 0.92 &      654 & 26 \\ % 25.74s
-    AMD EPYC 9754$^\ast$   & CPU & MF               & 12.7 & -- & 0.92 & 12{,}129 & 3  \\ % 2.846s
-    AMD EPYC 9754$^\ast$   & CPU & MF$_{\text{ir}}$ & 12.7 & -- & 0.92 &  4{,}885 & 5  \\ % 4.933s
+    2x AMD EPYC 9754   & CPU & PMF              & 12.7 & -- & 0.92 &      654 & 26 \\ % 25.74s
+    2x AMD EPYC 9754   & CPU & MF               & 12.7 & -- & 0.92 & 12{,}129 & 3  \\ % 2.846s
+    2x AMD EPYC 9754   & CPU & MF$_{\text{ir}}$ & 12.7 & -- & 0.92 &  4{,}885 & 5  \\ % 4.933s
     \bottomrule
   \end{tabular}
   \\[0.25em]
-  \hfill$^\ast$ two processor configuration
-  \todo[inline]{Timo: I think your performance numbers for the AMD 5975WX
-    are a bit off:it should be a memory bandwidth of four times the number
-    you report, 0.2TB/s. The number 0.05TB/s is per "CCD" and the TFLOPs
-    should be 1.8-2.0 depending on calculation.}
 \end{table}
 
 Similar to the \texttt{MatrixFree} framework designed for CPUs,
