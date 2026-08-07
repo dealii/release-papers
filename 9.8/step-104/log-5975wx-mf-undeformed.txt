@@ -1,0 +1,92 @@
+Running on 32 MPI ranks (with 2 threads each) in RELEASE mode
+CPU-based MatrixFree with vectorization over 4 doubles = 256 bits (AVX), VECTORIZATION_LEVEL=2
+
+dim: 3
+Element: Q2-Q1
+
+refinement: 0, n_dofs: 2312 = 2187 + 125
+Stokes operator: 1.170161e-05 s, DoFs/s: 197579649.3
+GMG velocity block smoothers:
+    level: 1 n_dofs: 375, eigenvalue spectrum: [ 0.3748094237, 1.431969228 ]
+    level: 2 n_dofs: 2187, eigenvalue spectrum: [ 0.09606982577, 1.536448426 ]
+Solver converged in 10 iterations in 0.002696677 seconds
+Velocity block GMG timings:
+    smoother: 0.000889511 s
+    transfer: 0.000423345 s
+    coarse  : 3.5397e-05 s
+    residual: 0.000126142 s
+velocity error: 0.045127778 pressure error: 0.1489693935
+
+refinement: 1, n_dofs: 15468 = 14739 + 729
+Stokes operator: 3.256573e-05 s, DoFs/s: 474977837.1
+GMG velocity block smoothers:
+    level: 2 n_dofs: 2187, eigenvalue spectrum: [ 0.09606982458, 1.538727778 ]
+    level: 3 n_dofs: 14739, eigenvalue spectrum: [ 0.03739755443, 1.591988511 ]
+Solver converged in 20 iterations in 0.009679325 seconds
+Velocity block GMG timings:
+    smoother: 0.002666941 s
+    transfer: 0.001058201 s
+    coarse  : 0.002435245 s
+    residual: 0.000426563 s
+velocity error: 0.006038672323 pressure error: 0.01232937966
+
+refinement: 2, n_dofs: 112724 = 107811 + 4913
+Stokes operator: 0.00010607921 s, DoFs/s: 1062639890
+GMG velocity block smoothers:
+    level: 3 n_dofs: 14739, eigenvalue spectrum: [ 0.0240815543, 1.599942825 ]
+    level: 4 n_dofs: 107811, eigenvalue spectrum: [ 0.02073543131, 1.597305391 ]
+Solver converged in 22 iterations in 0.035247769 seconds
+Velocity block GMG timings:
+    smoother: 0.010748833 s
+    transfer: 0.00241638 s
+    coarse  : 0.012127205 s
+    residual: 0.001722179 s
+velocity error: 0.0007646180234 pressure error: 0.001237295099
+
+refinement: 3, n_dofs: 859812 = 823875 + 35937
+Stokes operator: 0.00054963256 s, DoFs/s: 1564339638
+GMG velocity block smoothers:
+    level: 3 n_dofs: 14739, eigenvalue spectrum: [ 0.0240815543, 1.599942825 ]
+    level: 4 n_dofs: 107811, eigenvalue spectrum: [ 0.02073543131, 1.597305391 ]
+    level: 5 n_dofs: 823875, eigenvalue spectrum: [ 0.01585837353, 1.601677133 ]
+Solver converged in 23 iterations in 0.155933874 seconds
+Velocity block GMG timings:
+    smoother: 0.067284758 s
+    transfer: 0.010601536 s
+    coarse  : 0.010154707 s
+    residual: 0.009421911 s
+velocity error: 9.58544297e-05 pressure error: 0.0002302781205
+
+refinement: 4, n_dofs: 6714692 = 6440067 + 274625
+Stokes operator: 0.00391714792 s, DoFs/s: 1714178820
+GMG velocity block smoothers:
+    level: 3 n_dofs: 14739, eigenvalue spectrum: [ 0.0240815543, 1.599942825 ]
+    level: 4 n_dofs: 107811, eigenvalue spectrum: [ 0.02073543131, 1.597305391 ]
+    level: 5 n_dofs: 823875, eigenvalue spectrum: [ 0.01585837353, 1.601677133 ]
+    level: 6 n_dofs: 6440067, eigenvalue spectrum: [ 0.0152536475, 1.601086067 ]
+Solver converged in 23 iterations in 1.429510143 seconds
+Velocity block GMG timings:
+    smoother: 0.679600318 s
+    transfer: 0.103820916 s
+    coarse  : 0.010868755 s
+    residual: 0.085317044 s
+velocity error: 1.199008176e-05 pressure error: 5.600589276e-05
+
+refinement: 5, n_dofs: 53070468 = 50923779 + 2146689
+Stokes operator: 0.02832971137 s, DoFs/s: 1873314815
+GMG velocity block smoothers:
+    level: 3 n_dofs: 14739, eigenvalue spectrum: [ 0.0240815543, 1.599942825 ]
+    level: 4 n_dofs: 107811, eigenvalue spectrum: [ 0.02073543131, 1.597305391 ]
+    level: 5 n_dofs: 823875, eigenvalue spectrum: [ 0.01585837353, 1.601677133 ]
+    level: 6 n_dofs: 6440067, eigenvalue spectrum: [ 0.0152536475, 1.601086067 ]
+    level: 7 n_dofs: 50923779, eigenvalue spectrum: [ 0.01577440429, 1.60147005 ]
+Solver converged in 24 iterations in 12.63648206 seconds
+Velocity block GMG timings:
+    smoother: 6.23931814 s
+    transfer: 0.97131948 s
+    coarse  : 0.012022183 s
+    residual: 0.7658006 s
+velocity error: 1.499034635e-06 pressure error: 1.449579391e-05
+
+refinement: 6, n_dofs: 421991684 = 405017091 + 16974593
+Stokes operator: 0.2277045865 s, DoFs/s: 1853241915
