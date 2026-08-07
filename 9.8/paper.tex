@@ -432,7 +432,7 @@ performance, as is clear from Figure~\ref{fig:step-104}.
 
 
 
-The new tutorial showcases various new features of deal.II:
+The new tutorial showcases various new features of \dealii{}:
 First, \texttt{Portable::MatrixFree} now supports systems of
 equations by allowing for the use of more than one \texttt{Portable::FEEvaluation} object within an operator. In
 \step{104}, this is used to define the Stokes operator with a
@@ -447,7 +447,7 @@ Fourth, performance has been significantly improved by code optimizations, reduc
 of GPU fences, and by using multithreading for setup steps that run on the CPU.
 
 Finally, usability improved with various additional error checks throughout the interface, improved API documentation, and other new features. Taken together, the work over the last twelve months makes the portable matrix-free framework a competitive solution for
-performance critical deal.II applications.
+performance critical \dealii{} applications.
 
 \todo[inline]{Timo/Martin: Comparing the 4th and 5th rows of the
   table, it seems like PMF is still slower than MF by a factor of
@@ -529,12 +529,12 @@ serial vector, and \texttt{read\_vtk()} provides a combined interface for
 loading a VTK file and its associated finite-element data.
 
 The description of the data in a VTK file can also be translated into a
-compatible deal.II finite-element object with
+compatible \dealii{} finite-element object with
 \texttt{vtk\_to\_finite\_element()}.  This makes it possible to preserve
 the number and location of the degrees of freedom represented in the file
 without imposing an interpretation on multi-component arrays.  Once a
 \texttt{DoFHandler} has been constructed, \texttt{data\_to\_dealii\_vector()}
-maps the VTK data onto a deal.II vector, including distributed vectors on a
+maps the VTK data onto a \dealii{} vector, including distributed vectors on a
 parallel triangulation.  The supporting
 \texttt{GridTools::parallel\_to\_serial\_vertex\_indices()} utility supplies
 the vertex-numbering correspondence required when data are read on a
@@ -544,8 +544,8 @@ Finally, the VTK interface now supports two-way conversion between a
 \texttt{Triangulation} and a \texttt{vtkUnstructuredGrid}.  This allows
 meshes to be exchanged with VTK-based visualization and meshing tools in
 both directions, including meshes with non-hypercube reference-cell
-types supported by the library.  The conversion optionally transfers 
-manifold, boundary, and material identifiers associated with the deal.II
+types supported by the library.  The conversion optionally transfers
+manifold, boundary, and material identifiers associated with the \dealii{}
 mesh.  Together, these additions make it possible to use VTK files as input for restarting or
 preprocessing computations while retaining the topology and metadata
 needed by a finite-element program.
@@ -804,7 +804,7 @@ the result into the ghosted vector.
   it is typically defined as a scalar, interpreted as the magnitude of
   a vector aligned with the $z$-axis that results from taking the curl
   of a vector field that lives in the $x$-$y$ plane. For historical
-  reasons, deal.II used to represent this scalar as a
+  reasons, \dealii{} used to represent this scalar as a
   \texttt{Tensor<1,1>} (i.e., a tensor of rank one -– a tensor with
   one index -– for which the only possible value of the index is
   zero). This is, of course, entirely equivalent to it being a scalar,
