@@ -366,13 +366,14 @@ preconditioner and an inner geometric multigrid V-cycle. The operator
 evaluation and multigrid cycle is running without assemblying any matrices
 (i.e., ``matrix-free''). Performance results for a variety of GPUs and CPUs
 are presented in Table~\ref{fig:step-104b}.
+Here, ``PMF'' denotes the new portable matrix-free framework optimized for GPUs. The performance on CPUs is significantly lower than the original matrix-free framework optimized for CPUs (denoted by ``MF''). This is partly explained by the fact that the former method is not using SIMD vectorization and the latter has been optimized specifically for usage on CPUs. The portable
+framework is currently not taking advantage of structured grids like assuming the determinant of the Jacobian of the mapping being constant within a cell (``MF$_{\text{C}}$'' denotes that these optimizations being used).
 
 \begin{table}[tbp]
  \caption{\it Stokes operator throughput and time to solve the system
    for different devices. PMF denotes the new \texttt{Portable::MatrixFree}
    implementation optimized for GPUs, and MF denotes the CPU-based
-   \texttt{MatrixFree} framework leveraging SIMD. MF$_{\text{ir}}$ is a
-   less optimized variant of MF that runs on distorted meshes. Results from
+   \texttt{MatrixFree} framework leveraging SIMD. MF$_{\text{C}}$ exploits the fact that meshes are Cartesian. Results from
    step-104, on a problem with 53 million degrees of freedom, in 3D.}
  \label{fig:step-104b}
 
@@ -388,15 +389,15 @@ are presented in Table~\ref{fig:step-104b}.
     \\[0.25em]
     % single processor setup:
     AMD 5975WX      & CPU & PMF              & 2.0 & -- & 0.2 & 113 & 135 \\
-    AMD 5975WX      & CPU & MF               & 2.0 & -- & 0.2 & 1,873 & 13 \\
-    AMD 5975WX      & CPU & MF$_{\text{ir}}$ & 2.0 & -- & 0.2 & 995 & 21
-    \\[0.25em]
+    AMD 5975WX      & CPU & MF & 2.0 & -- & 0.2 & 995 & 21
+    \\
+    AMD 5975WX      & CPU & MF$_{\text{C}}$ & 2.0 & -- & 0.2 & 1,873 & 13 \\[0.25em]
     % dual processor setup:
     % 12.7 TFLOPs is theoretical max, 11.9 TFLOPs seem to be observed in the wild
     % 0.92TB/s theoretical memory bandwidth, 0.78TB/s seems to be observed in the wild
     2x AMD EPYC 9754   & CPU & PMF              & 12.7 & -- & 0.92 &      654 & 26 \\ % 25.74s
-    2x AMD EPYC 9754   & CPU & MF               & 12.7 & -- & 0.92 & 12{,}129 & 3  \\ % 2.846s
-    2x AMD EPYC 9754   & CPU & MF$_{\text{ir}}$ & 12.7 & -- & 0.92 &  4{,}885 & 5  \\ % 4.933s
+    2x AMD EPYC 9754   & CPU & MF & 12.7 & -- & 0.92 &  4{,}885 & 5  \\ % 4.933s
+    2x AMD EPYC 9754   & CPU & MF$_{\text{C}}$               & 12.7 & -- & 0.92 & 12{,}129 & 3  \\ % 2.846s
     \bottomrule
   \end{tabular}
   \\[0.25em]
@@ -409,7 +410,8 @@ matrices that get slower the higher the finite element degree, as more
 entries per row are nonzero. As GPUs are highly parallel devices, a
 significant number of unknowns per GPU are required to reach peak
 performance, as is clear from Figure~\ref{fig:step-104}.
-
+%
+Future work includes performance optimization for the portable framework and taking advantage of cartesian/undeformed meshes.
 
 
 
@@ -444,19 +446,9 @@ of GPU fences, and by using multithreading for setup steps that run on the CPU.
 Finally, usability improved with various additional error checks throughout the interface, improved API documentation, and other new features. Taken together, the work over the last twelve months makes the portable matrix-free framework a competitive solution for
 performance critical \dealii{} applications.
 
-\todo[inline]{Timo/Martin: Comparing the 4th and 5th rows of the
-  table, it seems like PMF is still slower than MF by a factor of
-  3-4. Do you want to write a paragraph that discusses this
-  discrepancy and/or outline future plans to address it?}
 
-\todo[inline]{Short reply by Martin: I do not think we can close the gap
-  between PMF and MF in the near future, because the abstractions of PMF are
-  not well-suited for CPUs (we are trying hard to make them work well for
-  GPUs, and by the work of several people, we have made good progress already
-  and will make more). So indeed, we should describe these differences, and
-  maybe point to higher-level plans I have to encapsulate such cases more
-  abstractly into global operators. Timo, if you agree I will write such a
-  paragraph, and you can fill the parts I'm missing.}
+
+\todo[inline]{Martin: please take a look}
 
 \subsection{Trilinos and Tpetra interfaces}
 \label{subsec:tpetra}
