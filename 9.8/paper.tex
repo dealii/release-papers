@@ -362,11 +362,12 @@ on the CPU if \dealii{} is configured without GPU support.
 A representative use case is the new \step{104} tutorial program (see also
 Section~\ref{subsec:steps}), that solves the Stokes equation using a block
 preconditioner and an inner geometric multigrid V-cycle. The operator
-evaluation and multigrid cycle is running without assemblying any matrices
+evaluation and multigrid cycle is running without assembling any matrices
 (i.e., ``matrix-free''). Performance results for a variety of GPUs and CPUs
 are presented in Table~\ref{fig:step-104b}.
-Here, ``PMF'' denotes the new portable matrix-free framework optimized for GPUs. The performance on CPUs is significantly lower than the original matrix-free framework optimized for CPUs (denoted by ``MF''). This is partly explained by the fact that the former method is not using SIMD vectorization and the latter has been optimized specifically for usage on CPUs. The portable
-framework is currently not taking advantage of structured grids like assuming the determinant of the Jacobian of the mapping being constant within a cell (``MF$_{\text{C}}$'' denotes that these optimizations being used).
+Here, ``PMF'' denotes the new portable matrix-free framework optimized for GPUs. The performance on CPUs is significantly lower than the original matrix-free framework optimized for CPUs (denoted by ``MF''). This difference is partly explained by the fact that the PMF implementation is not using SIMD vectorization, and the MF implementation has been optimized specifically for usage on CPUs over the years. The portable
+framework can currently also not take advantage of structured grids (like assuming the determinant of the Jacobian of the mapping being constant within a cell; ``MF$_{\text{C}}$'' denotes that these optimizations being used).
+Future work includes performance optimization for the portable framework and taking advantage of Cartesian meshes.
 
 \begin{table}[tbp]
  \caption{\it Stokes operator throughput and time to solve the system
@@ -379,7 +380,7 @@ framework is currently not taking advantage of structured grids like assuming th
 \centering
   \begin{tabular}{lllrrrrr}
     \toprule
-    \bfseries Name & & & \bfseries FP64 & \bfseries VRAM & \bfseries BW & \bfseries Operator & \bfseries Solve Time \\
+    \bfseries Device & \bfseries Type & & \bfseries FP64 & \bfseries VRAM & \bfseries BW & \bfseries Operator & \bfseries Solve Time \\
     & & & [TFLOPS] & [GB] & [TB/s] & [MDoFs/s] & [s]
     \\[0.5em]
     AMD W7800       & GPU & PMF              & 1.41 & 32 & 0.6 & 469 & 31     \\
@@ -409,8 +410,6 @@ matrices that get slower the higher the finite element degree, as more
 entries per row are nonzero. As GPUs are highly parallel devices, a
 significant number of unknowns per GPU are required to reach peak
 performance, as is clear from Figure~\ref{fig:step-104}.
-%
-Future work includes performance optimization for the portable framework and taking advantage of cartesian/undeformed meshes.
 
 
 
@@ -422,7 +421,7 @@ Future work includes performance optimization for the portable framework and tak
  \caption{\it Throughput of a Stokes operator application for
    different problem sizes and finite element degrees on an NVIDIA RTX
    6000 Blackwell Max-Q GPU. The \step{104} program provides a
-   detailed description and more performance data.}
+   detailed description and further performance data.}
  \label{fig:step-104}
 \end{figure}
 
@@ -434,12 +433,12 @@ equations by allowing for the use of more than one \texttt{Portable::FEEvaluatio
 \step{104}, this is used to define the Stokes operator with a
 velocity and pressure evaluation object using the same quadrature
 rule.
-Secondly, we overhauled the interface by providing \texttt{DeviceVector} and \texttt{DeviceBlockVector} classes
+Second, we overhauled the interface by providing \texttt{DeviceVector} and \texttt{DeviceBlockVector} classes
 within the matrix-free GPU kernels instead of exposing raw C-style
 pointers.
-Thirdly, the complete geometric multigrid cycle including multigrid
+Third, the complete geometric multigrid cycle including multigrid
 transfer for $h$ and $p$ coarsening runs on device without copying solution data between host and GPU, even when running with multiple GPUs. This is achieved using device-aware MPI support.
-Fourth, performance has been significantly improved by code optimizations, reducing the number
+Fourth, performance has been significantly improved through code optimizations, reducing the number
 of GPU fences, and by using multithreading for setup steps that run on the CPU.
 
 Finally, usability improved with various additional error checks throughout the interface, improved API documentation, and other new features. Taken together, the work over the last twelve months makes the portable matrix-free framework a competitive solution for
@@ -452,18 +451,18 @@ performance critical \dealii{} applications.
 \subsection{Trilinos and Tpetra interfaces}
 \label{subsec:tpetra}
 
-The \trilinos{} project is an important
+The Trilinos project is an important
 dependency for \dealii{}, providing one way
 to parallel linear algebra classes as well as numerous other pieces of
 functionality like solvers and preconditioners. Historically, Trilinos has
 provided parallel linear algebra functionality through its \epetra{}
-sub-packages. However, the \trilinos{} project has long intended
+sub-packages. However, the Trilinos project has long intended
 to replace their \epetra{}-based solver stack in favor of
 \tpetra{}-based solvers. Support for different number
-types and \texttt{Kokkos} execution spaces has been the main
-driver of this transition, the latter also enabling support for GPUs or other
+types and \texttt{Kokkos} execution spaces have been the main
+drivers of this transition, the latter also enabling support for GPUs or other
 acceleration devices. The \epetra{}-based stack was finally removed
-in the recent \trilinos{} 17 release. Because \dealii{}'s
+in the recent Trilinos 17 release. Because \dealii{}'s
 Trilinos wrappers were all based on \epetra{}, this
 has required us to complete the \tpetra{} wrappers we had
 started to write in recent years; for example, the
@@ -473,19 +472,19 @@ started to write in recent years; for example, the
 \texttt{TpetraWrappers::SparseMatrix} was included in the 9.6
 \dealii release. However, much functionality was still missing,
 and in particular \dealii would not configure
-and compile with \trilinos{} if the \epetra{} stack was not present.
+and compile with Trilinos if the \epetra{} stack was not present.
 
 With \dealii 9.8 \tpetra{} support was expanded
 significantly, while simultaneously improving the compatibility between \tpetra{} and
-\epetra based wrapper classes. We now support \trilinos{}
+\epetra based wrapper classes. We now support Trilinos
 versions that include the \epetra{}-based stack, the \tpetra{}-based stack,
 or both; in particular, this includes
-\trilinos{}' latest release 17 that no longer has \epetra{} support.
+Trilinos' latest release 17 that no longer has \epetra{} support.
 In case \epetra{} is available, the \texttt{TrilinosWrappers} namespace
 continues to use \epetra{} but will use \tpetra{}
 if only \tpetra{} is available. The \texttt{TpetraWrappers}
 namespace will always use \tpetra{} and is only available if
-\trilinos{} was configured with \tpetra{}.
+Trilinos was configured with \tpetra{}.
 
 While we generally expect the \tpetra{}
 stack to work, not all functionality from namespace
@@ -856,7 +855,6 @@ following:
 \end{multicols}
 
 \dealii can interface with many other libraries:
-\todo{All: Do we need to update/add anything here?}
 \begin{multicols}{4}
   \begin{itemize}[leftmargin=4mm]
     \item ADOL-C \cite{griewank1996adolc}
@@ -991,8 +989,6 @@ community of users and contributors!
 
 \dealii and its developers are financially supported through a
 variety of funding sources:
-
-\todo[inline]{All: Update as appropriate}
 
 D.~Arndt and B.~Turcksin: Research sponsored by the Laboratory Directed Research and
 Development Program of Oak Ridge National Laboratory, managed by UT-Battelle,
