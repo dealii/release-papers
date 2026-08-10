@@ -230,5 +230,5 @@ The following is a list of ouststanding tasks that have to happen after we tagge
    * [ ] Send a news item to NADigest; web form breaks longer lines automatically, so keep them long to avoid awkward formatting; https://na-digest.coecis.cornell.edu/submit/
    * [ ] SIAM CS&E digest
  - [ ] <b>Update wikipedia pages</b> (assigned:)
-   * https://en.wikipedia.org/wiki/Deal.II
-   * https://en.wikipedia.org/wiki/List_of_finite_element_software_packages
+   * [ ] https://en.wikipedia.org/wiki/Deal.II
+   * [ ] https://en.wikipedia.org/wiki/List_of_finite_element_software_packages
