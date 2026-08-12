@@ -367,7 +367,9 @@ evaluation and multigrid cycle is running without assembling any matrices
 are presented in Table~\ref{fig:step-104b}.
 Here, ``PMF'' denotes the new portable matrix-free framework optimized for GPUs. The performance on CPUs is significantly lower than the original matrix-free framework optimized for CPUs (denoted by ``MF''). This difference is partly explained by the fact that the PMF implementation is not using SIMD vectorization, and the MF implementation has been optimized specifically for usage on CPUs over the years. The portable
 framework can currently also not take advantage of structured grids (like assuming the determinant of the Jacobian of the mapping being constant within a cell; ``MF$_{\text{C}}$'' denotes that these optimizations being used).
-Future work includes performance optimization for the portable framework and taking advantage of Cartesian meshes.
+A comparison with server-grade AMD CPUs with the H100 setup, which formally
+have a lower peak FP64 rate and lower memory bandwidth, indicate further
+potential for the GPU implementation. Future work will therefore consider further performance optimization for the portable framework and taking advantage of Cartesian meshes.
 
 \begin{table}[tbp]
  \caption{\it Stokes operator throughput and time to solve the system
@@ -403,7 +405,8 @@ Future work includes performance optimization for the portable framework and tak
   \\[0.25em]
 \end{table}
 
-Similar to the \texttt{MatrixFree} framework designed for CPUs,
+Similar to the \texttt{MatrixFree} framework designed for
+CPUs~\cite{KronbichlerKormann2012,KronbichlerKormann2019},
 throughput for operator evaluation increases with polynomial
 degree. This is in contrast to matrix-vector products using assembled
 matrices that get slower the higher the finite element degree, as more
@@ -439,14 +442,11 @@ pointers.
 Third, the complete geometric multigrid cycle including multigrid
 transfer for $h$ and $p$ coarsening runs on device without copying solution data between host and GPU, even when running with multiple GPUs. This is achieved using device-aware MPI support.
 Fourth, performance has been significantly improved through code optimizations, reducing the number
-of GPU fences, and by using multithreading for setup steps that run on the CPU.
+of GPU fences, kernel fusion where possible, and by using multithreading for setup steps that run on the CPU.
 
 Finally, usability improved with various additional error checks throughout the interface, improved API documentation, and other new features. Taken together, the work over the last twelve months makes the portable matrix-free framework a competitive solution for
 performance critical \dealii{} applications.
 
-
-
-\todo[inline]{Martin: please take a look}
 
 \subsection{Trilinos and Tpetra interfaces}
 \label{subsec:tpetra}
