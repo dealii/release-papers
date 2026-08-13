@@ -31,17 +31,27 @@
 \addplot+[thick, mark=*, color=blue]
   table[x=dofs, y=Q2Q1-ts32] {op.q2q1};
 \addlegendentry{Q$_2$-Q$_1$}
-
+%\addplot+[thick, mark=*, color=blue]
+%  table[x=dofs, y=Q2Q1-ts32] {op.q2q1-old};
+%\addlegendentry{Q$_2$-Q$_1$old}
+  
 \addplot+[thick, mark=square*, color=red]
   table[x=dofs, y=Q3Q2-ts32] {op.q3q2};
 \addlegendentry{Q$_3$-Q$_2$}
+%\addplot+[thick, mark=square*, color=red]
+%  table[x=dofs, y=Q3Q2-ts32] {op.q3q2-old};
+%\addlegendentry{Q$_3$-Q$_2$ old}
 
 \addplot+[thick, mark=triangle*, color=green!60!black]
-  table[x=dofs, y=Q4Q3] {op.q4q3};
+  table[x=dofs, y=Q4Q3-ts64] {op.q4q3};
 \addlegendentry{Q$_4$-Q$_3$}
 
+%\addplot+[thick, mark=triangle*, color=green!60!black]
+%  table[x=dofs, y=Q4Q3] {op.q4q3-old};
+%\addlegendentry{Q$_4$-Q$_3$-old}
+
 \addplot+[thick, mark=diamond*, color=orange!85!black]
-  table[x=dofs, y=Q5Q4] {op.q5q4};
+  table[x=dofs, y=Q5Q4-auto] {op.q5q4};
 \addlegendentry{Q$_5$-Q$_4$}
 
 \end{axis}
