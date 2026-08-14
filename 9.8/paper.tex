@@ -207,7 +207,9 @@ University of Munich, Germany.
 
 \begin{abstract}
   This paper provides an overview of the new features of the finite element
-  library \dealii, version 9.8.
+  library \dealii, version 9.8, with substantially expanded support for mixed meshes
+  containing tetrahedra, wedges, and pyramids,
+  major improvements to the matrix-free GPU functionality, and many other improvements.
 \end{abstract}
 
 
@@ -366,10 +368,11 @@ evaluation and multigrid cycle is running without assembling any matrices
 (i.e., ``matrix-free''). Performance results for a variety of GPUs and CPUs
 are presented in Table~\ref{fig:step-104b}.
 Here, ``PMF'' denotes the new portable matrix-free framework optimized for GPUs. The performance on CPUs is significantly lower than the original matrix-free framework optimized for CPUs (denoted by ``MF''). This difference is partly explained by the fact that the PMF implementation is not using SIMD vectorization, and the MF implementation has been optimized specifically for usage on CPUs over the years. The portable
-framework can currently also not take advantage of structured grids (like assuming the determinant of the Jacobian of the mapping being constant within a cell; ``MF$_{\text{C}}$'' denotes that these optimizations being used).
-A comparison with server-grade AMD CPUs with the H100 setup, which formally
-have a lower peak FP64 rate and lower memory bandwidth, indicate further
-potential for the GPU implementation. Future work will therefore consider further performance optimization for the portable framework and taking advantage of Cartesian meshes.
+framework can currently also not take advantage of structured grids (like assuming the determinant of the Jacobian of the mapping being constant within a cell; ``MF$_{\text{C}}$'' denotes the use of these optimizations).
+The comparison with a typical workstation CPU (AMD 5975WX) shows competitive performance of the new PMF framework on GPUs.
+A comparison with a server-grade dual-CPU AMD EPYC machine, which formally
+has a lower peak FP64 rate and lower memory bandwidth than the H100, indicates further
+potential for the GPU implementation. Future work will therefore consider further performance optimization for the portable framework and exploiting Cartesian mesh structure.
 
 \begin{table}[tbp]
  \caption{\it Stokes operator throughput and time to solve the system
@@ -595,7 +598,7 @@ We achieved these reductions by preferring flat data structures such as
 higher scopes, using \texttt{boost::container::small\_vector} instead of
 \texttt{std::vector}, and eliminating temporaries by combining
 intermediate steps. A short quantitative analysis of various example steps
-shows a reduction in dynamic allocations between 56\% and 78\%; see
+shows a reduction in the number of dynamic allocations between 56\% and 78\%; see
 Table~\ref{tab:memory_allocations}.
 
 
