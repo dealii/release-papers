@@ -4,7 +4,9 @@ Attached please find a copy of our manuscript entitled "The deal.II Library, Ver
 
 Please note that the manuscriptcentral.com website only allows adding up to seven authors, so I was only able to add the first seven of the many authors. For that reason I was also unable to use the recommended latex template.
 
-Please let me know if you have any questions! 
+Please let me know if you have any questions.
 
-Thank you,
+Thank you!
+
+Best,
 Timo Heister
