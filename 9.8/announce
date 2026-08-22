@@ -1,5 +1,5 @@
 Version 9.8.0 of deal.II, the object-oriented finite element library
-awarded the J. H. Wilkinson Prize for Numerical Software and the
+awarded the J. H. Wilkinson Prize for Numerical Software and the 2025
 SIAM/ACM Prize in Computational Science and Engineering, has been
 released. It is available for free under an Open Source license from
 the deal.II homepage at
@@ -7,12 +7,18 @@ the deal.II homepage at
                    https://www.dealii.org/
 
 The major changes of this release are:
-  - ...
+  - Substantially extended support for meshes that contain triangles, tetrahedra, wedges, and pyramids
+  - Improved support for and performance on GPUs
+  - Support for newer versions of Trilinos that build on Tpetra
+  - Much extended interfaces to the VTK and SUNDIALS libraries
+  - A lot of work on reducing memory allocations to improve performance
+  - Continued evolution alongside newer C++ standards
+  - A substantial number of new tutorial and code gallery programs
 
 For more information see:
   - The preprint at https://www.dealii.org/deal98-preprint.pdf
-  - The list of more than XXX changes listed at
-    https://www.dealii.org/developer/doxygen/deal.II/changes_between_9_7_0_and_9_8_0.html
+  - The list of more than 143 changes listed at
+    https://www.dealii.org/developer/doxygen/deal.II/changes_between_9_7_1_and_9_8_0.html
 
 The main features of deal.II are:
   - Extensive documentation and 88 working example programs
